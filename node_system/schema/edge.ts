@@ -93,16 +93,12 @@ export interface Edge {
     /**
      * Physical distance in meters.
      * 
-     * ⚠️ Can be null for MVP.
+     * ⚠️ REQUIRED if your x/y coordinates are not to scale!
      * 
-     * Why it's okay to skip now:
-     * - Wi-Fi positioning error > measurement error
-     * - Can be batch-measured later
-     * - weight = 1 works for MVP
+     * If you cannot rely on x/y for distance (e.g., schematic map),
+     * you MUST measure and input this value manually.
      * 
-     * When to add:
-     * - When you need accurate ETAs
-     * - When optimizing for actual walking distance
+     * Pathfinding will use this as the base cost.
      */
     distance_m?: number | null;
 
