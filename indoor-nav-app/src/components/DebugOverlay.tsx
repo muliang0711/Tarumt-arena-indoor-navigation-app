@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-//  Debug Overlay — Real-time sensor & navigation state info
+//  Debug Overlay — Real-time sensor, nav state, PF info
 // ═══════════════════════════════════════════════════════════════
 
 import React from 'react';
@@ -12,6 +12,10 @@ interface Props {
     turnDetected: boolean;
     lastTurnAngle: number;
     visible: boolean;
+    /** Particle filter debug: effective sample size */
+    pfNeff?: number;
+    /** Particle filter debug: per-edge weight distribution */
+    pfEdgeWeights?: Map<string, number>;
 }
 
 function degStr(rad: number): string {
@@ -24,8 +28,15 @@ export default function DebugOverlay({
     turnDetected,
     lastTurnAngle,
     visible,
+    pfNeff,
+    pfEdgeWeights,
 }: Props) {
     if (!visible) return null;
+
+    // Sort edges by weight for display
+    const edgeEntries = pfEdgeWeights
+        ? [...pfEdgeWeights.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5)
+        : [];
 
     return (
         <View style={styles.container}>
@@ -38,8 +49,6 @@ export default function DebugOverlay({
                     <>
                         <Row label="Edge" value={navState.currentEdgeId} />
                         <Row label="s (along)" value={navState.s.toFixed(2) + ' m'} />
-                        <Row label="d (lateral)" value={navState.d.toFixed(2) + ' m'} />
-                        <Row label="Dir" value={navState.direction === 1 ? '→ P1' : '← P0'} />
                         <Row label="Heading" value={degStr(navState.heading)} />
                         <Row label="Steps" value={String(navState.stepCount)} />
                         <Row
@@ -54,6 +63,26 @@ export default function DebugOverlay({
                     </>
                 ) : (
                     <Text style={styles.dimText}>Not initialized — tap a node</Text>
+                )}
+
+                {/* Particle Filter */}
+                {pfNeff !== undefined && (
+                    <>
+                        <Text style={styles.sectionTitle}>Particle Filter</Text>
+                        <Row
+                            label="N_eff"
+                            value={pfNeff.toFixed(1)}
+                            highlight={pfNeff < 40}
+                        />
+                        {edgeEntries.map(([eid, w]) => (
+                            <Row
+                                key={eid}
+                                label={eid.slice(0, 10)}
+                                value={(w * 100).toFixed(0) + '%'}
+                                highlight={w > 0.5}
+                            />
+                        ))}
+                    </>
                 )}
 
                 {/* Turn Detection */}
@@ -108,7 +137,7 @@ const styles = StyleSheet.create({
         top: 50,
         right: 8,
         width: 200,
-        maxHeight: 400,
+        maxHeight: 440,
         backgroundColor: 'rgba(15, 17, 23, 0.92)',
         borderRadius: 12,
         borderWidth: 1,
@@ -116,48 +145,22 @@ const styles = StyleSheet.create({
         padding: 10,
         zIndex: 100,
     },
-    scroll: {
-        flex: 1,
-    },
-    title: {
-        color: '#fff',
-        fontSize: 13,
-        fontWeight: '700',
-        marginBottom: 6,
-    },
+    scroll: { flex: 1 },
+    title: { color: '#fff', fontSize: 13, fontWeight: '700', marginBottom: 6 },
     sectionTitle: {
-        color: '#71717a',
-        fontSize: 10,
-        fontWeight: '600',
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        marginTop: 8,
-        marginBottom: 4,
+        color: '#71717a', fontSize: 10, fontWeight: '600',
+        textTransform: 'uppercase', letterSpacing: 1,
+        marginTop: 8, marginBottom: 4,
     },
     row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: 2,
+        flexDirection: 'row', justifyContent: 'space-between',
+        alignItems: 'center', paddingVertical: 2,
     },
-    label: {
-        color: '#a1a1aa',
-        fontSize: 11,
-    },
+    label: { color: '#a1a1aa', fontSize: 11 },
     value: {
-        color: '#e4e4e7',
-        fontSize: 11,
-        fontFamily: 'monospace',
-        maxWidth: 120,
-        textAlign: 'right',
+        color: '#e4e4e7', fontSize: 11,
+        fontFamily: 'monospace', maxWidth: 120, textAlign: 'right',
     },
-    highlight: {
-        color: '#34d399',
-        fontWeight: '700',
-    },
-    dimText: {
-        color: '#52525b',
-        fontSize: 11,
-        fontStyle: 'italic',
-    },
+    highlight: { color: '#34d399', fontWeight: '700' },
+    dimText: { color: '#52525b', fontSize: 11, fontStyle: 'italic' },
 });

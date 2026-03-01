@@ -103,6 +103,8 @@ export default function MapScreen() {
     const [turnDetected, setTurnDetected] = useState(false);
     const [lastTurnAngle, setLastTurnAngle] = useState(0);
     const [userPosition, setUserPosition] = useState<{ x: number; y: number } | null>(null);
+    const [pfNeff, setPfNeff] = useState<number | undefined>(undefined);
+    const [pfEdgeWeights, setPfEdgeWeights] = useState<Map<string, number> | undefined>(undefined);
 
     const rawNodes = getRawNodes();
     const rawEdges = getRawEdges();
@@ -150,6 +152,12 @@ export default function MapScreen() {
                 setNavState(newState);
                 setUserPosition(toSvg(newState.position, boundsRef.current));
                 checkArrival(newState);
+                // PF debug
+                const pfs = engine.getLastPFState();
+                if (pfs) {
+                    setPfNeff(pfs.nEff);
+                    setPfEdgeWeights(pfs.edgeWeights);
+                }
             },
             onHeading: () => { },
             onTurn: (deltaYaw: number) => {
@@ -197,6 +205,8 @@ export default function MapScreen() {
             const result = findShortestPath(startNodeId!, nodeId);
             if (result) {
                 setPathResult(result);
+                // ① Pass path edges to engine for path-aware scoring
+                engineRef.current?.setPlannedPath(result.edgeIds);
                 setPhase('ready');
             } else {
                 Alert.alert('No Path', 'Could not find a path between these two nodes.');
@@ -208,6 +218,7 @@ export default function MapScreen() {
             const result = findShortestPath(startNodeId!, nodeId);
             if (result) {
                 setPathResult(result);
+                engineRef.current?.setPlannedPath(result.edgeIds);
             } else {
                 Alert.alert('No Path', 'Could not find a path between these two nodes.');
             }
@@ -250,6 +261,7 @@ export default function MapScreen() {
         setLastTurnAngle(0);
         arrivedRef.current = false;
         engineRef.current = new NavigationEngine();
+        engineRef.current.clearPlannedPath();
         sensorRef.current = new SensorService();
     }, []);
 
@@ -495,11 +507,12 @@ export default function MapScreen() {
                 )}
             </View>
 
-            {/* Debug Overlay */}
             <DebugOverlay
                 navState={navState} sensorData={sensorData}
                 turnDetected={turnDetected} lastTurnAngle={lastTurnAngle}
                 visible={debugVisible}
+                pfNeff={pfNeff}
+                pfEdgeWeights={pfEdgeWeights}
             />
 
             {/* Turn flash */}

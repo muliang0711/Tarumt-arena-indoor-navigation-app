@@ -4,41 +4,59 @@
 
 export const NAV_CONFIG = {
     // ── Scale ────────────────────────────────────────────────────
-    /** How many real meters per grid unit in the JSON coordinates */
     METERS_PER_GRID_UNIT: 10,
 
     // ── Corridor Constraint ──────────────────────────────────────
-    /** Total corridor width in meters (user clamped to ±half of this) */
     CORRIDOR_WIDTH: 3,
 
     // ── Node Proximity ───────────────────────────────────────────
-    /** Distance (meters) from a node endpoint to be considered "near node" */
     NODE_PROXIMITY_THRESHOLD: 2.0,
 
     // ── Turn Detection ───────────────────────────────────────────
-    /** Minimum yaw change (degrees) to consider a turn event */
     TURN_ANGLE_THRESHOLD: 30,
-    /** Time window (ms) over which yaw change is measured */
     TURN_WINDOW_MS: 800,
 
-    // ── Edge Switching ───────────────────────────────────────────
-    /** Gaussian σ (degrees) for heading-to-edge direction scoring */
+    // ── Edge Switching (legacy, used by PF scoring) ──────────────
     HEADING_MATCH_SIGMA: 25,
 
-    // ── PDR (Pedestrian Dead Reckoning) ──────────────────────────
-    /** Default step length in meters */
+    // ── Path-Aware Scoring ──────────────────────────────────────
+    PATH_BONUS_MULTIPLIER: 3.0,
+
+    // ── Heading Correction ──────────────────────────────────────
+    HEADING_CORRECTION_ALPHA: 0.10,
+
+    // ══════════════════════════════════════════════════════════════
+    //  PARTICLE FILTER (PF v1)
+    // ══════════════════════════════════════════════════════════════
+
+    /** Number of particles */
+    PF_NUM_PARTICLES: 80,
+
+    /** Step length noise σ (meters). Adds uncertainty to step distance. */
+    PF_STEP_NOISE_SIGMA: 0.08,
+
+    /** Heading noise σ (radians, ~5°). Adds uncertainty to heading per step. */
+    PF_HEADING_NOISE_SIGMA: 0.09,
+
+    /** Resample when N_eff < NUM_PARTICLES × this fraction */
+    PF_RESAMPLE_THRESHOLD: 0.5,
+
+    /** Fraction of particles injected as "explorers" at junctions on turn events.
+     *  These get random adjacent edges to ensure diversity. */
+    PF_EXPLORER_RATIO: 0.15,
+
+    /** Minimum weight for a particle to survive. Below this → eliminated in resampling. */
+    PF_MIN_WEIGHT: 0.001,
+
+    // ── PDR ─────────────────────────────────────────────────────
     STEP_LENGTH_DEFAULT: 0.65,
 
-    // ── Sensor ───────────────────────────────────────────────────
-    /** Gyroscope update interval (ms) — 50Hz */
+    // ── Sensor ──────────────────────────────────────────────────
     GYRO_UPDATE_INTERVAL: 20,
-    /** Accelerometer update interval (ms) — 20Hz */
     ACCEL_UPDATE_INTERVAL: 50,
 
-    // ── Map Rendering ────────────────────────────────────────────
-    /** Pixels per meter for SVG rendering */
+    // ── Map Rendering ───────────────────────────────────────────
     PIXELS_PER_METER: 5,
-    /** Map padding in pixels */
     MAP_PADDING: 40,
 } as const;
 
