@@ -33,7 +33,7 @@ export class NodeRepository {
     private adjacencyList: Map<string, AdjacencyEntry[]> = new Map();
 
     constructor(dataFilePath?: string) {
-        const filePath = dataFilePath || path.join(__dirname, '..', 'mvp_data', 'mvp_system_data.json');
+        const filePath = dataFilePath || path.join(__dirname, '..', 'mvp_data', 'Floor_2', 'mvp_system_data.json');
         this.loadData(filePath);
     }
 
