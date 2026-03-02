@@ -425,8 +425,8 @@ export default function MapScreen() {
                             {navState && (
                                 <Line
                                     x1={userPosition.x} y1={userPosition.y}
-                                    x2={userPosition.x + Math.cos(-navState.heading) * 15}
-                                    y2={userPosition.y + Math.sin(-navState.heading) * 15}
+                                    x2={userPosition.x + Math.cos(-sensorData.heading) * 15}
+                                    y2={userPosition.y + Math.sin(-sensorData.heading) * 15}
                                     stroke="#fff" strokeWidth={2} strokeLinecap="round"
                                 />
                             )}

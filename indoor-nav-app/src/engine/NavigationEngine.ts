@@ -144,8 +144,27 @@ export class NavigationEngine {
     handleTurn(deltaYaw: number, heading: number): NavState {
         if (!this.state.initialized) return this.state;
 
-        // PF handles turns by injecting explorer particles
-        this.pf.handleTurnEvent(heading);
+        // PF handles turns by injecting explorer particles and recomputing state
+        const pfState = this.pf.handleTurnEvent(heading);
+        this.lastPFState = pfState;
+
+        // Convert PF output to NavState
+        const bestEdge = this.graph.edges.get(pfState.bestEdgeId);
+        const dir: 1 | -1 = bestEdge
+            ? (Math.cos(pfState.heading - bestEdge.angle) >= 0 ? 1 : -1)
+            : 1;
+
+        this.state = {
+            currentEdgeId: pfState.bestEdgeId,
+            s: pfState.bestS,
+            d: 0,
+            direction: dir,
+            heading: pfState.heading,
+            stepCount: this.state.stepCount, // step count doesn't change on turn
+            position: pfState.position,
+            nearNode: pfState.nearNode,
+            initialized: true,
+        };
 
         return { ...this.state };
     }

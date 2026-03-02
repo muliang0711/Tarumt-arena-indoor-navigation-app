@@ -161,7 +161,7 @@ export class ParticleFilter {
      * Handle a turn event: inject explorer particles at nearby nodes
      * to ensure edge diversity. This is the key to wrong-edge recovery.
      */
-    handleTurnEvent(sensorHeading: number): void {
+    handleTurnEvent(sensorHeading: number): PFState {
         const numExplorers = Math.ceil(this.N * NAV_CONFIG.PF_EXPLORER_RATIO);
 
         // Find particles that are near nodes
@@ -172,52 +172,58 @@ export class ParticleFilter {
                 || edge.length - p.s < NAV_CONFIG.NODE_PROXIMITY_THRESHOLD;
         });
 
-        if (nearNodeParticles.length === 0) return;
+        if (nearNodeParticles.length > 0) {
+            // Pick the most common near-node
+            const nodeCount = new Map<string, number>();
+            for (const p of nearNodeParticles) {
+                const edge = this.graph.edges.get(p.edgeId);
+                if (!edge) continue;
+                const nodeId = p.s < NAV_CONFIG.NODE_PROXIMITY_THRESHOLD
+                    ? edge.from_node : edge.to_node;
+                nodeCount.set(nodeId, (nodeCount.get(nodeId) ?? 0) + 1);
+            }
 
-        // Pick the most common near-node
-        const nodeCount = new Map<string, number>();
-        for (const p of nearNodeParticles) {
-            const edge = this.graph.edges.get(p.edgeId);
-            if (!edge) continue;
-            const nodeId = p.s < NAV_CONFIG.NODE_PROXIMITY_THRESHOLD
-                ? edge.from_node : edge.to_node;
-            nodeCount.set(nodeId, (nodeCount.get(nodeId) ?? 0) + 1);
+            let bestNode = '';
+            let bestCount = 0;
+            for (const [nid, cnt] of nodeCount) {
+                if (cnt > bestCount) { bestCount = cnt; bestNode = nid; }
+            }
+
+            if (bestNode) {
+                // Inject explorer particles on adjacent edges at this node
+                const adj = this.graph.adjacency.get(bestNode);
+                if (adj) {
+                    const adjEdges = adj.edges
+                        .map(eid => this.graph.edges.get(eid))
+                        .filter(Boolean) as EdgeGeometry[];
+
+                    // Replace the lowest-weight particles with explorers
+                    const sorted = [...this.particles].map((p, i) => ({ p, i }));
+                    sorted.sort((a, b) => a.p.weight - b.p.weight);
+
+                    let injected = 0;
+                    for (let k = 0; k < sorted.length && injected < numExplorers; k++) {
+                        const idx = sorted[k].i;
+                        const edge = adjEdges[injected % adjEdges.length];
+                        const isFrom = edge.from_node === bestNode;
+
+                        this.particles[idx] = {
+                            edgeId: edge.edge_id,
+                            s: isFrom ? 0 : edge.length,
+                            direction: isFrom ? 1 : -1,
+                            heading: wrapAngle(sensorHeading + gaussianRandom(0, NAV_CONFIG.PF_HEADING_NOISE_SIGMA * 2)),
+                            weight: 1.0 / this.N,
+                        };
+                        injected++;
+                    }
+                }
+            }
         }
 
-        let bestNode = '';
-        let bestCount = 0;
-        for (const [nid, cnt] of nodeCount) {
-            if (cnt > bestCount) { bestCount = cnt; bestNode = nid; }
-        }
-        if (!bestNode) return;
-
-        // Inject explorer particles on adjacent edges at this node
-        const adj = this.graph.adjacency.get(bestNode);
-        if (!adj) return;
-
-        const adjEdges = adj.edges
-            .map(eid => this.graph.edges.get(eid))
-            .filter(Boolean) as EdgeGeometry[];
-
-        // Replace the lowest-weight particles with explorers
-        const sorted = [...this.particles].map((p, i) => ({ p, i }));
-        sorted.sort((a, b) => a.p.weight - b.p.weight);
-
-        let injected = 0;
-        for (let k = 0; k < sorted.length && injected < numExplorers; k++) {
-            const idx = sorted[k].i;
-            const edge = adjEdges[injected % adjEdges.length];
-            const isFrom = edge.from_node === bestNode;
-
-            this.particles[idx] = {
-                edgeId: edge.edge_id,
-                s: isFrom ? 0 : edge.length,
-                direction: isFrom ? 1 : -1,
-                heading: wrapAngle(sensorHeading + gaussianRandom(0, NAV_CONFIG.PF_HEADING_NOISE_SIGMA * 2)),
-                weight: 1.0 / this.N,
-            };
-            injected++;
-        }
+        // Always recompute weights and output to solidify the turn immediately
+        this.computeWeights(sensorHeading);
+        this.normalizeWeights();
+        return this.computeOutput(this.effectiveSampleSize());
     }
 
     // ── Propagation ─────────────────────────────────────────────

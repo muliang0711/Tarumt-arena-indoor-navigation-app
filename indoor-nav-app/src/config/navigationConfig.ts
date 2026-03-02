@@ -13,7 +13,7 @@ export const NAV_CONFIG = {
     NODE_PROXIMITY_THRESHOLD: 2.0,
 
     // ── Turn Detection ───────────────────────────────────────────
-    TURN_ANGLE_THRESHOLD: 30,
+    TURN_ANGLE_THRESHOLD: 15,
     TURN_WINDOW_MS: 800,
 
     // ── Edge Switching (legacy, used by PF scoring) ──────────────
