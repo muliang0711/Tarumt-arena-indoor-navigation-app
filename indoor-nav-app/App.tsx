@@ -1,7 +1,7 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { activateKeepAwakeAsync } from 'expo-keep-awake';
-import MapScreen from './src/screens/MapScreen';
+import MapScreen from './src/experimental/SvgMapDemo/SvgMapScreen';
 
 activateKeepAwakeAsync();
 
