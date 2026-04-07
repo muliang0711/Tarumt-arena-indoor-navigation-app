@@ -2,6 +2,7 @@ const TILE_SIZE = 16;
 const MIN_MAP_WIDTH = 30;
 const MIN_MAP_HEIGHT = 20;
 const STORAGE_KEY = "village-map-editor-state-v2";
+const PHONE_REVIEW_SNAPSHOT_KEY = "village-phone-review-snapshot-v1";
 const SAMPLE_LAYOUT_URL = "/generated_maps/village_map_layout.json";
 const ASSET_INDEX_URL = "/assets/index.json";
 
@@ -56,6 +57,16 @@ const assetMap = new Map();
 
 const canvas = document.querySelector("#map-canvas");
 const ctx = canvas.getContext("2d");
+const backgroundCacheCanvas = document.createElement("canvas");
+const backgroundCacheCtx = backgroundCacheCanvas.getContext("2d");
+
+const renderState = {
+  backgroundCacheKey: "",
+  frameId: 0,
+  pendingCanvas: false,
+  pendingUi: false,
+  selectedPreviewAssetId: null,
+};
 
 const ui = {
   activeLayerButtons: document.querySelectorAll("[data-layer]"),
@@ -76,6 +87,7 @@ const ui = {
   paletteGroups: document.querySelector("#palette-groups"),
   palettePanel: document.querySelector("#palette-panel"),
   reloadAssetsButton: document.querySelector("#reload-assets-button"),
+  reviewMapButton: document.querySelector("#review-map-button"),
   sampleButton: document.querySelector("#sample-button"),
   saveButton: document.querySelector("#save-button"),
   selectedMeta: document.querySelector("#selected-meta"),
@@ -95,6 +107,16 @@ const ui = {
   visualPanel: document.querySelector("#visual-tools-panel"),
   zoomRange: document.querySelector("#zoom-range"),
 };
+
+function setTextIfChanged(element, value) {
+  if (element.textContent !== value) {
+    element.textContent = value;
+  }
+}
+
+function isSameTile(left, right) {
+  return left?.x === right?.x && left?.y === right?.y;
+}
 
 function tileKey(x, y) {
   return `${x},${y}`;
@@ -154,6 +176,27 @@ function grassVariantAsset(tileX, tileY) {
   }
   const index = (tileX * 19 + tileY * 23 + tileX * tileY) % grassAssets.length;
   return grassAssets[index];
+}
+
+function getUnwalkableBackgroundAssets() {
+  return assets.filter((asset) => /unwalkable_tile/i.test(assetBaseId(asset.id)));
+}
+
+function unwalkableBackgroundVariantAsset(tileX, tileY) {
+  const backgroundAssets = getUnwalkableBackgroundAssets();
+  if (!backgroundAssets.length) {
+    return grassVariantAsset(tileX, tileY);
+  }
+  const index = (tileX * 17 + tileY * 29 + tileX * tileY) % backgroundAssets.length;
+  return backgroundAssets[index];
+}
+
+function backgroundAssetSignature() {
+  const backgroundAssets = getUnwalkableBackgroundAssets();
+  if (backgroundAssets.length) {
+    return backgroundAssets.map((asset) => asset.id).join("|");
+  }
+  return getGrassAssets().map((asset) => asset.id).join("|");
 }
 
 function snapshotState() {
@@ -789,12 +832,12 @@ function handleVisualPointerDown(event, tile) {
 }
 
 // SECTION: editing
-function drawGrass(targetCtx, scale) {
+function drawBackgroundTerrain(targetCtx, scale) {
   for (let tileY = 0; tileY < state.mapHeight; tileY += 1) {
     for (let tileX = 0; tileX < state.mapWidth; tileX += 1) {
-      const asset = grassVariantAsset(tileX, tileY);
+      const asset = unwalkableBackgroundVariantAsset(tileX, tileY);
       if (!asset?.image) {
-        targetCtx.fillStyle = "#2f8f2a";
+        targetCtx.fillStyle = "#6b6251";
         targetCtx.fillRect(
           tileX * TILE_SIZE * scale,
           tileY * TILE_SIZE * scale,
@@ -813,6 +856,21 @@ function drawGrass(targetCtx, scale) {
       );
     }
   }
+}
+
+function ensureBackgroundCache(scale) {
+  const width = state.mapWidth * TILE_SIZE * scale;
+  const height = state.mapHeight * TILE_SIZE * scale;
+  const cacheKey = `${width}x${height}@${scale}:${backgroundAssetSignature()}`;
+  if (renderState.backgroundCacheKey === cacheKey) {
+    return;
+  }
+
+  backgroundCacheCanvas.width = width;
+  backgroundCacheCanvas.height = height;
+  backgroundCacheCtx.imageSmoothingEnabled = false;
+  drawBackgroundTerrain(backgroundCacheCtx, scale);
+  renderState.backgroundCacheKey = cacheKey;
 }
 
 function drawGrid(targetCtx, scale) {
@@ -1027,7 +1085,8 @@ function renderMap(targetCtx, scale, includeGrid) {
   targetCtx.clearRect(0, 0, width, height);
   targetCtx.imageSmoothingEnabled = false;
 
-  drawGrass(targetCtx, scale);
+  ensureBackgroundCache(scale);
+  targetCtx.drawImage(backgroundCacheCanvas, 0, 0);
   drawPlacements(targetCtx, scale);
   drawVisualPreview(targetCtx, scale);
   drawMetadataTiles(targetCtx, scale);
@@ -1042,9 +1101,15 @@ function renderMap(targetCtx, scale, includeGrid) {
 
 function updateSelectedPreview() {
   const asset = assetMap.get(state.selectedAssetId);
-  ui.selectedPreview.innerHTML = "";
+  const assetId = asset?.id ?? null;
+  if (renderState.selectedPreviewAssetId === assetId) {
+    return;
+  }
+
+  renderState.selectedPreviewAssetId = assetId;
+  ui.selectedPreview.replaceChildren();
   if (!asset) {
-    ui.selectedMeta.textContent = "No visual asset selected.";
+    setTextIfChanged(ui.selectedMeta, "No visual asset selected.");
     return;
   }
 
@@ -1053,10 +1118,12 @@ function updateSelectedPreview() {
   image.alt = asset.label;
   image.width = asset.image.width * 2;
   image.height = asset.image.height * 2;
-  ui.selectedPreview.appendChild(image);
+  ui.selectedPreview.replaceChildren(image);
 
-  ui.selectedMeta.textContent =
-    `Name: ${asset.id}\nCategory: ${asset.category}\nSize: ${asset.image.width}x${asset.image.height}px\nFootprint: ${assetTileWidth(asset)}x${assetTileHeight(asset)} tiles`;
+  setTextIfChanged(
+    ui.selectedMeta,
+    `Name: ${asset.id}\nCategory: ${asset.category}\nSize: ${asset.image.width}x${asset.image.height}px\nFootprint: ${assetTileWidth(asset)}x${assetTileHeight(asset)} tiles`,
+  );
 }
 
 function updateSelectionMeta() {
@@ -1064,8 +1131,10 @@ function updateSelectionMeta() {
     const placement = state.placements.find((item) => item.id === state.selectedPlacementId);
     const asset = placement ? getPlacementAsset(placement) : null;
     if (placement && asset) {
-      ui.selectionMeta.textContent =
-        `Visual placement\nAsset: ${asset.id}\nTile: ${placement.tileX}, ${placement.tileY}\nFootprint: ${assetTileWidth(asset)}x${assetTileHeight(asset)} tiles`;
+      setTextIfChanged(
+        ui.selectionMeta,
+        `Visual placement\nAsset: ${asset.id}\nTile: ${placement.tileX}, ${placement.tileY}\nFootprint: ${assetTileWidth(asset)}x${assetTileHeight(asset)} tiles`,
+      );
       return;
     }
   }
@@ -1073,8 +1142,10 @@ function updateSelectionMeta() {
   if (state.selectedNodeId) {
     const node = state.nodes.find((item) => item.id === state.selectedNodeId);
     if (node) {
-      ui.selectionMeta.textContent =
-        `Metadata node\nId: ${node.id}\nLabel: ${node.label}\nType: ${nodeTypeLabel(node.type)}\nTile: ${node.x}, ${node.y}`;
+      setTextIfChanged(
+        ui.selectionMeta,
+        `Metadata node\nId: ${node.id}\nLabel: ${node.label}\nType: ${nodeTypeLabel(node.type)}\nTile: ${node.x}, ${node.y}`,
+      );
       return;
     }
   }
@@ -1082,8 +1153,7 @@ function updateSelectionMeta() {
   if (state.selectedLinkId) {
     const link = state.links.find((item) => item.id === state.selectedLinkId);
     if (link) {
-      ui.selectionMeta.textContent =
-        `Waypoint link\nFrom: ${link.from}\nTo: ${link.to}\nId: ${link.id}`;
+      setTextIfChanged(ui.selectionMeta, `Waypoint link\nFrom: ${link.from}\nTo: ${link.to}\nId: ${link.id}`);
       return;
     }
   }
@@ -1094,12 +1164,14 @@ function updateSelectionMeta() {
     const autoBlocked = getAutoBlockedTileKeys().has(key);
     const hoveredNode = findNodeAt(state.hoverTile.x, state.hoverTile.y);
     const hoveredLink = findLinkAt(state.hoverTile.x, state.hoverTile.y);
-    ui.selectionMeta.textContent =
-      `Metadata tile\nTile: ${state.hoverTile.x}, ${state.hoverTile.y}\nState: ${tileState}\nSource: ${state.metadataTiles[key] ? "manual" : autoBlocked ? "auto-blocked-from-visual" : "none"}\nNode: ${hoveredNode?.id ?? "none"}\nLink: ${hoveredLink?.id ?? "none"}`;
-      return;
+    setTextIfChanged(
+      ui.selectionMeta,
+      `Metadata tile\nTile: ${state.hoverTile.x}, ${state.hoverTile.y}\nState: ${tileState}\nSource: ${state.metadataTiles[key] ? "manual" : autoBlocked ? "auto-blocked-from-visual" : "none"}\nNode: ${hoveredNode?.id ?? "none"}\nLink: ${hoveredLink?.id ?? "none"}`,
+    );
+    return;
   }
 
-  ui.selectionMeta.textContent = "Nothing selected.";
+  setTextIfChanged(ui.selectionMeta, "Nothing selected.");
 }
 
 function updateToolPanels() {
@@ -1138,28 +1210,61 @@ function updateStatus() {
     state.linkStartNodeId ? `Link from: ${state.linkStartNodeId}` : null,
     state.hoverTile ? `Hover: ${state.hoverTile.x}, ${state.hoverTile.y}` : null,
   ].filter(Boolean);
-  ui.statusText.textContent = parts.join(" | ");
-  ui.placementsCount.textContent = String(state.placements.length);
-  ui.walkableCount.textContent = String(walkableCount);
-  ui.blockedCount.textContent = String(blockedCount);
-  ui.nodesCount.textContent = String(state.nodes.length);
-  ui.linksCount.textContent = String(state.links.length);
+  setTextIfChanged(ui.statusText, parts.join(" | "));
+  setTextIfChanged(ui.placementsCount, String(state.placements.length));
+  setTextIfChanged(ui.walkableCount, String(walkableCount));
+  setTextIfChanged(ui.blockedCount, String(blockedCount));
+  setTextIfChanged(ui.nodesCount, String(state.nodes.length));
+  setTextIfChanged(ui.linksCount, String(state.links.length));
 }
 
-function render() {
+function renderCanvas() {
   const width = state.mapWidth * TILE_SIZE * state.zoom;
   const height = state.mapHeight * TILE_SIZE * state.zoom;
-  canvas.width = width;
-  canvas.height = height;
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+  }
 
   renderMap(ctx, state.zoom, true);
+}
+
+function renderUi() {
   syncInputs();
   updateToolPanels();
   updateSelectedPreview();
   updateSelectionMeta();
   updateStatus();
+}
+
+function flushRender() {
+  renderState.frameId = 0;
+  const shouldRenderCanvas = renderState.pendingCanvas;
+  const shouldRenderUi = renderState.pendingUi;
+  renderState.pendingCanvas = false;
+  renderState.pendingUi = false;
+
+  if (shouldRenderCanvas) {
+    renderCanvas();
+  }
+
+  if (shouldRenderUi) {
+    renderUi();
+  }
+}
+
+function render(options = {}) {
+  const { canvas: shouldRenderCanvas = true, ui: shouldRenderUi = true } = options;
+  renderState.pendingCanvas = renderState.pendingCanvas || shouldRenderCanvas;
+  renderState.pendingUi = renderState.pendingUi || shouldRenderUi;
+
+  if (renderState.frameId) {
+    return;
+  }
+
+  renderState.frameId = window.requestAnimationFrame(flushRender);
 }
 
 function buildPalette() {
@@ -1270,16 +1375,43 @@ function exportJson() {
 }
 
 function exportPng() {
-  const exportCanvas = document.createElement("canvas");
-  exportCanvas.width = state.mapWidth * TILE_SIZE * 2;
-  exportCanvas.height = state.mapHeight * TILE_SIZE * 2;
-  const exportContext = exportCanvas.getContext("2d");
-  renderMap(exportContext, 2, false);
+  const exportCanvas = createExportCanvas();
   exportCanvas.toBlob((blob) => {
     if (blob) {
       downloadBlob(blob, "village-map-export.png");
     }
   });
+}
+
+function createExportCanvas() {
+  const exportCanvas = document.createElement("canvas");
+  exportCanvas.width = state.mapWidth * TILE_SIZE * 2;
+  exportCanvas.height = state.mapHeight * TILE_SIZE * 2;
+  const exportContext = exportCanvas.getContext("2d");
+  renderMap(exportContext, 2, false);
+  return exportCanvas;
+}
+
+function reviewCurrentMapOnPhone() {
+  const exportCanvas = createExportCanvas();
+  try {
+    window.localStorage.setItem(
+      PHONE_REVIEW_SNAPSHOT_KEY,
+      JSON.stringify({
+        createdAt: new Date().toISOString(),
+        fileName: "village-map-review.png",
+        height: exportCanvas.height,
+        kind: "map",
+        label: "Current Map Snapshot",
+        src: exportCanvas.toDataURL("image/png"),
+        width: exportCanvas.width,
+      }),
+    );
+    window.open("./phone_preview.html?source=map", "_blank", "noopener");
+  } catch (error) {
+    console.error(error);
+    alert("Unable to send the current map to the phone reviewer. Export PNG and upload it in the reviewer instead.");
+  }
 }
 
 function loadImportedLayout(parsed) {
@@ -1400,6 +1532,7 @@ async function loadSampleLayout() {
 // SECTION: import_export
 canvas.addEventListener("mousemove", (event) => {
   const tile = readPointerTile(event);
+  const hoverChanged = !isSameTile(state.hoverTile, tile);
   state.hoverTile = tile;
 
   if (state.activeLayer === "visual" && state.dragPlacementId && tile) {
@@ -1408,32 +1541,51 @@ canvas.addEventListener("mousemove", (event) => {
     if (placement && asset) {
       const nextX = Math.max(tile.x - state.dragOffset.x, 0);
       const nextY = Math.max(tile.y - state.dragOffset.y, 0);
+      let moved = false;
       if (state.autoGrow) {
-        placement.tileX = nextX;
-        placement.tileY = nextY;
-        ensureMapFits(nextX, nextY, assetTileWidth(asset), assetTileHeight(asset));
+        if (placement.tileX !== nextX || placement.tileY !== nextY) {
+          placement.tileX = nextX;
+          placement.tileY = nextY;
+          ensureMapFits(nextX, nextY, assetTileWidth(asset), assetTileHeight(asset));
+          moved = true;
+        }
       } else {
-        placement.tileX = Math.min(nextX, state.mapWidth - assetTileWidth(asset));
-        placement.tileY = Math.min(nextY, state.mapHeight - assetTileHeight(asset));
+        const boundedX = Math.min(nextX, state.mapWidth - assetTileWidth(asset));
+        const boundedY = Math.min(nextY, state.mapHeight - assetTileHeight(asset));
+        if (placement.tileX !== boundedX || placement.tileY !== boundedY) {
+          placement.tileX = boundedX;
+          placement.tileY = boundedY;
+          moved = true;
+        }
       }
-      render();
+      if (moved || hoverChanged) {
+        render({ canvas: true, ui: false });
+      }
       return;
     }
   }
 
   if (state.activeLayer === "metadata" && state.metadataPaintActive && tile) {
+    if (!hoverChanged) {
+      return;
+    }
     applyMetadataBrush(tile.x, tile.y, state.metadataMode);
-    render();
+    render({ canvas: true, ui: true });
     return;
   }
 
-  render();
+  if (hoverChanged) {
+    render({ canvas: true, ui: state.activeLayer === "metadata" });
+  }
 });
 
 canvas.addEventListener("mouseleave", () => {
+  if (!state.hoverTile && !state.metadataPaintActive) {
+    return;
+  }
   state.hoverTile = null;
   state.metadataPaintActive = false;
-  render();
+  render({ canvas: true, ui: state.activeLayer === "metadata" });
 });
 
 canvas.addEventListener("mousedown", (event) => {
@@ -1451,12 +1603,18 @@ canvas.addEventListener("mousedown", (event) => {
 });
 
 window.addEventListener("mouseup", () => {
-  if (state.dragPlacementId || state.metadataPaintActive) {
+  const wasDragging = Boolean(state.dragPlacementId);
+  const wasPaintingMetadata = Boolean(state.metadataPaintActive);
+  if (wasDragging || wasPaintingMetadata) {
     persistLocal();
   }
 
   state.dragPlacementId = null;
   state.metadataPaintActive = false;
+
+  if (wasDragging || wasPaintingMetadata) {
+    render({ canvas: true, ui: true });
+  }
 });
 
 canvas.addEventListener("contextmenu", (event) => event.preventDefault());
@@ -1555,6 +1713,7 @@ ui.reloadAssetsButton.addEventListener("click", async () => {
     alert(error instanceof Error ? error.message : "Unable to reload assets.");
   }
 });
+ui.reviewMapButton.addEventListener("click", reviewCurrentMapOnPhone);
 ui.sampleButton.addEventListener("click", async () => {
   try {
     await loadSampleLayout();
@@ -1599,6 +1758,8 @@ async function fetchAssetManifest() {
 async function loadAssets() {
   const manifest = await fetchAssetManifest();
   assetMap.clear();
+  renderState.backgroundCacheKey = "";
+  renderState.selectedPreviewAssetId = null;
 
   const results = await Promise.allSettled(
     manifest.map(

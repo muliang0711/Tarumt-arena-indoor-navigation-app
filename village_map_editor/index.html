@@ -9,50 +9,19 @@
   <body>
     <div class="app-shell">
       <aside class="sidebar">
-        <section class="panel panel-hero">
-          <p class="eyebrow">Indoor Navigation Builder</p>
-          <h1>Build the floor visually. Then mark the navigation logic.</h1>
-          <p class="muted hero-copy">
-            Use the same editor for both passes. First recreate the school floor with PNG assets.
-            Then switch to metadata and define what the pathfinding system understands.
-          </p>
-          <div class="hero-tags">
-            <span class="hero-tag">Two layers</span>
-            <span class="hero-tag">Grid first</span>
-            <span class="hero-tag">Real-length weights later</span>
-          </div>
-        </section>
-
-        <section class="panel panel-workflow">
-          <div class="section-head">
-            <h2>Working Flow</h2>
-            <p class="muted small-text">Follow this order so the map stays clean and editable.</p>
+        <section class="panel panel-compact-intro">
+          <div class="compact-intro-head">
+            <div>
+              <p class="eyebrow">Indoor Navigation Builder</p>
+              <h1>Build with the serious tiles first.</h1>
+            </div>
+            <a class="compact-link" href="./phone_preview.html">Phone reviewer</a>
           </div>
 
-          <div class="workflow-list">
-            <article class="workflow-step">
-              <span class="workflow-index">01</span>
-              <div>
-                <h3>Visual Pass</h3>
-                <p>Place PNG buildings, walls, roads, props, and floor details until the floor plan looks right.</p>
-              </div>
-            </article>
-
-            <article class="workflow-step">
-              <span class="workflow-index">02</span>
-              <div>
-                <h3>Metadata Pass</h3>
-                <p>Mark walkable tiles, blocked tiles, and waypoint nodes. Then connect the nodes into navigation paths.</p>
-              </div>
-            </article>
-
-            <article class="workflow-step">
-              <span class="workflow-index">03</span>
-              <div>
-                <h3>Export Project</h3>
-                <p>Save the visual map and metadata together as JSON, then use it as the base for navigation.</p>
-              </div>
-            </article>
+          <div class="hero-tags compact-tags">
+            <span class="hero-tag">Serious assets only</span>
+            <span class="hero-tag">Visual layer</span>
+            <span class="hero-tag">Metadata layer</span>
           </div>
         </section>
 
@@ -101,20 +70,24 @@
           </div>
         </section>
 
+        <section id="palette-panel" class="panel palette-panel-priority">
+          <div class="section-head">
+            <h2>Visual Palette</h2>
+            <p class="muted small-text">Only PNGs from <code>serious_shit</code> are loaded here.</p>
+          </div>
+          <div id="palette-groups" class="palette-groups"></div>
+        </section>
+
         <section id="visual-tools-panel" class="panel">
           <div class="section-head">
             <h2>Visual Tools</h2>
-            <p class="muted small-text">Use these only to build the visible floor map.</p>
+            <p class="muted small-text">Pick a serious asset, then place, move, or erase it from the map.</p>
           </div>
 
           <div class="tool-row tool-row-visual">
             <button class="tool-button is-active" data-visual-mode="paint" type="button">Paint</button>
             <button class="tool-button" data-visual-mode="select" type="button">Select</button>
             <button class="tool-button" data-visual-mode="erase" type="button">Erase</button>
-          </div>
-
-          <div class="helper-note">
-            <strong>Tip:</strong> Finish the floor layout first. Do not worry about walkability until the shape feels correct.
           </div>
 
           <div class="selected-card">
@@ -201,6 +174,7 @@
             <button id="save-button" type="button">Save local</button>
             <button id="load-button" type="button">Load local</button>
             <button id="reload-assets-button" type="button">Reload assets</button>
+            <button id="review-map-button" type="button">Review map on phone</button>
             <button id="sample-button" type="button">Load sample</button>
             <button id="export-png-button" type="button">Export PNG</button>
             <button id="export-json-button" type="button">Export JSON</button>
@@ -240,14 +214,6 @@
               <strong id="links-count">0</strong>
             </div>
           </div>
-        </section>
-
-        <section id="palette-panel" class="panel">
-          <div class="section-head">
-            <h2>Visual Palette</h2>
-            <p class="muted small-text">Any PNG in the asset folder appears here after reload.</p>
-          </div>
-          <div id="palette-groups" class="palette-groups"></div>
         </section>
 
         <section class="panel">

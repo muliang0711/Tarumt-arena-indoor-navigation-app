@@ -53,6 +53,10 @@ select {
   font: inherit;
 }
 
+a {
+  color: inherit;
+}
+
 .app-shell {
   display: grid;
   grid-template-columns: 420px minmax(0, 1fr);
@@ -60,6 +64,9 @@ select {
 }
 
 .sidebar {
+  display: grid;
+  gap: 14px;
+  align-content: start;
   padding: 18px;
   overflow-y: auto;
   border-right: 1px solid var(--line);
@@ -125,13 +132,12 @@ select {
   display: block;
   border: 1px solid rgba(177, 208, 182, 0.22);
   border-radius: 18px;
-  background: #2f8f2a;
+  background: #6b6251;
   box-shadow: var(--shadow-lg);
   image-rendering: pixelated;
 }
 
 .panel {
-  margin-bottom: 14px;
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
@@ -153,6 +159,37 @@ select {
   background:
     linear-gradient(180deg, rgba(19, 34, 32, 0.96), rgba(18, 31, 30, 0.98)),
     radial-gradient(circle at top, rgba(121, 195, 255, 0.08), transparent 34%);
+}
+
+.panel-compact-intro {
+  background:
+    radial-gradient(circle at top right, rgba(216, 178, 79, 0.12), transparent 26%),
+    linear-gradient(180deg, rgba(21, 35, 34, 0.98), rgba(18, 31, 30, 0.98));
+}
+
+.compact-intro-head {
+  display: flex;
+  gap: 14px;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.compact-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid rgba(216, 178, 79, 0.22);
+  border-radius: 999px;
+  background: rgba(216, 178, 79, 0.08);
+  color: var(--accent-soft);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.compact-tags {
+  margin-top: 10px;
 }
 
 .eyebrow {
@@ -347,6 +384,18 @@ button:focus-visible,
   border-color: rgba(216, 178, 79, 0.45);
 }
 
+.link-button {
+  width: 100%;
+  margin-top: 10px;
+  text-decoration: none;
+}
+
+.palette-panel-priority {
+  position: sticky;
+  top: 18px;
+  z-index: 2;
+}
+
 .tool-button.is-active,
 .palette-item.is-active {
   border-color: rgba(216, 178, 79, 0.42);
@@ -476,6 +525,12 @@ button:focus-visible,
   gap: 10px;
 }
 
+.palette-groups {
+  max-height: 42vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
 .palette-item {
   display: grid;
   gap: 8px;
@@ -529,6 +584,10 @@ button:focus-visible,
     border-bottom: 1px solid var(--line);
   }
 
+  .palette-panel-priority {
+    position: static;
+  }
+
   .workspace-toolbar {
     grid-template-columns: 1fr;
   }
@@ -542,6 +601,10 @@ button:focus-visible,
 
   .panel {
     padding: 14px;
+  }
+
+  .compact-intro-head {
+    flex-direction: column;
   }
 
   .tool-row,
