@@ -17,8 +17,10 @@
 6. `roadmap/02_12_week_plan.md`
 7. `project/01_current_demo.md`
 8. `project/02_next_repo_steps.md`
-9. `practice/01_first_exercises.md`
-10. `practice/02_checklist_and_mistakes.md`
+9. `project/05_v1_mobile_map_plan.md`
+10. `project/06_navigation_preview_mode.md`
+11. `practice/01_first_exercises.md`
+12. `practice/02_checklist_and_mistakes.md`
 
 ## 目录结构
 
