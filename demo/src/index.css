@@ -1,0 +1,49 @@
+:root {
+  --bg: #091119;
+  --bg-deep: #05090e;
+  --accent: #2dbb95;
+  --accent-deep: #1b7d69;
+  --ink: #9eb0c4;
+  --ink-soft: #73879c;
+  --ink-strong: #f4f7fb;
+  --line: rgba(93, 120, 148, 0.46);
+  --line-strong: rgba(165, 194, 225, 0.58);
+  --font-body: "Segoe UI Variable", Aptos, "Segoe UI", sans-serif;
+  --font-display: Consolas, "Courier New", monospace;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-synthesis: none;
+  font-weight: 400;
+  line-height: 1.45;
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(45, 187, 149, 0.12), transparent 26%),
+    radial-gradient(circle at bottom right, rgba(143, 180, 255, 0.12), transparent 28%),
+    linear-gradient(180deg, var(--bg), var(--bg-deep));
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+svg text {
+  user-select: none;
+}
