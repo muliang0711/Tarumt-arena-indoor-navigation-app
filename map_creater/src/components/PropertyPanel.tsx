@@ -456,6 +456,7 @@ export function PropertyPanel({
         <div className="toolbar-note">
           <p className="section-title">Editor Notes</p>
           <p>Use node mode for semantic anchors only. Avoid corridor spam nodes.</p>
+          <p>`not_walkable` marks blocked space and should stay disconnected from route edges.</p>
           <p>Edges must keep explicit weight values even when precision is unknown.</p>
           <p>Background image is only a tracing reference and is not exported.</p>
         </div>

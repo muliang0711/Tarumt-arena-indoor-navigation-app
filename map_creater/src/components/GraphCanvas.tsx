@@ -1,11 +1,12 @@
 import type { PointerEvent as ReactPointerEvent, RefObject } from 'react'
 
 import {
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
+  getNodeBadge,
+  getNodeShape,
   getNodeStyle,
 } from '../lib/graph'
 import type {
+  CanvasSize,
   EditorMode,
   GraphDataset,
   GraphEdge,
@@ -15,6 +16,7 @@ import type {
 } from '../types/graph'
 
 interface GraphCanvasProps {
+  canvasSize: CanvasSize
   dataset: GraphDataset
   selection: Selection | null
   mode: EditorMode
@@ -44,28 +46,28 @@ interface GraphCanvasProps {
   ) => void
 }
 
-function renderHelperGrid(spacing: number) {
+function renderHelperGrid(spacing: number, canvasSize: CanvasSize) {
   const lines = []
 
-  for (let x = 0; x <= CANVAS_WIDTH; x += spacing) {
+  for (let x = 0; x <= canvasSize.width; x += spacing) {
     lines.push(
       <line
         key={`grid-x-${x}`}
         x1={x}
         y1={0}
         x2={x}
-        y2={CANVAS_HEIGHT}
+        y2={canvasSize.height}
       />,
     )
   }
 
-  for (let y = 0; y <= CANVAS_HEIGHT; y += spacing) {
+  for (let y = 0; y <= canvasSize.height; y += spacing) {
     lines.push(
       <line
         key={`grid-y-${y}`}
         x1={0}
         y1={y}
-        x2={CANVAS_WIDTH}
+        x2={canvasSize.width}
         y2={y}
       />,
     )
@@ -75,6 +77,7 @@ function renderHelperGrid(spacing: number) {
 }
 
 function renderAnchorLattice(
+  canvasSize: CanvasSize,
   spacing: number,
   mode: EditorMode,
   hoveredAnchor: Point | null,
@@ -82,8 +85,8 @@ function renderAnchorLattice(
 ) {
   const anchors = []
 
-  for (let x = 0; x <= CANVAS_WIDTH; x += spacing) {
-    for (let y = 0; y <= CANVAS_HEIGHT; y += spacing) {
+  for (let x = 0; x <= canvasSize.width; x += spacing) {
+    for (let y = 0; y <= canvasSize.height; y += spacing) {
       const isHovered = hoveredAnchor?.x === x && hoveredAnchor?.y === y
       anchors.push(
         <g key={`anchor-${x}-${y}`} className="anchor-point">
@@ -131,6 +134,7 @@ function nodeLabel(node: GraphNode) {
 }
 
 export function GraphCanvas({
+  canvasSize,
   dataset,
   selection,
   mode,
@@ -170,7 +174,7 @@ export function GraphCanvas({
       </div>
 
       <div className="canvas-meta">
-        <span>Canvas: {CANVAS_WIDTH} x {CANVAS_HEIGHT}</span>
+        <span>Canvas: {canvasSize.width} x {canvasSize.height}</span>
         <span>Lattice: {latticeSpacing}px</span>
         <span>Mode: {mode}</span>
         <span>Pending edge source: {pendingEdgeStartId ?? 'None'}</span>
@@ -180,9 +184,9 @@ export function GraphCanvas({
         <svg
           ref={svgRef}
           className="graph-canvas"
-          width={CANVAS_WIDTH * zoom}
-          height={CANVAS_HEIGHT * zoom}
-          viewBox={`0 0 ${CANVAS_WIDTH} ${CANVAS_HEIGHT}`}
+          width={canvasSize.width * zoom}
+          height={canvasSize.height * zoom}
+          viewBox={`0 0 ${canvasSize.width} ${canvasSize.height}`}
           onPointerMove={onCanvasPointerMove}
           onPointerLeave={onCanvasPointerLeave}
         >
@@ -190,8 +194,8 @@ export function GraphCanvas({
             className="canvas-background"
             x={0}
             y={0}
-            width={CANVAS_WIDTH}
-            height={CANVAS_HEIGHT}
+            width={canvasSize.width}
+            height={canvasSize.height}
             onPointerDown={onCanvasPointerDown}
           />
 
@@ -200,16 +204,17 @@ export function GraphCanvas({
               href={backgroundImageUrl}
               x={0}
               y={0}
-              width={CANVAS_WIDTH}
-              height={CANVAS_HEIGHT}
+              width={canvasSize.width}
+              height={canvasSize.height}
               preserveAspectRatio="xMidYMid meet"
               opacity={0.16}
               pointerEvents="none"
             />
           ) : null}
 
-          {showGrid ? renderHelperGrid(latticeSpacing) : null}
+          {showGrid ? renderHelperGrid(latticeSpacing, canvasSize) : null}
           {renderAnchorLattice(
+            canvasSize,
             latticeSpacing,
             mode,
             hoveredAnchor,
@@ -272,9 +277,12 @@ export function GraphCanvas({
 
           {dataset.nodes.map((node) => {
             const style = getNodeStyle(node.type)
+            const badge = getNodeBadge(node.type)
+            const shape = getNodeShape(node.type)
             const isSelected =
               selection?.kind === 'node' && selection.id === node.node_id
             const isPendingStart = pendingEdgeStartId === node.node_id
+            const markerSize = isSelected ? 34 : 30
 
             return (
               <g
@@ -294,14 +302,28 @@ export function GraphCanvas({
                     pointerEvents="none"
                   />
                 ) : null}
-                <circle
-                  cx={node.x}
-                  cy={node.y}
-                  r={isSelected ? 18 : 15}
-                  fill={style.fill}
-                  stroke={isSelected ? '#111827' : style.stroke}
-                  strokeWidth={isSelected ? 3 : 2}
-                />
+                {shape === 'diamond' ? (
+                  <rect
+                    x={node.x - markerSize / 2}
+                    y={node.y - markerSize / 2}
+                    width={markerSize}
+                    height={markerSize}
+                    rx={4}
+                    fill={style.fill}
+                    stroke={isSelected ? '#111827' : style.stroke}
+                    strokeWidth={isSelected ? 3 : 2}
+                    transform={`rotate(45 ${node.x} ${node.y})`}
+                  />
+                ) : (
+                  <circle
+                    cx={node.x}
+                    cy={node.y}
+                    r={isSelected ? 18 : 15}
+                    fill={style.fill}
+                    stroke={isSelected ? '#111827' : style.stroke}
+                    strokeWidth={isSelected ? 3 : 2}
+                  />
+                )}
                 <text
                   x={node.x}
                   y={node.y + 4}
@@ -309,7 +331,7 @@ export function GraphCanvas({
                   className="node-badge"
                   fill={style.text}
                 >
-                  {node.type.slice(0, 2).toUpperCase()}
+                  {badge}
                 </text>
                 <text
                   x={node.x}
@@ -336,7 +358,7 @@ export function GraphCanvas({
           Hovered anchor:{' '}
           {hoveredAnchor ? `${hoveredAnchor.x}, ${hoveredAnchor.y}` : 'None'}
         </span>
-        <span>Place nodes by clicking anchor dots, then connect nodes with edges.</span>
+        <span>Place nodes on anchor dots, then connect only walkable nodes with edges.</span>
       </div>
     </section>
   )

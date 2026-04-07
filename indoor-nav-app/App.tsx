@@ -1,14 +1,14 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { activateKeepAwakeAsync } from 'expo-keep-awake';
-import MapScreen from './src/experimental/SvgMapDemo/SvgMapScreen';
+import NavigationSplitPrototype from './src/screens/NavigationSplitPrototype';
 
 activateKeepAwakeAsync();
 
 export default function App() {
   return (
     <SafeAreaView style={styles.container}>
-      <MapScreen />
+      <NavigationSplitPrototype />
     </SafeAreaView>
   );
 }

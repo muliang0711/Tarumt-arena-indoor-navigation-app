@@ -14,10 +14,15 @@ import { Toolbar } from './components/Toolbar'
 import { TopBar } from './components/TopBar'
 import { seedGraphDataset } from './data/seedGraph'
 import {
+  DEFAULT_CANVAS_HEIGHT,
+  DEFAULT_CANVAS_WIDTH,
   DEFAULT_LATTICE_SPACING,
+  clampCanvasSize,
   clampPoint,
+  createAutoEdgesForAdjacentJunctions,
   createGraphEdge,
   createGraphNode,
+  getAutoCanvasSize,
   getClientPointInSvg,
   getNearestAnchorPoint,
   isPointNearAnchor,
@@ -26,6 +31,7 @@ import {
   validateGraphDataset,
 } from './lib/graph'
 import type {
+  CanvasSize,
   EditorMode,
   GraphDataset,
   GraphEdge,
@@ -76,6 +82,10 @@ function App() {
   })
   const [showGrid, setShowGrid] = useState(true)
   const [latticeSpacing, setLatticeSpacing] = useState(DEFAULT_LATTICE_SPACING)
+  const [canvasSize, setCanvasSize] = useState<CanvasSize>({
+    width: DEFAULT_CANVAS_WIDTH,
+    height: DEFAULT_CANVAS_HEIGHT,
+  })
   const [showBackground, setShowBackground] = useState(true)
   const [backgroundImageUrl, setBackgroundImageUrl] = useState<string | null>(null)
   const [zoom, setZoom] = useState(1)
@@ -93,7 +103,11 @@ function App() {
   const hoveredAnchor =
     mode === 'addNode' && pointerPosition
       ? (() => {
-          const anchor = getNearestAnchorPoint(pointerPosition, latticeSpacing)
+          const anchor = getNearestAnchorPoint(
+            pointerPosition,
+            latticeSpacing,
+            canvasSize,
+          )
           return isPointNearAnchor(pointerPosition, anchor, latticeSpacing)
             ? anchor
             : null
@@ -184,6 +198,7 @@ function App() {
         svgRef.current,
         event.clientX,
         event.clientY,
+        canvasSize,
       )
 
       if (!rawPoint) {
@@ -191,7 +206,7 @@ function App() {
       }
 
       setPointerPosition(rawPoint)
-      const point = getNearestAnchorPoint(rawPoint, latticeSpacing)
+      const point = getNearestAnchorPoint(rawPoint, latticeSpacing, canvasSize)
       const deltaX = point.x - interaction.pointerStart.x
       const deltaY = point.y - interaction.pointerStart.y
 
@@ -204,7 +219,7 @@ function App() {
                 ...clampPoint({
                   x: interaction.nodeStart.x + deltaX,
                   y: interaction.nodeStart.y + deltaY,
-                }),
+                }, canvasSize),
               }
             : node,
         ),
@@ -212,6 +227,34 @@ function App() {
     }
 
     const handlePointerUp = () => {
+      if (interaction.kind === 'drag-node') {
+        setDataset((current) => {
+          const currentNode = current.nodes.find(
+            (node) => node.node_id === interaction.nodeId,
+          )
+          if (!currentNode) {
+            return current
+          }
+
+          const autoEdges = createAutoEdgesForAdjacentJunctions(
+            currentNode,
+            current.nodes,
+            current.edges,
+            latticeSpacing,
+            edgeDefaults,
+          )
+
+          if (autoEdges.length === 0) {
+            return current
+          }
+
+          return {
+            ...current,
+            edges: [...current.edges, ...autoEdges],
+          }
+        })
+      }
+
       setInteraction(null)
     }
 
@@ -222,7 +265,7 @@ function App() {
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)
     }
-  }, [interaction, latticeSpacing])
+  }, [canvasSize, edgeDefaults, interaction, latticeSpacing])
 
   const updateNode = (
     nodeId: string,
@@ -237,8 +280,12 @@ function App() {
       }
 
       const nextNode = updater(existing)
-      const clampedPosition = clampPoint({ x: nextNode.x, y: nextNode.y })
-      const snappedPosition = getNearestAnchorPoint(clampedPosition, latticeSpacing)
+      const clampedPosition = clampPoint({ x: nextNode.x, y: nextNode.y }, canvasSize)
+      const snappedPosition = getNearestAnchorPoint(
+        clampedPosition,
+        latticeSpacing,
+        canvasSize,
+      )
       const normalizedNode: GraphNode = {
         ...nextNode,
         x: snappedPosition.x,
@@ -322,6 +369,7 @@ function App() {
       svgRef.current,
       event.clientX,
       event.clientY,
+      canvasSize,
     )
     if (!rawPoint) {
       return
@@ -345,6 +393,7 @@ function App() {
       svgRef.current,
       event.clientX,
       event.clientY,
+      canvasSize,
     )
     setPointerPosition(point)
   }
@@ -400,6 +449,7 @@ function App() {
       svgRef.current,
       event.clientX,
       event.clientY,
+      canvasSize,
     )
     if (!rawPoint) {
       return
@@ -409,7 +459,7 @@ function App() {
     setInteraction({
       kind: 'drag-node',
       nodeId,
-      pointerStart: getNearestAnchorPoint(rawPoint, latticeSpacing),
+      pointerStart: getNearestAnchorPoint(rawPoint, latticeSpacing, canvasSize),
       nodeStart: { x: node.x, y: node.y },
     })
   }
@@ -420,10 +470,22 @@ function App() {
     }
 
     const node = createGraphNode(anchor, nodeDefaults, dataset.nodes)
-    setDataset((current) => ({
-      ...current,
-      nodes: [...current.nodes, node],
-    }))
+
+    setDataset((current) => {
+      const nextNodes = [...current.nodes, node]
+      const autoEdges = createAutoEdgesForAdjacentJunctions(
+        node,
+        nextNodes,
+        current.edges,
+        latticeSpacing,
+        edgeDefaults,
+      )
+
+      return {
+        nodes: nextNodes,
+        edges: [...current.edges, ...autoEdges],
+      }
+    })
     setSelection({ kind: 'node', id: node.node_id })
   }
 
@@ -459,6 +521,7 @@ function App() {
       const text = await file.text()
       const parsed = parseGraphDataset(JSON.parse(text))
       setDataset(parsed)
+      setCanvasSize(getAutoCanvasSize(parsed.nodes, latticeSpacing))
       setSelection(null)
       setPendingEdgeStartId(null)
     } catch (error) {
@@ -516,9 +579,36 @@ function App() {
     }
   }
 
+  const handleNodeDefaultsChange = (nextDefaults: NodeDefaults) => {
+    const nodeTypeChanged = nextDefaults.type !== nodeDefaults.type
+
+    setNodeDefaults(nextDefaults)
+
+    if (nodeTypeChanged) {
+      handleModeChange('addNode')
+    }
+  }
+
+  const handleCanvasSizeChange = (nextSize: CanvasSize) => {
+    const normalizedSize = clampCanvasSize(nextSize)
+    setCanvasSize(normalizedSize)
+    setDataset((current) => ({
+      ...current,
+      nodes: current.nodes.map((node) => ({
+        ...node,
+        ...getNearestAnchorPoint(
+          { x: node.x, y: node.y },
+          latticeSpacing,
+          normalizedSize,
+        ),
+      })),
+    }))
+  }
+
   return (
     <div className="app-shell">
       <TopBar
+        canvasSize={canvasSize}
         mode={mode}
         nodeCount={dataset.nodes.length}
         edgeCount={dataset.edges.length}
@@ -533,6 +623,7 @@ function App() {
         onExportGraph={handleExportGraph}
         onLoadSample={() => {
           setDataset(seedGraphDataset)
+          setCanvasSize(getAutoCanvasSize(seedGraphDataset.nodes, latticeSpacing))
           setSelection(null)
           setPendingEdgeStartId(null)
         }}
@@ -554,11 +645,17 @@ function App() {
             ...current,
             nodes: current.nodes.map((node) => ({
               ...node,
-              ...getNearestAnchorPoint({ x: node.x, y: node.y }, nextSpacing),
+              ...getNearestAnchorPoint(
+                { x: node.x, y: node.y },
+                nextSpacing,
+                canvasSize,
+              ),
             })),
           }))
         }}
         onZoomChange={setZoom}
+        onCanvasSizeChange={handleCanvasSizeChange}
+        onAutoFitCanvas={() => setCanvasSize(getAutoCanvasSize(dataset.nodes, latticeSpacing))}
       />
 
       <input
@@ -583,11 +680,12 @@ function App() {
           edgeDefaults={edgeDefaults}
           pendingEdgeStartId={pendingEdgeStartId}
           onModeChange={handleModeChange}
-          onNodeDefaultsChange={setNodeDefaults}
+          onNodeDefaultsChange={handleNodeDefaultsChange}
           onEdgeDefaultsChange={setEdgeDefaults}
         />
 
         <GraphCanvas
+          canvasSize={canvasSize}
           dataset={dataset}
           selection={selection}
           mode={mode}

@@ -8,6 +8,7 @@ const nodes = [
   createGraphNode({ x: 380, y: 390 }, { floor_id: 1, type: 'toilet' }, []),
   createGraphNode({ x: 580, y: 390 }, { floor_id: 1, type: 'elevator' }, []),
   createGraphNode({ x: 780, y: 390 }, { floor_id: 1, type: 'stairs' }, []),
+  createGraphNode({ x: 960, y: 210 }, { floor_id: 1, type: 'not_walkable' }, []),
 ].map((node, index) => ({
   ...node,
   node_id: `N_${index + 1}`,
@@ -20,14 +21,18 @@ const nodes = [
           ? 'Toilet'
           : index === 4
             ? 'Lift'
-            : index === 5
-              ? 'Stairs'
-              : null,
+          : index === 5
+            ? 'Stairs'
+          : index === 6
+            ? 'Blocked Area'
+          : null,
   tags:
     index === 1
       ? ['decision']
       : index === 4
         ? ['vertical']
+        : index === 6
+          ? ['obstacle']
         : null,
 }))
 

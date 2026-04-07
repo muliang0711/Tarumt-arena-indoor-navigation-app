@@ -1,4 +1,5 @@
 import type {
+  CanvasSize,
   EdgeDefaults,
   GraphDataset,
   GraphEdge,
@@ -9,26 +10,47 @@ import type {
   ValidationResult,
 } from '../types/graph'
 
-export const CANVAS_WIDTH = 1600
-export const CANVAS_HEIGHT = 1000
+export const DEFAULT_CANVAS_WIDTH = 1600
+export const DEFAULT_CANVAS_HEIGHT = 1000
 export const DEFAULT_LATTICE_SPACING = 50
+const AUTO_FIT_PADDING_STEPS = 4
 
-export const nodeTypeStyles: Record<
-  string,
-  { fill: string; stroke: string; text: string }
-> = {
-  junction: { fill: '#eef2ff', stroke: '#3150a4', text: '#1e2d66' },
-  room: { fill: '#d9f1ff', stroke: '#1d6f95', text: '#10384c' },
-  toilet: { fill: '#dcfce7', stroke: '#2f855a', text: '#17402b' },
-  elevator: { fill: '#fde7d3', stroke: '#a65f18', text: '#59320b' },
-  stairs: { fill: '#ede9fe', stroke: '#6d28d9', text: '#40157d' },
-  entrance: { fill: '#d1fae5', stroke: '#047857', text: '#064e3b' },
-  exit: { fill: '#fee2e2', stroke: '#b42318', text: '#5b1b14' },
-  default: { fill: '#e5e7eb', stroke: '#475569', text: '#1f2937' },
+type NodeVisualStyle = {
+  fill: string
+  stroke: string
+  text: string
+  badge: string
+  shape: 'circle' | 'diamond'
+}
+
+export const nodeTypeStyles: Record<string, NodeVisualStyle> = {
+  junction: { fill: '#eef2ff', stroke: '#3150a4', text: '#1e2d66', badge: 'JN', shape: 'circle' },
+  room: { fill: '#d9f1ff', stroke: '#1d6f95', text: '#10384c', badge: 'RM', shape: 'circle' },
+  toilet: { fill: '#dcfce7', stroke: '#2f855a', text: '#17402b', badge: 'WC', shape: 'circle' },
+  elevator: { fill: '#fde7d3', stroke: '#a65f18', text: '#59320b', badge: 'EL', shape: 'circle' },
+  stairs: { fill: '#ede9fe', stroke: '#6d28d9', text: '#40157d', badge: 'ST', shape: 'circle' },
+  entrance: { fill: '#d1fae5', stroke: '#047857', text: '#064e3b', badge: 'EN', shape: 'circle' },
+  exit: { fill: '#fee2e2', stroke: '#b42318', text: '#5b1b14', badge: 'EX', shape: 'circle' },
+  not_walkable: {
+    fill: '#1f2937',
+    stroke: '#991b1b',
+    text: '#fef2f2',
+    badge: 'NW',
+    shape: 'diamond',
+  },
+  default: { fill: '#e5e7eb', stroke: '#475569', text: '#1f2937', badge: 'ND', shape: 'circle' },
 }
 
 export function getNodeStyle(type: string) {
   return nodeTypeStyles[type] ?? nodeTypeStyles.default
+}
+
+export function getNodeBadge(type: string) {
+  return getNodeStyle(type).badge
+}
+
+export function getNodeShape(type: string) {
+  return getNodeStyle(type).shape
 }
 
 export function snapValue(value: number, gridSize: number, enabled: boolean) {
@@ -43,10 +65,17 @@ export function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
 }
 
-export function clampPoint(point: Point): Point {
+export function clampCanvasSize(size: CanvasSize): CanvasSize {
   return {
-    x: clamp(point.x, 0, CANVAS_WIDTH),
-    y: clamp(point.y, 0, CANVAS_HEIGHT),
+    width: Math.max(400, Math.round(size.width)),
+    height: Math.max(400, Math.round(size.height)),
+  }
+}
+
+export function clampPoint(point: Point, canvasSize: CanvasSize): Point {
+  return {
+    x: clamp(point.x, 0, canvasSize.width),
+    y: clamp(point.y, 0, canvasSize.height),
   }
 }
 
@@ -54,15 +83,20 @@ export function normalizePoint(
   point: Point,
   gridSize: number,
   snapToGrid: boolean,
+  canvasSize: CanvasSize,
 ): Point {
   return clampPoint({
     x: snapValue(point.x, gridSize, snapToGrid),
     y: snapValue(point.y, gridSize, snapToGrid),
-  })
+  }, canvasSize)
 }
 
-export function getNearestAnchorPoint(point: Point, spacing: number) {
-  return normalizePoint(point, spacing, true)
+export function getNearestAnchorPoint(
+  point: Point,
+  spacing: number,
+  canvasSize: CanvasSize,
+) {
+  return normalizePoint(point, spacing, true, canvasSize)
 }
 
 export function isPointNearAnchor(
@@ -78,6 +112,7 @@ export function getClientPointInSvg(
   svg: SVGSVGElement | null,
   clientX: number,
   clientY: number,
+  canvasSize: CanvasSize,
 ): Point | null {
   if (!svg) {
     return null
@@ -89,9 +124,23 @@ export function getClientPointInSvg(
   }
 
   return {
-    x: ((clientX - rect.left) / rect.width) * CANVAS_WIDTH,
-    y: ((clientY - rect.top) / rect.height) * CANVAS_HEIGHT,
+    x: ((clientX - rect.left) / rect.width) * canvasSize.width,
+    y: ((clientY - rect.top) / rect.height) * canvasSize.height,
   }
+}
+
+export function getAutoCanvasSize(
+  nodes: GraphNode[],
+  spacing: number,
+): CanvasSize {
+  const maxX = nodes.length > 0 ? Math.max(...nodes.map((node) => node.x)) : 0
+  const maxY = nodes.length > 0 ? Math.max(...nodes.map((node) => node.y)) : 0
+  const padding = spacing * AUTO_FIT_PADDING_STEPS
+
+  return clampCanvasSize({
+    width: Math.max(DEFAULT_CANVAS_WIDTH, snapValue(maxX + padding, spacing, true)),
+    height: Math.max(DEFAULT_CANVAS_HEIGHT, snapValue(maxY + padding, spacing, true)),
+  })
 }
 
 function getNextNumericId(existingIds: string[], prefix: string) {
@@ -149,6 +198,74 @@ export function createGraphEdge(
     enabled: true,
     metadata: null,
   }
+}
+
+export function hasEdgeBetweenNodes(
+  edges: GraphEdge[],
+  firstNodeId: string,
+  secondNodeId: string,
+) {
+  return edges.some(
+    (edge) =>
+      (edge.from_node === firstNodeId && edge.to_node === secondNodeId) ||
+      (edge.from_node === secondNodeId && edge.to_node === firstNodeId),
+  )
+}
+
+export function getAdjacentJunctionNodes(
+  currentNode: GraphNode,
+  nodes: GraphNode[],
+  spacing: number,
+) {
+  if (currentNode.type === 'not_walkable' || currentNode.enabled === false) {
+    return []
+  }
+
+  return nodes.filter((node) => {
+    if (
+      node.node_id === currentNode.node_id ||
+      node.type !== 'junction' ||
+      node.enabled === false ||
+      node.floor_id !== currentNode.floor_id
+    ) {
+      return false
+    }
+
+    const horizontalNeighbor =
+      node.y === currentNode.y && Math.abs(node.x - currentNode.x) === spacing
+    const verticalNeighbor =
+      node.x === currentNode.x && Math.abs(node.y - currentNode.y) === spacing
+
+    return horizontalNeighbor || verticalNeighbor
+  })
+}
+
+export function createAutoEdgesForAdjacentJunctions(
+  currentNode: GraphNode,
+  nodes: GraphNode[],
+  edges: GraphEdge[],
+  spacing: number,
+  defaults: EdgeDefaults,
+) {
+  const autoEdges: GraphEdge[] = []
+
+  getAdjacentJunctionNodes(currentNode, nodes, spacing).forEach((junctionNode) => {
+    const nextEdgeList = [...edges, ...autoEdges]
+    if (hasEdgeBetweenNodes(nextEdgeList, currentNode.node_id, junctionNode.node_id)) {
+      return
+    }
+
+    autoEdges.push(
+      createGraphEdge(
+        currentNode.node_id,
+        junctionNode.node_id,
+        defaults,
+        nextEdgeList,
+      ),
+    )
+  })
+
+  return autoEdges
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {
@@ -274,6 +391,18 @@ export function validateGraphDataset(dataset: GraphDataset): ValidationResult {
 
   const nodeIds = new Set<string>()
   const edgeIds = new Set<string>()
+  const nodeConnectionCounts = new Map<string, number>()
+
+  dataset.edges.forEach((edge) => {
+    nodeConnectionCounts.set(
+      edge.from_node,
+      (nodeConnectionCounts.get(edge.from_node) ?? 0) + 1,
+    )
+    nodeConnectionCounts.set(
+      edge.to_node,
+      (nodeConnectionCounts.get(edge.to_node) ?? 0) + 1,
+    )
+  })
 
   dataset.nodes.forEach((node, index) => {
     const label = `Node ${index + 1}`
@@ -292,6 +421,11 @@ export function validateGraphDataset(dataset: GraphDataset): ValidationResult {
     }
     if (!node.type.trim()) {
       errors.push(`${label}: type is required.`)
+    }
+    if (node.type === 'not_walkable' && (nodeConnectionCounts.get(node.node_id) ?? 0) > 0) {
+      warnings.push(
+        `${label}: not_walkable nodes should not be connected to route edges.`,
+      )
     }
     if (node.enabled === false) {
       warnings.push(`${label}: node is disabled.`)

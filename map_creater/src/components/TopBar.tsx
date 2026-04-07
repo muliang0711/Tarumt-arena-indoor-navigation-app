@@ -1,6 +1,7 @@
-import type { EditorMode } from '../types/graph'
+import type { CanvasSize, EditorMode } from '../types/graph'
 
 interface TopBarProps {
+  canvasSize: CanvasSize
   mode: EditorMode
   nodeCount: number
   edgeCount: number
@@ -21,9 +22,12 @@ interface TopBarProps {
   onToggleBackground: () => void
   onLatticeSpacingChange: (spacing: number) => void
   onZoomChange: (zoom: number) => void
+  onCanvasSizeChange: (size: CanvasSize) => void
+  onAutoFitCanvas: () => void
 }
 
 export function TopBar({
+  canvasSize,
   mode,
   nodeCount,
   edgeCount,
@@ -44,6 +48,8 @@ export function TopBar({
   onToggleBackground,
   onLatticeSpacingChange,
   onZoomChange,
+  onCanvasSizeChange,
+  onAutoFitCanvas,
 }: TopBarProps) {
   return (
     <header className="topbar">
@@ -111,6 +117,38 @@ export function TopBar({
           <strong>{Math.round(zoom * 100)}%</strong>
         </label>
 
+        <label className="zoom-chip">
+          <span>Width</span>
+          <input
+            type="number"
+            min={400}
+            step={50}
+            value={canvasSize.width}
+            onChange={(event) =>
+              onCanvasSizeChange({
+                ...canvasSize,
+                width: Number(event.target.value) || canvasSize.width,
+              })
+            }
+          />
+        </label>
+
+        <label className="zoom-chip">
+          <span>Height</span>
+          <input
+            type="number"
+            min={400}
+            step={50}
+            value={canvasSize.height}
+            onChange={(event) =>
+              onCanvasSizeChange({
+                ...canvasSize,
+                height: Number(event.target.value) || canvasSize.height,
+              })
+            }
+          />
+        </label>
+
         <button type="button" className="ghost-button" onClick={onImportGraph}>
           Import JSON
         </button>
@@ -130,6 +168,9 @@ export function TopBar({
         </button>
         <button type="button" className="ghost-button" onClick={onLoadSample}>
           Load Sample
+        </button>
+        <button type="button" className="ghost-button" onClick={onAutoFitCanvas}>
+          Auto Fit Canvas
         </button>
         <button type="button" className="danger-button" onClick={onClearGraph}>
           Clear Graph

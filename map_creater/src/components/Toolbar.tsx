@@ -126,6 +126,8 @@ export function Toolbar({
       <div className="toolbar-section toolbar-note">
         <p className="section-title">Workflow</p>
         <p>Nodes should represent junctions or semantic anchors, not arbitrary corridor points.</p>
+        <p>Use `not_walkable` for blocked zones, walls, or obstacles that should not join the route graph.</p>
+        <p>New nodes and dragged nodes auto-connect to same-floor junctions one lattice step away.</p>
         <p>Current edge source: {pendingEdgeStartId ?? 'Not selected'}</p>
       </div>
     </aside>

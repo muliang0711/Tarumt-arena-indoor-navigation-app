@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Village Map Editor</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <section class="panel panel-hero">
+          <p class="eyebrow">Indoor Navigation Builder</p>
+          <h1>Build the floor visually. Then mark the navigation logic.</h1>
+          <p class="muted hero-copy">
+            Use the same editor for both passes. First recreate the school floor with PNG assets.
+            Then switch to metadata and define what the pathfinding system understands.
+          </p>
+          <div class="hero-tags">
+            <span class="hero-tag">Two layers</span>
+            <span class="hero-tag">Grid first</span>
+            <span class="hero-tag">Real-length weights later</span>
+          </div>
+        </section>
+
+        <section class="panel panel-workflow">
+          <div class="section-head">
+            <h2>Working Flow</h2>
+            <p class="muted small-text">Follow this order so the map stays clean and editable.</p>
+          </div>
+
+          <div class="workflow-list">
+            <article class="workflow-step">
+              <span class="workflow-index">01</span>
+              <div>
+                <h3>Visual Pass</h3>
+                <p>Place PNG buildings, walls, roads, props, and floor details until the floor plan looks right.</p>
+              </div>
+            </article>
+
+            <article class="workflow-step">
+              <span class="workflow-index">02</span>
+              <div>
+                <h3>Metadata Pass</h3>
+                <p>Mark walkable tiles, blocked tiles, and waypoint nodes. Then connect the nodes into navigation paths.</p>
+              </div>
+            </article>
+
+            <article class="workflow-step">
+              <span class="workflow-index">03</span>
+              <div>
+                <h3>Export Project</h3>
+                <p>Save the visual map and metadata together as JSON, then use it as the base for navigation.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Editor Layer</h2>
+            <p class="muted small-text">Switch between art placement and navigation markup.</p>
+          </div>
+
+          <div class="tool-row">
+            <button class="tool-button is-active" data-layer="visual" type="button">Visual Layer</button>
+            <button class="tool-button" data-layer="metadata" type="button">Metadata Layer</button>
+          </div>
+
+          <div class="control-stack compact-top">
+            <label class="field">
+              <span>Zoom</span>
+              <input id="zoom-range" type="range" min="1" max="4" step="1" value="2" />
+            </label>
+
+            <div class="size-grid">
+              <label class="field">
+                <span>Map Width</span>
+                <input id="map-width-input" type="number" min="30" max="300" step="1" value="30" />
+              </label>
+
+              <label class="field">
+                <span>Map Height</span>
+                <input id="map-height-input" type="number" min="20" max="300" step="1" value="20" />
+              </label>
+            </div>
+
+            <button id="apply-map-size-button" type="button">Apply map size</button>
+
+            <div class="toggle-grid">
+              <label class="checkbox-row">
+                <input id="grid-toggle" type="checkbox" checked />
+                <span>Show grid</span>
+              </label>
+
+              <label class="checkbox-row">
+                <input id="auto-grow-toggle" type="checkbox" checked />
+                <span>Auto grow in Visual Layer</span>
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section id="visual-tools-panel" class="panel">
+          <div class="section-head">
+            <h2>Visual Tools</h2>
+            <p class="muted small-text">Use these only to build the visible floor map.</p>
+          </div>
+
+          <div class="tool-row tool-row-visual">
+            <button class="tool-button is-active" data-visual-mode="paint" type="button">Paint</button>
+            <button class="tool-button" data-visual-mode="select" type="button">Select</button>
+            <button class="tool-button" data-visual-mode="erase" type="button">Erase</button>
+          </div>
+
+          <div class="helper-note">
+            <strong>Tip:</strong> Finish the floor layout first. Do not worry about walkability until the shape feels correct.
+          </div>
+
+          <div class="selected-card">
+            <div class="section-head">
+              <h2>Selected Asset</h2>
+              <p class="muted small-text">Pick a PNG from the palette, then place it onto the map.</p>
+            </div>
+            <div id="selected-preview" class="selected-preview"></div>
+            <div id="selected-meta" class="selected-meta"></div>
+          </div>
+        </section>
+
+        <section id="metadata-tools-panel" class="panel">
+          <div class="section-head">
+            <h2>Metadata Tools</h2>
+            <p class="muted small-text">This layer defines the grid logic that navigation will use later.</p>
+          </div>
+
+          <div class="tool-grid metadata-grid">
+            <button class="tool-button is-active" data-metadata-mode="walkable" type="button">Walkable</button>
+            <button class="tool-button" data-metadata-mode="blocked" type="button">Blocked</button>
+            <button class="tool-button" data-metadata-mode="node" type="button">Node</button>
+            <button class="tool-button" data-metadata-mode="link" type="button">Link</button>
+            <button class="tool-button" data-metadata-mode="erase" type="button">Erase</button>
+          </div>
+
+          <div class="control-stack">
+            <label class="field">
+              <span>Node Role</span>
+              <select id="node-type-select">
+                <option value="destination">Destination</option>
+                <option value="junction">Junction</option>
+                <option value="stairs">Stairs</option>
+                <option value="elevator">Elevator</option>
+              </select>
+            </label>
+
+            <label class="field">
+              <span>Node Label</span>
+              <input id="node-label-input" type="text" placeholder="A401 Destination" />
+            </label>
+
+            <label class="field">
+              <span>Node Id</span>
+              <input id="node-id-input" type="text" placeholder="a401_destination" />
+            </label>
+
+            <label class="checkbox-row">
+              <input id="auto-block-visual-toggle" type="checkbox" checked />
+              <span>Auto block placed PNG footprints</span>
+            </label>
+          </div>
+
+          <div class="helper-note metadata-note">
+            <strong>Recommended:</strong> Keep auto block on, paint walkable tiles in front of doors, place nodes on important points, then connect them with the link tool.
+          </div>
+
+          <div class="legend-grid">
+            <div class="legend-item">
+              <span class="legend-swatch legend-walkable"></span>
+              <span>Walkable grid cell</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch legend-blocked"></span>
+              <span>Blocked grid cell</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-swatch legend-anchor"></span>
+              <span>Navigation node</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Project Actions</h2>
+            <p class="muted small-text">Save often. Export JSON when a floor is ready for navigation work.</p>
+          </div>
+
+          <div class="action-grid">
+            <button id="undo-button" type="button">Undo</button>
+            <button id="clear-button" type="button">Clear visual map</button>
+            <button id="clear-metadata-button" type="button">Clear metadata</button>
+            <button id="save-button" type="button">Save local</button>
+            <button id="load-button" type="button">Load local</button>
+            <button id="reload-assets-button" type="button">Reload assets</button>
+            <button id="sample-button" type="button">Load sample</button>
+            <button id="export-png-button" type="button">Export PNG</button>
+            <button id="export-json-button" type="button">Export JSON</button>
+          </div>
+
+          <label class="import-button">
+            <input id="import-json-input" type="file" accept=".json,application/json" />
+            <span>Import JSON</span>
+          </label>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Map Summary</h2>
+            <p class="muted small-text">Live counts for the current floor.</p>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-card">
+              <span class="summary-label">Visuals</span>
+              <strong id="placements-count">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Walkable</span>
+              <strong id="walkable-count">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Blocked</span>
+              <strong id="blocked-count">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Nodes</span>
+              <strong id="nodes-count">0</strong>
+            </div>
+            <div class="summary-card">
+              <span class="summary-label">Links</span>
+              <strong id="links-count">0</strong>
+            </div>
+          </div>
+        </section>
+
+        <section id="palette-panel" class="panel">
+          <div class="section-head">
+            <h2>Visual Palette</h2>
+            <p class="muted small-text">Any PNG in the asset folder appears here after reload.</p>
+          </div>
+          <div id="palette-groups" class="palette-groups"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>Current Selection</h2>
+            <p class="muted small-text">Use this to inspect the tile under the cursor or the selected object.</p>
+          </div>
+          <div id="selection-meta" class="selection-meta">Nothing selected.</div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <div class="workspace-toolbar">
+          <div class="toolbar-primary">
+            <p class="toolbar-label">Editor status</p>
+            <div id="status-text">Loading assets...</div>
+          </div>
+
+          <div class="toolbar-guide">
+            <p class="toolbar-label">Current workflow</p>
+            <div class="hint-text">
+              Visual Layer = place PNG components. Metadata Layer = paint the grid, place nodes, and connect waypoint paths.
+            </div>
+          </div>
+        </div>
+
+        <div class="canvas-wrap">
+          <canvas id="map-canvas"></canvas>
+        </div>
+      </main>
+    </div>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>

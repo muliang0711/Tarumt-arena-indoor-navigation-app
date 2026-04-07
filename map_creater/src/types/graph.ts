@@ -6,6 +6,7 @@ export const NODE_TYPE_OPTIONS = [
   'stairs',
   'entrance',
   'exit',
+  'not_walkable',
 ] as const
 
 export type PredefinedNodeType = (typeof NODE_TYPE_OPTIONS)[number]
@@ -47,6 +48,11 @@ export type EditorMode = 'select' | 'addNode' | 'addEdge' | 'delete'
 export interface Point {
   x: number
   y: number
+}
+
+export interface CanvasSize {
+  width: number
+  height: number
 }
 
 export interface Selection {
