@@ -15,6 +15,8 @@ const state = {
   deviceId: "iphone-15",
   mapSnapshot: null,
   reviewSource: "asset",
+  renderedHeight: 0,
+  renderedWidth: 0,
   selectedAssetId: null,
   scalePercent: 100,
   search: "",
@@ -30,11 +32,21 @@ const ui = {
   coverageSummary: document.querySelector("#coverage-summary"),
   deviceSelect: document.querySelector("#device-select"),
   deviceSummary: document.querySelector("#device-summary"),
+  detailViewButton: document.querySelector("#detail-view-button"),
   fitWidthButton: document.querySelector("#fit-width-button"),
+  minimapImage: document.querySelector("#minimap-image"),
+  minimapSurface: document.querySelector("#minimap-surface"),
+  minimapViewport: document.querySelector("#minimap-viewport"),
   nativeSizeButton: document.querySelector("#native-size-button"),
+  navDownButton: document.querySelector("#nav-down-button"),
+  navLeftButton: document.querySelector("#nav-left-button"),
+  navRightButton: document.querySelector("#nav-right-button"),
+  navUpButton: document.querySelector("#nav-up-button"),
+  navigatorPanel: document.querySelector("#navigator-panel"),
   phoneScreen: document.querySelector("#phone-screen"),
   phoneStage: document.querySelector("#phone-stage"),
   previewImage: document.querySelector("#preview-image"),
+  readableViewButton: document.querySelector("#readable-view-button"),
   scaleInput: document.querySelector("#scale-input"),
   scaleRange: document.querySelector("#scale-range"),
   searchInput: document.querySelector("#search-input"),
@@ -74,6 +86,17 @@ function clampScale(value) {
 
 function titleCase(value) {
   return value.replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function getFitWidthPercent(asset, device) {
+  if (!asset?.width) {
+    return 100;
+  }
+  return (device.width / asset.width) * 100;
+}
+
+function hasNavigator() {
+  return state.reviewSource !== "asset" && Boolean(getActiveReviewItem());
 }
 
 function syncControls() {
@@ -174,6 +197,7 @@ function applyBackgroundClass() {
 function updateSourceUi() {
   const usingTileset = state.reviewSource === "asset";
   ui.assetLibraryPanel.classList.toggle("is-hidden", !usingTileset);
+  ui.navigatorPanel.classList.toggle("is-hidden", !hasNavigator());
 
   if (state.reviewSource === "map") {
     ui.sourceStatus.textContent = state.mapSnapshot
@@ -222,6 +246,61 @@ function updateAssetMeta(asset, renderedWidth, renderedHeight, device) {
     `File: ${asset.fileName}\nCategory: ${titleCase(asset.category ?? asset.kind ?? "custom")}\nSource size: ${asset.width} x ${asset.height} px\nShown size: ${Math.round(renderedWidth)} x ${Math.round(renderedHeight)} CSS px\nScreen coverage: ${widthCoverage}% width, ${heightCoverage}% height\nClips horizontally: ${clippedWidth}\nClips vertically: ${clippedHeight}`;
 }
 
+function updateMinimap() {
+  if (!hasNavigator()) {
+    return;
+  }
+
+  const asset = getActiveReviewItem();
+  if (!asset || !state.renderedWidth || !state.renderedHeight) {
+    return;
+  }
+
+  ui.minimapImage.src = asset.src;
+  ui.minimapImage.alt = `${asset.label} minimap`;
+
+  window.requestAnimationFrame(() => {
+    const surfaceRect = ui.minimapSurface.getBoundingClientRect();
+    const imageRect = ui.minimapImage.getBoundingClientRect();
+    if (!imageRect.width || !imageRect.height) {
+      return;
+    }
+
+    const leftOffset = imageRect.left - surfaceRect.left;
+    const topOffset = imageRect.top - surfaceRect.top;
+    const viewportLeft = leftOffset + (ui.phoneScreen.scrollLeft / state.renderedWidth) * imageRect.width;
+    const viewportTop = topOffset + (ui.phoneScreen.scrollTop / state.renderedHeight) * imageRect.height;
+    const viewportWidth = (ui.phoneScreen.clientWidth / state.renderedWidth) * imageRect.width;
+    const viewportHeight = (ui.phoneScreen.clientHeight / state.renderedHeight) * imageRect.height;
+
+    ui.minimapViewport.style.left = `${viewportLeft}px`;
+    ui.minimapViewport.style.top = `${viewportTop}px`;
+    ui.minimapViewport.style.width = `${Math.max(viewportWidth, 18)}px`;
+    ui.minimapViewport.style.height = `${Math.max(viewportHeight, 18)}px`;
+  });
+}
+
+function scrollPreviewBy(deltaX, deltaY) {
+  ui.phoneScreen.scrollBy({
+    left: deltaX,
+    top: deltaY,
+    behavior: "smooth",
+  });
+}
+
+function applyScaleMultiplier(multiplier) {
+  const asset = getActiveReviewItem();
+  const device = getSelectedDevice();
+  if (!asset) {
+    return;
+  }
+
+  setScale(getFitWidthPercent(asset, device) * multiplier);
+  window.requestAnimationFrame(() => {
+    ui.phoneScreen.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+  });
+}
+
 function renderStage() {
   const asset = getActiveReviewItem();
   const device = getSelectedDevice();
@@ -246,6 +325,8 @@ function renderStage() {
 
   const renderedWidth = asset.width * (state.scalePercent / 100);
   const renderedHeight = asset.height * (state.scalePercent / 100);
+  state.renderedWidth = renderedWidth;
+  state.renderedHeight = renderedHeight;
   const widthCoverage = (renderedWidth / device.width) * 100;
   const heightCoverage = (renderedHeight / device.height) * 100;
 
@@ -256,9 +337,10 @@ function renderStage() {
 
   ui.stageTitle.textContent = asset.label;
   ui.coverageSummary.textContent =
-    `${Math.round(renderedWidth)} x ${Math.round(renderedHeight)} CSS px at ${state.scalePercent}%.\nThis uses ${widthCoverage.toFixed(1)}% of the phone width and ${heightCoverage.toFixed(1)}% of the phone height.`;
+    `${Math.round(renderedWidth)} x ${Math.round(renderedHeight)} CSS px at ${state.scalePercent}%.\nThis uses ${widthCoverage.toFixed(1)}% of the phone width and ${heightCoverage.toFixed(1)}% of the phone height.\nUse overview for full layout, readable for normal inspection, and detail for tiny rooms or icons.`;
 
   updateAssetMeta(asset, renderedWidth, renderedHeight, device);
+  updateMinimap();
 }
 
 function setScale(value) {
@@ -377,17 +459,9 @@ function bindEvents() {
   });
 
   ui.nativeSizeButton.addEventListener("click", () => setScale(100));
-
-  ui.fitWidthButton.addEventListener("click", () => {
-    const asset = getActiveReviewItem();
-    const device = getSelectedDevice();
-    if (!asset) {
-      return;
-    }
-
-    const percent = (device.width / asset.width) * 100;
-    setScale(percent);
-  });
+  ui.fitWidthButton.addEventListener("click", () => applyScaleMultiplier(1));
+  ui.readableViewButton.addEventListener("click", () => applyScaleMultiplier(1.8));
+  ui.detailViewButton.addEventListener("click", () => applyScaleMultiplier(2.6));
 
   ui.uploadInput.addEventListener("change", async () => {
     const [file] = ui.uploadInput.files || [];
@@ -415,6 +489,31 @@ function bindEvents() {
     } finally {
       ui.uploadInput.value = "";
     }
+  });
+
+  ui.navUpButton.addEventListener("click", () => scrollPreviewBy(0, -ui.phoneScreen.clientHeight * 0.78));
+  ui.navDownButton.addEventListener("click", () => scrollPreviewBy(0, ui.phoneScreen.clientHeight * 0.78));
+  ui.navLeftButton.addEventListener("click", () => scrollPreviewBy(-ui.phoneScreen.clientWidth * 0.78, 0));
+  ui.navRightButton.addEventListener("click", () => scrollPreviewBy(ui.phoneScreen.clientWidth * 0.78, 0));
+
+  ui.phoneScreen.addEventListener("scroll", () => updateMinimap());
+  ui.minimapSurface.addEventListener("click", (event) => {
+    if (!hasNavigator() || !state.renderedWidth || !state.renderedHeight) {
+      return;
+    }
+
+    const imageRect = ui.minimapImage.getBoundingClientRect();
+    if (!imageRect.width || !imageRect.height) {
+      return;
+    }
+
+    const ratioX = Math.min(Math.max((event.clientX - imageRect.left) / imageRect.width, 0), 1);
+    const ratioY = Math.min(Math.max((event.clientY - imageRect.top) / imageRect.height, 0), 1);
+    ui.phoneScreen.scrollTo({
+      left: ratioX * state.renderedWidth - ui.phoneScreen.clientWidth / 2,
+      top: ratioY * state.renderedHeight - ui.phoneScreen.clientHeight / 2,
+      behavior: "smooth",
+    });
   });
 
   window.addEventListener("resize", () => renderStage());

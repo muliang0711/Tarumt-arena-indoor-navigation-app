@@ -92,6 +92,8 @@
             <div class="button-row">
               <button id="native-size-button" type="button">Reset to 100%</button>
               <button id="fit-width-button" type="button">Fit to phone width</button>
+              <button id="readable-view-button" type="button">Readable view</button>
+              <button id="detail-view-button" type="button">Detail view</button>
             </div>
           </section>
 
@@ -102,6 +104,25 @@
             </div>
 
             <div id="asset-meta" class="stat-block">Loading images...</div>
+          </section>
+
+          <section id="navigator-panel" class="panel is-hidden">
+            <div class="section-head">
+              <h2>Map Navigator</h2>
+              <p class="muted">Use overview for layout. Use readable or detail view when you need to inspect rooms.</p>
+            </div>
+
+            <div id="minimap-surface" class="minimap-surface">
+              <img id="minimap-image" class="minimap-image" alt="" />
+              <div id="minimap-viewport" class="minimap-viewport"></div>
+            </div>
+
+            <div class="nav-pad">
+              <button id="nav-up-button" type="button">Up</button>
+              <button id="nav-left-button" type="button">Left</button>
+              <button id="nav-right-button" type="button">Right</button>
+              <button id="nav-down-button" type="button">Down</button>
+            </div>
           </section>
 
           <section id="asset-library-panel" class="panel panel-library">
