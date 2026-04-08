@@ -19,8 +19,12 @@
 8. `project/02_next_repo_steps.md`
 9. `project/05_v1_mobile_map_plan.md`
 10. `project/06_navigation_preview_mode.md`
-11. `practice/01_first_exercises.md`
-12. `practice/02_checklist_and_mistakes.md`
+11. `project/07_tilemap_runtime_dataflow.md`
+12. `project/08_camera_viewport_movement_render_system.md`
+13. `project/09_flutter_libraries_fit_assessment.md`
+14. `project/10_mvp_runtime_package_schema_v1.md`
+15. `practice/01_first_exercises.md`
+16. `practice/02_checklist_and_mistakes.md`
 
 ## 目录结构
 
