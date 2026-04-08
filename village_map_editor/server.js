@@ -9,6 +9,7 @@ const ROOT = path.resolve(__dirname, "..");
 const EDITOR_DIR = __dirname;
 const ASSET_DIR = path.join(ROOT, "village_tileset_placeholders");
 const GENERATED_DIR = path.join(ROOT, "generated_maps");
+const PACKAGE_DIR = path.join(GENERATED_DIR, "map_packages");
 
 const MIME_TYPES = {
   ".css": "text/css; charset=utf-8",
@@ -93,6 +94,94 @@ function sendFile(response, filePath) {
   });
 }
 
+function ensureDir(directory) {
+  fs.mkdirSync(directory, { recursive: true });
+}
+
+function slugifyMapId(value) {
+  return String(value || "map_package")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "") || "map_package";
+}
+
+function copyDirectory(sourceDir, targetDir) {
+  ensureDir(targetDir);
+  for (const entry of fs.readdirSync(sourceDir, { withFileTypes: true })) {
+    const sourcePath = path.join(sourceDir, entry.name);
+    const targetPath = path.join(targetDir, entry.name);
+    if (entry.isDirectory()) {
+      copyDirectory(sourcePath, targetPath);
+    } else if (entry.isFile()) {
+      fs.copyFileSync(sourcePath, targetPath);
+    }
+  }
+}
+
+function dataUrlToBuffer(dataUrl) {
+  const match = /^data:(.+);base64,(.+)$/.exec(dataUrl);
+  if (!match) {
+    throw new Error("Invalid preview image payload.");
+  }
+  return Buffer.from(match[2], "base64");
+}
+
+function readJsonBody(request) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+    request.on("data", (chunk) => {
+      body += chunk;
+      if (body.length > 10 * 1024 * 1024) {
+        reject(new Error("Request body too large."));
+        request.destroy();
+      }
+    });
+    request.on("end", () => {
+      try {
+        resolve(JSON.parse(body));
+      } catch (error) {
+        reject(error);
+      }
+    });
+    request.on("error", reject);
+  });
+}
+
+async function handleExportPackage(request, response) {
+  try {
+    const payload = await readJsonBody(request);
+    const mapId = slugifyMapId(payload.mapId);
+    const packageRoot = path.join(PACKAGE_DIR, mapId);
+    const resourcesTarget = path.join(packageRoot, "resources", "serious_shit");
+    const sourceResources = path.join(ASSET_DIR, "serious_shit");
+
+    fs.rmSync(packageRoot, { recursive: true, force: true });
+    ensureDir(packageRoot);
+    ensureDir(PACKAGE_DIR);
+
+    fs.writeFileSync(path.join(packageRoot, "map.json"), `${JSON.stringify(payload.project, null, 2)}\n`, "utf8");
+    fs.writeFileSync(path.join(packageRoot, "preview.png"), dataUrlToBuffer(payload.previewDataUrl));
+    copyDirectory(sourceResources, resourcesTarget);
+
+    response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+    response.end(
+      JSON.stringify({
+        ok: true,
+        packageDir: packageRoot,
+      }),
+    );
+  } catch (error) {
+    response.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+    response.end(
+      JSON.stringify({
+        ok: false,
+        error: error instanceof Error ? error.message : "Unable to export package.",
+      }),
+    );
+  }
+}
+
 function resolveRequestPath(urlPath) {
   if (urlPath === "/" || urlPath === "/index.html") {
     return path.join(EDITOR_DIR, "index.html");
@@ -111,6 +200,10 @@ function resolveRequestPath(urlPath) {
 
 const server = http.createServer((request, response) => {
   const requestUrl = new URL(request.url, `http://${request.headers.host}`);
+  if (request.method === "POST" && requestUrl.pathname === "/api/export-package") {
+    handleExportPackage(request, response);
+    return;
+  }
   if (requestUrl.pathname === "/assets/index.json") {
     response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
     response.end(createAssetManifest());

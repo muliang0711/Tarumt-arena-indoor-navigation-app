@@ -76,6 +76,7 @@ const ui = {
   clearButton: document.querySelector("#clear-button"),
   clearMetadataButton: document.querySelector("#clear-metadata-button"),
   exportJsonButton: document.querySelector("#export-json-button"),
+  exportPackageButton: document.querySelector("#export-package-button"),
   exportPngButton: document.querySelector("#export-png-button"),
   gridToggle: document.querySelector("#grid-toggle"),
   importInput: document.querySelector("#import-json-input"),
@@ -1335,6 +1336,14 @@ function downloadBlob(blob, fileName) {
 }
 
 function exportJson() {
+  const project = buildExportProject();
+  downloadBlob(
+    new Blob([JSON.stringify(project, null, 2)], { type: "application/json" }),
+    "village-map-project.json",
+  );
+}
+
+function buildExportProject() {
   const metadataTiles = Object.entries(state.metadataTiles).map(([key, kind]) => {
     const [x, y] = key.split(",").map(Number);
     return { x, y, kind };
@@ -1344,53 +1353,73 @@ function exportJson() {
     return { x, y, kind };
   });
 
-  downloadBlob(
-    new Blob(
-      [
-        JSON.stringify(
-          {
-            schemaVersion: 1,
-            mapId: "village_demo_01",
-            tileSize: TILE_SIZE,
-            mapWidth: state.mapWidth,
-            mapHeight: state.mapHeight,
-            autoGrow: state.autoGrow,
-            resourceRoot: "resources/serious_shit",
-            background: {
-              mode: "auto-tile",
-              walkableAssetId: "serious_shit__walkable_road_clean",
-              blockedAssetId: "serious_shit__unwalkable_tile_clean",
-            },
-            visual: {
-              placements: state.placements,
-            },
-            metadata: {
-              autoBlockFromVisuals: state.autoBlockFromVisuals,
-              resolvedTiles,
-              tiles: metadataTiles,
-            },
-            navigation: {
-              nodes: state.nodes,
-              links: state.links,
-            },
-            nodes: state.nodes,
-            links: state.links,
-            spawn: {
-              playerStart: {
-                x: 1,
-                y: 1,
-                direction: "down",
-              },
-            },
-          },
-          null,
-          2,
-        ),
-      ],
-      { type: "application/json" },
-    ),
-    "village-map-project.json",
-  );
+  return {
+    schemaVersion: 1,
+    mapId: "village_demo_01",
+    tileSize: TILE_SIZE,
+    mapWidth: state.mapWidth,
+    mapHeight: state.mapHeight,
+    autoGrow: state.autoGrow,
+    resourceRoot: "resources/serious_shit",
+    background: {
+      mode: "auto-tile",
+      walkableAssetId: "serious_shit__walkable_road_clean",
+      blockedAssetId: "serious_shit__unwalkable_tile_clean",
+    },
+    visual: {
+      placements: state.placements,
+    },
+    metadata: {
+      autoBlockFromVisuals: state.autoBlockFromVisuals,
+      resolvedTiles,
+      tiles: metadataTiles,
+    },
+    navigation: {
+      nodes: state.nodes,
+      links: state.links,
+    },
+    nodes: state.nodes,
+    links: state.links,
+    spawn: {
+      playerStart: {
+        x: 1,
+        y: 1,
+        direction: "down",
+      },
+    },
+  };
+}
+
+async function exportMapPackage() {
+  const exportCanvas = createExportCanvas();
+  const packagePayload = {
+    mapId: "village_demo_01",
+    project: buildExportProject(),
+    previewDataUrl: exportCanvas.toDataURL("image/png"),
+  };
+
+  ui.statusText.textContent = "Exporting runtime package...";
+
+  try {
+    const response = await fetch("/api/export-package", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(packagePayload),
+    });
+
+    if (!response.ok) {
+      throw new Error("Unable to export runtime package.");
+    }
+
+    const result = await response.json();
+    ui.statusText.textContent = `Runtime package exported: ${result.packageDir}`;
+  } catch (error) {
+    console.error(error);
+    ui.statusText.textContent =
+      error instanceof Error ? error.message : "Unable to export runtime package.";
+  }
 }
 
 function exportPng() {
@@ -1747,6 +1776,7 @@ ui.sampleButton.addEventListener("click", async () => {
   }
 });
 ui.exportJsonButton.addEventListener("click", exportJson);
+ui.exportPackageButton.addEventListener("click", exportMapPackage);
 ui.exportPngButton.addEventListener("click", exportPng);
 
 ui.importInput.addEventListener("change", async () => {

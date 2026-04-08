@@ -1,0 +1,71 @@
+{
+  "tileSize": 16,
+  "mapWidth": 12,
+  "mapHeight": 8,
+  "metadata": {
+    "autoBlockFromVisuals": true,
+    "tiles": [
+      { "x": 0, "y": 0, "kind": "blocked" },
+      { "x": 1, "y": 0, "kind": "blocked" },
+      { "x": 2, "y": 0, "kind": "blocked" },
+      { "x": 3, "y": 0, "kind": "blocked" },
+      { "x": 4, "y": 0, "kind": "blocked" },
+      { "x": 5, "y": 0, "kind": "blocked" },
+      { "x": 6, "y": 0, "kind": "blocked" },
+      { "x": 7, "y": 0, "kind": "blocked" },
+      { "x": 8, "y": 0, "kind": "blocked" },
+      { "x": 9, "y": 0, "kind": "blocked" },
+      { "x": 10, "y": 0, "kind": "blocked" },
+      { "x": 11, "y": 0, "kind": "blocked" },
+      { "x": 0, "y": 7, "kind": "blocked" },
+      { "x": 1, "y": 7, "kind": "blocked" },
+      { "x": 2, "y": 7, "kind": "blocked" },
+      { "x": 3, "y": 7, "kind": "blocked" },
+      { "x": 4, "y": 7, "kind": "blocked" },
+      { "x": 5, "y": 7, "kind": "blocked" },
+      { "x": 6, "y": 7, "kind": "blocked" },
+      { "x": 7, "y": 7, "kind": "blocked" },
+      { "x": 8, "y": 7, "kind": "blocked" },
+      { "x": 9, "y": 7, "kind": "blocked" },
+      { "x": 10, "y": 7, "kind": "blocked" },
+      { "x": 11, "y": 7, "kind": "blocked" }
+    ],
+    "resolvedTiles": [
+      { "x": 0, "y": 0, "kind": "blocked" },
+      { "x": 1, "y": 0, "kind": "blocked" },
+      { "x": 2, "y": 0, "kind": "blocked" },
+      { "x": 3, "y": 0, "kind": "blocked" },
+      { "x": 4, "y": 0, "kind": "blocked" },
+      { "x": 5, "y": 0, "kind": "blocked" },
+      { "x": 6, "y": 0, "kind": "blocked" },
+      { "x": 7, "y": 0, "kind": "blocked" },
+      { "x": 8, "y": 0, "kind": "blocked" },
+      { "x": 9, "y": 0, "kind": "blocked" },
+      { "x": 10, "y": 0, "kind": "blocked" },
+      { "x": 11, "y": 0, "kind": "blocked" },
+      { "x": 0, "y": 7, "kind": "blocked" },
+      { "x": 1, "y": 7, "kind": "blocked" },
+      { "x": 2, "y": 7, "kind": "blocked" },
+      { "x": 3, "y": 7, "kind": "blocked" },
+      { "x": 4, "y": 7, "kind": "blocked" },
+      { "x": 5, "y": 7, "kind": "blocked" },
+      { "x": 6, "y": 7, "kind": "blocked" },
+      { "x": 7, "y": 7, "kind": "blocked" },
+      { "x": 8, "y": 7, "kind": "blocked" },
+      { "x": 9, "y": 7, "kind": "blocked" },
+      { "x": 10, "y": 7, "kind": "blocked" },
+      { "x": 11, "y": 7, "kind": "blocked" }
+    ]
+  },
+  "nodes": [
+    { "id": "entrance", "label": "Entrance", "type": "destination", "x": 5, "y": 7 },
+    { "id": "corridor", "label": "Corridor", "type": "junction", "x": 5, "y": 5 },
+    { "id": "table", "label": "Meeting Table", "type": "destination", "x": 5, "y": 3 },
+    { "id": "window_side", "label": "Window Side", "type": "destination", "x": 9, "y": 3 }
+  ],
+  "links": [
+    { "id": "l_1", "from": "entrance", "to": "corridor" },
+    { "id": "l_2", "from": "corridor", "to": "table" },
+    { "id": "l_3", "from": "table", "to": "window_side" }
+  ]
+}
