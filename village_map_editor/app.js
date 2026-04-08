@@ -1349,10 +1349,18 @@ function exportJson() {
       [
         JSON.stringify(
           {
+            schemaVersion: 1,
+            mapId: "village_demo_01",
             tileSize: TILE_SIZE,
             mapWidth: state.mapWidth,
             mapHeight: state.mapHeight,
             autoGrow: state.autoGrow,
+            resourceRoot: "resources/serious_shit",
+            background: {
+              mode: "auto-tile",
+              walkableAssetId: "serious_shit__walkable_road_clean",
+              blockedAssetId: "serious_shit__unwalkable_tile_clean",
+            },
             visual: {
               placements: state.placements,
             },
@@ -1360,10 +1368,21 @@ function exportJson() {
               autoBlockFromVisuals: state.autoBlockFromVisuals,
               resolvedTiles,
               tiles: metadataTiles,
-      nodes: state.nodes,
-      links: state.links,
-    },
-  },
+            },
+            navigation: {
+              nodes: state.nodes,
+              links: state.links,
+            },
+            nodes: state.nodes,
+            links: state.links,
+            spawn: {
+              playerStart: {
+                x: 1,
+                y: 1,
+                direction: "down",
+              },
+            },
+          },
           null,
           2,
         ),
@@ -1399,11 +1418,17 @@ function reviewCurrentMapOnPhone() {
       PHONE_REVIEW_SNAPSHOT_KEY,
       JSON.stringify({
         createdAt: new Date().toISOString(),
+        exportScale: 2,
         fileName: "village-map-review.png",
         height: exportCanvas.height,
         kind: "map",
         label: "Current Map Snapshot",
+        links: state.links,
+        mapHeight: state.mapHeight,
+        mapWidth: state.mapWidth,
+        nodes: state.nodes,
         src: exportCanvas.toDataURL("image/png"),
+        tileSize: TILE_SIZE,
         width: exportCanvas.width,
       }),
     );

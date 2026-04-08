@@ -125,6 +125,43 @@
             </div>
           </section>
 
+          <section id="overlay-panel" class="panel is-hidden">
+            <div class="section-head">
+              <h2>Semantic Overlay</h2>
+              <p class="muted">Tap one node as current location, then tap another node to start a navigation preview.</p>
+            </div>
+
+            <div id="interaction-status" class="stat-block">Tap a node on the map to set current location.</div>
+
+            <div class="toggle-list">
+              <label class="checkbox-row">
+                <input id="overlay-nodes-toggle" type="checkbox" checked />
+                <span>Show nodes</span>
+              </label>
+
+              <label class="checkbox-row">
+                <input id="overlay-labels-toggle" type="checkbox" checked />
+                <span>Show labels</span>
+              </label>
+            </div>
+
+            <label class="field">
+              <span>Start node</span>
+              <select id="route-start-select"></select>
+            </label>
+
+            <label class="field">
+              <span>Destination node</span>
+              <select id="route-end-select"></select>
+            </label>
+
+            <div class="button-row button-row-single">
+              <button id="clear-route-button" type="button">Clear route</button>
+            </div>
+
+            <div id="overlay-status" class="stat-block">No map metadata loaded.</div>
+          </section>
+
           <section id="asset-library-panel" class="panel panel-library">
             <div class="section-head">
               <h2>Tileset Library</h2>
@@ -155,7 +192,22 @@
                 <div class="phone-frame">
                   <div class="phone-notch"></div>
                   <div id="phone-screen" class="phone-screen">
-                    <img id="preview-image" alt="" />
+                    <div id="preview-stack" class="preview-stack">
+                      <img id="preview-image" alt="" />
+                      <div id="nav-top-card" class="nav-top-card is-hidden">
+                        <p class="nav-kicker">Navigation</p>
+                        <strong id="nav-title">Follow highlighted path</strong>
+                        <span id="nav-subtitle">Pick a start and destination node.</span>
+                      </div>
+                      <div id="nav-bottom-bar" class="nav-bottom-bar is-hidden">
+                        <div class="nav-bottom-copy">
+                          <span class="nav-bottom-label">Destination</span>
+                          <strong id="nav-destination">Not selected</strong>
+                        </div>
+                        <button id="exit-nav-button" class="nav-bottom-button" type="button">Exit</button>
+                      </div>
+                      <svg id="overlay-svg" class="overlay-svg" aria-hidden="true"></svg>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -196,6 +196,12 @@ button:hover {
   color: #dfe9e6;
 }
 
+.toggle-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
 input[type="number"],
 input[type="search"],
 select {
@@ -484,10 +490,151 @@ select:focus {
   background: rgba(255, 255, 255, 0.04);
 }
 
+.preview-stack {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.preview-stack.nav-active::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 13, 16, 0.26);
+  pointer-events: none;
+}
+
 #preview-image {
   display: block;
   max-width: none;
   max-height: none;
+}
+
+.nav-top-card,
+.nav-bottom-bar {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  z-index: 3;
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: rgba(13, 19, 23, 0.84);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.22);
+}
+
+.nav-top-card {
+  top: 16px;
+}
+
+.nav-bottom-bar {
+  bottom: 16px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-kicker,
+.nav-bottom-label {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+}
+
+#nav-title,
+#nav-destination {
+  color: var(--text);
+}
+
+#nav-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.nav-bottom-copy {
+  display: grid;
+  gap: 3px;
+}
+
+.nav-bottom-button {
+  min-height: 38px;
+  padding: 8px 14px;
+}
+
+.overlay-svg {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  z-index: 2;
+  pointer-events: auto;
+}
+
+.overlay-node {
+  fill: #ffe0a4;
+  stroke: rgba(44, 31, 3, 0.85);
+  stroke-width: 2.5px;
+  pointer-events: none;
+}
+
+.overlay-node[data-type="stairs"] {
+  fill: #7fd8ff;
+}
+
+.overlay-node[data-type="elevator"] {
+  fill: #9ef0b3;
+}
+
+.overlay-node[data-type="destination"] {
+  fill: #ffd480;
+}
+
+.overlay-node[data-role="start"] {
+  fill: #8fe0a0;
+}
+
+.overlay-node[data-role="end"] {
+  fill: #ffd480;
+}
+
+.overlay-hit {
+  fill: transparent;
+  pointer-events: auto;
+}
+
+.overlay-route {
+  fill: none;
+  stroke: #f2bc63;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.96;
+  pointer-events: none;
+}
+
+.overlay-route-glow {
+  fill: none;
+  stroke: rgba(242, 188, 99, 0.26);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
+}
+
+.overlay-label {
+  fill: #fff6dc;
+  font-size: 18px;
+  font-weight: 700;
+  paint-order: stroke;
+  stroke: rgba(34, 25, 7, 0.92);
+  stroke-width: 5px;
+  pointer-events: none;
+}
+
+.overlay-scrim {
+  fill: rgba(9, 13, 16, 0.34);
+  pointer-events: none;
 }
 
 .notes-grid {
