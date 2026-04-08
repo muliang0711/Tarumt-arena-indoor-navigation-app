@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ class MapStage extends StatefulWidget {
     required this.project,
     required this.overlayImageProvider,
     required this.resolveAssetImageProvider,
+    required this.assetImages,
     required this.route,
     required this.startNodeId,
     required this.endNodeId,
@@ -20,6 +23,7 @@ class MapStage extends StatefulWidget {
   final MapProject project;
   final ImageProvider<Object>? overlayImageProvider;
   final ImageProvider<Object>? Function(String assetId) resolveAssetImageProvider;
+  final Map<String, ui.Image> assetImages;
   final RouteResult route;
   final String? startNodeId;
   final String? endNodeId;
@@ -164,6 +168,7 @@ class _MapStageState extends State<MapStage> {
                             project: widget.project,
                             overlayImageProvider: widget.overlayImageProvider,
                             resolveAssetImageProvider: widget.resolveAssetImageProvider,
+                            assetImages: widget.assetImages,
                           ),
                           CustomPaint(
                             painter: _MapOverlayPainter(
@@ -201,11 +206,13 @@ class _StageImage extends StatelessWidget {
     required this.project,
     required this.overlayImageProvider,
     required this.resolveAssetImageProvider,
+    required this.assetImages,
   });
 
   final MapProject project;
   final ImageProvider<Object>? overlayImageProvider;
   final ImageProvider<Object>? Function(String assetId) resolveAssetImageProvider;
+  final Map<String, ui.Image> assetImages;
 
   @override
   Widget build(BuildContext context) {
@@ -223,7 +230,7 @@ class _StageImage extends StatelessWidget {
     if (project.placements.isNotEmpty) {
       return _TilemapScene(
         project: project,
-        resolveAssetImageProvider: resolveAssetImageProvider,
+        assetImages: assetImages,
       );
     }
 
@@ -236,62 +243,92 @@ class _StageImage extends StatelessWidget {
 class _TilemapScene extends StatelessWidget {
   const _TilemapScene({
     required this.project,
-    required this.resolveAssetImageProvider,
+    required this.assetImages,
   });
 
   final MapProject project;
-  final ImageProvider<Object>? Function(String assetId) resolveAssetImageProvider;
+  final Map<String, ui.Image> assetImages;
 
   @override
   Widget build(BuildContext context) {
-    final children = <Widget>[];
-    final walkableImage = resolveAssetImageProvider(project.background.walkableAssetId);
-    final blockedImage = resolveAssetImageProvider(project.background.blockedAssetId);
+    return RepaintBoundary(
+      child: CustomPaint(
+        painter: _TilemapScenePainter(
+          project: project,
+          assetImages: assetImages,
+        ),
+      ),
+    );
+  }
+}
+
+class _TilemapScenePainter extends CustomPainter {
+  const _TilemapScenePainter({
+    required this.project,
+    required this.assetImages,
+  });
+
+  final MapProject project;
+  final Map<String, ui.Image> assetImages;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final walkableImage = assetImages[project.background.walkableAssetId];
+    final blockedImage = assetImages[project.background.blockedAssetId];
 
     for (var y = 0; y < project.mapHeight; y += 1) {
       for (var x = 0; x < project.mapWidth; x += 1) {
         final kind = project.tileKindAt(x, y);
-        final imageProvider = kind == 'blocked' ? blockedImage : walkableImage;
-        children.add(
-          Positioned(
-            left: x * project.tileSize.toDouble(),
-            top: y * project.tileSize.toDouble(),
-            width: project.tileSize.toDouble(),
-            height: project.tileSize.toDouble(),
-            child: imageProvider != null
-                ? Image(
-                    image: imageProvider,
-                    fit: BoxFit.fill,
-                    filterQuality: FilterQuality.none,
-                  )
-                : ColoredBox(
-                    color: kind == 'blocked'
-                        ? const Color(0xFF85716A)
-                        : const Color(0xFFDDBFB2),
-                  ),
-          ),
+        final image = kind == 'blocked' ? blockedImage : walkableImage;
+        final destination = Rect.fromLTWH(
+          x * project.tileSize.toDouble(),
+          y * project.tileSize.toDouble(),
+          project.tileSize.toDouble(),
+          project.tileSize.toDouble(),
         );
+
+        if (image != null) {
+          canvas.drawImageRect(
+            image,
+            Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+            destination,
+            Paint()..filterQuality = FilterQuality.none,
+          );
+        } else {
+          canvas.drawRect(
+            destination,
+            Paint()
+              ..color = kind == 'blocked'
+                  ? const Color(0xFF85716A)
+                  : const Color(0xFFDDBFB2),
+          );
+        }
       }
     }
 
     for (final placement in project.placements) {
-      final imageProvider = resolveAssetImageProvider(placement.assetId);
-      if (imageProvider == null) {
+      final image = assetImages[placement.assetId];
+      if (image == null) {
         continue;
       }
-      children.add(
-        Positioned(
-          left: placement.tileX * project.tileSize,
-          top: placement.tileY * project.tileSize,
-          child: Image(
-            image: imageProvider,
-            filterQuality: FilterQuality.none,
-          ),
-        ),
+      final destination = Rect.fromLTWH(
+        placement.tileX * project.tileSize,
+        placement.tileY * project.tileSize,
+        image.width.toDouble(),
+        image.height.toDouble(),
+      );
+      canvas.drawImageRect(
+        image,
+        Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+        destination,
+        Paint()..filterQuality = FilterQuality.none,
       );
     }
+  }
 
-    return Stack(children: children);
+  @override
+  bool shouldRepaint(covariant _TilemapScenePainter oldDelegate) {
+    return oldDelegate.project != project || oldDelegate.assetImages != assetImages;
   }
 }
 

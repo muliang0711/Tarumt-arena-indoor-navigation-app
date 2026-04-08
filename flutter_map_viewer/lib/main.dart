@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:io';
+import 'dart:ui' as ui;
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +63,7 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
   MapProject? _project;
   Uint8List? _pickedImageBytes;
   String? _packageRootPath;
+  Map<String, ui.Image> _assetImages = const {};
   String? _startNodeId;
   String? _endNodeId;
   Offset? _playerTile;
@@ -96,6 +99,7 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
     try {
       final json = await rootBundle.loadString('assets/maps/sample_map.json');
       final project = MapProject.fromJsonString(json);
+      final assetImages = await _loadProjectAssetImages(project, packageRootPath: null);
       if (!mounted) {
         return;
       }
@@ -103,6 +107,7 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
         _project = project;
         _pickedImageBytes = null;
         _packageRootPath = null;
+        _assetImages = assetImages;
         _startNodeId = project.nodes.isNotEmpty ? project.nodes.first.id : null;
         _endNodeId = project.nodes.length > 1 ? project.nodes.last.id : null;
         _playerTile = Offset(project.spawn.x, project.spawn.y);
@@ -149,12 +154,14 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
 
       final source = String.fromCharCodes(result.files.single.bytes!);
       final project = MapProject.fromJsonString(source);
+      final assetImages = await _loadProjectAssetImages(project, packageRootPath: null);
       if (!mounted) {
         return;
       }
       setState(() {
         _project = project;
         _packageRootPath = null;
+        _assetImages = assetImages;
         _startNodeId = project.nodes.isNotEmpty ? project.nodes.first.id : null;
         _endNodeId = project.nodes.length > 1 ? project.nodes.last.id : null;
         _playerTile = Offset(project.spawn.x, project.spawn.y);
@@ -247,6 +254,7 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
 
       final source = await mapFile.readAsString();
       final project = MapProject.fromJsonString(source);
+      final assetImages = await _loadProjectAssetImages(project, packageRootPath: directory);
       if (!mounted) {
         return;
       }
@@ -254,6 +262,7 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
         _project = project;
         _packageRootPath = directory;
         _pickedImageBytes = null;
+        _assetImages = assetImages;
         _startNodeId = project.nodes.isNotEmpty ? project.nodes.first.id : null;
         _endNodeId = project.nodes.length > 1 ? project.nodes.last.id : null;
         _playerTile = Offset(project.spawn.x, project.spawn.y);
@@ -329,6 +338,60 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
     });
   }
 
+  Future<Map<String, ui.Image>> _loadProjectAssetImages(
+    MapProject project, {
+    required String? packageRootPath,
+  }) async {
+    final requiredIds = <String>{
+      project.background.walkableAssetId,
+      project.background.blockedAssetId,
+      ...project.placements.map((placement) => placement.assetId),
+    };
+
+    final images = <String, ui.Image>{};
+    for (final assetId in requiredIds) {
+      final image = await _loadUiImageForAsset(assetId, packageRootPath: packageRootPath);
+      if (image != null) {
+        images[assetId] = image;
+      }
+    }
+    return images;
+  }
+
+  Future<ui.Image?> _loadUiImageForAsset(
+    String assetId, {
+    required String? packageRootPath,
+  }) async {
+    final normalized = assetId.trim();
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    Uint8List bytes;
+    if (packageRootPath != null) {
+      final fileName = '${normalized.split('__').last}.png';
+      final filePath =
+          '$packageRootPath${Platform.pathSeparator}${projectResourceRoot()}${Platform.pathSeparator}$fileName';
+      final file = File(filePath);
+      if (!file.existsSync()) {
+        return null;
+      }
+      bytes = await file.readAsBytes();
+    } else {
+      final bundleData =
+          await rootBundle.load('assets/resources/${normalized.replaceAll('__', '/')}.png');
+      bytes = bundleData.buffer.asUint8List();
+    }
+
+    return _decodeUiImage(bytes);
+  }
+
+  Future<ui.Image> _decodeUiImage(Uint8List bytes) {
+    final completer = Completer<ui.Image>();
+    ui.decodeImageFromList(bytes, completer.complete);
+    return completer.future;
+  }
+
   ImageProvider<Object>? _resolveAssetImageProvider(String assetId) {
     final normalized = assetId.trim();
     if (normalized.isEmpty) {
@@ -396,6 +459,7 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
                               project: project,
                               overlayImageProvider: _imageProvider,
                               resolveAssetImageProvider: _resolveAssetImageProvider,
+                              assetImages: _assetImages,
                               route: _route,
                               startNodeId: _startNodeId,
                               endNodeId: _endNodeId,
