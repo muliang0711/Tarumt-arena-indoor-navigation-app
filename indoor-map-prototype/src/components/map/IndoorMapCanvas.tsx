@@ -161,20 +161,22 @@ export default function IndoorMapCanvas({
 
           {selectedDestination ? (
             <G>
-              <Line
-                x1={selectedDestination.entrance.x}
-                y1={selectedDestination.entrance.y}
-                x2={selectedDestination.roomCenter.x}
-                y2={selectedDestination.roomCenter.y}
-                stroke={selectedDestination.accentColor}
-                strokeWidth={4}
-                strokeDasharray="10 8"
-                opacity={0.45}
-              />
+              {state !== 'navigating' ? (
+                <Line
+                  x1={selectedDestination.entrance.x}
+                  y1={selectedDestination.entrance.y}
+                  x2={selectedDestination.roomCenter.x}
+                  y2={selectedDestination.roomCenter.y}
+                  stroke={selectedDestination.accentColor}
+                  strokeWidth={4}
+                  strokeDasharray="10 8"
+                  opacity={0.45}
+                />
+              ) : null}
               <Circle
                 cx={selectedDestination.roomCenter.x}
                 cy={selectedDestination.roomCenter.y}
-                r={18}
+                r={state === 'navigating' ? 14 : 18}
                 fill={selectedDestination.accentColor}
               />
               <Circle
@@ -183,16 +185,18 @@ export default function IndoorMapCanvas({
                 r={8}
                 fill={colors.white}
               />
-              <SvgText
-                x={selectedDestination.roomCenter.x}
-                y={selectedDestination.roomBounds.y - 18}
-                textAnchor="middle"
-                fontSize={18}
-                fontWeight="700"
-                fill={colors.textPrimary}
-              >
-                {selectedDestination.label}
-              </SvgText>
+              {state !== 'navigating' ? (
+                <SvgText
+                  x={selectedDestination.roomCenter.x}
+                  y={selectedDestination.roomBounds.y - 18}
+                  textAnchor="middle"
+                  fontSize={18}
+                  fontWeight="700"
+                  fill={colors.textPrimary}
+                >
+                  {selectedDestination.label}
+                </SvgText>
+              ) : null}
             </G>
           ) : null}
 

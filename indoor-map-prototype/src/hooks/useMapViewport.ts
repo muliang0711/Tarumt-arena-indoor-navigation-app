@@ -107,6 +107,9 @@ export function useMapViewport({ worldWidth, worldHeight, focusBounds }: UseMapV
     translateX: 0,
     translateY: 0,
   });
+  const viewportRef = useRef(viewport);
+  const transformRef = useRef(transform);
+  const boundsRef = useRef({ worldWidth, worldHeight, focusBounds });
 
   const gestureRef = useRef({
     scale: DEFAULT_SCALE,
@@ -115,7 +118,20 @@ export function useMapViewport({ worldWidth, worldHeight, focusBounds }: UseMapV
     distance: 0,
     focalWorldX: 0,
     focalWorldY: 0,
+    touchCount: 0,
   });
+
+  useEffect(() => {
+    viewportRef.current = viewport;
+  }, [viewport]);
+
+  useEffect(() => {
+    transformRef.current = transform;
+  }, [transform]);
+
+  useEffect(() => {
+    boundsRef.current = { worldWidth, worldHeight, focusBounds };
+  }, [focusBounds, worldHeight, worldWidth]);
 
   useEffect(() => {
     if (viewport.width <= 0 || viewport.height <= 0) {
@@ -137,34 +153,39 @@ export function useMapViewport({ worldWidth, worldHeight, focusBounds }: UseMapV
   };
 
   const centerOn = useCallback((point: Point, requestedScale?: number) => {
-    if (viewport.width <= 0 || viewport.height <= 0) {
+    const nextViewport = viewportRef.current;
+    const nextBounds = boundsRef.current;
+    const currentTransform = transformRef.current;
+    if (nextViewport.width <= 0 || nextViewport.height <= 0) {
       return;
     }
 
-    const scale = clamp(requestedScale ?? transform.scale, MIN_SCALE, MAX_SCALE);
+    const scale = clamp(requestedScale ?? currentTransform.scale, MIN_SCALE, MAX_SCALE);
     setTransform(
       clampTransform(
         {
           scale,
-          translateX: viewport.width * 0.5 - point.x * scale,
-          translateY: viewport.height * 0.5 - point.y * scale,
+          translateX: nextViewport.width * 0.5 - point.x * scale,
+          translateY: nextViewport.height * 0.5 - point.y * scale,
         },
-        viewport,
-        worldWidth,
-        worldHeight,
+        nextViewport,
+        nextBounds.worldWidth,
+        nextBounds.worldHeight,
       ),
     );
-  }, [transform.scale, viewport, worldWidth, worldHeight]);
+  }, []);
 
   const zoomBy = useCallback((delta: number) => {
-    if (viewport.width <= 0 || viewport.height <= 0) {
+    const nextViewport = viewportRef.current;
+    const nextBounds = boundsRef.current;
+    if (nextViewport.width <= 0 || nextViewport.height <= 0) {
       return;
     }
 
     setTransform((current) => {
       const nextScale = clamp(current.scale + delta, MIN_SCALE, MAX_SCALE);
-      const centerX = viewport.width * 0.5;
-      const centerY = viewport.height * 0.5;
+      const centerX = nextViewport.width * 0.5;
+      const centerY = nextViewport.height * 0.5;
       const worldX = (centerX - current.translateX) / current.scale;
       const worldY = (centerY - current.translateY) / current.scale;
 
@@ -174,44 +195,71 @@ export function useMapViewport({ worldWidth, worldHeight, focusBounds }: UseMapV
           translateX: centerX - worldX * nextScale,
           translateY: centerY - worldY * nextScale,
         },
-        viewport,
-        worldWidth,
-        worldHeight,
+        nextViewport,
+        nextBounds.worldWidth,
+        nextBounds.worldHeight,
       );
     });
-  }, [viewport, worldWidth, worldHeight]);
+  }, []);
 
   const fitToBounds = useCallback(() => {
-    if (viewport.width <= 0 || viewport.height <= 0) {
+    const nextViewport = viewportRef.current;
+    const nextBounds = boundsRef.current;
+    if (nextViewport.width <= 0 || nextViewport.height <= 0) {
       return;
     }
 
-    setTransform(computeFitTransform(viewport, focusBounds, worldWidth, worldHeight));
-  }, [focusBounds, viewport, worldHeight, worldWidth]);
+    setTransform(
+      computeFitTransform(
+        nextViewport,
+        nextBounds.focusBounds,
+        nextBounds.worldWidth,
+        nextBounds.worldHeight,
+      ),
+    );
+  }, []);
+
+  const startGestureFromTouches = (touches: readonly any[]) => {
+    const currentTransform = transformRef.current;
+    const midpoint = midpointBetweenTouches(touches);
+    gestureRef.current = {
+      scale: currentTransform.scale,
+      translateX: currentTransform.translateX,
+      translateY: currentTransform.translateY,
+      distance: distanceBetweenTouches(touches),
+      focalWorldX: (midpoint.x - currentTransform.translateX) / currentTransform.scale,
+      focalWorldY: (midpoint.y - currentTransform.translateY) / currentTransform.scale,
+      touchCount: touches.length,
+    };
+  };
 
   const panResponder = useMemo<PanResponderInstance>(() => {
     return PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gestureState) =>
-        Math.abs(gestureState.dx) > 2 || Math.abs(gestureState.dy) > 2,
+      onStartShouldSetPanResponder: (event) => event.nativeEvent.touches.length >= 2,
+      onStartShouldSetPanResponderCapture: (event) => event.nativeEvent.touches.length >= 2,
+      onMoveShouldSetPanResponder: (event, gestureState) =>
+        event.nativeEvent.touches.length >= 2 ||
+        Math.abs(gestureState.dx) > 1 ||
+        Math.abs(gestureState.dy) > 1,
+      onMoveShouldSetPanResponderCapture: (event, gestureState) =>
+        event.nativeEvent.touches.length >= 2 ||
+        Math.abs(gestureState.dx) > 1 ||
+        Math.abs(gestureState.dy) > 1,
       onPanResponderGrant: (event) => {
-        const touches = event.nativeEvent.touches;
-        const midpoint = midpointBetweenTouches(touches);
-        gestureRef.current = {
-          scale: transform.scale,
-          translateX: transform.translateX,
-          translateY: transform.translateY,
-          distance: distanceBetweenTouches(touches),
-          focalWorldX: (midpoint.x - transform.translateX) / transform.scale,
-          focalWorldY: (midpoint.y - transform.translateY) / transform.scale,
-        };
+        startGestureFromTouches(event.nativeEvent.touches);
       },
       onPanResponderMove: (event, gestureState: PanResponderGestureState) => {
-        if (viewport.width <= 0 || viewport.height <= 0) {
+        const nextViewport = viewportRef.current;
+        const nextBounds = boundsRef.current;
+        if (nextViewport.width <= 0 || nextViewport.height <= 0) {
           return;
         }
 
         const touches = event.nativeEvent.touches;
+        if (gestureRef.current.touchCount !== touches.length) {
+          startGestureFromTouches(touches);
+        }
+
         if (touches.length >= 2) {
           const midpoint = midpointBetweenTouches(touches);
           const distance = distanceBetweenTouches(touches);
@@ -228,9 +276,9 @@ export function useMapViewport({ worldWidth, worldHeight, focusBounds }: UseMapV
                 translateX: midpoint.x - gestureRef.current.focalWorldX * nextScale,
                 translateY: midpoint.y - gestureRef.current.focalWorldY * nextScale,
               },
-              viewport,
-              worldWidth,
-              worldHeight,
+              nextViewport,
+              nextBounds.worldWidth,
+              nextBounds.worldHeight,
             ),
           );
           return;
@@ -243,14 +291,14 @@ export function useMapViewport({ worldWidth, worldHeight, focusBounds }: UseMapV
               translateX: gestureRef.current.translateX + gestureState.dx,
               translateY: gestureRef.current.translateY + gestureState.dy,
             },
-            viewport,
-            worldWidth,
-            worldHeight,
+            nextViewport,
+            nextBounds.worldWidth,
+            nextBounds.worldHeight,
           ),
         );
       },
     });
-  }, [transform.scale, transform.translateX, transform.translateY, viewport, worldHeight, worldWidth]);
+  }, []);
 
   return {
     viewport,
