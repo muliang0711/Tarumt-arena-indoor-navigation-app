@@ -13,6 +13,8 @@ class MapStage extends StatefulWidget {
     required this.overlayImageProvider,
     required this.resolveAssetImageProvider,
     required this.assetImages,
+    required this.startupZoomMultiplier,
+    required this.onViewScaleChanged,
     required this.route,
     required this.startNodeId,
     required this.endNodeId,
@@ -24,6 +26,8 @@ class MapStage extends StatefulWidget {
   final ImageProvider<Object>? overlayImageProvider;
   final ImageProvider<Object>? Function(String assetId) resolveAssetImageProvider;
   final Map<String, ui.Image> assetImages;
+  final double startupZoomMultiplier;
+  final ValueChanged<double> onViewScaleChanged;
   final RouteResult route;
   final String? startNodeId;
   final String? endNodeId;
@@ -50,7 +54,9 @@ class _MapStageState extends State<MapStage> {
     super.didUpdateWidget(oldWidget);
     final routeChanged = oldWidget.route.nodes != widget.route.nodes;
     final projectChanged = oldWidget.project != widget.project;
-    if (routeChanged || projectChanged) {
+    final zoomChanged = oldWidget.startupZoomMultiplier != widget.startupZoomMultiplier;
+    final playerChanged = oldWidget.playerTile != widget.playerTile;
+    if (routeChanged || projectChanged || zoomChanged || playerChanged) {
       WidgetsBinding.instance.addPostFrameCallback((_) => _frameContent());
     }
   }
@@ -68,11 +74,6 @@ class _MapStageState extends State<MapStage> {
 
     final childWidth = widget.project.pixelWidth;
     final childHeight = widget.project.pixelHeight;
-    final fitScale = math.min(_viewportSize.width / childWidth, _viewportSize.height / childHeight);
-    final scale = widget.route.hasRoute
-        ? math.max(math.min(fitScale * 2.1, 4.0), fitScale)
-        : fitScale;
-
     final focusRect = widget.route.hasRoute
         ? widget.project.routeBounds(widget.route.nodes)
         : widget.playerTile != null
@@ -81,10 +82,15 @@ class _MapStageState extends State<MapStage> {
                   (widget.playerTile!.dx + 0.5) * widget.project.tileSize,
                   (widget.playerTile!.dy + 0.5) * widget.project.tileSize,
                 ),
-                width: widget.project.tileSize * 8,
-                height: widget.project.tileSize * 6,
+                width: widget.project.tileSize * 14,
+                height: widget.project.tileSize * 10,
               )
             : Rect.fromLTWH(0, 0, childWidth, childHeight);
+    final focusFitScale = math.min(
+      _viewportSize.width / math.max(focusRect.width, 1),
+      _viewportSize.height / math.max(focusRect.height, 1),
+    );
+    final scale = (focusFitScale * widget.startupZoomMultiplier).clamp(0.25, 6.0);
 
     final centerX = focusRect.center.dx;
     final centerY = widget.route.hasRoute
@@ -96,6 +102,7 @@ class _MapStageState extends State<MapStage> {
     _controller.value = Matrix4.identity()
       ..translateByDouble(dx, dy, 0, 1)
       ..scaleByDouble(scale, scale, 1, 1);
+    widget.onViewScaleChanged(scale);
   }
 
   void _handleTap(TapUpDetails details) {
@@ -158,6 +165,9 @@ class _MapStageState extends State<MapStage> {
                     boundaryMargin: const EdgeInsets.all(320),
                     minScale: 0.25,
                     maxScale: 6,
+                    onInteractionUpdate: (_) {
+                      widget.onViewScaleChanged(_controller.value.getMaxScaleOnAxis());
+                    },
                     child: SizedBox(
                       width: widget.project.pixelWidth,
                       height: widget.project.pixelHeight,

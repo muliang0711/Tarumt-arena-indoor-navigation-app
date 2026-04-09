@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:file_picker/file_picker.dart';
@@ -60,6 +61,30 @@ class MapViewerHomePage extends StatefulWidget {
 }
 
 class _MapViewerHomePageState extends State<MapViewerHomePage> {
+  static const List<_ViewportPreset> _viewportPresets = [
+    _ViewportPreset(
+      id: 'iphone_15',
+      label: 'Phone 390x844',
+      width: 390,
+      height: 844,
+      shortLabel: '390 x 844',
+    ),
+    _ViewportPreset(
+      id: 'pixel_8',
+      label: 'Phone 412x915',
+      width: 412,
+      height: 915,
+      shortLabel: '412 x 915',
+    ),
+    _ViewportPreset(
+      id: 'iphone_15_pm',
+      label: 'Phone 430x932',
+      width: 430,
+      height: 932,
+      shortLabel: '430 x 932',
+    ),
+  ];
+
   MapProject? _project;
   Uint8List? _pickedImageBytes;
   String? _packageRootPath;
@@ -67,6 +92,10 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
   String? _startNodeId;
   String? _endNodeId;
   Offset? _playerTile;
+  double _startupZoomMultiplier = 1.0;
+  double _currentViewScale = 1.0;
+  bool _simulatePhoneViewport = true;
+  String _selectedViewportPresetId = 'iphone_15';
   String _status = 'Loading bundled sample project...';
   bool _busy = false;
 
@@ -88,6 +117,13 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
 
   RouteResult get _route {
     return _project?.buildRoute(_startNodeId, _endNodeId) ?? const RouteResult.empty();
+  }
+
+  _ViewportPreset get _selectedViewportPreset {
+    return _viewportPresets.firstWhere(
+      (preset) => preset.id == _selectedViewportPresetId,
+      orElse: () => _viewportPresets.first,
+    );
   }
 
   Future<void> _loadBundledSample() async {
@@ -446,6 +482,44 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
                             startNodeId: _startNodeId,
                             endNodeId: _endNodeId,
                             playerTile: _playerTile,
+                            startupZoomMultiplier: _startupZoomMultiplier,
+                            currentViewScale: _currentViewScale,
+                            simulatePhoneViewport: _simulatePhoneViewport,
+                            selectedViewportPreset: _selectedViewportPreset,
+                            viewportPresets: _viewportPresets,
+                            onStartupZoomChanged: (value) {
+                              setState(() {
+                                _startupZoomMultiplier = value;
+                              });
+                            },
+                            onSetOverview: () {
+                              setState(() {
+                                _startupZoomMultiplier = 0.55;
+                              });
+                            },
+                            onSetReadable: () {
+                              setState(() {
+                                _startupZoomMultiplier = 1.0;
+                              });
+                            },
+                            onSetDetail: () {
+                              setState(() {
+                                _startupZoomMultiplier = 1.6;
+                              });
+                            },
+                            onToggleViewportMode: (value) {
+                              setState(() {
+                                _simulatePhoneViewport = value;
+                              });
+                            },
+                            onViewportPresetChanged: (value) {
+                              if (value == null) {
+                                return;
+                              }
+                              setState(() {
+                                _selectedViewportPresetId = value;
+                              });
+                            },
                             onStartChanged: (value) => setState(() => _startNodeId = value),
                             onEndChanged: (value) => setState(() => _endNodeId = value),
                             onMoveLeft: () => _movePlayer(-1, 0),
@@ -455,16 +529,29 @@ class _MapViewerHomePageState extends State<MapViewerHomePage> {
                           ),
                           const SizedBox(height: 14),
                           Expanded(
-                            child: MapStage(
-                              project: project,
-                              overlayImageProvider: _imageProvider,
-                              resolveAssetImageProvider: _resolveAssetImageProvider,
-                              assetImages: _assetImages,
-                              route: _route,
-                              startNodeId: _startNodeId,
-                              endNodeId: _endNodeId,
-                              playerTile: _playerTile,
-                              onNodeTap: _handleNodeTap,
+                            child: _ViewportStageFrame(
+                              simulatePhoneViewport: _simulatePhoneViewport,
+                              preset: _selectedViewportPreset,
+                              child: MapStage(
+                                project: project,
+                                overlayImageProvider: _imageProvider,
+                                resolveAssetImageProvider: _resolveAssetImageProvider,
+                                assetImages: _assetImages,
+                                startupZoomMultiplier: _startupZoomMultiplier,
+                                onViewScaleChanged: (value) {
+                                  if (!mounted) {
+                                    return;
+                                  }
+                                  setState(() {
+                                    _currentViewScale = value;
+                                  });
+                                },
+                                route: _route,
+                                startNodeId: _startNodeId,
+                                endNodeId: _endNodeId,
+                                playerTile: _playerTile,
+                                onNodeTap: _handleNodeTap,
+                              ),
                             ),
                           ),
                         ],
@@ -593,6 +680,17 @@ class _InspectorStrip extends StatelessWidget {
     required this.startNodeId,
     required this.endNodeId,
     required this.playerTile,
+    required this.startupZoomMultiplier,
+    required this.currentViewScale,
+    required this.simulatePhoneViewport,
+    required this.selectedViewportPreset,
+    required this.viewportPresets,
+    required this.onStartupZoomChanged,
+    required this.onSetOverview,
+    required this.onSetReadable,
+    required this.onSetDetail,
+    required this.onToggleViewportMode,
+    required this.onViewportPresetChanged,
     required this.onStartChanged,
     required this.onEndChanged,
     required this.onMoveLeft,
@@ -606,6 +704,17 @@ class _InspectorStrip extends StatelessWidget {
   final String? startNodeId;
   final String? endNodeId;
   final Offset? playerTile;
+  final double startupZoomMultiplier;
+  final double currentViewScale;
+  final bool simulatePhoneViewport;
+  final _ViewportPreset selectedViewportPreset;
+  final List<_ViewportPreset> viewportPresets;
+  final ValueChanged<double> onStartupZoomChanged;
+  final VoidCallback onSetOverview;
+  final VoidCallback onSetReadable;
+  final VoidCallback onSetDetail;
+  final ValueChanged<bool> onToggleViewportMode;
+  final ValueChanged<String?> onViewportPresetChanged;
   final ValueChanged<String?> onStartChanged;
   final ValueChanged<String?> onEndChanged;
   final VoidCallback onMoveLeft;
@@ -643,6 +752,23 @@ class _InspectorStrip extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(child: _MetricCard(label: 'Route', value: route.hasRoute ? '${route.segmentCount} hops' : 'Not set')),
               ],
+            ),
+            const SizedBox(height: 12),
+            _ZoomInspector(
+              startupZoomMultiplier: startupZoomMultiplier,
+              currentViewScale: currentViewScale,
+              onStartupZoomChanged: onStartupZoomChanged,
+              onSetOverview: onSetOverview,
+              onSetReadable: onSetReadable,
+              onSetDetail: onSetDetail,
+            ),
+            const SizedBox(height: 12),
+            _ViewportInspector(
+              simulatePhoneViewport: simulatePhoneViewport,
+              selectedViewportPreset: selectedViewportPreset,
+              presets: viewportPresets,
+              onToggleViewportMode: onToggleViewportMode,
+              onPresetChanged: onViewportPresetChanged,
             ),
             const SizedBox(height: 12),
             Row(
@@ -805,6 +931,306 @@ class _PlayerControls extends StatelessWidget {
       ],
     );
   }
+}
+
+class _ZoomInspector extends StatelessWidget {
+  const _ZoomInspector({
+    required this.startupZoomMultiplier,
+    required this.currentViewScale,
+    required this.onStartupZoomChanged,
+    required this.onSetOverview,
+    required this.onSetReadable,
+    required this.onSetDetail,
+  });
+
+  final double startupZoomMultiplier;
+  final double currentViewScale;
+  final ValueChanged<double> onStartupZoomChanged;
+  final VoidCallback onSetOverview;
+  final VoidCallback onSetReadable;
+  final VoidCallback onSetDetail;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6E6DE),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Startup Zoom',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFF7C635D),
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Multiplier x${startupZoomMultiplier.toStringAsFixed(2)}  |  Current scale x${currentViewScale.toStringAsFixed(2)}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF4D3B36),
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            Slider(
+              value: startupZoomMultiplier,
+              min: 0.4,
+              max: 2.4,
+              divisions: 20,
+              label: startupZoomMultiplier.toStringAsFixed(2),
+              onChanged: onStartupZoomChanged,
+            ),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton.tonal(
+                  onPressed: onSetOverview,
+                  child: const Text('Overview'),
+                ),
+                FilledButton.tonal(
+                  onPressed: onSetReadable,
+                  child: const Text('Readable'),
+                ),
+                FilledButton.tonal(
+                  onPressed: onSetDetail,
+                  child: const Text('Detail'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ViewportInspector extends StatelessWidget {
+  const _ViewportInspector({
+    required this.simulatePhoneViewport,
+    required this.selectedViewportPreset,
+    required this.presets,
+    required this.onToggleViewportMode,
+    required this.onPresetChanged,
+  });
+
+  final bool simulatePhoneViewport;
+  final _ViewportPreset selectedViewportPreset;
+  final List<_ViewportPreset> presets;
+  final ValueChanged<bool> onToggleViewportMode;
+  final ValueChanged<String?> onPresetChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6E6DE),
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Viewport Simulation',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xFF7C635D),
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              simulatePhoneViewport
+                  ? 'Using fixed mobile viewport: ${selectedViewportPreset.shortLabel}'
+                  : 'Using full desktop canvas. Switch back to phone mode for realistic startup zoom tuning.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: const Color(0xFF4D3B36),
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: 10),
+            SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment<bool>(
+                  value: true,
+                  icon: Icon(Icons.smartphone_rounded),
+                  label: Text('Phone Frame'),
+                ),
+                ButtonSegment<bool>(
+                  value: false,
+                  icon: Icon(Icons.desktop_windows_rounded),
+                  label: Text('Desktop'),
+                ),
+              ],
+              selected: {simulatePhoneViewport},
+              onSelectionChanged: (selection) {
+                if (selection.isEmpty) {
+                  return;
+                }
+                onToggleViewportMode(selection.first);
+              },
+            ),
+            const SizedBox(height: 10),
+            DropdownButtonFormField<String>(
+              initialValue: selectedViewportPreset.id,
+              decoration: InputDecoration(
+                labelText: 'Phone preset',
+                filled: true,
+                fillColor: const Color(0xFFFFF7F2),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              items: presets
+                  .map(
+                    (preset) => DropdownMenuItem<String>(
+                      value: preset.id,
+                      child: Text(preset.label),
+                    ),
+                  )
+                  .toList(),
+              onChanged: onPresetChanged,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ViewportStageFrame extends StatelessWidget {
+  const _ViewportStageFrame({
+    required this.simulatePhoneViewport,
+    required this.preset,
+    required this.child,
+  });
+
+  final bool simulatePhoneViewport;
+  final _ViewportPreset preset;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!simulatePhoneViewport) {
+      return child;
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final availableWidth = constraints.maxWidth;
+        final availableHeight = constraints.maxHeight;
+        final aspectRatio = preset.aspectRatio;
+        final idealWidth = math.min(availableWidth, 430.0);
+        var frameWidth = idealWidth;
+        var frameHeight = frameWidth / aspectRatio;
+
+        if (frameHeight > availableHeight) {
+          frameHeight = availableHeight;
+          frameWidth = frameHeight * aspectRatio;
+        }
+
+        return Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF7F2),
+                  borderRadius: BorderRadius.circular(999),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x16000000),
+                      blurRadius: 14,
+                      offset: Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  'Simulated ${preset.shortLabel}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: const Color(0xFF5F4740),
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Container(
+                width: frameWidth,
+                height: frameHeight,
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1D1817),
+                  borderRadius: BorderRadius.circular(38),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x26000000),
+                      blurRadius: 28,
+                      offset: Offset(0, 14),
+                    ),
+                  ],
+                ),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF2B201D),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(28),
+                    child: Stack(
+                      children: [
+                        Positioned.fill(child: child),
+                        Positioned(
+                          top: 8,
+                          left: 0,
+                          right: 0,
+                          child: Center(
+                            child: Container(
+                              width: 112,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF1B1514),
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ViewportPreset {
+  const _ViewportPreset({
+    required this.id,
+    required this.label,
+    required this.width,
+    required this.height,
+    required this.shortLabel,
+  });
+
+  final String id;
+  final String label;
+  final double width;
+  final double height;
+  final String shortLabel;
+
+  double get aspectRatio => width / height;
 }
 
 class _EmptyState extends StatelessWidget {
