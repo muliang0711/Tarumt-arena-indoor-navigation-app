@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     Animated,
+    Image,
+    LayoutChangeEvent,
     NativeScrollEvent,
     NativeSyntheticEvent,
     ScrollView,
@@ -11,6 +13,7 @@ import {
     useWindowDimensions,
     View,
 } from 'react-native';
+import demoMapPackage from '../data/villageDemoPackage.json';
 
 type FocusMode = 'map' | 'split' | 'ar';
 
@@ -18,6 +21,22 @@ const COLLAPSED_PANEL_HEIGHT = 84;
 const PANEL_GAP = 14;
 const TOP_COPY_SPACE = 154;
 const BOTTOM_SPACE = 14;
+const DEFAULT_STARTUP_ZOOM = 1.1;
+const MIN_PREVIEW_ZOOM = 0.55;
+const MAX_PREVIEW_ZOOM = 1.85;
+const PREVIEW_ZOOM_STEP = 0.1;
+const PREVIEW_IMAGE = require('../../assets/map-packages/village_demo_01/preview.png');
+
+type DemoMapPackage = typeof demoMapPackage;
+
+interface ContentBounds {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    centerX: number;
+    centerY: number;
+}
 
 function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);
@@ -52,11 +71,193 @@ function getModeCopy(mode: FocusMode) {
     }
 }
 
+function computeContentBounds(mapPackage: DemoMapPackage): ContentBounds {
+    const tileSize = mapPackage.tileSize || 16;
+    const worldWidth = mapPackage.mapWidth * tileSize;
+    const worldHeight = mapPackage.mapHeight * tileSize;
+    const resolvedTiles = mapPackage.metadata?.resolvedTiles ?? [];
+    const placements = mapPackage.visual?.placements ?? [];
+
+    let minX = Number.POSITIVE_INFINITY;
+    let minY = Number.POSITIVE_INFINITY;
+    let maxX = Number.NEGATIVE_INFINITY;
+    let maxY = Number.NEGATIVE_INFINITY;
+
+    for (const tile of resolvedTiles) {
+        minX = Math.min(minX, tile.x * tileSize);
+        minY = Math.min(minY, tile.y * tileSize);
+        maxX = Math.max(maxX, (tile.x + 1) * tileSize);
+        maxY = Math.max(maxY, (tile.y + 1) * tileSize);
+    }
+
+    for (const placement of placements) {
+        minX = Math.min(minX, placement.tileX * tileSize);
+        minY = Math.min(minY, placement.tileY * tileSize);
+        maxX = Math.max(maxX, (placement.tileX + 8) * tileSize);
+        maxY = Math.max(maxY, (placement.tileY + 8) * tileSize);
+    }
+
+    if (!Number.isFinite(minX) || !Number.isFinite(minY)) {
+        return {
+            left: 0,
+            top: 0,
+            width: worldWidth,
+            height: worldHeight,
+            centerX: worldWidth / 2,
+            centerY: worldHeight / 2,
+        };
+    }
+
+    const padding = tileSize * 5;
+    const left = clamp(minX - padding, 0, worldWidth);
+    const top = clamp(minY - padding, 0, worldHeight);
+    const right = clamp(maxX + padding, 0, worldWidth);
+    const bottom = clamp(maxY + padding, 0, worldHeight);
+    const width = Math.max(right - left, tileSize * 10);
+    const height = Math.max(bottom - top, tileSize * 10);
+
+    return {
+        left,
+        top,
+        width,
+        height,
+        centerX: left + width / 2,
+        centerY: top + height / 2,
+    };
+}
+
+function computeMapPreviewFrame(
+    viewportWidth: number,
+    viewportHeight: number,
+    mapPackage: DemoMapPackage,
+    startupZoom: number,
+) {
+    const worldWidth = mapPackage.mapWidth * mapPackage.tileSize;
+    const worldHeight = mapPackage.mapHeight * mapPackage.tileSize;
+    const focus = computeContentBounds(mapPackage);
+    const fitScale = Math.min(
+        viewportWidth / Math.max(focus.width, 1),
+        viewportHeight / Math.max(focus.height, 1),
+    );
+    const scale = fitScale * startupZoom;
+    const scaledWidth = worldWidth * scale;
+    const scaledHeight = worldHeight * scale;
+    const left = viewportWidth * 0.5 - focus.centerX * scale;
+    const top = viewportHeight * 0.56 - focus.centerY * scale;
+
+    return {
+        scale,
+        left,
+        top,
+        width: scaledWidth,
+        height: scaledHeight,
+    };
+}
+
+function MapPreviewSurface({
+    previewZoom,
+}: {
+    previewZoom: number;
+}) {
+    const [viewport, setViewport] = useState({ width: 0, height: 0 });
+    const tileSize = demoMapPackage.tileSize;
+    const worldWidth = demoMapPackage.mapWidth * tileSize;
+    const worldHeight = demoMapPackage.mapHeight * tileSize;
+    const frame = useMemo(() => {
+        if (viewport.width <= 0 || viewport.height <= 0) {
+            return null;
+        }
+        return computeMapPreviewFrame(
+            viewport.width,
+            viewport.height,
+            demoMapPackage,
+            previewZoom,
+        );
+    }, [previewZoom, viewport.height, viewport.width]);
+
+    const handleLayout = (event: LayoutChangeEvent) => {
+        const { width, height } = event.nativeEvent.layout;
+        setViewport((current) => {
+            if (
+                Math.abs(current.width - width) < 0.5 &&
+                Math.abs(current.height - height) < 0.5
+            ) {
+                return current;
+            }
+            return { width, height };
+        });
+    };
+
+    return (
+        <View style={styles.mapCanvas} onLayout={handleLayout}>
+            {frame && (
+                <Image
+                    source={PREVIEW_IMAGE}
+                    resizeMode="stretch"
+                    style={[
+                        styles.mapRaster,
+                        {
+                            left: frame.left,
+                            top: frame.top,
+                            width: frame.width,
+                            height: frame.height,
+                        },
+                    ]}
+                />
+            )}
+            <View pointerEvents="none" style={styles.mapGlass} />
+            <View style={styles.mapBadge}>
+                <Text style={styles.mapBadgeText}>Real map preview · x{previewZoom.toFixed(2)}</Text>
+            </View>
+            <View style={styles.mapMetaBar}>
+                <View style={styles.mapMetaPill}>
+                    <Text style={styles.mapMetaLabel}>Package</Text>
+                    <Text style={styles.mapMetaValue}>{demoMapPackage.mapId}</Text>
+                </View>
+                <View style={styles.mapMetaPill}>
+                    <Text style={styles.mapMetaLabel}>World</Text>
+                    <Text style={styles.mapMetaValue}>{worldWidth} x {worldHeight}</Text>
+                </View>
+            </View>
+        </View>
+    );
+}
+
+function FloatingPreviewZoomControls({
+    previewZoom,
+    onZoomIn,
+    onZoomOut,
+    onZoomReset,
+}: {
+    previewZoom: number;
+    onZoomIn: () => void;
+    onZoomOut: () => void;
+    onZoomReset: () => void;
+}) {
+    return (
+        <View pointerEvents="box-none" style={styles.zoomOverlay}>
+            <View style={styles.mapZoomDock}>
+                <TouchableOpacity style={styles.mapZoomButton} activeOpacity={0.85} onPress={onZoomOut}>
+                    <Text style={styles.mapZoomGlyph}>-</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.mapZoomReadout} activeOpacity={0.85} onPress={onZoomReset}>
+                    <Text style={styles.mapZoomLabel}>Preview zoom</Text>
+                    <Text style={styles.mapZoomValue}>x{previewZoom.toFixed(2)}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.mapZoomButton} activeOpacity={0.85} onPress={onZoomIn}>
+                    <Text style={styles.mapZoomGlyph}>+</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    );
+}
+
 export default function NavigationSplitPrototype() {
     const { height: windowHeight } = useWindowDimensions();
     const scrollRef = useRef<ScrollView | null>(null);
     const scrollY = useRef(new Animated.Value(0)).current;
     const [focusMode, setFocusMode] = useState<FocusMode>('split');
+    const [previewZoom, setPreviewZoom] = useState(DEFAULT_STARTUP_ZOOM);
 
     const viewportHeight = Math.max(windowHeight, 1);
     const usableHeight = Math.max(
@@ -160,6 +361,18 @@ export default function NavigationSplitPrototype() {
         setFocusMode(getFocusMode(nextOffset, snapRange));
     };
 
+    const handlePreviewZoomIn = () => {
+        setPreviewZoom((current) => clamp(current + PREVIEW_ZOOM_STEP, MIN_PREVIEW_ZOOM, MAX_PREVIEW_ZOOM));
+    };
+
+    const handlePreviewZoomOut = () => {
+        setPreviewZoom((current) => clamp(current - PREVIEW_ZOOM_STEP, MIN_PREVIEW_ZOOM, MAX_PREVIEW_ZOOM));
+    };
+
+    const handlePreviewZoomReset = () => {
+        setPreviewZoom(DEFAULT_STARTUP_ZOOM);
+    };
+
     return (
         <View style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#07111f" />
@@ -233,7 +446,18 @@ export default function NavigationSplitPrototype() {
                             }}
                         >
                             <Text style={styles.panelHint}>
-                                Placeholder only for now. Replace this block with the real map later.
+                                Bundled review build of the exported package. Use this screen on your phone to judge the real startup framing.
+                            </Text>
+                        </Animated.View>
+                        <Animated.View
+                            style={{
+                                opacity: mapMetaOpacity,
+                                height: mapTagHeight,
+                                overflow: 'hidden',
+                            }}
+                        >
+                            <Text style={styles.panelMicroMeta}>
+                                Live preview zoom x{previewZoom.toFixed(2)} · tap the dock buttons to tune the phone view
                             </Text>
                         </Animated.View>
                     </Animated.View>
@@ -250,15 +474,9 @@ export default function NavigationSplitPrototype() {
                             },
                         ]}
                     >
-                        <View style={styles.mapGrid} />
-                        <View style={styles.mapRoute}>
-                            <View style={[styles.mapDot, styles.mapDotStart]} />
-                            <View style={styles.mapLine} />
-                            <View style={[styles.mapDot, styles.mapDotEnd]} />
-                        </View>
-                        <View style={styles.mapBadge}>
-                            <Text style={styles.mapBadgeText}>Map placeholder</Text>
-                        </View>
+                        <MapPreviewSurface
+                            previewZoom={previewZoom}
+                        />
                     </Animated.View>
                 </Animated.View>
 
@@ -326,6 +544,14 @@ export default function NavigationSplitPrototype() {
                     { useNativeDriver: false },
                 )}
             />
+            {focusMode !== 'ar' && (
+                <FloatingPreviewZoomControls
+                    previewZoom={previewZoom}
+                    onZoomIn={handlePreviewZoomIn}
+                    onZoomOut={handlePreviewZoomOut}
+                    onZoomReset={handlePreviewZoomReset}
+                />
+            )}
         </View>
     );
 }
@@ -449,6 +675,11 @@ const styles = StyleSheet.create({
         lineHeight: 19,
         maxWidth: 320,
     },
+    panelMicroMeta: {
+        color: '#dbeafe',
+        fontSize: 12,
+        fontWeight: '700',
+    },
     mapCanvas: {
         flex: 1,
         marginTop: 16,
@@ -457,39 +688,13 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'rgba(148, 163, 184, 0.12)',
         overflow: 'hidden',
-        justifyContent: 'center',
-        alignItems: 'center',
     },
-    mapGrid: {
+    mapRaster: {
+        position: 'absolute',
+    },
+    mapGlass: {
         ...StyleSheet.absoluteFillObject,
-        opacity: 0.5,
-        backgroundColor: 'transparent',
-        borderRadius: 22,
-    },
-    mapRoute: {
-        width: '78%',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    mapLine: {
-        width: '100%',
-        height: 6,
-        borderRadius: 999,
-        backgroundColor: '#38bdf8',
-        marginVertical: 12,
-    },
-    mapDot: {
-        width: 18,
-        height: 18,
-        borderRadius: 999,
-        borderWidth: 3,
-        borderColor: '#f8fafc',
-    },
-    mapDotStart: {
-        backgroundColor: '#22c55e',
-    },
-    mapDotEnd: {
-        backgroundColor: '#f97316',
+        backgroundColor: 'rgba(6, 12, 20, 0.08)',
     },
     mapBadge: {
         position: 'absolute',
@@ -504,6 +709,87 @@ const styles = StyleSheet.create({
         color: '#cbd5e1',
         fontSize: 11,
         fontWeight: '700',
+    },
+    mapMetaBar: {
+        position: 'absolute',
+        left: 16,
+        right: 16,
+        top: 14,
+        flexDirection: 'row',
+        gap: 8,
+    },
+    mapMetaPill: {
+        paddingHorizontal: 10,
+        paddingVertical: 8,
+        borderRadius: 16,
+        backgroundColor: 'rgba(15, 23, 42, 0.82)',
+        borderWidth: 1,
+        borderColor: 'rgba(148, 163, 184, 0.16)',
+    },
+    mapMetaLabel: {
+        color: '#7dd3fc',
+        fontSize: 10,
+        fontWeight: '800',
+        letterSpacing: 0.8,
+        textTransform: 'uppercase',
+    },
+    mapMetaValue: {
+        marginTop: 2,
+        color: '#f8fafc',
+        fontSize: 12,
+        fontWeight: '700',
+    },
+    zoomOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        justifyContent: 'flex-end',
+        paddingHorizontal: 26,
+        paddingBottom: 24,
+        zIndex: 40,
+    },
+    mapZoomDock: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        alignSelf: 'stretch',
+    },
+    mapZoomButton: {
+        width: 44,
+        height: 44,
+        borderRadius: 14,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+        borderWidth: 1,
+        borderColor: 'rgba(125, 211, 252, 0.2)',
+    },
+    mapZoomGlyph: {
+        color: '#f8fafc',
+        fontSize: 22,
+        fontWeight: '800',
+    },
+    mapZoomReadout: {
+        flex: 1,
+        minHeight: 44,
+        borderRadius: 14,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+        borderWidth: 1,
+        borderColor: 'rgba(148, 163, 184, 0.16)',
+        justifyContent: 'center',
+    },
+    mapZoomLabel: {
+        color: '#7dd3fc',
+        fontSize: 10,
+        fontWeight: '800',
+        letterSpacing: 0.8,
+        textTransform: 'uppercase',
+    },
+    mapZoomValue: {
+        marginTop: 2,
+        color: '#f8fafc',
+        fontSize: 15,
+        fontWeight: '800',
     },
     arViewport: {
         flex: 1,
