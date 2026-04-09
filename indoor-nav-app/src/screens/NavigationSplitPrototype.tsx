@@ -1,33 +1,37 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
-    Animated,
     Image,
+    ImageSourcePropType,
     LayoutChangeEvent,
-    NativeScrollEvent,
-    NativeSyntheticEvent,
-    ScrollView,
+    PanResponder,
+    PanResponderGestureState,
+    PanResponderInstance,
     StatusBar,
     StyleSheet,
     Text,
     TouchableOpacity,
-    useWindowDimensions,
     View,
 } from 'react-native';
 import demoMapPackage from '../data/villageDemoPackage.json';
 
-type FocusMode = 'map' | 'split' | 'ar';
-
-const COLLAPSED_PANEL_HEIGHT = 84;
-const PANEL_GAP = 14;
-const TOP_COPY_SPACE = 154;
-const BOTTOM_SPACE = 14;
-const DEFAULT_STARTUP_ZOOM = 1.1;
-const MIN_PREVIEW_ZOOM = 0.55;
-const MAX_PREVIEW_ZOOM = 1.85;
-const PREVIEW_ZOOM_STEP = 0.1;
 const PREVIEW_IMAGE = require('../../assets/map-packages/village_demo_01/preview.png');
+const DEFAULT_STARTUP_ZOOM = 1.1;
+const MIN_SCALE = 0.55;
+const MAX_SCALE = 2.4;
+const ZOOM_STEP = 0.12;
 
 type DemoMapPackage = typeof demoMapPackage;
+
+interface ViewportSize {
+    width: number;
+    height: number;
+}
+
+interface TransformState {
+    scale: number;
+    translateX: number;
+    translateY: number;
+}
 
 interface ContentBounds {
     left: number;
@@ -42,33 +46,54 @@ function clamp(value: number, min: number, max: number) {
     return Math.min(Math.max(value, min), max);
 }
 
-function getFocusMode(offsetY: number, snapRange: number): FocusMode {
-    if (offsetY <= snapRange * 0.5) {
-        return 'map';
+function distanceBetweenTouches(touches: readonly any[]) {
+    if (touches.length < 2) {
+        return 0;
     }
-
-    if (offsetY >= snapRange * 1.5) {
-        return 'ar';
-    }
-
-    return 'split';
+    const [first, second] = touches;
+    return Math.hypot(second.pageX - first.pageX, second.pageY - first.pageY);
 }
 
-function getModeCopy(mode: FocusMode) {
-    switch (mode) {
-        case 'map':
-            return {
-                label: 'Map Fullscreen',
-            };
-        case 'ar':
-            return {
-                label: 'AR Fullscreen',
-            };
-        default:
-            return {
-                label: 'Split View',
-            };
+function midpointBetweenTouches(touches: readonly any[]) {
+    if (touches.length < 2) {
+        return { x: 0, y: 0 };
     }
+    const [first, second] = touches;
+    return {
+        x: (first.pageX + second.pageX) * 0.5,
+        y: (first.pageY + second.pageY) * 0.5,
+    };
+}
+
+function clampTransform(
+    next: TransformState,
+    viewport: ViewportSize,
+    worldWidth: number,
+    worldHeight: number,
+): TransformState {
+    const scaledWidth = worldWidth * next.scale;
+    const scaledHeight = worldHeight * next.scale;
+
+    let translateX = next.translateX;
+    let translateY = next.translateY;
+
+    if (scaledWidth <= viewport.width) {
+        translateX = (viewport.width - scaledWidth) * 0.5;
+    } else {
+        translateX = clamp(translateX, viewport.width - scaledWidth, 0);
+    }
+
+    if (scaledHeight <= viewport.height) {
+        translateY = (viewport.height - scaledHeight) * 0.5;
+    } else {
+        translateY = clamp(translateY, viewport.height - scaledHeight, 0);
+    }
+
+    return {
+        scale: next.scale,
+        translateX,
+        translateY,
+    };
 }
 
 function computeContentBounds(mapPackage: DemoMapPackage): ContentBounds {
@@ -103,8 +128,8 @@ function computeContentBounds(mapPackage: DemoMapPackage): ContentBounds {
             top: 0,
             width: worldWidth,
             height: worldHeight,
-            centerX: worldWidth / 2,
-            centerY: worldHeight / 2,
+            centerX: worldWidth * 0.5,
+            centerY: worldHeight * 0.5,
         };
     }
 
@@ -121,59 +146,107 @@ function computeContentBounds(mapPackage: DemoMapPackage): ContentBounds {
         top,
         width,
         height,
-        centerX: left + width / 2,
-        centerY: top + height / 2,
+        centerX: left + width * 0.5,
+        centerY: top + height * 0.5,
     };
 }
 
-function computeMapPreviewFrame(
-    viewportWidth: number,
-    viewportHeight: number,
+function computeInitialTransform(
+    viewport: ViewportSize,
     mapPackage: DemoMapPackage,
     startupZoom: number,
-) {
+): TransformState {
     const worldWidth = mapPackage.mapWidth * mapPackage.tileSize;
     const worldHeight = mapPackage.mapHeight * mapPackage.tileSize;
     const focus = computeContentBounds(mapPackage);
     const fitScale = Math.min(
-        viewportWidth / Math.max(focus.width, 1),
-        viewportHeight / Math.max(focus.height, 1),
+        viewport.width / Math.max(focus.width, 1),
+        viewport.height / Math.max(focus.height, 1),
     );
-    const scale = fitScale * startupZoom;
-    const scaledWidth = worldWidth * scale;
-    const scaledHeight = worldHeight * scale;
-    const left = viewportWidth * 0.5 - focus.centerX * scale;
-    const top = viewportHeight * 0.56 - focus.centerY * scale;
+    const scale = clamp(fitScale * startupZoom, MIN_SCALE, MAX_SCALE);
+    const translateX = viewport.width * 0.5 - focus.centerX * scale;
+    const translateY = viewport.height * 0.56 - focus.centerY * scale;
 
-    return {
-        scale,
-        left,
-        top,
-        width: scaledWidth,
-        height: scaledHeight,
-    };
+    return clampTransform(
+        {
+            scale,
+            translateX,
+            translateY,
+        },
+        viewport,
+        worldWidth,
+        worldHeight,
+    );
 }
 
-function MapPreviewSurface({
-    previewZoom,
+function FloatingButton({
+    label,
+    onPress,
+    compact = false,
 }: {
-    previewZoom: number;
+    label: string;
+    onPress: () => void;
+    compact?: boolean;
 }) {
-    const [viewport, setViewport] = useState({ width: 0, height: 0 });
-    const tileSize = demoMapPackage.tileSize;
-    const worldWidth = demoMapPackage.mapWidth * tileSize;
-    const worldHeight = demoMapPackage.mapHeight * tileSize;
-    const frame = useMemo(() => {
+    return (
+        <TouchableOpacity
+            activeOpacity={0.86}
+            onPress={onPress}
+            style={[styles.floatingButton, compact && styles.floatingButtonCompact]}
+        >
+            <Text style={styles.floatingButtonText}>{label}</Text>
+        </TouchableOpacity>
+    );
+}
+
+function FullscreenMapReview({
+    mapPackage,
+    previewImage,
+}: {
+    mapPackage: DemoMapPackage;
+    previewImage: ImageSourcePropType;
+}) {
+    const [viewport, setViewport] = useState<ViewportSize>({ width: 0, height: 0 });
+    const [transform, setTransform] = useState<TransformState>({
+        scale: DEFAULT_STARTUP_ZOOM,
+        translateX: 0,
+        translateY: 0,
+    });
+
+    const worldWidth = mapPackage.mapWidth * mapPackage.tileSize;
+    const worldHeight = mapPackage.mapHeight * mapPackage.tileSize;
+    const focus = useMemo(() => computeContentBounds(mapPackage), [mapPackage]);
+
+    const gestureStartRef = useRef<{
+        scale: number;
+        translateX: number;
+        translateY: number;
+        distance: number;
+        focalWorldX: number;
+        focalWorldY: number;
+        panX: number;
+        panY: number;
+    }>({
+        scale: DEFAULT_STARTUP_ZOOM,
+        translateX: 0,
+        translateY: 0,
+        distance: 0,
+        focalWorldX: 0,
+        focalWorldY: 0,
+        panX: 0,
+        panY: 0,
+    });
+
+    useEffect(() => {
         if (viewport.width <= 0 || viewport.height <= 0) {
-            return null;
+            return;
         }
-        return computeMapPreviewFrame(
-            viewport.width,
-            viewport.height,
-            demoMapPackage,
-            previewZoom,
-        );
-    }, [previewZoom, viewport.height, viewport.width]);
+        setTransform(computeInitialTransform(viewport, mapPackage, DEFAULT_STARTUP_ZOOM));
+    }, [mapPackage, viewport.height, viewport.width]);
+
+    const updateTransform = (next: TransformState) => {
+        setTransform(clampTransform(next, viewport, worldWidth, worldHeight));
+    };
 
     const handleLayout = (event: LayoutChangeEvent) => {
         const { width, height } = event.nativeEvent.layout;
@@ -188,697 +261,326 @@ function MapPreviewSurface({
         });
     };
 
+    const panResponder = useMemo<PanResponderInstance>(() => PanResponder.create({
+        onStartShouldSetPanResponder: () => false,
+        onMoveShouldSetPanResponder: (_, gestureState) =>
+            gestureState.numberActiveTouches >= 2 ||
+            Math.abs(gestureState.dx) > 2 ||
+            Math.abs(gestureState.dy) > 2,
+        onPanResponderGrant: (event) => {
+            const touches = event.nativeEvent.touches;
+            gestureStartRef.current.scale = transform.scale;
+            gestureStartRef.current.translateX = transform.translateX;
+            gestureStartRef.current.translateY = transform.translateY;
+
+            if (touches.length >= 2) {
+                const midpoint = midpointBetweenTouches(touches);
+                gestureStartRef.current.distance = Math.max(distanceBetweenTouches(touches), 1);
+                gestureStartRef.current.focalWorldX =
+                    (midpoint.x - transform.translateX) / transform.scale;
+                gestureStartRef.current.focalWorldY =
+                    (midpoint.y - transform.translateY) / transform.scale;
+                return;
+            }
+
+            gestureStartRef.current.panX = transform.translateX;
+            gestureStartRef.current.panY = transform.translateY;
+        },
+        onPanResponderMove: (event, gestureState: PanResponderGestureState) => {
+            if (viewport.width <= 0 || viewport.height <= 0) {
+                return;
+            }
+
+            const touches = event.nativeEvent.touches;
+            if (touches.length >= 2) {
+                const midpoint = midpointBetweenTouches(touches);
+                const nextDistance = Math.max(distanceBetweenTouches(touches), 1);
+                const nextScale = clamp(
+                    gestureStartRef.current.scale *
+                        (nextDistance / Math.max(gestureStartRef.current.distance, 1)),
+                    MIN_SCALE,
+                    MAX_SCALE,
+                );
+                const nextTranslateX =
+                    midpoint.x - gestureStartRef.current.focalWorldX * nextScale;
+                const nextTranslateY =
+                    midpoint.y - gestureStartRef.current.focalWorldY * nextScale;
+                updateTransform({
+                    scale: nextScale,
+                    translateX: nextTranslateX,
+                    translateY: nextTranslateY,
+                });
+                return;
+            }
+
+            updateTransform({
+                scale: gestureStartRef.current.scale,
+                translateX: gestureStartRef.current.panX + gestureState.dx,
+                translateY: gestureStartRef.current.panY + gestureState.dy,
+            });
+        },
+        onPanResponderRelease: () => {
+            gestureStartRef.current.scale = transform.scale;
+            gestureStartRef.current.translateX = transform.translateX;
+            gestureStartRef.current.translateY = transform.translateY;
+        },
+        onPanResponderTerminationRequest: () => true,
+        onPanResponderTerminate: () => {
+            gestureStartRef.current.scale = transform.scale;
+            gestureStartRef.current.translateX = transform.translateX;
+            gestureStartRef.current.translateY = transform.translateY;
+        },
+    }), [transform.scale, transform.translateX, transform.translateY, viewport.height, viewport.width, worldHeight, worldWidth]);
+
+    const zoomByStep = (delta: number) => {
+        if (viewport.width <= 0 || viewport.height <= 0) {
+            return;
+        }
+        const focalX = viewport.width * 0.5;
+        const focalY = viewport.height * 0.55;
+        const nextScale = clamp(transform.scale + delta, MIN_SCALE, MAX_SCALE);
+        const focalWorldX = (focalX - transform.translateX) / transform.scale;
+        const focalWorldY = (focalY - transform.translateY) / transform.scale;
+
+        updateTransform({
+            scale: nextScale,
+            translateX: focalX - focalWorldX * nextScale,
+            translateY: focalY - focalWorldY * nextScale,
+        });
+    };
+
+    const recenter = () => {
+        if (viewport.width <= 0 || viewport.height <= 0) {
+            return;
+        }
+        setTransform(computeInitialTransform(viewport, mapPackage, transform.scale));
+    };
+
+    const resetView = () => {
+        if (viewport.width <= 0 || viewport.height <= 0) {
+            return;
+        }
+        setTransform(computeInitialTransform(viewport, mapPackage, DEFAULT_STARTUP_ZOOM));
+    };
+
     return (
-        <View style={styles.mapCanvas} onLayout={handleLayout}>
-            {frame && (
-                <Image
-                    source={PREVIEW_IMAGE}
-                    resizeMode="stretch"
+        <View style={styles.screen}>
+            <StatusBar barStyle="light-content" backgroundColor="#081019" />
+
+            <View style={styles.mapViewport} onLayout={handleLayout} {...panResponder.panHandlers}>
+                <View
                     style={[
-                        styles.mapRaster,
+                        styles.mapWorld,
                         {
-                            left: frame.left,
-                            top: frame.top,
-                            width: frame.width,
-                            height: frame.height,
+                            width: worldWidth,
+                            height: worldHeight,
+                            transform: [
+                                { translateX: transform.translateX },
+                                { translateY: transform.translateY },
+                                { scale: transform.scale },
+                            ],
                         },
                     ]}
-                />
-            )}
-            <View pointerEvents="none" style={styles.mapGlass} />
-            <View style={styles.mapBadge}>
-                <Text style={styles.mapBadgeText}>Real map preview · x{previewZoom.toFixed(2)}</Text>
-            </View>
-            <View style={styles.mapMetaBar}>
-                <View style={styles.mapMetaPill}>
-                    <Text style={styles.mapMetaLabel}>Package</Text>
-                    <Text style={styles.mapMetaValue}>{demoMapPackage.mapId}</Text>
+                >
+                    <Image
+                        source={previewImage}
+                        resizeMode="stretch"
+                        style={styles.mapImage}
+                    />
                 </View>
-                <View style={styles.mapMetaPill}>
-                    <Text style={styles.mapMetaLabel}>World</Text>
-                    <Text style={styles.mapMetaValue}>{worldWidth} x {worldHeight}</Text>
-                </View>
-            </View>
-        </View>
-    );
-}
 
-function FloatingPreviewZoomControls({
-    previewZoom,
-    onZoomIn,
-    onZoomOut,
-    onZoomReset,
-}: {
-    previewZoom: number;
-    onZoomIn: () => void;
-    onZoomOut: () => void;
-    onZoomReset: () => void;
-}) {
-    return (
-        <View pointerEvents="box-none" style={styles.zoomOverlay}>
-            <View style={styles.mapZoomDock}>
-                <TouchableOpacity style={styles.mapZoomButton} activeOpacity={0.85} onPress={onZoomOut}>
-                    <Text style={styles.mapZoomGlyph}>-</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.mapZoomReadout} activeOpacity={0.85} onPress={onZoomReset}>
-                    <Text style={styles.mapZoomLabel}>Preview zoom</Text>
-                    <Text style={styles.mapZoomValue}>x{previewZoom.toFixed(2)}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.mapZoomButton} activeOpacity={0.85} onPress={onZoomIn}>
-                    <Text style={styles.mapZoomGlyph}>+</Text>
-                </TouchableOpacity>
+                <View pointerEvents="none" style={styles.mapWash} />
+
+                <View pointerEvents="box-none" style={styles.topOverlay}>
+                    <View style={styles.topCard}>
+                        <Text style={styles.topEyebrow}>Map Review</Text>
+                        <Text style={styles.topTitle}>2D navigation surface</Text>
+                        <Text style={styles.topMeta}>
+                            Pan with one finger. Pinch with two fingers. Real package preview on phone.
+                        </Text>
+                    </View>
+
+                    <View style={styles.topPills}>
+                        <View style={styles.infoPill}>
+                            <Text style={styles.infoPillLabel}>Package</Text>
+                            <Text style={styles.infoPillValue}>{mapPackage.mapId}</Text>
+                        </View>
+                        <View style={styles.infoPill}>
+                            <Text style={styles.infoPillLabel}>Zoom</Text>
+                            <Text style={styles.infoPillValue}>x{transform.scale.toFixed(2)}</Text>
+                        </View>
+                        <View style={styles.infoPill}>
+                            <Text style={styles.infoPillLabel}>Focus</Text>
+                            <Text style={styles.infoPillValue}>
+                                {Math.round(focus.width)} x {Math.round(focus.height)}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+
+                <View pointerEvents="box-none" style={styles.rightOverlay}>
+                    <FloatingButton label="+" onPress={() => zoomByStep(ZOOM_STEP)} compact />
+                    <FloatingButton label="-" onPress={() => zoomByStep(-ZOOM_STEP)} compact />
+                    <FloatingButton label="Center" onPress={recenter} />
+                    <FloatingButton label="Reset" onPress={resetView} />
+                </View>
+
+                <View pointerEvents="box-none" style={styles.bottomOverlay}>
+                    <View style={styles.bottomSheet}>
+                        <Text style={styles.bottomTitle}>Map-first mobile review</Text>
+                        <Text style={styles.bottomMeta}>
+                            Fullscreen canvas with floating controls. This is the target interaction model for phone review.
+                        </Text>
+                    </View>
+                </View>
             </View>
         </View>
     );
 }
 
 export default function NavigationSplitPrototype() {
-    const { height: windowHeight } = useWindowDimensions();
-    const scrollRef = useRef<ScrollView | null>(null);
-    const scrollY = useRef(new Animated.Value(0)).current;
-    const [focusMode, setFocusMode] = useState<FocusMode>('split');
-    const [previewZoom, setPreviewZoom] = useState(DEFAULT_STARTUP_ZOOM);
-
-    const viewportHeight = Math.max(windowHeight, 1);
-    const usableHeight = Math.max(
-        viewportHeight - TOP_COPY_SPACE - BOTTOM_SPACE,
-        COLLAPSED_PANEL_HEIGHT * 2 + PANEL_GAP,
-    );
-    const splitPanelHeight = Math.max((usableHeight - PANEL_GAP) / 2, COLLAPSED_PANEL_HEIGHT);
-    const expandedPanelHeight = Math.max(
-        usableHeight - COLLAPSED_PANEL_HEIGHT - PANEL_GAP,
-        splitPanelHeight,
-    );
-    const snapRange = Math.max(expandedPanelHeight - splitPanelHeight, 1);
-    const scrollOffsets = useMemo(() => [0, snapRange, snapRange * 2], [snapRange]);
-    const contentHeight = viewportHeight + snapRange * 2;
-    const modeCopy = getModeCopy(focusMode);
-
-    useEffect(() => {
-        const frame = requestAnimationFrame(() => {
-            scrollRef.current?.scrollTo({ y: snapRange, animated: false });
-            scrollY.setValue(snapRange);
-            setFocusMode('split');
-        });
-
-        return () => cancelAnimationFrame(frame);
-    }, [scrollY, snapRange]);
-
-    const mapHeight = scrollY.interpolate({
-        inputRange: [0, snapRange, snapRange * 2],
-        outputRange: [expandedPanelHeight, splitPanelHeight, COLLAPSED_PANEL_HEIGHT],
-        extrapolate: 'clamp',
-    });
-
-    const arHeight = scrollY.interpolate({
-        inputRange: [0, snapRange, snapRange * 2],
-        outputRange: [COLLAPSED_PANEL_HEIGHT, splitPanelHeight, expandedPanelHeight],
-        extrapolate: 'clamp',
-    });
-
-    const mapMetaOpacity = scrollY.interpolate({
-        inputRange: [snapRange, snapRange * 1.45, snapRange * 2],
-        outputRange: [1, 0.2, 0],
-        extrapolate: 'clamp',
-    });
-
-    const mapCanvasOpacity = scrollY.interpolate({
-        inputRange: [snapRange, snapRange * 1.25, snapRange * 2],
-        outputRange: [1, 0.12, 0],
-        extrapolate: 'clamp',
-    });
-
-    const mapCanvasScale = scrollY.interpolate({
-        inputRange: [snapRange, snapRange * 2],
-        outputRange: [1, 0.92],
-        extrapolate: 'clamp',
-    });
-
-    const mapCanvasTranslate = scrollY.interpolate({
-        inputRange: [snapRange, snapRange * 2],
-        outputRange: [0, -18],
-        extrapolate: 'clamp',
-    });
-
-    const mapPanelPadding = scrollY.interpolate({
-        inputRange: [snapRange, snapRange * 2],
-        outputRange: [18, 12],
-        extrapolate: 'clamp',
-    });
-
-    const mapHeaderGap = scrollY.interpolate({
-        inputRange: [snapRange, snapRange * 2],
-        outputRange: [4, 0],
-        extrapolate: 'clamp',
-    });
-
-    const mapTagHeight = scrollY.interpolate({
-        inputRange: [snapRange, snapRange * 1.45, snapRange * 2],
-        outputRange: [28, 10, 0],
-        extrapolate: 'clamp',
-    });
-
-    const mapHintHeight = scrollY.interpolate({
-        inputRange: [snapRange, snapRange * 1.45, snapRange * 2],
-        outputRange: [40, 10, 0],
-        extrapolate: 'clamp',
-    });
-
-    const mapTitleSize = scrollY.interpolate({
-        inputRange: [snapRange, snapRange * 2],
-        outputRange: [22, 18],
-        extrapolate: 'clamp',
-    });
-
-    const handleSnapState = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        const nextOffset = clamp(event.nativeEvent.contentOffset.y, 0, snapRange * 2);
-        setFocusMode(getFocusMode(nextOffset, snapRange));
-    };
-
-    const scrollToOffset = (offset: number) => {
-        const nextOffset = clamp(offset, 0, snapRange * 2);
-        scrollRef.current?.scrollTo({ y: nextOffset, animated: true });
-        setFocusMode(getFocusMode(nextOffset, snapRange));
-    };
-
-    const handlePreviewZoomIn = () => {
-        setPreviewZoom((current) => clamp(current + PREVIEW_ZOOM_STEP, MIN_PREVIEW_ZOOM, MAX_PREVIEW_ZOOM));
-    };
-
-    const handlePreviewZoomOut = () => {
-        setPreviewZoom((current) => clamp(current - PREVIEW_ZOOM_STEP, MIN_PREVIEW_ZOOM, MAX_PREVIEW_ZOOM));
-    };
-
-    const handlePreviewZoomReset = () => {
-        setPreviewZoom(DEFAULT_STARTUP_ZOOM);
-    };
-
-    return (
-        <View style={styles.container}>
-            <StatusBar barStyle="light-content" backgroundColor="#07111f" />
-
-            <View style={styles.overlay}>
-                <Text style={styles.eyebrow}>Indoor Navigation Prototype</Text>
-                <Text style={styles.title}>Split map + AR navigation flow</Text>
-                <View style={styles.modePill}>
-                    <Text style={styles.modeLabel}>{modeCopy.label}</Text>
-                </View>
-                <View style={styles.cueRow}>
-                    {focusMode !== 'map' && (
-                        <TouchableOpacity
-                            style={styles.cueButton}
-                            activeOpacity={0.85}
-                            onPress={() => scrollToOffset(focusMode === 'ar' ? snapRange : 0)}
-                        >
-                            <Text style={styles.cueArrow}>↑</Text>
-                            <Text style={styles.cueLabel}>
-                                {focusMode === 'ar' ? 'Back to split' : 'Open map'}
-                            </Text>
-                        </TouchableOpacity>
-                    )}
-
-                    {focusMode !== 'ar' && (
-                        <TouchableOpacity
-                            style={styles.cueButton}
-                            activeOpacity={0.85}
-                            onPress={() => scrollToOffset(focusMode === 'map' ? snapRange : snapRange * 2)}
-                        >
-                            <Text style={styles.cueArrow}>↓</Text>
-                            <Text style={styles.cueLabel}>
-                                {focusMode === 'map' ? 'Show split' : 'Open AR'}
-                            </Text>
-                        </TouchableOpacity>
-                    )}
-                </View>
-            </View>
-
-            <View style={styles.stage} pointerEvents="none">
-                <Animated.View
-                    style={[
-                        styles.panel,
-                        styles.mapPanel,
-                        {
-                            height: mapHeight,
-                            paddingTop: mapPanelPadding,
-                            paddingBottom: mapPanelPadding,
-                            paddingHorizontal: mapPanelPadding,
-                        },
-                    ]}
-                >
-                    <Animated.View style={[styles.panelHeader, { gap: mapHeaderGap }]}>
-                        <Animated.View
-                            style={{
-                                opacity: mapMetaOpacity,
-                                height: mapTagHeight,
-                                overflow: 'hidden',
-                            }}
-                        >
-                            <Text style={styles.panelTag}>MAP</Text>
-                        </Animated.View>
-                        <Animated.Text style={[styles.panelTitle, { fontSize: mapTitleSize }]}>
-                            2D navigation surface
-                        </Animated.Text>
-                        <Animated.View
-                            style={{
-                                opacity: mapMetaOpacity,
-                                height: mapHintHeight,
-                                overflow: 'hidden',
-                            }}
-                        >
-                            <Text style={styles.panelHint}>
-                                Bundled review build of the exported package. Use this screen on your phone to judge the real startup framing.
-                            </Text>
-                        </Animated.View>
-                        <Animated.View
-                            style={{
-                                opacity: mapMetaOpacity,
-                                height: mapTagHeight,
-                                overflow: 'hidden',
-                            }}
-                        >
-                            <Text style={styles.panelMicroMeta}>
-                                Live preview zoom x{previewZoom.toFixed(2)} · tap the dock buttons to tune the phone view
-                            </Text>
-                        </Animated.View>
-                    </Animated.View>
-
-                    <Animated.View
-                        style={[
-                            styles.mapCanvas,
-                            {
-                                opacity: mapCanvasOpacity,
-                                transform: [
-                                    { translateY: mapCanvasTranslate },
-                                    { scale: mapCanvasScale },
-                                ],
-                            },
-                        ]}
-                    >
-                        <MapPreviewSurface
-                            previewZoom={previewZoom}
-                        />
-                    </Animated.View>
-                </Animated.View>
-
-                <View style={styles.panelGap} />
-
-                <Animated.View style={[styles.panel, styles.arPanel, { height: arHeight }]}>
-                    <View style={styles.panelHeader}>
-                        <Text style={[styles.panelTag, styles.panelTagWarm]}>AR</Text>
-                        <Text style={styles.panelTitle}>Camera guidance surface</Text>
-                        <Text style={styles.panelHint}>
-                            This area expands when the user scrolls down so AR can take over the screen.
-                        </Text>
-                    </View>
-
-                    <View style={styles.arViewport}>
-                        <View style={styles.arFrame}>
-                            <View style={styles.reticleRow}>
-                                <View style={styles.reticleCorner} />
-                                <View style={[styles.reticleCorner, styles.reticleCornerRight]} />
-                            </View>
-                            <View style={styles.reticleCenter}>
-                                <View style={styles.reticleArrow} />
-                                <Text style={styles.reticleText}>Walk straight 18m</Text>
-                            </View>
-                            <View style={[styles.reticleRow, styles.reticleRowBottom]}>
-                                <View style={[styles.reticleCorner, styles.reticleCornerBottom]} />
-                                <View
-                                    style={[
-                                        styles.reticleCorner,
-                                        styles.reticleCornerRight,
-                                        styles.reticleCornerBottom,
-                                    ]}
-                                />
-                            </View>
-                            <View style={styles.arCards}>
-                                <View style={styles.arCard}>
-                                    <Text style={styles.arCardLabel}>Next turn</Text>
-                                    <Text style={styles.arCardValue}>Left at corridor B</Text>
-                                </View>
-                                <View style={styles.arCard}>
-                                    <Text style={styles.arCardLabel}>Confidence</Text>
-                                    <Text style={styles.arCardValue}>Hallway lock stable</Text>
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </Animated.View>
-            </View>
-
-            <Animated.ScrollView
-                ref={scrollRef}
-                style={StyleSheet.absoluteFill}
-                contentContainerStyle={{ height: contentHeight }}
-                showsVerticalScrollIndicator={false}
-                bounces={false}
-                snapToOffsets={scrollOffsets}
-                snapToAlignment="start"
-                decelerationRate="fast"
-                scrollEventThrottle={16}
-                overScrollMode="never"
-                onMomentumScrollEnd={handleSnapState}
-                onScrollEndDrag={handleSnapState}
-                onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                    { useNativeDriver: false },
-                )}
-            />
-            {focusMode !== 'ar' && (
-                <FloatingPreviewZoomControls
-                    previewZoom={previewZoom}
-                    onZoomIn={handlePreviewZoomIn}
-                    onZoomOut={handlePreviewZoomOut}
-                    onZoomReset={handlePreviewZoomReset}
-                />
-            )}
-        </View>
-    );
+    return <FullscreenMapReview mapPackage={demoMapPackage} previewImage={PREVIEW_IMAGE} />;
 }
 
 const styles = StyleSheet.create({
-    container: {
+    screen: {
+        flex: 1,
+        backgroundColor: '#081019',
+    },
+    mapViewport: {
         flex: 1,
         backgroundColor: '#07111f',
-    },
-    overlay: {
-        position: 'absolute',
-        top: 28,
-        left: 18,
-        right: 18,
-        zIndex: 20,
-    },
-    eyebrow: {
-        color: '#7dd3fc',
-        fontSize: 12,
-        fontWeight: '700',
-        letterSpacing: 1.4,
-    },
-    title: {
-        marginTop: 8,
-        color: '#f8fafc',
-        fontSize: 24,
-        fontWeight: '800',
-    },
-    modePill: {
-        alignSelf: 'flex-start',
-        marginTop: 12,
-        paddingHorizontal: 12,
-        paddingVertical: 7,
-        borderRadius: 999,
-        backgroundColor: 'rgba(15, 23, 42, 0.88)',
-        borderWidth: 1,
-        borderColor: 'rgba(125, 211, 252, 0.25)',
-    },
-    modeLabel: {
-        color: '#e2e8f0',
-        fontSize: 12,
-        fontWeight: '700',
-    },
-    cueRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        marginTop: 10,
-    },
-    cueButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        alignSelf: 'flex-start',
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        borderRadius: 999,
-        backgroundColor: 'rgba(15, 23, 42, 0.72)',
-        borderWidth: 1,
-        borderColor: 'rgba(148, 163, 184, 0.18)',
-    },
-    cueArrow: {
-        color: '#7dd3fc',
-        fontSize: 14,
-        fontWeight: '800',
-    },
-    cueLabel: {
-        color: '#dbeafe',
-        fontSize: 12,
-        fontWeight: '700',
-    },
-    stage: {
-        flex: 1,
-        paddingTop: TOP_COPY_SPACE,
-        paddingHorizontal: 12,
-        paddingBottom: BOTTOM_SPACE,
-    },
-    panel: {
         overflow: 'hidden',
-        borderRadius: 28,
+    },
+    mapWorld: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+    },
+    mapImage: {
+        width: '100%',
+        height: '100%',
+    },
+    mapWash: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(8, 16, 25, 0.08)',
+    },
+    topOverlay: {
+        position: 'absolute',
+        top: 18,
+        left: 16,
+        right: 16,
+        gap: 10,
+    },
+    topCard: {
+        borderRadius: 22,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        backgroundColor: 'rgba(8, 15, 24, 0.8)',
         borderWidth: 1,
-        padding: 18,
+        borderColor: 'rgba(255, 255, 255, 0.08)',
     },
-    mapPanel: {
-        backgroundColor: '#0d1b2a',
-        borderColor: 'rgba(125, 211, 252, 0.16)',
-    },
-    arPanel: {
-        backgroundColor: '#1f2937',
-        borderColor: 'rgba(251, 191, 36, 0.18)',
-    },
-    panelGap: {
-        height: PANEL_GAP,
-    },
-    panelHeader: {
-        gap: 4,
-    },
-    panelTag: {
-        alignSelf: 'flex-start',
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderRadius: 999,
+    topEyebrow: {
         color: '#7dd3fc',
-        backgroundColor: 'rgba(125, 211, 252, 0.12)',
         fontSize: 11,
-        fontWeight: '700',
+        fontWeight: '800',
         letterSpacing: 1.2,
-    },
-    panelTagWarm: {
-        color: '#fbbf24',
-        backgroundColor: 'rgba(251, 191, 36, 0.14)',
-    },
-    panelTitle: {
-        color: '#f8fafc',
-        fontSize: 22,
-        fontWeight: '800',
-    },
-    panelHint: {
-        color: '#94a3b8',
-        fontSize: 13,
-        lineHeight: 19,
-        maxWidth: 320,
-    },
-    panelMicroMeta: {
-        color: '#dbeafe',
-        fontSize: 12,
-        fontWeight: '700',
-    },
-    mapCanvas: {
-        flex: 1,
-        marginTop: 16,
-        borderRadius: 22,
-        backgroundColor: '#07111f',
-        borderWidth: 1,
-        borderColor: 'rgba(148, 163, 184, 0.12)',
-        overflow: 'hidden',
-    },
-    mapRaster: {
-        position: 'absolute',
-    },
-    mapGlass: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(6, 12, 20, 0.08)',
-    },
-    mapBadge: {
-        position: 'absolute',
-        bottom: 16,
-        right: 16,
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        borderRadius: 999,
-        backgroundColor: 'rgba(15, 23, 42, 0.88)',
-    },
-    mapBadgeText: {
-        color: '#cbd5e1',
-        fontSize: 11,
-        fontWeight: '700',
-    },
-    mapMetaBar: {
-        position: 'absolute',
-        left: 16,
-        right: 16,
-        top: 14,
-        flexDirection: 'row',
-        gap: 8,
-    },
-    mapMetaPill: {
-        paddingHorizontal: 10,
-        paddingVertical: 8,
-        borderRadius: 16,
-        backgroundColor: 'rgba(15, 23, 42, 0.82)',
-        borderWidth: 1,
-        borderColor: 'rgba(148, 163, 184, 0.16)',
-    },
-    mapMetaLabel: {
-        color: '#7dd3fc',
-        fontSize: 10,
-        fontWeight: '800',
-        letterSpacing: 0.8,
         textTransform: 'uppercase',
     },
-    mapMetaValue: {
-        marginTop: 2,
-        color: '#f8fafc',
-        fontSize: 12,
-        fontWeight: '700',
-    },
-    zoomOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        justifyContent: 'flex-end',
-        paddingHorizontal: 26,
-        paddingBottom: 24,
-        zIndex: 40,
-    },
-    mapZoomDock: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        alignSelf: 'stretch',
-    },
-    mapZoomButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 14,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-        borderWidth: 1,
-        borderColor: 'rgba(125, 211, 252, 0.2)',
-    },
-    mapZoomGlyph: {
-        color: '#f8fafc',
-        fontSize: 22,
-        fontWeight: '800',
-    },
-    mapZoomReadout: {
-        flex: 1,
-        minHeight: 44,
-        borderRadius: 14,
-        paddingHorizontal: 14,
-        paddingVertical: 10,
-        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-        borderWidth: 1,
-        borderColor: 'rgba(148, 163, 184, 0.16)',
-        justifyContent: 'center',
-    },
-    mapZoomLabel: {
-        color: '#7dd3fc',
-        fontSize: 10,
-        fontWeight: '800',
-        letterSpacing: 0.8,
-        textTransform: 'uppercase',
-    },
-    mapZoomValue: {
-        marginTop: 2,
-        color: '#f8fafc',
-        fontSize: 15,
-        fontWeight: '800',
-    },
-    arViewport: {
-        flex: 1,
-        minHeight: 0,
-        marginTop: 14,
-        gap: 10,
-    },
-    arFrame: {
-        flex: 1,
-        minHeight: 0,
-        borderRadius: 22,
-        backgroundColor: '#111827',
-        borderWidth: 1,
-        borderColor: 'rgba(251, 191, 36, 0.14)',
-        padding: 16,
-        paddingBottom: 110,
-        justifyContent: 'space-between',
-        overflow: 'hidden',
-    },
-    reticleRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    reticleRowBottom: {
-        alignItems: 'flex-end',
-    },
-    reticleCorner: {
-        width: 26,
-        height: 26,
-        borderTopWidth: 3,
-        borderLeftWidth: 3,
-        borderColor: '#fbbf24',
-        borderTopLeftRadius: 12,
-    },
-    reticleCornerRight: {
-        borderLeftWidth: 0,
-        borderRightWidth: 3,
-        borderTopRightRadius: 12,
-    },
-    reticleCornerBottom: {
-        borderTopWidth: 0,
-        borderBottomWidth: 3,
-        borderBottomLeftRadius: 12,
-    },
-    reticleCenter: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 12,
-    },
-    reticleArrow: {
-        width: 84,
-        height: 84,
-        borderRadius: 42,
-        backgroundColor: 'rgba(245, 158, 11, 0.18)',
-        borderWidth: 1,
-        borderColor: 'rgba(251, 191, 36, 0.28)',
-    },
-    reticleText: {
-        color: '#f8fafc',
-        fontSize: 19,
-        fontWeight: '800',
-    },
-    arCards: {
-        position: 'absolute',
-        left: 16,
-        right: 16,
-        bottom: 16,
-        flexDirection: 'row',
-        gap: 10,
-    },
-    arCard: {
-        flex: 1,
-        borderRadius: 18,
-        paddingHorizontal: 14,
-        paddingVertical: 12,
-        backgroundColor: 'rgba(17, 24, 39, 0.86)',
-        borderWidth: 1,
-        borderColor: 'rgba(148, 163, 184, 0.12)',
-    },
-    arCardLabel: {
-        color: '#94a3b8',
-        fontSize: 12,
-        fontWeight: '700',
-    },
-    arCardValue: {
+    topTitle: {
         marginTop: 4,
         color: '#f8fafc',
+        fontSize: 21,
+        fontWeight: '800',
+    },
+    topMeta: {
+        marginTop: 6,
+        color: '#cbd5e1',
+        fontSize: 13,
+        lineHeight: 18,
+    },
+    topPills: {
+        flexDirection: 'row',
+        gap: 8,
+    },
+    infoPill: {
+        flex: 1,
+        borderRadius: 16,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        backgroundColor: 'rgba(8, 15, 24, 0.74)',
+        borderWidth: 1,
+        borderColor: 'rgba(148, 163, 184, 0.14)',
+    },
+    infoPillLabel: {
+        color: '#7dd3fc',
+        fontSize: 10,
+        fontWeight: '800',
+        letterSpacing: 0.8,
+        textTransform: 'uppercase',
+    },
+    infoPillValue: {
+        marginTop: 4,
+        color: '#f8fafc',
+        fontSize: 13,
+        fontWeight: '800',
+    },
+    rightOverlay: {
+        position: 'absolute',
+        right: 16,
+        bottom: 126,
+        gap: 10,
+        alignItems: 'flex-end',
+    },
+    floatingButton: {
+        minWidth: 72,
+        minHeight: 46,
+        paddingHorizontal: 16,
+        borderRadius: 18,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(8, 15, 24, 0.86)',
+        borderWidth: 1,
+        borderColor: 'rgba(148, 163, 184, 0.18)',
+        shadowColor: '#000',
+        shadowOpacity: 0.18,
+        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 6 },
+        elevation: 6,
+    },
+    floatingButtonCompact: {
+        minWidth: 46,
+        paddingHorizontal: 0,
+        borderRadius: 14,
+    },
+    floatingButtonText: {
+        color: '#f8fafc',
         fontSize: 16,
-        fontWeight: '700',
+        fontWeight: '800',
+    },
+    bottomOverlay: {
+        position: 'absolute',
+        left: 16,
+        right: 16,
+        bottom: 20,
+    },
+    bottomSheet: {
+        borderRadius: 22,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        backgroundColor: 'rgba(8, 15, 24, 0.82)',
+        borderWidth: 1,
+        borderColor: 'rgba(148, 163, 184, 0.14)',
+    },
+    bottomTitle: {
+        color: '#f8fafc',
+        fontSize: 16,
+        fontWeight: '800',
+    },
+    bottomMeta: {
+        marginTop: 4,
+        color: '#cbd5e1',
+        fontSize: 13,
+        lineHeight: 18,
     },
 });

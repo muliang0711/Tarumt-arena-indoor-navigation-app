@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "Indoor Map Prototype",
+    "slug": "indoor-map-prototype",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false
+    }
+  }
+}
