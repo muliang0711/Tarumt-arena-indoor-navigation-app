@@ -26,7 +26,7 @@ Owns data loading and external boundaries.
 
 - local map package loading
 - map parsing
-- future backend or Supabase adapters
+- future backend API or device adapters
 
 ### `src/shared`
 

@@ -6,7 +6,7 @@ Responsibilities:
 
 - load map packages and sprite registries
 - parse raw map data into application-ready floor models
-- provide adapter-style entry points for future backend, sensors, or storage
+- provide adapter-style entry points for future backend APIs or device services
 
 Rules:
 
@@ -21,5 +21,4 @@ Current focus:
 Future expansion:
 
 - backend API client
-- Supabase data adapter
 - AR sensor and anchor adapters
