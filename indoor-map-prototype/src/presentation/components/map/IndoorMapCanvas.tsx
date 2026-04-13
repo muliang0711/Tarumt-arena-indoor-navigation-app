@@ -12,7 +12,7 @@ import Svg, {
   Text as SvgText,
 } from 'react-native-svg';
 
-import { colors } from '../../theme/tokens';
+import { colors } from '../../../shared/theme/tokens';
 import type {
   DestinationAnchor,
   FlowState,
@@ -20,7 +20,7 @@ import type {
   Point,
   RouteModel,
   TransformState,
-} from '../../types';
+} from '../../../shared/types';
 
 interface IndoorMapCanvasProps {
   floor: ParsedMapFloor;

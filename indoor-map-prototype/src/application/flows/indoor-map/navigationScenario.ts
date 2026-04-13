@@ -1,4 +1,4 @@
-import { colors } from '../theme/tokens';
+import { colors } from '../../../shared/theme/tokens';
 import type {
   DestinationAnchor,
   FloorOption,
@@ -6,7 +6,7 @@ import type {
   ParsedMapFloor,
   Point,
   RouteModel,
-} from '../types';
+} from '../../../shared/types';
 
 const DESTINATION_BLUEPRINTS = [
   { label: 'Studio 3A', subtitle: 'Collaborative classroom', accentColor: colors.accentAmber },

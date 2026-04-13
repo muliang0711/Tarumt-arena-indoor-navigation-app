@@ -5,7 +5,7 @@ import type {
   ParsedPlacement,
   ParsedResolvedTile,
   SpriteAssetDefinition,
-} from '../types';
+} from '../../shared/types';
 
 function resolveTileSprite(
   kind: ParsedResolvedTile['kind'],

@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-import IndoorMapPrototypeScreen from './src/screens/IndoorMapPrototypeScreen';
-import { colors } from './src/theme/tokens';
+import IndoorMapPrototypeScreen from './src/presentation/screens/IndoorMapPrototypeScreen';
+import { colors } from './src/shared/theme/tokens';
 
 export default function App() {
   return (

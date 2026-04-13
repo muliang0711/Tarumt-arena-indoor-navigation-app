@@ -1,8 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import { colors, radii, spacing } from '../../theme/tokens';
-import type { FloorOption } from '../../types';
+import { colors, radii, spacing } from '../../../shared/theme/tokens';
+import type { FloorOption } from '../../../shared/types';
 
 interface FloatingControlsProps {
   floors: FloorOption[];

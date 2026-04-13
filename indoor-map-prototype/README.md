@@ -12,12 +12,12 @@ What is different from the existing app:
 Architecture overview:
 
 - `assets/maps/`: copied reference map package and sprite assets
-- `src/data/`: static map registry and indoor route scenario layer
-- `src/utils/mapParser.ts`: converts raw map package data into renderable floor objects
-- `src/hooks/useMapViewport.ts`: one-finger pan and two-finger pinch interactions
-- `src/components/map/`: SVG-based base map and overlay rendering
-- `src/components/ui/`: floating controls and state sheet
-- `src/screens/`: top-level prototype screen
+- `src/presentation/`: screens, map rendering, and viewport interaction
+- `src/application/`: navigation flow orchestration and route-building logic
+- `src/integration/`: map loading and parsing adapters
+- `src/shared/`: shared types and theme tokens
+
+Detailed layer notes live in [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 Run locally:
 

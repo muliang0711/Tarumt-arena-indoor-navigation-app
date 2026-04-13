@@ -6,7 +6,7 @@ import {
   PanResponderInstance,
 } from 'react-native';
 
-import type { Bounds, Point, TransformState, ViewportSize } from '../types';
+import type { Bounds, Point, TransformState, ViewportSize } from '../../shared/types';
 
 const DEFAULT_SCALE = 1;
 const MIN_SCALE = 0.55;
