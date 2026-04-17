@@ -5,6 +5,14 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "plugins": [
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Allow Indoor Map Prototype to access motion data for indoor position tracking."
+        }
+      ]
+    ],
     "assetBundlePatterns": [
       "**/*"
     ],

@@ -4,6 +4,7 @@ import { getPrototypeFloor } from '../../../integration/map/loadPrototypeFloor';
 import type {
   DestinationAnchor,
   FlowState,
+  NavigationTelemetry,
   ParsedMapFloor,
   Point,
   RouteModel,
@@ -11,8 +12,8 @@ import type {
 import {
   buildPrototypeScenario,
   buildRouteToDestination,
-  interpolateRoutePosition,
 } from './navigationScenario';
+import { useSensorRouteTracking } from './useSensorRouteTracking';
 
 export type AppPage = 'home' | 'destination' | 'confirm' | 'map';
 
@@ -27,6 +28,7 @@ export interface IndoorMapFlowModel {
   routeProgress: number;
   scenario: ReturnType<typeof buildPrototypeScenario>;
   userPosition: Point;
+  telemetry: NavigationTelemetry;
   actions: {
     requestCamera: () => void;
     startDestinationFlow: () => void;
@@ -51,7 +53,6 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
   const [selectedDestinationId, setSelectedDestinationId] = useState(
     scenario.destinations[1]?.id ?? scenario.destinations[0]?.id ?? '',
   );
-  const [routeProgress, setRouteProgress] = useState(0);
 
   const selectedDestination =
     scenario.destinations.find((destination) => destination.id === selectedDestinationId) ?? null;
@@ -64,38 +65,39 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
     return buildRouteToDestination(scenario.currentPosition, selectedDestination, floor.tileSize);
   }, [floor.tileSize, scenario.currentPosition, selectedDestination]);
 
+  const sensorTracking = useSensorRouteTracking({
+    floor,
+    route,
+    enabled: page === 'map' && mapState === 'navigating',
+    initialPosition: scenario.currentPosition,
+  });
+
   const userPosition = useMemo(() => {
     if (!route || mapState === 'detected' || mapState === 'confirmed') {
       return scenario.currentPosition;
     }
 
-    return interpolateRoutePosition(route.points, mapState === 'arrived' ? 1 : routeProgress);
-  }, [mapState, route, routeProgress, scenario.currentPosition]);
+    if (mapState === 'arrived') {
+      return route.points[route.points.length - 1] ?? sensorTracking.userPosition;
+    }
+
+    return sensorTracking.userPosition;
+  }, [mapState, route, scenario.currentPosition, sensorTracking.userPosition]);
 
   useEffect(() => {
-    if (page !== 'map' || mapState !== 'navigating') {
+    if (page !== 'map' || mapState !== 'navigating' || !sensorTracking.hasArrived) {
       return;
     }
 
-    const timer = setInterval(() => {
-      setRouteProgress((current) => {
-        const next = Math.min(current + 0.018, 1);
-        if (next >= 1) {
-          setMapState('arrived');
-        }
-        return next;
-      });
-    }, 120);
-
-    return () => clearInterval(timer);
-  }, [mapState, page]);
+    setMapState('arrived');
+  }, [mapState, page, sensorTracking.hasArrived]);
 
   const requestCamera = () => setCameraGranted(true);
 
   const startDestinationFlow = () => {
     setPage('destination');
     setMapState('detected');
-    setRouteProgress(0);
+    sensorTracking.reset();
   };
 
   const selectDestination = (destinationId: string) => {
@@ -115,13 +117,13 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
       return;
     }
 
-    setRouteProgress(0);
     setMapState('navigating');
     setPage('map');
+    void sensorTracking.start();
   };
 
   const resetToHome = () => {
-    setRouteProgress(0);
+    sensorTracking.reset();
     setMapState('detected');
     setPage('home');
   };
@@ -132,12 +134,13 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
       return;
     }
 
+    sensorTracking.reset();
     setMapState('confirmed');
     setPage('confirm');
   };
 
   const restartRoute = () => {
-    setRouteProgress(0);
+    sensorTracking.reset();
     setMapState('confirmed');
     setPage('destination');
   };
@@ -150,9 +153,10 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
     floor,
     selectedDestination,
     route,
-    routeProgress,
+    routeProgress: mapState === 'arrived' ? 1 : sensorTracking.routeProgress,
     scenario,
     userPosition,
+    telemetry: sensorTracking.telemetry,
     actions: {
       requestCamera,
       startDestinationFlow,

@@ -13,6 +13,7 @@ import type {
   DestinationAnchor,
   FloorOption,
   FlowState,
+  NavigationTelemetry,
   ParsedMapFloor,
   Point,
   RouteModel,
@@ -32,6 +33,7 @@ interface NavigationMapStepProps {
   selectedDestination: DestinationAnchor | null;
   transform: TransformState;
   userPosition: Point;
+  telemetry: NavigationTelemetry;
   panHandlers: GestureResponderHandlers;
   onLayout: (event: LayoutChangeEvent) => void;
   onBack: () => void;
@@ -52,6 +54,7 @@ export function NavigationMapStep({
   selectedDestination,
   transform,
   userPosition,
+  telemetry,
   panHandlers,
   onLayout,
   onBack,
@@ -62,6 +65,9 @@ export function NavigationMapStep({
   onEnd,
   onNewRoute,
 }: NavigationMapStepProps) {
+  const headingLabel =
+    telemetry.headingDegrees == null ? 'Calibrating' : `${Math.round(telemetry.headingDegrees)}°`;
+
   return (
     <View style={styles.mapPage}>
       <IndoorMapCanvas
@@ -92,6 +98,37 @@ export function NavigationMapStep({
 
           <View style={styles.mapStatusPill}>
             <Text style={styles.mapStatusText}>{floor.label}</Text>
+          </View>
+        </View>
+
+        <View style={styles.telemetryWrap}>
+          <View style={styles.telemetryCard}>
+            <View style={styles.telemetryHeaderRow}>
+              <Text style={styles.telemetryTitle}>{telemetry.modeLabel}</Text>
+              <View
+                style={[
+                  styles.telemetryStatusDot,
+                  telemetry.status === 'active'
+                    ? styles.telemetryStatusActive
+                    : telemetry.status === 'fallback'
+                      ? styles.telemetryStatusFallback
+                      : telemetry.status === 'permission-denied' || telemetry.status === 'unavailable'
+                        ? styles.telemetryStatusBlocked
+                        : styles.telemetryStatusIdle,
+                ]}
+              />
+            </View>
+            <Text style={styles.telemetryDetail}>{telemetry.detailLabel}</Text>
+            <View style={styles.telemetryMetricsRow}>
+              <View style={styles.telemetryMetric}>
+                <Text style={styles.telemetryMetricLabel}>Steps</Text>
+                <Text style={styles.telemetryMetricValue}>{telemetry.stepCount}</Text>
+              </View>
+              <View style={styles.telemetryMetric}>
+                <Text style={styles.telemetryMetricLabel}>Heading</Text>
+                <Text style={styles.telemetryMetricValue}>{headingLabel}</Text>
+              </View>
+            </View>
           </View>
         </View>
 
@@ -182,6 +219,69 @@ const styles = StyleSheet.create({
     color: colors.textOnDark,
     fontSize: 13,
     fontWeight: '700',
+  },
+  telemetryWrap: {
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.sm,
+  },
+  telemetryCard: {
+    borderRadius: radii.lg,
+    backgroundColor: 'rgba(248, 251, 255, 0.94)',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    gap: spacing.xs,
+  },
+  telemetryHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  telemetryTitle: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  telemetryStatusDot: {
+    width: 11,
+    height: 11,
+    borderRadius: radii.pill,
+  },
+  telemetryStatusActive: {
+    backgroundColor: colors.accentGreen,
+  },
+  telemetryStatusFallback: {
+    backgroundColor: colors.accentAmber,
+  },
+  telemetryStatusBlocked: {
+    backgroundColor: colors.accentRose,
+  },
+  telemetryStatusIdle: {
+    backgroundColor: colors.textMuted,
+  },
+  telemetryDetail: {
+    color: colors.textSecondary,
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  telemetryMetricsRow: {
+    flexDirection: 'row',
+    gap: spacing.md,
+    marginTop: 2,
+  },
+  telemetryMetric: {
+    minWidth: 70,
+  },
+  telemetryMetricLabel: {
+    color: colors.textMuted,
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+  },
+  telemetryMetricValue: {
+    color: colors.textPrimary,
+    fontSize: 16,
+    fontWeight: '800',
+    marginTop: 2,
   },
   arrivalBannerWrap: {
     marginTop: 'auto',

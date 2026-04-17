@@ -143,6 +143,22 @@ export interface RouteModel {
   instruction: string;
 }
 
+export type NavigationSensorStatus =
+  | 'idle'
+  | 'preparing'
+  | 'active'
+  | 'fallback'
+  | 'permission-denied'
+  | 'unavailable';
+
+export interface NavigationTelemetry {
+  status: NavigationSensorStatus;
+  modeLabel: string;
+  detailLabel: string;
+  headingDegrees: number | null;
+  stepCount: number;
+}
+
 export interface ViewportSize {
   width: number;
   height: number;

@@ -21,7 +21,7 @@ const FLOOR_OPTIONS: FloorOption[] = [
   { id: 'student-center-level-2', label: 'L2', availability: 'preview' },
 ];
 
-function distanceBetweenPoints(a: Point, b: Point) {
+export function distanceBetweenPoints(a: Point, b: Point) {
   return Math.hypot(b.x - a.x, b.y - a.y);
 }
 
@@ -178,4 +178,71 @@ export function interpolateRoutePosition(routePoints: Point[], progress: number)
   }
 
   return routePoints[routePoints.length - 1];
+}
+
+export function getRouteDistance(routePoints: Point[]) {
+  return routePoints.reduce((sum, point, index) => {
+    if (index === 0) {
+      return sum;
+    }
+
+    return sum + distanceBetweenPoints(routePoints[index - 1], point);
+  }, 0);
+}
+
+export function getRoutePositionAtDistance(routePoints: Point[], distancePx: number): Point {
+  if (routePoints.length === 0) {
+    return { x: 0, y: 0 };
+  }
+
+  if (routePoints.length === 1 || distancePx <= 0) {
+    return routePoints[0];
+  }
+
+  const totalDistance = getRouteDistance(routePoints);
+  if (distancePx >= totalDistance) {
+    return routePoints[routePoints.length - 1];
+  }
+
+  let covered = 0;
+  for (let index = 0; index < routePoints.length - 1; index += 1) {
+    const start = routePoints[index];
+    const end = routePoints[index + 1];
+    const segmentLength = distanceBetweenPoints(start, end);
+
+    if (covered + segmentLength >= distancePx) {
+      const ratio = (distancePx - covered) / segmentLength;
+      return {
+        x: start.x + (end.x - start.x) * ratio,
+        y: start.y + (end.y - start.y) * ratio,
+      };
+    }
+
+    covered += segmentLength;
+  }
+
+  return routePoints[routePoints.length - 1];
+}
+
+export function getRouteHeadingAtDistance(routePoints: Point[], distancePx: number) {
+  if (routePoints.length < 2) {
+    return 0;
+  }
+
+  const clampedDistance = Math.max(0, distancePx);
+  let covered = 0;
+
+  for (let index = 0; index < routePoints.length - 1; index += 1) {
+    const start = routePoints[index];
+    const end = routePoints[index + 1];
+    const segmentLength = distanceBetweenPoints(start, end);
+
+    if (covered + segmentLength >= clampedDistance || index === routePoints.length - 2) {
+      return ((Math.atan2(end.y - start.y, end.x - start.x) * 180) / Math.PI + 360) % 360;
+    }
+
+    covered += segmentLength;
+  }
+
+  return 0;
 }

@@ -18,6 +18,7 @@ export default function IndoorMapPrototypeScreen() {
     route,
     scenario,
     userPosition,
+    telemetry,
     actions,
   } = useIndoorMapFlow();
 
@@ -91,6 +92,7 @@ export default function IndoorMapPrototypeScreen() {
       selectedDestination={selectedDestination}
       transform={transform}
       userPosition={userPosition}
+      telemetry={telemetry}
       panHandlers={panHandlers}
       onLayout={onLayout}
       onBack={actions.backFromMap}

@@ -4,6 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Village Tileset Phone Reviewer</title>
+    <script>
+      if (window.location.protocol === "file:") {
+        const target = `http://localhost:4173/phone_preview.html${window.location.search}${window.location.hash}`;
+        window.location.replace(target);
+      }
+    </script>
     <link rel="stylesheet" href="./phone_preview.css" />
   </head>
   <body>
