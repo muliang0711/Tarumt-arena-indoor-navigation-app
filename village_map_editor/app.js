@@ -2,6 +2,7 @@ const TILE_SIZE = 16;
 const MIN_MAP_WIDTH = 30;
 const MIN_MAP_HEIGHT = 20;
 const AUTO_BLOCK_TILE_ALPHA_THRESHOLD = 0.18;
+const PLACEMENT_ORIGIN_VERSION = 2;
 const STORAGE_KEY = "village-map-editor-state-v2";
 const PHONE_REVIEW_SNAPSHOT_KEY = "village-phone-review-snapshot-v1";
 const SAMPLE_LAYOUT_URL = "/generated_maps/village_map_layout.json";
@@ -56,6 +57,7 @@ const state = {
 let assets = [];
 const assetMap = new Map();
 const assetAutoBlockCache = new Map();
+const assetLayoutCache = new Map();
 
 const canvas = document.querySelector("#map-canvas");
 const ctx = canvas.getContext("2d");
@@ -153,17 +155,101 @@ function nodeTypeLabel(value) {
 }
 
 function assetTileWidth(asset) {
-  if (!asset?.image) {
-    return 1;
-  }
-  return Math.max(Math.ceil(asset.image.width / TILE_SIZE), 1);
+  return getAssetLayout(asset).footprintWidth;
 }
 
 function assetTileHeight(asset) {
+  return getAssetLayout(asset).footprintHeight;
+}
+
+function getAssetLayout(asset) {
   if (!asset?.image) {
-    return 1;
+    return {
+      contentHeight: TILE_SIZE,
+      contentWidth: TILE_SIZE,
+      drawOffsetX: 0,
+      drawOffsetY: 0,
+      footprintHeight: 1,
+      footprintWidth: 1,
+      legacySnapOffsetX: 0,
+      legacySnapOffsetY: 0,
+      minX: 0,
+      minY: 0,
+    };
   }
-  return Math.max(Math.ceil(asset.image.height / TILE_SIZE), 1);
+
+  const cached = assetLayoutCache.get(asset.id);
+  if (cached) {
+    return cached;
+  }
+
+  footprintCanvas.width = asset.image.width;
+  footprintCanvas.height = asset.image.height;
+  footprintCtx.clearRect(0, 0, footprintCanvas.width, footprintCanvas.height);
+  footprintCtx.drawImage(asset.image, 0, 0);
+
+  const { data } = footprintCtx.getImageData(0, 0, footprintCanvas.width, footprintCanvas.height);
+  let minX = footprintCanvas.width;
+  let minY = footprintCanvas.height;
+  let maxX = -1;
+  let maxY = -1;
+
+  for (let pixelY = 0; pixelY < footprintCanvas.height; pixelY += 1) {
+    for (let pixelX = 0; pixelX < footprintCanvas.width; pixelX += 1) {
+      const alpha = data[(pixelY * footprintCanvas.width + pixelX) * 4 + 3];
+      if (alpha <= 0) {
+        continue;
+      }
+
+      if (pixelX < minX) {
+        minX = pixelX;
+      }
+      if (pixelY < minY) {
+        minY = pixelY;
+      }
+      if (pixelX > maxX) {
+        maxX = pixelX;
+      }
+      if (pixelY > maxY) {
+        maxY = pixelY;
+      }
+    }
+  }
+
+  if (maxX < 0 || maxY < 0) {
+    minX = 0;
+    minY = 0;
+    maxX = asset.image.width - 1;
+    maxY = asset.image.height - 1;
+  }
+
+  const contentWidth = maxX - minX + 1;
+  const contentHeight = maxY - minY + 1;
+  const layout = {
+    contentHeight,
+    contentWidth,
+    drawOffsetX: -minX,
+    drawOffsetY: -minY,
+    footprintHeight: Math.max(Math.ceil(contentHeight / TILE_SIZE), 1),
+    footprintWidth: Math.max(Math.ceil(contentWidth / TILE_SIZE), 1),
+    legacySnapOffsetX: Math.round(minX / TILE_SIZE),
+    legacySnapOffsetY: Math.round(minY / TILE_SIZE),
+    minX,
+    minY,
+  };
+
+  assetLayoutCache.set(asset.id, layout);
+  return layout;
+}
+
+function placementPixelX(placement, asset, scale = 1) {
+  const layout = getAssetLayout(asset);
+  return (placement.tileX * TILE_SIZE + layout.drawOffsetX) * scale;
+}
+
+function placementPixelY(placement, asset, scale = 1) {
+  const layout = getAssetLayout(asset);
+  return (placement.tileY * TILE_SIZE + layout.drawOffsetY) * scale;
 }
 
 function assetBaseId(assetId) {
@@ -213,6 +299,7 @@ function snapshotState() {
     mapWidth: state.mapWidth,
     metadataTiles: state.metadataTiles,
     nodes: state.nodes,
+    placementOriginVersion: PLACEMENT_ORIGIN_VERSION,
     placements: state.placements,
     selectedAssetId: state.selectedAssetId,
     showGrid: state.showGrid,
@@ -229,6 +316,8 @@ function saveHistory() {
 
 function restoreSnapshot(snapshot) {
   const parsed = JSON.parse(snapshot);
+  const placementOriginVersion =
+    typeof parsed.placementOriginVersion === "number" ? parsed.placementOriginVersion : 1;
   const parsedNodes = Array.isArray(parsed.nodes) ? parsed.nodes : Array.isArray(parsed.anchors) ? parsed.anchors : [];
   state.nodes = parsedNodes
     .filter((node) => typeof node?.id === "string" && typeof node?.x === "number" && typeof node?.y === "number")
@@ -246,7 +335,9 @@ function restoreSnapshot(snapshot) {
   state.mapHeight = typeof parsed.mapHeight === "number" ? Math.max(Math.floor(parsed.mapHeight), MIN_MAP_HEIGHT) : MIN_MAP_HEIGHT;
   state.mapWidth = typeof parsed.mapWidth === "number" ? Math.max(Math.floor(parsed.mapWidth), MIN_MAP_WIDTH) : MIN_MAP_WIDTH;
   state.metadataTiles = parsed.metadataTiles && typeof parsed.metadataTiles === "object" ? parsed.metadataTiles : {};
-  state.placements = Array.isArray(parsed.placements) ? parsed.placements : [];
+  state.placements = Array.isArray(parsed.placements)
+    ? normalizePlacements(parsed.placements, placementOriginVersion)
+    : [];
   state.selectedAssetId = typeof parsed.selectedAssetId === "string" ? parsed.selectedAssetId : null;
   state.showGrid = typeof parsed.showGrid === "boolean" ? parsed.showGrid : true;
   state.zoom = typeof parsed.zoom === "number" ? Math.min(Math.max(parsed.zoom, 1), 4) : 2;
@@ -282,6 +373,48 @@ function makePlacement(assetId, tileX, tileY) {
     tileX,
     tileY,
   };
+}
+
+function migrateLegacyPlacement(placement) {
+  const asset = assetMap.get(placement.assetId);
+  if (!asset) {
+    return {
+      ...placement,
+      tileX: Math.max(Math.floor(placement.tileX ?? 0), 0),
+      tileY: Math.max(Math.floor(placement.tileY ?? 0), 0),
+    };
+  }
+
+  const layout = getAssetLayout(asset);
+  return {
+    ...placement,
+    tileX: Math.max(Math.floor((placement.tileX ?? 0) + layout.legacySnapOffsetX), 0),
+    tileY: Math.max(Math.floor((placement.tileY ?? 0) + layout.legacySnapOffsetY), 0),
+  };
+}
+
+function normalizePlacements(placements, placementOriginVersion = 1) {
+  return placements
+    .filter(
+      (placement) =>
+        placement &&
+        typeof placement.assetId === "string" &&
+        typeof placement.id === "string" &&
+        typeof placement.tileX === "number" &&
+        typeof placement.tileY === "number" &&
+        assetMap.has(placement.assetId),
+    )
+    .map((placement) => {
+      if (placementOriginVersion >= PLACEMENT_ORIGIN_VERSION) {
+        return {
+          ...placement,
+          tileX: Math.max(Math.floor(placement.tileX), 0),
+          tileY: Math.max(Math.floor(placement.tileY), 0),
+        };
+      }
+
+      return migrateLegacyPlacement(placement);
+    });
 }
 
 function syncInputs() {
@@ -364,41 +497,9 @@ function getAutoBlockedOffsets(asset) {
 
   const width = assetTileWidth(asset);
   const height = assetTileHeight(asset);
-  footprintCanvas.width = asset.image.width;
-  footprintCanvas.height = asset.image.height;
-  footprintCtx.clearRect(0, 0, footprintCanvas.width, footprintCanvas.height);
-  footprintCtx.drawImage(asset.image, 0, 0);
-
-  const { data } = footprintCtx.getImageData(0, 0, footprintCanvas.width, footprintCanvas.height);
-  const offsets = [];
-  for (let tileY = 0; tileY < height; tileY += 1) {
-    for (let tileX = 0; tileX < width; tileX += 1) {
-      const maxX = Math.min((tileX + 1) * TILE_SIZE, footprintCanvas.width);
-      const maxY = Math.min((tileY + 1) * TILE_SIZE, footprintCanvas.height);
-      let opaquePixels = 0;
-      let totalPixels = 0;
-
-      for (let pixelY = tileY * TILE_SIZE; pixelY < maxY; pixelY += 1) {
-        for (let pixelX = tileX * TILE_SIZE; pixelX < maxX; pixelX += 1) {
-          const alpha = data[(pixelY * footprintCanvas.width + pixelX) * 4 + 3];
-          totalPixels += 1;
-          if (alpha >= 32) {
-            opaquePixels += 1;
-          }
-        }
-      }
-
-      if (totalPixels && opaquePixels / totalPixels >= AUTO_BLOCK_TILE_ALPHA_THRESHOLD) {
-        offsets.push({ x: tileX, y: tileY });
-      }
-    }
-  }
-
-  const resolvedOffsets = offsets.length
-    ? offsets
-    : Array.from({ length: height }, (_, tileY) =>
-        Array.from({ length: width }, (_, tileX) => ({ x: tileX, y: tileY })),
-      ).flat();
+  const resolvedOffsets = Array.from({ length: height }, (_, tileY) =>
+    Array.from({ length: width }, (_, tileX) => ({ x: tileX, y: tileY })),
+  ).flat();
 
   assetAutoBlockCache.set(asset.id, resolvedOffsets);
   return resolvedOffsets;
@@ -967,8 +1068,8 @@ function drawPlacements(targetCtx, scale) {
 
     targetCtx.drawImage(
       asset.image,
-      placement.tileX * TILE_SIZE * scale,
-      placement.tileY * TILE_SIZE * scale,
+      placementPixelX(placement, asset, scale),
+      placementPixelY(placement, asset, scale),
       asset.image.width * scale,
       asset.image.height * scale,
     );
@@ -989,8 +1090,8 @@ function drawVisualPreview(targetCtx, scale) {
   targetCtx.globalAlpha = 0.45;
   targetCtx.drawImage(
     asset.image,
-    state.hoverTile.x * TILE_SIZE * scale,
-    state.hoverTile.y * TILE_SIZE * scale,
+    (state.hoverTile.x * TILE_SIZE + getAssetLayout(asset).drawOffsetX) * scale,
+    (state.hoverTile.y * TILE_SIZE + getAssetLayout(asset).drawOffsetY) * scale,
     asset.image.width * scale,
     asset.image.height * scale,
   );
@@ -1132,8 +1233,8 @@ function drawSelections(targetCtx, scale) {
       targetCtx.strokeRect(
         placement.tileX * TILE_SIZE * scale + 1,
         placement.tileY * TILE_SIZE * scale + 1,
-        asset.image.width * scale - 2,
-        asset.image.height * scale - 2,
+        assetTileWidth(asset) * TILE_SIZE * scale - 2,
+        assetTileHeight(asset) * TILE_SIZE * scale - 2,
       );
       targetCtx.restore();
     }
@@ -1414,6 +1515,7 @@ function buildExportProject() {
   });
 
   return {
+    placementOriginVersion: PLACEMENT_ORIGIN_VERSION,
     schemaVersion: 1,
     mapId: "village_demo_01",
     tileSize: TILE_SIZE,
@@ -1427,6 +1529,7 @@ function buildExportProject() {
       blockedAssetId: "serious_shit__unwalkable_tile_clean",
     },
     visual: {
+      placementOriginVersion: PLACEMENT_ORIGIN_VERSION,
       placements: state.placements,
     },
     metadata: {
@@ -1530,6 +1633,12 @@ function reviewCurrentMapOnPhone() {
 
 function loadImportedLayout(parsed) {
   saveHistory();
+  const placementOriginVersion =
+    typeof parsed.visual?.placementOriginVersion === "number"
+      ? parsed.visual.placementOriginVersion
+      : typeof parsed.placementOriginVersion === "number"
+        ? parsed.placementOriginVersion
+        : 1;
 
   const visualPlacements = Array.isArray(parsed.visual?.placements)
     ? parsed.visual.placements
@@ -1565,7 +1674,7 @@ function loadImportedLayout(parsed) {
         : state.autoBlockFromVisuals;
   state.mapWidth = typeof parsed.mapWidth === "number" ? Math.max(Math.floor(parsed.mapWidth), MIN_MAP_WIDTH) : MIN_MAP_WIDTH;
   state.mapHeight = typeof parsed.mapHeight === "number" ? Math.max(Math.floor(parsed.mapHeight), MIN_MAP_HEIGHT) : MIN_MAP_HEIGHT;
-  state.placements = visualPlacements.filter((placement) => assetMap.has(placement.assetId));
+  state.placements = normalizePlacements(visualPlacements, placementOriginVersion);
   state.metadataTiles = {};
   for (const tile of metadataTiles) {
     if (typeof tile?.x === "number" && typeof tile?.y === "number" && typeof tile?.kind === "string") {
@@ -1874,6 +1983,7 @@ async function loadAssets() {
   const manifest = await fetchAssetManifest();
   assetMap.clear();
   assetAutoBlockCache.clear();
+  assetLayoutCache.clear();
   renderState.backgroundCacheKey = "";
   renderState.selectedPreviewAssetId = null;
 
