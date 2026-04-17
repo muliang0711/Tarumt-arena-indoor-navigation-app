@@ -7,6 +7,7 @@ import Svg, {
   Image as SvgImage,
   Line,
   Pattern,
+  Polygon,
   Polyline,
   Rect,
   Text as SvgText,
@@ -27,6 +28,7 @@ interface IndoorMapCanvasProps {
   state: FlowState;
   transform: TransformState;
   userPosition: Point;
+  headingDegrees: number | null;
   selectedDestination: DestinationAnchor | null;
   route: RouteModel | null;
   panHandlers: GestureResponderHandlers;
@@ -46,6 +48,7 @@ export default function IndoorMapCanvas({
   state,
   transform,
   userPosition,
+  headingDegrees,
   selectedDestination,
   route,
   panHandlers,
@@ -54,6 +57,7 @@ export default function IndoorMapCanvas({
   const blockedPatternId = floor.background.blocked
     ? sanitizePatternId(floor.background.blocked.assetId)
     : null;
+  const arrowRotation = headingDegrees ?? 0;
 
   return (
     <View style={styles.canvasShell} onLayout={onLayout} {...panHandlers}>
@@ -223,8 +227,16 @@ export default function IndoorMapCanvas({
 
           <G>
             <Circle cx={userPosition.x} cy={userPosition.y} r={24} fill={colors.userRing} />
-            <Circle cx={userPosition.x} cy={userPosition.y} r={12} fill={colors.white} />
-            <Circle cx={userPosition.x} cy={userPosition.y} r={7} fill={colors.userDot} />
+            <G transform={`translate(${userPosition.x} ${userPosition.y}) rotate(${arrowRotation})`}>
+              <Circle cx={0} cy={0} r={12} fill={colors.white} />
+              <Polygon
+                points="0,-18 12,12 4,9 0,16 -4,9 -12,12"
+                fill={colors.userDot}
+                stroke={colors.white}
+                strokeWidth={2}
+                strokeLinejoin="round"
+              />
+            </G>
           </G>
 
           {state === 'detected' ? (

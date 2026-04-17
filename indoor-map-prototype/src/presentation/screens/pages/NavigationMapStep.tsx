@@ -66,7 +66,7 @@ export function NavigationMapStep({
   onNewRoute,
 }: NavigationMapStepProps) {
   const headingLabel =
-    telemetry.headingDegrees == null ? 'Calibrating' : `${Math.round(telemetry.headingDegrees)}°`;
+    telemetry.headingDegrees == null ? 'Calibrating' : `${Math.round(telemetry.headingDegrees)} deg`;
 
   return (
     <View style={styles.mapPage}>
@@ -75,6 +75,7 @@ export function NavigationMapStep({
         state={mapState}
         transform={transform}
         userPosition={userPosition}
+        headingDegrees={telemetry.headingDegrees}
         selectedDestination={selectedDestination}
         route={route}
         panHandlers={panHandlers}
