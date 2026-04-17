@@ -1,6 +1,7 @@
 const TILE_SIZE = 16;
 const MIN_MAP_WIDTH = 30;
 const MIN_MAP_HEIGHT = 20;
+const AUTO_BLOCK_TILE_ALPHA_THRESHOLD = 0.18;
 const STORAGE_KEY = "village-map-editor-state-v2";
 const PHONE_REVIEW_SNAPSHOT_KEY = "village-phone-review-snapshot-v1";
 const SAMPLE_LAYOUT_URL = "/generated_maps/village_map_layout.json";
@@ -54,11 +55,14 @@ const state = {
 
 let assets = [];
 const assetMap = new Map();
+const assetAutoBlockCache = new Map();
 
 const canvas = document.querySelector("#map-canvas");
 const ctx = canvas.getContext("2d");
 const backgroundCacheCanvas = document.createElement("canvas");
 const backgroundCacheCtx = backgroundCacheCanvas.getContext("2d");
+const footprintCanvas = document.createElement("canvas");
+const footprintCtx = footprintCanvas.getContext("2d", { willReadFrequently: true });
 
 const renderState = {
   backgroundCacheKey: "",
@@ -333,11 +337,71 @@ function shouldAutoBlockAsset(asset) {
   }
 
   const baseId = assetBaseId(asset.id);
-  if (baseId.startsWith("terrain_path_") || baseId.startsWith("terrain_grass_plain")) {
+  if (
+    baseId.startsWith("terrain_path_") ||
+    baseId.startsWith("terrain_grass_plain") ||
+    baseId.startsWith("walkable_")
+  ) {
+    return false;
+  }
+
+  if (assetTileWidth(asset) === 1 && assetTileHeight(asset) === 1 && !/unwalkable|blocked/i.test(baseId)) {
     return false;
   }
 
   return true;
+}
+
+function getAutoBlockedOffsets(asset) {
+  if (!asset?.image) {
+    return [];
+  }
+
+  const cached = assetAutoBlockCache.get(asset.id);
+  if (cached) {
+    return cached;
+  }
+
+  const width = assetTileWidth(asset);
+  const height = assetTileHeight(asset);
+  footprintCanvas.width = asset.image.width;
+  footprintCanvas.height = asset.image.height;
+  footprintCtx.clearRect(0, 0, footprintCanvas.width, footprintCanvas.height);
+  footprintCtx.drawImage(asset.image, 0, 0);
+
+  const { data } = footprintCtx.getImageData(0, 0, footprintCanvas.width, footprintCanvas.height);
+  const offsets = [];
+  for (let tileY = 0; tileY < height; tileY += 1) {
+    for (let tileX = 0; tileX < width; tileX += 1) {
+      const maxX = Math.min((tileX + 1) * TILE_SIZE, footprintCanvas.width);
+      const maxY = Math.min((tileY + 1) * TILE_SIZE, footprintCanvas.height);
+      let opaquePixels = 0;
+      let totalPixels = 0;
+
+      for (let pixelY = tileY * TILE_SIZE; pixelY < maxY; pixelY += 1) {
+        for (let pixelX = tileX * TILE_SIZE; pixelX < maxX; pixelX += 1) {
+          const alpha = data[(pixelY * footprintCanvas.width + pixelX) * 4 + 3];
+          totalPixels += 1;
+          if (alpha >= 32) {
+            opaquePixels += 1;
+          }
+        }
+      }
+
+      if (totalPixels && opaquePixels / totalPixels >= AUTO_BLOCK_TILE_ALPHA_THRESHOLD) {
+        offsets.push({ x: tileX, y: tileY });
+      }
+    }
+  }
+
+  const resolvedOffsets = offsets.length
+    ? offsets
+    : Array.from({ length: height }, (_, tileY) =>
+        Array.from({ length: width }, (_, tileX) => ({ x: tileX, y: tileY })),
+      ).flat();
+
+  assetAutoBlockCache.set(asset.id, resolvedOffsets);
+  return resolvedOffsets;
 }
 
 function getAutoBlockedTileKeys() {
@@ -353,12 +417,8 @@ function getAutoBlockedTileKeys() {
       continue;
     }
 
-    const width = assetTileWidth(asset);
-    const height = assetTileHeight(asset);
-    for (let y = placement.tileY; y < placement.tileY + height; y += 1) {
-      for (let x = placement.tileX; x < placement.tileX + width; x += 1) {
-        blocked.add(tileKey(x, y));
-      }
+    for (const offset of getAutoBlockedOffsets(asset)) {
+      blocked.add(tileKey(placement.tileX + offset.x, placement.tileY + offset.y));
     }
   }
 
@@ -1813,6 +1873,7 @@ async function fetchAssetManifest() {
 async function loadAssets() {
   const manifest = await fetchAssetManifest();
   assetMap.clear();
+  assetAutoBlockCache.clear();
   renderState.backgroundCacheKey = "";
   renderState.selectedPreviewAssetId = null;
 
