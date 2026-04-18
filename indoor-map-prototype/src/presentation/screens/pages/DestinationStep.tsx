@@ -56,7 +56,7 @@ export function DestinationStep({
 
         <ActionDock
           onHomePress={onBack}
-          onStartPress={selectedDestinationId ? onContinue : () => {}}
+          onStartPress={() => {}}
         />
       </View>
     </ScreenShell>
