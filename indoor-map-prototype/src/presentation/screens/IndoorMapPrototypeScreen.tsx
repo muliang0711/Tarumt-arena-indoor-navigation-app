@@ -17,6 +17,7 @@ export default function IndoorMapPrototypeScreen() {
     selectedDestinationFloor,
     selectedDestination,
     route,
+    routeProgress,
     scenario,
     userPosition,
     telemetry,
@@ -99,6 +100,7 @@ export default function IndoorMapPrototypeScreen() {
       floors={scenario.floors}
       mapState={mapState}
       route={route}
+      routeProgress={routeProgress}
       selectedDestination={selectedDestination}
       transform={transform}
       userPosition={userPosition}

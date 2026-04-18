@@ -28,6 +28,7 @@ interface NavigationMapStepProps {
   floors: FloorOption[];
   mapState: FlowState;
   route: RouteModel | null;
+  routeProgress: number;
   selectedDestination: DestinationAnchor | null;
   transform: TransformState;
   userPosition: Point;
@@ -49,6 +50,7 @@ export function NavigationMapStep({
   floors,
   mapState,
   route,
+  routeProgress,
   selectedDestination,
   transform,
   userPosition,
@@ -90,10 +92,9 @@ export function NavigationMapStep({
         />
 
         <NavigationMapBottomPanel
-          floorLabel={floor.label}
           mapState={mapState}
           route={route}
-          selectedDestination={selectedDestination}
+          routeProgress={routeProgress}
           onExit={handleExit}
         />
       </SafeAreaView>

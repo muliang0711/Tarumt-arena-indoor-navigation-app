@@ -1,55 +1,64 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { DestinationAnchor, FlowState, RouteModel } from '../../../shared/types';
+import type { FlowState, RouteModel } from '../../../shared/types';
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
-import { SecondaryActionButton } from '../controls/ActionButtons';
 
 interface NavigationMapBottomPanelProps {
-  floorLabel: string;
   mapState: FlowState;
   route: RouteModel | null;
-  selectedDestination: DestinationAnchor | null;
+  routeProgress: number;
   onExit: () => void;
 }
 
 export function NavigationMapBottomPanel({
-  floorLabel,
   mapState,
   route,
-  selectedDestination,
+  routeProgress,
   onExit,
 }: NavigationMapBottomPanelProps) {
   const summaryLabel =
     mapState === 'arrived'
-      ? 'Destination reached'
-      : `${route?.etaMinutes ?? 0} min / ${route?.distanceMeters ?? 0} m`;
+      ? 'Arrived'
+      : `${route?.etaMinutes ?? 0} min`;
 
-  const detailLabel =
-    mapState === 'arrived' ? 'You can leave the live map now.' : route?.instruction ?? 'Follow the route highlight.';
+  const instructionLabel =
+    mapState === 'arrived'
+      ? 'You have reached your destination.'
+      : route?.instruction ?? 'Turn left at the next intersection.';
 
   return (
     <View style={styles.wrap}>
       <View style={styles.panel}>
-        <View style={styles.infoRow}>
-          <View style={styles.titleBlock}>
-            <Text style={styles.destinationLabel}>Destination</Text>
-            <Text style={styles.destinationTitle} numberOfLines={1}>
-              {selectedDestination?.label ?? 'Destination'}
-            </Text>
-            <Text style={styles.summaryText}>{summaryLabel}</Text>
-            <Text style={styles.detailText} numberOfLines={2}>
-              {detailLabel}
-            </Text>
-          </View>
+        <View style={styles.topRow}>
+          <Text style={styles.summaryText}>{summaryLabel}</Text>
 
-          <View style={styles.floorPill}>
-            <Text style={styles.floorPillLabel}>Floor</Text>
-            <Text style={styles.floorPillValue}>{floorLabel}</Text>
+          <View style={styles.actionRow}>
+            <View style={styles.turnBadge}>
+              <View style={styles.turnStem} />
+              <View style={styles.turnHead} />
+            </View>
+            <Pressable
+              onPress={onExit}
+              style={({ pressed }) => [styles.exitButton, pressed && styles.exitButtonPressed]}
+            >
+              <Text style={styles.exitButtonLabel}>Exit</Text>
+            </Pressable>
           </View>
         </View>
 
-        <SecondaryActionButton label="Exit map" onPress={onExit} />
+        <Text style={styles.instructionText} numberOfLines={1}>
+          {instructionLabel}
+        </Text>
+
+        <View style={styles.progressTrack}>
+          <View
+            style={[
+              styles.progressFill,
+              { width: `${Math.max(8, Math.round(Math.min(Math.max(routeProgress, 0), 1) * 100))}%` },
+            ]}
+          />
+        </View>
       </View>
     </View>
   );
@@ -63,68 +72,91 @@ const styles = StyleSheet.create({
   },
   panel: {
     borderRadius: radii.lg,
-    padding: spacing.md,
-    backgroundColor: 'rgba(248, 251, 255, 0.94)',
+    paddingHorizontal: spacing.md,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.sm,
+    backgroundColor: 'rgba(12, 15, 22, 0.94)',
     borderWidth: 1,
-    borderColor: colors.glassStroke,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 16 },
+    borderColor: 'rgba(255, 255, 255, 0.08)',
+    shadowColor: 'rgba(0, 0, 0, 0.34)',
+    shadowOffset: { width: 0, height: 18 },
     shadowOpacity: 1,
     shadowRadius: 28,
     elevation: 12,
-    gap: spacing.md,
+    gap: spacing.sm,
   },
-  infoRow: {
+  topRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     gap: spacing.md,
-  },
-  titleBlock: {
-    flex: 1,
-  },
-  destinationLabel: {
-    color: colors.textMuted,
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
-  },
-  destinationTitle: {
-    color: colors.textPrimary,
-    fontSize: 22,
-    fontWeight: '800',
-    marginTop: 4,
   },
   summaryText: {
-    color: colors.accentBlue,
-    fontSize: 13,
-    fontWeight: '700',
-    marginTop: spacing.xs,
+    color: colors.textOnDark,
+    fontSize: 18,
+    fontWeight: '800',
   },
-  detailText: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: spacing.xs,
+  actionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
-  floorPill: {
-    minWidth: 70,
-    borderRadius: radii.md,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.sm,
-    backgroundColor: colors.surfaceMuted,
+  turnBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
   },
-  floorPillLabel: {
-    color: colors.textMuted,
-    fontSize: 10,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.8,
+  turnStem: {
+    width: 3,
+    height: 15,
+    borderRadius: radii.pill,
+    backgroundColor: colors.white,
+    transform: [{ translateX: -5 }],
   },
-  floorPillValue: {
-    color: colors.textPrimary,
+  turnHead: {
+    position: 'absolute',
+    width: 11,
+    height: 11,
+    borderTopWidth: 3,
+    borderLeftWidth: 3,
+    borderColor: colors.white,
+    top: 13,
+    transform: [{ rotate: '-45deg' }],
+  },
+  exitButton: {
+    minWidth: 84,
+    height: 48,
+    borderRadius: radii.pill,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EF4444',
+  },
+  exitButtonPressed: {
+    opacity: 0.9,
+  },
+  exitButtonLabel: {
+    color: colors.white,
     fontSize: 15,
     fontWeight: '800',
-    marginTop: 4,
+  },
+  instructionText: {
+    color: 'rgba(248, 250, 253, 0.88)',
+    fontSize: 15,
+    fontWeight: '700',
+    lineHeight: 20,
+  },
+  progressTrack: {
+    height: 6,
+    borderRadius: radii.pill,
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: radii.pill,
+    backgroundColor: colors.accentBlue,
   },
 });
