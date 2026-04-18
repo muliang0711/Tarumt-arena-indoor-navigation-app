@@ -48,6 +48,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     backgroundColor: colors.accentGreenSoft,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 8,

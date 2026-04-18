@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.glassStroke,
     padding: spacing.md,
   },
   destinationAccent: {

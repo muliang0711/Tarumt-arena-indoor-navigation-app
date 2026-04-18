@@ -50,6 +50,8 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.surface,
     borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.glassStroke,
     padding: spacing.lg,
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 16 },

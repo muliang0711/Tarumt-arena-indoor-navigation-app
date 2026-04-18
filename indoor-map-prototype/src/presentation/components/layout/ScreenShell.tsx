@@ -1,8 +1,9 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 
 import { colors } from '../../../shared/theme/tokens';
 import { ScreenHeader } from './ScreenHeader';
+import { ShellBackground } from './ShellBackground';
 
 interface ScreenShellProps {
   eyebrow?: string;
@@ -15,11 +16,14 @@ interface ScreenShellProps {
 export function ScreenShell({ eyebrow, title, subtitle, header, children }: ScreenShellProps) {
   return (
     <SafeAreaView style={styles.page}>
-      {header ??
-        (eyebrow && title && subtitle ? (
-          <ScreenHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
-        ) : null)}
-      {children}
+      <ShellBackground />
+      <View style={styles.contentLayer}>
+        {header ??
+          (eyebrow && title && subtitle ? (
+            <ScreenHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />
+          ) : null)}
+        {children}
+      </View>
     </SafeAreaView>
   );
 }
@@ -27,6 +31,9 @@ export function ScreenShell({ eyebrow, title, subtitle, header, children }: Scre
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: '#F7FAFE',
+    backgroundColor: colors.pageBackground,
+  },
+  contentLayer: {
+    flex: 1,
   },
 });
