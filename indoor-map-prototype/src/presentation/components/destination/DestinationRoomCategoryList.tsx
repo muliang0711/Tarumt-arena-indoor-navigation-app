@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import type { DestinationFloorCatalog } from '../../../shared/types';
@@ -17,25 +17,18 @@ export function DestinationRoomCategoryList({
   onSelectDestination,
   onConfirmDestination,
 }: DestinationRoomCategoryListProps) {
-  const lastTapRef = useRef<{ destinationId: string; timestamp: number } | null>(null);
-
   function handleRoomPress(destinationId: string) {
-    const now = Date.now();
-    const previousTap = lastTapRef.current;
-
-    if (
-      previousTap &&
-      previousTap.destinationId === destinationId &&
-      now - previousTap.timestamp < 320
-    ) {
-      onSelectDestination(destinationId);
-      onConfirmDestination(destinationId);
-      lastTapRef.current = null;
-      return;
-    }
-
-    lastTapRef.current = { destinationId, timestamp: now };
     onSelectDestination(destinationId);
+    onConfirmDestination(destinationId);
+  }
+
+  if (floor.categories.length === 0) {
+    return (
+      <View style={styles.emptyState}>
+        <Text style={styles.emptyTitle}>No rooms found</Text>
+        <Text style={styles.emptySubtitle}>Try another room name, lab, office, or facility.</Text>
+      </View>
+    );
   }
 
   return (
@@ -72,7 +65,6 @@ export function DestinationRoomCategoryList({
                   <View style={styles.roomTextBlock}>
                     <Text style={styles.roomTitle}>{room.label}</Text>
                     <Text style={styles.roomMeta}>{room.subtitle}</Text>
-                    <Text style={styles.roomHint}>Double tap to continue</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -96,6 +88,24 @@ const styles = StyleSheet.create({
     borderColor: colors.glassStroke,
     padding: spacing.md,
     gap: spacing.sm,
+  },
+  emptyState: {
+    backgroundColor: 'rgba(244, 247, 252, 0.42)',
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.glassStroke,
+    padding: spacing.lg,
+    gap: spacing.xs,
+  },
+  emptyTitle: {
+    color: colors.textPrimary,
+    fontSize: 18,
+    fontWeight: '800',
+  },
+  emptySubtitle: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    lineHeight: 20,
   },
   categoryHeader: {
     flexDirection: 'row',
@@ -145,13 +155,5 @@ const styles = StyleSheet.create({
   roomMeta: {
     color: colors.textSecondary,
     fontSize: 13,
-  },
-  roomHint: {
-    color: colors.textMuted,
-    fontSize: 11,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginTop: 2,
   },
 });
