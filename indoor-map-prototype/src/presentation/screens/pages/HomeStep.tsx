@@ -2,8 +2,9 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { spacing } from '../../../shared/theme/tokens';
-import { PrimaryActionButton, SecondaryActionButton } from '../../components/controls/ActionButtons';
+import { HomeActionStack } from '../../components/home/HomeActionStack';
 import { HomeHeroCard } from '../../components/home/HomeHeroCard';
+import { HomeStepHeader } from '../../components/home/HomeStepHeader';
 import { ScreenShell } from '../../components/layout/ScreenShell';
 
 interface HomeStepProps {
@@ -21,9 +22,13 @@ export function HomeStep({
 }: HomeStepProps) {
   return (
     <ScreenShell
-      eyebrow="Campus navigator"
-      title="Indoor location detected"
-      subtitle="Confirm your indoor position first, then choose a destination before opening the map."
+      header={
+        <HomeStepHeader
+          eyebrow="Campus navigator"
+          title="Indoor location detected"
+          subtitle="Confirm your indoor position first, then choose a destination before opening the map."
+        />
+      }
     >
       <View style={styles.content}>
         <HomeHeroCard
@@ -34,13 +39,11 @@ export function HomeStep({
           mapPackageLabel="village_demo_01"
         />
 
-        <View style={styles.actionStack}>
-          <SecondaryActionButton
-            label={cameraGranted ? 'Camera ready' : 'Request camera'}
-            onPress={onRequestCamera}
-          />
-          <PrimaryActionButton label="Start navigation" onPress={onStartNavigation} />
-        </View>
+        <HomeActionStack
+          cameraGranted={cameraGranted}
+          onRequestCamera={onRequestCamera}
+          onStartNavigation={onStartNavigation}
+        />
       </View>
     </ScreenShell>
   );
@@ -52,9 +55,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.xl,
     gap: spacing.lg,
-  },
-  actionStack: {
-    gap: spacing.sm,
-    marginTop: 'auto',
   },
 });

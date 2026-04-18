@@ -6,9 +6,12 @@ This folder holds visual pieces that are specific to the home step but still wor
 
 ## Contains
 
+- `HomeStepHeader.tsx`: page-specific header block for the home step
 - `HomeHeroCard.tsx`: status card for the current indoor anchor, camera state, and active map package
+- `HomeActionStack.tsx`: home-step CTA group for camera access and route start
 
 ## Dependencies And Coupling
 
 - uses shared theme tokens from `src/shared/theme/tokens.ts`
 - remains presentational and expects already-formatted strings from the page layer
+- should be the default home for UI that belongs only to `HomeStep`
