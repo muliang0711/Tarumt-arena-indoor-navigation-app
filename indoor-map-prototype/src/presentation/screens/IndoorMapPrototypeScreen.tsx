@@ -85,6 +85,7 @@ export default function IndoorMapPrototypeScreen() {
         floorLabel={selectedDestination?.floorLabel ?? floor.label}
         route={route}
         selectedDestination={selectedDestination}
+        onGoHome={actions.resetToHome}
         onChooseAnother={actions.restartRoute}
         onOpenMap={actions.startNavigation}
       />

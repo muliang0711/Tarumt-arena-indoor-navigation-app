@@ -7,6 +7,7 @@ import { ConfirmRouteActions } from '../../components/confirm/ConfirmRouteAction
 import { ConfirmRouteCard } from '../../components/confirm/ConfirmRouteCard';
 import { ConfirmStepHeader } from '../../components/confirm/ConfirmStepHeader';
 import { ScreenShell } from '../../components/layout/ScreenShell';
+import { ActionDock } from '../../components/shared/ActionDock';
 
 interface ConfirmStepProps {
   buildingName: string;
@@ -14,6 +15,7 @@ interface ConfirmStepProps {
   floorLabel: string;
   route: RouteModel | null;
   selectedDestination: DestinationAnchor | null;
+  onGoHome: () => void;
   onChooseAnother: () => void;
   onOpenMap: () => void;
 }
@@ -24,6 +26,7 @@ export function ConfirmStep({
   floorLabel,
   route,
   selectedDestination,
+  onGoHome,
   onChooseAnother,
   onOpenMap,
 }: ConfirmStepProps) {
@@ -39,6 +42,12 @@ export function ConfirmStep({
         />
 
         <ConfirmRouteActions onChooseAnother={onChooseAnother} onOpenMap={onOpenMap} />
+
+        <ActionDock
+          onHomePress={onGoHome}
+          onStartPress={onChooseAnother}
+          onMapPress={onOpenMap}
+        />
       </View>
     </ScreenShell>
   );
