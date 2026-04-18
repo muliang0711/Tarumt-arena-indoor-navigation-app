@@ -1,24 +1,24 @@
 # Integration Layer
 
-This layer is the boundary to external or low-level data sources.
+## Purpose
 
-Responsibilities:
+This layer owns boundaries to external or low-level inputs. In the current repo that mainly means adapting the bundled map package and sprite assets into a parsed floor model that the application layer can consume without caring about raw JSON shape or asset lookup details.
 
-- load map packages and sprite registries
-- parse raw map data into application-ready floor models
-- provide adapter-style entry points for future backend APIs or device services
+## Contains
 
-Rules:
+- `map/`: static prototype map loading, asset registry wiring, and parsing helpers
 
-- keep file loading and parsing here
-- expose stable functions to the application layer
-- avoid mixing UI decisions into this layer
+## Entry Points
 
-Current focus:
+- `map/loadPrototypeFloor.ts`: returns the cached parsed floor used by the application layer
+- `map/mapParser.ts`: converts `map.json` records plus assets into runtime models
 
-- static prototype map loading from local assets
+## Dependencies And Coupling
 
-Future expansion:
+- depends on `assets/maps/` for the bundled prototype package
+- depends on `src/shared/` for map and parsed-model types
+- should not import presentation code or embed UI-specific decisions
 
-- backend API client
-- AR sensor and anchor adapters
+## When To Read Deeper
+
+Read deeper when the map package changes, a new asset source is introduced, or application code needs a different parsed shape than the current adapter returns.

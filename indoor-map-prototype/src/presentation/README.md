@@ -1,21 +1,27 @@
 # Presentation Layer
 
-This layer owns everything the user can see or touch.
+## Purpose
 
-Responsibilities:
+This layer owns what the user sees and touches. It turns application models into cards, controls, map overlays, and gestures without becoming the source of truth for navigation flow decisions.
 
-- render screens, map canvas, controls, and page chrome
-- convert application state into visual state
-- handle visual-only interactions such as pan and pinch viewport behavior
+## Contains
 
-Rules:
+- `components/`: reusable UI pieces such as buttons, layout shells, map canvas, and floating controls
+- `hooks/`: presentation-only interaction logic, currently map viewport pan and pinch state
+- `screens/`: screen assembly and page-level views for each step of the prototype journey
 
-- do not load raw map assets directly here
-- do not define route-building logic here
-- do not hide business flow state inside large visual components
+## Entry Points
 
-Main folders:
+- `screens/IndoorMapPrototypeScreen.tsx`: top-level presentation coordinator mounted from `App.tsx`
+- `components/map/IndoorMapCanvas.tsx`: map renderer for tiles, rooms, route, destination, and user marker
+- `hooks/useMapViewport.ts`: gesture model for pan, zoom, centering, and fit-to-bounds
 
-- `components/`: reusable UI pieces
-- `hooks/`: presentation-only hooks such as viewport control
-- `screens/`: page assembly and screen switching
+## Dependencies And Coupling
+
+- depends on `src/application/` for the flow model and route state
+- depends on `src/shared/` for types and theme tokens
+- should not import raw asset files or decide route logic independently
+
+## When To Read Deeper
+
+Read deeper when changing layout, map interactions, telemetry display, or how a particular navigation step is visually composed.
