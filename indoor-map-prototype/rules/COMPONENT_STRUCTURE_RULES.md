@@ -24,6 +24,20 @@ This file defines how components should be split, owned, and promoted in the pro
 - shells may expose extension points such as `header` or custom slots
 - page-owned visuals passed into a shell still belong to the page feature, not to `layout/`
 
+## Spacing Ownership Rule
+
+- only the page container should control spacing between sibling components on that page
+- child components should not hardcode external top, bottom, or sibling spacing just to position themselves relative to nearby components
+- if a page needs more or less distance between its sections, adjust that in the page file or the page shell props, not inside the child component
+- this keeps spacing edits fast, local, and predictable during iteration
+
+## Home Page Example
+
+- `HomeStep.tsx` should be able to control the spacing between its four main blocks directly
+- header to hero-card spacing belongs to `HomeStep.tsx` or `ScreenShell.tsx`
+- hero-card to bottom dock spacing also belongs to `HomeStep.tsx`
+- `HomeStepHeader.tsx`, `HomeHeroCard.tsx`, and `HomeActionStack.tsx` may control their internal padding, but not the layout distance between each other
+
 ## Splitting Rule
 
 - split a page when a UI block has its own visual identity, behavior, animation, or likely iteration path

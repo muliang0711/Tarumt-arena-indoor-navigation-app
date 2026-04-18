@@ -5,6 +5,7 @@ import { spacing } from '../../../shared/theme/tokens';
 import { HomeActionStack } from '../../components/home/HomeActionStack';
 import { HomeHeroCard } from '../../components/home/HomeHeroCard';
 import { HomeStepHeader } from '../../components/home/HomeStepHeader';
+import { HeaderSystemRow } from '../../components/layout/HeaderSystemRow';
 import { ScreenShell } from '../../components/layout/ScreenShell';
 
 interface HomeStepProps {
@@ -19,7 +20,10 @@ export function HomeStep({
   return (
     <ScreenShell
       header={
-        <HomeStepHeader title="Campus navigator" />
+        <View style={styles.headerBlock}>
+          <HeaderSystemRow />
+          <HomeStepHeader title="Campus navigator" />
+        </View>
       }
     >
       <View style={styles.content}>
@@ -37,6 +41,12 @@ export function HomeStep({
 }
 
 const styles = StyleSheet.create({
+  headerBlock: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.lg,
+    gap: spacing.lg,
+  },
   content: {
     flex: 1,
     paddingHorizontal: spacing.lg,

@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
-import { colors, spacing } from '../../../shared/theme/tokens';
-import { HeaderSystemRow } from '../layout/HeaderSystemRow';
+import { colors } from '../../../shared/theme/tokens';
 
 interface HomeStepHeaderProps {
   title: string;
@@ -58,8 +57,7 @@ export function HomeStepHeader({ title }: HomeStepHeaderProps) {
   }, [campusChars.length, navigatorChars.length]);
 
   return (
-    <View style={styles.pageHeader}>
-      <HeaderSystemRow style={styles.systemRow} />
+    <View style={styles.titleBlock}>
       <View style={styles.titleRow}>
         {campusChars.map((char, index) => {
           const animation = charAnimations.current[index];
@@ -122,14 +120,7 @@ export function HomeStepHeader({ title }: HomeStepHeaderProps) {
 }
 
 const styles = StyleSheet.create({
-  pageHeader: {
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.md,
-    paddingBottom: spacing.lg,
-  },
-  systemRow: {
-    marginBottom: spacing.lg,
-  },
+  titleBlock: {},
   titleRow: {
     flexDirection: 'row',
     justifyContent: 'center',
