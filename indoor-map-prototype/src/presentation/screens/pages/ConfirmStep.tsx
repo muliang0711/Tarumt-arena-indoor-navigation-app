@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 
 import type { DestinationAnchor, RouteModel } from '../../../shared/types';
 import { spacing } from '../../../shared/theme/tokens';
-import { ConfirmRouteActions } from '../../components/confirm/ConfirmRouteActions';
 import { ConfirmRouteCard } from '../../components/confirm/ConfirmRouteCard';
 import { ConfirmStepHeader } from '../../components/confirm/ConfirmStepHeader';
 import { ScreenShell } from '../../components/layout/ScreenShell';
@@ -39,9 +38,9 @@ export function ConfirmStep({
           floorLabel={floorLabel}
           route={route}
           selectedDestination={selectedDestination}
+          onChooseAnother={onChooseAnother}
+          onOpenMap={onOpenMap}
         />
-
-        <ConfirmRouteActions onChooseAnother={onChooseAnother} onOpenMap={onOpenMap} />
 
         <ActionDock
           onHomePress={onGoHome}
