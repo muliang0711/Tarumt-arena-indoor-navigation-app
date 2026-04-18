@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
@@ -75,18 +75,64 @@ function DockItem({
   onPress: () => void;
   icon: React.ReactNode;
 }) {
+  const progress = useRef(new Animated.Value(active ? 1 : 0)).current;
+
+  useEffect(() => {
+    Animated.timing(progress, {
+      toValue: active ? 1 : 0,
+      duration: 220,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    }).start();
+  }, [active, progress]);
+
+  const animatedWidth = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [58, 122],
+  });
+
+  const animatedLabelWidth = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 58],
+  });
+
+  const animatedLabelOpacity = progress.interpolate({
+    inputRange: [0, 0.55, 1],
+    outputRange: [0, 0.12, 1],
+  });
+
+  const animatedLabelTranslateY = progress.interpolate({
+    inputRange: [0, 1],
+    outputRange: [6, 0],
+  });
+
   return (
-    <Pressable
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.dockItem,
-        active && styles.dockItemActive,
-        pressed && styles.dockItemPressed,
-      ]}
-    >
-      <View style={styles.dockItemIconWrap}>{icon}</View>
-      {active ? <Text style={styles.dockItemLabel}>{label}</Text> : null}
-    </Pressable>
+    <Animated.View style={[styles.dockItem, { width: animatedWidth }]}>
+      <Animated.View
+        pointerEvents="none"
+        style={[styles.dockItemActiveFill, { opacity: progress }]}
+      />
+      <Pressable
+        onPress={onPress}
+        style={({ pressed }) => [styles.dockItemPressable, pressed && styles.dockItemPressed]}
+      >
+        <View style={styles.dockItemIconWrap}>{icon}</View>
+        <Animated.View
+          style={[
+            styles.dockItemLabelWrap,
+            {
+              width: animatedLabelWidth,
+              opacity: animatedLabelOpacity,
+              transform: [{ translateY: animatedLabelTranslateY }],
+            },
+          ]}
+        >
+          <Text style={styles.dockItemLabel} numberOfLines={1}>
+            {label}
+          </Text>
+        </Animated.View>
+      </Pressable>
+    </Animated.View>
   );
 }
 
@@ -209,27 +255,33 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.16)',
   },
   dockItem: {
-    minWidth: 58,
     height: 58,
     borderRadius: radii.pill,
-    paddingHorizontal: spacing.md,
     backgroundColor: 'rgba(244, 247, 252, 0.16)',
     borderWidth: 1,
     borderColor: 'transparent',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xs,
+    overflow: 'hidden',
+    position: 'relative',
   },
-  dockItemActive: {
-    minWidth: 122,
+  dockItemActiveFill: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(244, 247, 252, 0.9)',
+    borderRadius: radii.pill,
+    borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.76)',
     shadowColor: colors.shadow,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 1,
     shadowRadius: 18,
     elevation: 10,
+  },
+  dockItemPressable: {
+    flex: 1,
+    paddingHorizontal: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.xs,
   },
   dockItemPressed: {
     opacity: 0.92,
@@ -244,6 +296,9 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 14,
     fontWeight: '800',
+  },
+  dockItemLabelWrap: {
+    overflow: 'hidden',
   },
   glyphBox: {
     width: 20,
