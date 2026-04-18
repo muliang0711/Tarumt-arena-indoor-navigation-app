@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   wrap: {
     position: 'absolute',
     right: spacing.md,
-    bottom: 126,
+    bottom: 160,
   },
   button: {
     width: 60,

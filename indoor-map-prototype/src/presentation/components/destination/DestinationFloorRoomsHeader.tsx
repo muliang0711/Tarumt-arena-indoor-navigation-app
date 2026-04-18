@@ -21,11 +21,7 @@ export function DestinationFloorRoomsHeader({
       <HeaderSystemRow style={styles.systemRow} />
 
       <View style={styles.titleBlock}>
-        <Text style={styles.eyebrow}>{floorLabel}</Text>
         <Text style={styles.pageTitle}>Choose a room</Text>
-        <Text style={styles.pageSubtitle}>
-          Search this floor or tap a room once to continue.
-        </Text>
       </View>
 
       <DestinationSearchBar
@@ -49,23 +45,13 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   titleBlock: {
-    gap: spacing.xs,
-  },
-  eyebrow: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    fontWeight: '700',
-    letterSpacing: 0.8,
-    textTransform: 'uppercase',
+    alignSelf: 'stretch',
+    alignItems: 'center',
   },
   pageTitle: {
     color: colors.textPrimary,
     fontSize: 30,
     fontWeight: '800',
-  },
-  pageSubtitle: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
+    textAlign: 'center',
   },
 });
