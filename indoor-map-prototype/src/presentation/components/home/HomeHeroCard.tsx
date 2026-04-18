@@ -1,4 +1,5 @@
 import React from 'react';
+import { BlurView } from 'expo-blur';
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
@@ -19,39 +20,51 @@ export function HomeHeroCard({
   style,
 }: HomeHeroCardProps) {
   return (
-    <View style={[styles.card, style]}>
-      <View pointerEvents="none" style={styles.glassWash} />
-      <View pointerEvents="none" style={styles.glassHighlight} />
-      <View pointerEvents="none" style={styles.glassBlueGlow} />
-      <View pointerEvents="none" style={styles.glassPurpleGlow} />
-      <View pointerEvents="none" style={styles.innerStroke} />
+    <View style={[styles.cardShell, style]}>
+      <View pointerEvents="none" style={styles.shadowLayerSoft} />
+      <View pointerEvents="none" style={styles.shadowLayerLift} />
 
-      <View style={styles.content}>
-        <View style={styles.headerBlock}>
-          <View style={styles.statusBadge}>
-            <View style={styles.statusBadgeCore}>
-              <View style={styles.statusBadgeColumn}>
-                <View style={styles.statusBadgeSquare} />
-                <View style={styles.statusBadgeSquareSmall} />
+      <View style={styles.cardFrame}>
+        <BlurView
+          tint="light"
+          intensity={72}
+          experimentalBlurMethod="dimezisBlurView"
+          style={StyleSheet.absoluteFillObject}
+        />
+        <View pointerEvents="none" style={styles.glassBaseFill} />
+        <View pointerEvents="none" style={styles.glassWash} />
+        <View pointerEvents="none" style={styles.glassHighlight} />
+        <View pointerEvents="none" style={styles.glassBlueGlow} />
+        <View pointerEvents="none" style={styles.glassPurpleGlow} />
+        <View pointerEvents="none" style={styles.innerStroke} />
+
+        <View style={styles.content}>
+          <View style={styles.headerBlock}>
+            <View style={styles.statusBadge}>
+              <View style={styles.statusBadgeCore}>
+                <View style={styles.statusBadgeColumn}>
+                  <View style={styles.statusBadgeSquare} />
+                  <View style={styles.statusBadgeSquareSmall} />
+                </View>
+                <View style={styles.statusBadgeLineStack}>
+                  <View style={styles.statusBadgeLine} />
+                  <View style={styles.statusBadgeLineShort} />
+                  <View style={styles.statusBadgeLine} />
+                </View>
               </View>
-              <View style={styles.statusBadgeLineStack}>
-                <View style={styles.statusBadgeLine} />
-                <View style={styles.statusBadgeLineShort} />
-                <View style={styles.statusBadgeLine} />
-              </View>
+              <View style={[styles.statusBadgeDot, styles.statusBadgeDotActive]} />
             </View>
-            <View style={[styles.statusBadgeDot, styles.statusBadgeDotActive]} />
+
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.subtitle}>{subtitle}</Text>
           </View>
 
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.subtitle}>{subtitle}</Text>
-        </View>
+          <View style={styles.divider} />
 
-        <View style={styles.divider} />
-
-        <View style={styles.infoPanel}>
-          <InfoRow label="Current anchor" value={currentAnchorLabel} />
-          <InfoRow label="Map package" value={mapPackageLabel} />
+          <View style={styles.infoPanel}>
+            <InfoRow label="Current anchor" value={currentAnchorLabel} />
+            <InfoRow label="Map package" value={mapPackageLabel} />
+          </View>
         </View>
       </View>
     </View>
@@ -79,58 +92,88 @@ function InfoRow({ label, value }: InfoRowProps) {
 }
 
 const styles = StyleSheet.create({
-  card: {
+  cardShell: {
+    position: 'relative',
+  },
+  shadowLayerSoft: {
+    position: 'absolute',
+    top: 18,
+    left: 18,
+    right: 18,
+    bottom: -10,
+    borderRadius: radii.lg + 8,
+    backgroundColor: 'rgba(15, 23, 42, 0.08)',
+    shadowColor: 'rgba(15, 23, 42, 0.34)',
+    shadowOffset: { width: 0, height: 26 },
+    shadowOpacity: 1,
+    shadowRadius: 38,
+    elevation: 18,
+  },
+  shadowLayerLift: {
+    position: 'absolute',
+    top: 8,
+    left: 10,
+    right: 10,
+    bottom: 4,
+    borderRadius: radii.lg + 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    shadowColor: colors.shadow,
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 1,
+    shadowRadius: 28,
+    elevation: 12,
+  },
+  cardFrame: {
     position: 'relative',
     overflow: 'hidden',
-    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    backgroundColor: 'rgba(255, 255, 255, 0.22)',
     borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.26)',
+    borderColor: 'rgba(255, 255, 255, 0.48)',
     padding: spacing.lg,
-    shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 18 },
-    shadowOpacity: 1,
-    shadowRadius: 32,
-    elevation: 14,
+  },
+  glassBaseFill: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
   },
   glassWash: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
   glassHighlight: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    height: '46%',
-    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+    height: '50%',
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
   },
   glassBlueGlow: {
     position: 'absolute',
-    top: -42,
-    left: -18,
-    width: 170,
-    height: 170,
+    top: -54,
+    left: -28,
+    width: 210,
+    height: 210,
     borderRadius: radii.pill,
     backgroundColor: colors.accentBlueSoft,
-    opacity: 0.95,
+    opacity: 0.9,
   },
   glassPurpleGlow: {
     position: 'absolute',
-    right: -52,
-    bottom: -70,
-    width: 190,
-    height: 190,
+    right: -68,
+    bottom: -88,
+    width: 230,
+    height: 230,
     borderRadius: radii.pill,
     backgroundColor: colors.accentPurpleSoft,
-    opacity: 0.82,
+    opacity: 0.78,
   },
   innerStroke: {
     position: 'absolute',
     inset: 1,
     borderRadius: radii.lg - 1,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.12)',
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   content: {
     position: 'relative',
@@ -223,10 +266,10 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   infoPanel: {
-    backgroundColor: 'rgba(255, 255, 255, 0.24)',
+    backgroundColor: 'rgba(255, 255, 255, 0.32)',
     borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.26)',
+    borderColor: 'rgba(255, 255, 255, 0.36)',
     padding: spacing.md,
     gap: spacing.md,
   },
