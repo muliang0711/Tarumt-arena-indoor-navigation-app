@@ -19,11 +19,7 @@ export function HomeStep({
   return (
     <ScreenShell
       header={
-        <HomeStepHeader
-          eyebrow="Campus navigator"
-          title="Indoor location detected"
-          subtitle="Confirm your indoor position first, then choose a destination before opening the map."
-        />
+        <HomeStepHeader title="Campus navigator" />
       }
     >
       <View style={styles.content}>

@@ -1,15 +1,61 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
 import { colors, spacing } from '../../../shared/theme/tokens';
 
 interface HomeStepHeaderProps {
-  eyebrow: string;
   title: string;
-  subtitle: string;
 }
 
-export function HomeStepHeader({ eyebrow, title, subtitle }: HomeStepHeaderProps) {
+export function HomeStepHeader({ title }: HomeStepHeaderProps) {
+  const [campusWord = '', navigatorWord = ''] = title.toUpperCase().split(' ');
+  const campusChars = [...campusWord];
+  const navigatorChars = [...navigatorWord];
+  const totalChars = campusChars.length + navigatorChars.length;
+  const charAnimations = useRef<Animated.Value[]>(
+    Array.from({ length: totalChars }, () => new Animated.Value(0))
+  );
+
+  if (charAnimations.current.length !== totalChars) {
+    charAnimations.current = Array.from({ length: totalChars }, () => new Animated.Value(0));
+  }
+
+  useEffect(() => {
+    const animations = charAnimations.current;
+
+    animations.forEach((animation) => animation.setValue(0));
+
+    const campusReveal = Animated.stagger(
+      140,
+      animations.slice(0, campusChars.length).map((animation) =>
+        Animated.timing(animation, {
+          toValue: 1,
+          duration: 300,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        })
+      )
+    );
+
+    const navigatorReveal = Animated.stagger(
+      130,
+      animations.slice(campusChars.length).map((animation) =>
+        Animated.timing(animation, {
+          toValue: 1,
+          duration: 280,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        })
+      )
+    );
+
+    Animated.sequence([campusReveal, Animated.delay(220), navigatorReveal]).start();
+
+    return () => {
+      animations.forEach((animation) => animation.stopAnimation());
+    };
+  }, [campusChars.length, navigatorChars.length]);
+
   return (
     <View style={styles.pageHeader}>
       <View style={styles.systemRow}>
@@ -19,9 +65,63 @@ export function HomeStepHeader({ eyebrow, title, subtitle }: HomeStepHeaderProps
           <Text style={styles.systemChipLabel}>System Active</Text>
         </View>
       </View>
-      <Text style={styles.pageEyebrow}>{eyebrow}</Text>
-      <Text style={styles.pageTitle}>{title}</Text>
-      <Text style={styles.pageSubtitle}>{subtitle}</Text>
+      <View style={styles.titleRow}>
+        {campusChars.map((char, index) => {
+          const animation = charAnimations.current[index];
+          const translateY = animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [8, 0],
+          });
+          const letterSpacingScale = animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.94, 1],
+          });
+
+          return (
+            <Animated.View
+              key={`campus-${char}-${index}`}
+              style={[
+                styles.charWrap,
+                {
+                  opacity: animation,
+                  transform: [{ translateY }, { scale: letterSpacingScale }],
+                },
+              ]}
+            >
+              <Text style={styles.pageTitle}>{char}</Text>
+            </Animated.View>
+          );
+        })}
+
+        <View style={styles.wordGap} />
+
+        {navigatorChars.map((char, index) => {
+          const animation = charAnimations.current[campusChars.length + index];
+          const translateY = animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [8, 0],
+          });
+          const letterSpacingScale = animation.interpolate({
+            inputRange: [0, 1],
+            outputRange: [0.94, 1],
+          });
+
+          return (
+            <Animated.View
+              key={`navigator-${char}-${index}`}
+              style={[
+                styles.charWrap,
+                {
+                  opacity: animation,
+                  transform: [{ translateY }, { scale: letterSpacingScale }],
+                },
+              ]}
+            >
+              <Text style={styles.pageTitle}>{char}</Text>
+            </Animated.View>
+          );
+        })}
+      </View>
     </View>
   );
 }
@@ -36,7 +136,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: spacing.lg,
   },
   timeText: {
     color: colors.textSecondary,
@@ -65,23 +165,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
-  pageEyebrow: {
-    color: colors.accentBlue,
-    fontSize: 12,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+  },
+  charWrap: {
+    overflow: 'visible',
+  },
+  wordGap: {
+    width: 12,
   },
   pageTitle: {
     color: colors.textPrimary,
-    fontSize: 34,
+    textAlign: 'center',
+    fontSize: 28,
     fontWeight: '800',
-    marginTop: 8,
-  },
-  pageSubtitle: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    lineHeight: 22,
-    marginTop: 8,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
 });
