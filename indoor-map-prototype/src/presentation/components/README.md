@@ -18,6 +18,7 @@ This folder holds reusable visual building blocks used by one or more screens. T
 - `layout/ScreenShell.tsx`: shared frame for the home, destination, and confirm pages
 - `layout/ScreenHeader.tsx`: generic cross-page header for non-home steps
 - `layout/HeaderSystemRow.tsx`: shared time and system-status strip used by multiple headers
+- `layout/ActionDock.tsx`: shared frosted bottom action dock used by multiple pages
 
 ## Dependencies And Coupling
 

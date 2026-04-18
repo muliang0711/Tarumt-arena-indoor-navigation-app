@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import type { DestinationAnchor, ParsedMapFloor } from '../../../shared/types';
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
-import { PrimaryActionButton, SecondaryActionButton } from '../../components/controls/ActionButtons';
 import { DestinationStepHeader } from '../../components/destination/DestinationStepHeader';
+import { ActionDock } from '../../components/layout/ActionDock';
 import { ScreenShell } from '../../components/layout/ScreenShell';
 
 interface DestinationStepProps {
@@ -24,11 +24,30 @@ export function DestinationStep({
   onSelectDestination,
   onContinue,
 }: DestinationStepProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const visibleDestinations = normalizedQuery
+    ? destinations.filter((destination) => {
+        const haystack = [
+          destination.label,
+          destination.subtitle,
+          floor.label,
+          'student center',
+        ]
+          .join(' ')
+          .toLowerCase();
+
+        return haystack.includes(normalizedQuery);
+      })
+    : destinations;
+
   return (
-    <ScreenShell header={<DestinationStepHeader />}>
+    <ScreenShell
+      header={<DestinationStepHeader query={searchQuery} onQueryChange={setSearchQuery} />}
+    >
       <View style={styles.content}>
         <ScrollView contentContainerStyle={styles.destinationList}>
-          {destinations.map((destination) => {
+          {visibleDestinations.map((destination) => {
             const selected = destination.id === selectedDestinationId;
             return (
               <TouchableOpacity
@@ -57,16 +76,26 @@ export function DestinationStep({
               </TouchableOpacity>
             );
           })}
+          {!visibleDestinations.length ? (
+            <View style={styles.emptyState}>
+              <Text style={styles.emptyStateTitle}>No matching destination</Text>
+              <Text style={styles.emptyStateText}>Try a room code or destination name.</Text>
+            </View>
+          ) : null}
         </ScrollView>
 
-        <View style={styles.actionStack}>
-          <SecondaryActionButton label="Back" onPress={onBack} />
-          <PrimaryActionButton
-            label="Continue"
-            onPress={onContinue}
-            disabled={!selectedDestinationId}
-          />
-        </View>
+        <ActionDock
+          items={[
+            { id: 'back', label: 'Back', icon: 'back', onPress: onBack },
+            {
+              id: 'continue',
+              label: 'Continue',
+              icon: 'continue',
+              onPress: selectedDestinationId ? onContinue : () => {},
+            },
+            { id: 'map', label: 'Map', icon: 'map', onPress: () => {} },
+          ]}
+        />
       </View>
     </ScreenShell>
   );
@@ -82,6 +111,24 @@ const styles = StyleSheet.create({
   destinationList: {
     gap: spacing.sm,
     paddingBottom: spacing.md,
+  },
+  emptyState: {
+    backgroundColor: colors.surface,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.glassStroke,
+    padding: spacing.lg,
+    gap: spacing.xs,
+  },
+  emptyStateTitle: {
+    color: colors.textPrimary,
+    fontSize: 17,
+    fontWeight: '800',
+  },
+  emptyStateText: {
+    color: colors.textSecondary,
+    fontSize: 14,
+    lineHeight: 20,
   },
   destinationCard: {
     flexDirection: 'row',
@@ -110,9 +157,5 @@ const styles = StyleSheet.create({
   destinationMeta: {
     color: colors.textSecondary,
     fontSize: 13,
-  },
-  actionStack: {
-    gap: spacing.sm,
-    marginTop: 'auto',
   },
 });

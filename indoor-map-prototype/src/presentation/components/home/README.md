@@ -8,7 +8,6 @@ This folder holds visual pieces that are specific to the home step but still wor
 
 - `HomeStepHeader.tsx`: page-specific header block for the home step
 - `HomeHeroCard.tsx`: status card for the current indoor anchor and active map package
-- `HomeActionStack.tsx`: frosted glass bottom dock for the home-step navigation CTA
 
 ## Dependencies And Coupling
 

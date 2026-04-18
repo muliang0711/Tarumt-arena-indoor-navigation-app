@@ -2,9 +2,9 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { spacing } from '../../../shared/theme/tokens';
-import { HomeActionStack } from '../../components/home/HomeActionStack';
 import { HomeHeroCard } from '../../components/home/HomeHeroCard';
 import { HomeStepHeader } from '../../components/home/HomeStepHeader';
+import { ActionDock } from '../../components/layout/ActionDock';
 import { HeaderSystemRow } from '../../components/layout/HeaderSystemRow';
 import { ScreenShell } from '../../components/layout/ScreenShell';
 
@@ -34,7 +34,13 @@ export function HomeStep({
           mapPackageLabel="village_demo_01"
         />
 
-        <HomeActionStack onStartNavigation={onStartNavigation} />
+        <ActionDock
+          items={[
+            { id: 'home', label: 'Home', icon: 'home', onPress: () => {} },
+            { id: 'start', label: 'Start', icon: 'start', onPress: onStartNavigation },
+            { id: 'map', label: 'Map', icon: 'map', onPress: () => {} },
+          ]}
+        />
       </View>
     </ScreenShell>
   );
