@@ -8,9 +8,9 @@ This folder holds reusable visual building blocks used by one or more screens. T
 
 - `controls/`: shared buttons, floor selector, zoom controls, and recenter affordances
 - `home/`: isolated visuals for the home step that may evolve independently
-- `layout/`: reusable page shell and cross-page framing for the non-map steps
+- `layout/`: reusable page shell, shell background, and frame-level composition for the non-map steps
 - `map/`: SVG-based map canvas that renders tiles, route overlays, rooms, and the user marker
-- `shared/`: reusable cross-feature components promoted out of page folders after real multi-page reuse
+- `shared/`: reusable cross-feature UI pieces promoted out of page folders after real multi-page reuse
 
 ## Entry Points
 
@@ -20,7 +20,7 @@ This folder holds reusable visual building blocks used by one or more screens. T
 - `layout/ScreenHeader.tsx`: generic cross-page header for non-home steps
 - `shared/HeaderSystemRow.tsx`: shared time and system-status strip used by multiple headers
 - `shared/DestinationSearchBar.tsx`: reusable expanding search bar shared by destination flow headers
-- `layout/ActionDock.tsx`: shared frosted bottom action dock used by multiple pages
+- `shared/ActionDock.tsx`: shared frosted bottom action dock used by multiple pages
 
 ## Dependencies And Coupling
 

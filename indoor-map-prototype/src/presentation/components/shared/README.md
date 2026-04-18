@@ -8,6 +8,7 @@ This folder holds presentation components that were promoted out of a page or fe
 
 - `HeaderSystemRow.tsx`: shared time and system-status strip used across multiple headers
 - `DestinationSearchBar.tsx`: reusable expanding search bar shared by destination flow headers
+- `ActionDock.tsx`: reusable bottom action dock shared across multiple pages
 
 ## Dependencies And Coupling
 

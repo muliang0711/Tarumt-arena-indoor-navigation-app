@@ -21,8 +21,15 @@ This file defines how components should be split, owned, and promoted in the pro
 ## Layout Rule
 
 - `src/presentation/components/layout/` is for true shared layout framing
+- examples: shells, shell backgrounds, frame wrappers, or structure-level headers
 - shells may expose extension points such as `header` or custom slots
 - page-owned visuals passed into a shell still belong to the page feature, not to `layout/`
+
+## Shared Rule
+
+- `src/presentation/components/shared/` is for reused UI pieces that are not the page frame itself
+- examples: action docks, search bars, status rows, reusable cards, or other cross-feature interactive pieces
+- if a component is reused across pages but it is not framing the page, prefer `shared/` over `layout/`
 
 ## Spacing Ownership Rule
 

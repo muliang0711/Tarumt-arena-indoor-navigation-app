@@ -5,8 +5,8 @@ import type { DestinationFloorCatalog } from '../../../shared/types';
 import { spacing } from '../../../shared/theme/tokens';
 import { DestinationStepHeader } from '../../components/destination/DestinationStepHeader';
 import { DestinationSelectionList } from '../../components/destination/DestinationSelectionList';
-import { ActionDock } from '../../components/layout/ActionDock';
 import { ScreenShell } from '../../components/layout/ScreenShell';
+import { ActionDock } from '../../components/shared/ActionDock';
 
 interface DestinationStepProps {
   floors: DestinationFloorCatalog[];
