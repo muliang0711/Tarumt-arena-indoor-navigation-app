@@ -2,11 +2,12 @@
 
 ## Purpose
 
-This folder holds reusable visual building blocks used by one or more screens. The split here is by UI responsibility rather than by feature: layout framing, interaction controls, and the map renderer itself each live in their own subfolder.
+This folder holds reusable visual building blocks used by one or more screens. The split here is by UI responsibility rather than by feature: layout framing, interaction controls, feature-specific visuals, and the map renderer each live in their own subfolder.
 
 ## Contains
 
 - `controls/`: shared buttons, floor selector, zoom controls, and recenter affordances
+- `home/`: isolated visuals for the home step that may evolve independently
 - `layout/`: reusable page shell for the non-map steps
 - `map/`: SVG-based map canvas that renders tiles, route overlays, rooms, and the user marker
 
