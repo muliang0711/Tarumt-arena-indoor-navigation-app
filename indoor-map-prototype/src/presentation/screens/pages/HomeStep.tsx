@@ -5,7 +5,7 @@ import { spacing } from '../../../shared/theme/tokens';
 import { HomeHeroCard } from '../../components/home/HomeHeroCard';
 import { HomeStepHeader } from '../../components/home/HomeStepHeader';
 import { ActionDock } from '../../components/layout/ActionDock';
-import { HeaderSystemRow } from '../../components/layout/HeaderSystemRow';
+import { HeaderSystemRow } from '../../components/shared/HeaderSystemRow';
 import { ScreenShell } from '../../components/layout/ScreenShell';
 
 interface HomeStepProps {

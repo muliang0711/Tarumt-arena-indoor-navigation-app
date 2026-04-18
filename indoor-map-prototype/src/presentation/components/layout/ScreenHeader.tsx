@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, spacing } from '../../../shared/theme/tokens';
-import { HeaderSystemRow } from './HeaderSystemRow';
+import { HeaderSystemRow } from '../shared/HeaderSystemRow';
 
 interface ScreenHeaderProps {
   eyebrow: string;

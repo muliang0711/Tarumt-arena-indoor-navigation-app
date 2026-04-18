@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, spacing } from '../../../shared/theme/tokens';
-import { HeaderSystemRow } from '../layout/HeaderSystemRow';
-import { DestinationSearchBar } from './DestinationSearchBar';
+import { DestinationSearchBar } from '../shared/DestinationSearchBar';
+import { HeaderSystemRow } from '../shared/HeaderSystemRow';
 
 interface DestinationStepHeaderProps {
   query: string;
