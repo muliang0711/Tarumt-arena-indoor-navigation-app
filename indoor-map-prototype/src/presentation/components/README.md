@@ -17,6 +17,7 @@ This folder holds reusable visual building blocks used by one or more screens. T
 - `controls/FloatingControls.tsx`: overlays floor and zoom controls on the map screen
 - `layout/ScreenShell.tsx`: shared frame for the home, destination, and confirm pages
 - `layout/ScreenHeader.tsx`: generic cross-page header for non-home steps
+- `layout/HeaderSystemRow.tsx`: shared time and system-status strip used by multiple headers
 
 ## Dependencies And Coupling
 

@@ -11,7 +11,8 @@
         {
           "motionPermission": "Allow Indoor Map Prototype to access motion data for indoor position tracking."
         }
-      ]
+      ],
+      "expo-font"
     ],
     "assetBundlePatterns": [
       "**/*"

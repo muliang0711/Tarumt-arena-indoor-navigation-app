@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, spacing } from '../../../shared/theme/tokens';
+import { HeaderSystemRow } from './HeaderSystemRow';
 
 interface ScreenHeaderProps {
   eyebrow: string;
@@ -12,13 +13,7 @@ interface ScreenHeaderProps {
 export function ScreenHeader({ eyebrow, title, subtitle }: ScreenHeaderProps) {
   return (
     <View style={styles.pageHeader}>
-      <View style={styles.systemRow}>
-        <Text style={styles.timeText}>07:23 PM</Text>
-        <View style={styles.systemChip}>
-          <View style={styles.systemChipDot} />
-          <Text style={styles.systemChipLabel}>System Active</Text>
-        </View>
-      </View>
+      <HeaderSystemRow style={styles.systemRow} />
       <Text style={styles.pageEyebrow}>{eyebrow}</Text>
       <Text style={styles.pageTitle}>{title}</Text>
       <Text style={styles.pageSubtitle}>{subtitle}</Text>
@@ -33,37 +28,7 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.lg,
   },
   systemRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     marginBottom: spacing.xl,
-  },
-  timeText: {
-    color: colors.textSecondary,
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  systemChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: colors.accentGreenSoft,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  systemChipDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 999,
-    backgroundColor: colors.accentGreen,
-  },
-  systemChipLabel: {
-    color: colors.accentGreen,
-    fontSize: 12,
-    fontWeight: '700',
   },
   pageEyebrow: {
     color: colors.accentBlue,
