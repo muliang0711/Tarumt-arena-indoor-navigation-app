@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 import type { DestinationFloorCatalog } from '../../../shared/types';
@@ -8,13 +8,36 @@ interface DestinationRoomCategoryListProps {
   floor: DestinationFloorCatalog;
   selectedDestinationId: string | null;
   onSelectDestination: (destinationId: string) => void;
+  onConfirmDestination: (destinationId: string) => void;
 }
 
 export function DestinationRoomCategoryList({
   floor,
   selectedDestinationId,
   onSelectDestination,
+  onConfirmDestination,
 }: DestinationRoomCategoryListProps) {
+  const lastTapRef = useRef<{ destinationId: string; timestamp: number } | null>(null);
+
+  function handleRoomPress(destinationId: string) {
+    const now = Date.now();
+    const previousTap = lastTapRef.current;
+
+    if (
+      previousTap &&
+      previousTap.destinationId === destinationId &&
+      now - previousTap.timestamp < 320
+    ) {
+      onSelectDestination(destinationId);
+      onConfirmDestination(destinationId);
+      lastTapRef.current = null;
+      return;
+    }
+
+    lastTapRef.current = { destinationId, timestamp: now };
+    onSelectDestination(destinationId);
+  }
+
   return (
     <ScrollView contentContainerStyle={styles.categoryList}>
       {floor.categories.map((category) => (
@@ -31,7 +54,7 @@ export function DestinationRoomCategoryList({
                 <TouchableOpacity
                   key={room.id}
                   activeOpacity={0.9}
-                  onPress={() => onSelectDestination(room.id)}
+                  onPress={() => handleRoomPress(room.id)}
                   style={[
                     styles.roomCard,
                     selected && {
@@ -49,6 +72,7 @@ export function DestinationRoomCategoryList({
                   <View style={styles.roomTextBlock}>
                     <Text style={styles.roomTitle}>{room.label}</Text>
                     <Text style={styles.roomMeta}>{room.subtitle}</Text>
+                    <Text style={styles.roomHint}>Double tap to continue</Text>
                   </View>
                 </TouchableOpacity>
               );
@@ -121,5 +145,13 @@ const styles = StyleSheet.create({
   roomMeta: {
     color: colors.textSecondary,
     fontSize: 13,
+  },
+  roomHint: {
+    color: colors.textMuted,
+    fontSize: 11,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginTop: 2,
   },
 });

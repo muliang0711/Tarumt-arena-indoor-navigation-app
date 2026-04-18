@@ -22,6 +22,13 @@ export function DestinationFloorRoomsStep({
   onSelectDestination,
   onContinue,
 }: DestinationFloorRoomsStepProps) {
+  function handleConfirmDestination(destinationId: string) {
+    onSelectDestination(destinationId);
+    requestAnimationFrame(() => {
+      onContinue();
+    });
+  }
+
   return (
     <ScreenShell
       eyebrow={floor.label}
@@ -33,6 +40,7 @@ export function DestinationFloorRoomsStep({
           floor={floor}
           selectedDestinationId={selectedDestinationId}
           onSelectDestination={onSelectDestination}
+          onConfirmDestination={handleConfirmDestination}
         />
 
         <ActionDock onHomePress={onBack} onStartPress={onContinue} />

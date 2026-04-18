@@ -4,13 +4,20 @@ import { BlurView } from 'expo-blur';
 
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
 
+type DockItemId = 'home' | 'start' | 'map';
+
 interface ActionDockProps {
   onHomePress?: () => void;
   onStartPress: () => void;
   onMapPress?: () => void;
 }
 
-type DockItemId = 'home' | 'start' | 'map';
+interface DockItemConfig {
+  id: DockItemId;
+  label: string;
+  icon: DockItemId;
+  onPress: () => void;
+}
 
 export function ActionDock({
   onHomePress = () => {},
@@ -18,13 +25,13 @@ export function ActionDock({
   onMapPress = () => {},
 }: ActionDockProps) {
   const [activeItemId, setActiveItemId] = useState<string | null>(null);
-  const items: Array<{ id: DockItemId; label: string; icon: DockItemId; onPress: () => void }> = [
+  const items: DockItemConfig[] = [
     { id: 'home', label: 'Home', icon: 'home', onPress: onHomePress },
     { id: 'start', label: 'Start', icon: 'start', onPress: onStartPress },
     { id: 'map', label: 'Map', icon: 'map', onPress: onMapPress },
   ];
 
-  function handlePress(item: (typeof items)[number]) {
+  function handlePress(item: DockItemConfig) {
     if (activeItemId === item.id) {
       item.onPress();
       return;
