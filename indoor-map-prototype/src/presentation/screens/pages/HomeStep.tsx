@@ -35,7 +35,6 @@ export function HomeStep({
           title="Student Center"
           subtitle="Level 3 locked with high confidence"
           currentAnchorLabel={currentLocationLabel}
-          cameraPermissionLabel={cameraGranted ? 'Granted' : 'Not requested'}
           mapPackageLabel="village_demo_01"
         />
 
