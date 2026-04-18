@@ -8,16 +8,12 @@ import { HomeStepHeader } from '../../components/home/HomeStepHeader';
 import { ScreenShell } from '../../components/layout/ScreenShell';
 
 interface HomeStepProps {
-  cameraGranted: boolean;
   currentLocationLabel: string;
-  onRequestCamera: () => void;
   onStartNavigation: () => void;
 }
 
 export function HomeStep({
-  cameraGranted,
   currentLocationLabel,
-  onRequestCamera,
   onStartNavigation,
 }: HomeStepProps) {
   return (
@@ -38,11 +34,7 @@ export function HomeStep({
           mapPackageLabel="village_demo_01"
         />
 
-        <HomeActionStack
-          cameraGranted={cameraGranted}
-          onRequestCamera={onRequestCamera}
-          onStartNavigation={onStartNavigation}
-        />
+        <HomeActionStack onStartNavigation={onStartNavigation} />
       </View>
     </ScreenShell>
   );

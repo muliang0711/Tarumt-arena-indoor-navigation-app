@@ -10,7 +10,6 @@ import { useMapViewport } from '../hooks/useMapViewport';
 export default function IndoorMapPrototypeScreen() {
   const {
     page,
-    cameraGranted,
     mapState,
     activeFloorId,
     floor,
@@ -47,9 +46,7 @@ export default function IndoorMapPrototypeScreen() {
   if (page === 'home') {
     return (
       <HomeStep
-        cameraGranted={cameraGranted}
         currentLocationLabel={scenario.currentLocationLabel}
-        onRequestCamera={actions.requestCamera}
         onStartNavigation={actions.startDestinationFlow}
       />
     );
