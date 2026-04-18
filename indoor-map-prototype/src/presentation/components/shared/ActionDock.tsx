@@ -4,12 +4,13 @@ import { BlurView } from 'expo-blur';
 
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
 
-type DockItemId = 'home' | 'start' | 'map';
+type DockItemId = 'home' | 'start' | 'map' | 'report';
 
 interface ActionDockProps {
   onHomePress?: () => void;
   onStartPress: () => void;
   onMapPress?: () => void;
+  activeItemId?: DockItemId | null;
 }
 
 interface DockItemConfig {
@@ -23,12 +24,19 @@ export function ActionDock({
   onHomePress = () => {},
   onStartPress,
   onMapPress = () => {},
+  activeItemId: initialActiveItemId = null,
 }: ActionDockProps) {
-  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const [activeItemId, setActiveItemId] = useState<DockItemId | null>(initialActiveItemId);
+
+  useEffect(() => {
+    setActiveItemId(initialActiveItemId);
+  }, [initialActiveItemId]);
+
   const items: DockItemConfig[] = [
     { id: 'home', label: 'Home', icon: 'home', onPress: onHomePress },
     { id: 'start', label: 'Start', icon: 'start', onPress: onStartPress },
     { id: 'map', label: 'Map', icon: 'map', onPress: onMapPress },
+    { id: 'report', label: 'Report', icon: 'report', onPress: () => {} },
   ];
 
   function handlePress(item: DockItemConfig) {
@@ -119,7 +127,10 @@ function DockItem({
       />
       <Pressable
         onPress={onPress}
-        style={({ pressed }) => [styles.dockItemPressable, pressed && styles.dockItemPressed]}
+        style={({ pressed }) => [
+          styles.dockItemPressable,
+          pressed && styles.dockItemPressed,
+        ]}
       >
         <View style={styles.dockItemIconWrap}>{icon}</View>
         <Animated.View
@@ -171,6 +182,18 @@ function DockGlyph({ icon, active }: { icon: DockItemId; active: boolean }) {
             styles.mapGlyphFoldRight,
             active && styles.glyphBorderActive,
           ]}
+        />
+      </View>
+    );
+  }
+
+  if (icon === 'report') {
+    return (
+      <View style={styles.glyphBox}>
+        <View style={[styles.reportGlyphSheet, active && styles.glyphBorderActive]} />
+        <View style={[styles.reportGlyphLine, active && styles.glyphLineActive]} />
+        <View
+          style={[styles.reportGlyphLine, styles.reportGlyphLineLower, active && styles.glyphLineActive]}
         />
       </View>
     );
@@ -365,5 +388,23 @@ const styles = StyleSheet.create({
   },
   mapGlyphFoldRight: {
     borderRightWidth: 1.8,
+  },
+  reportGlyphSheet: {
+    width: 12,
+    height: 14,
+    borderWidth: 1.8,
+    borderColor: colors.textSecondary,
+    borderRadius: 3,
+  },
+  reportGlyphLine: {
+    position: 'absolute',
+    width: 6,
+    height: 1.8,
+    borderRadius: radii.pill,
+    backgroundColor: colors.textSecondary,
+    top: 7,
+  },
+  reportGlyphLineLower: {
+    top: 11,
   },
 });

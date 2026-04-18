@@ -11,11 +11,13 @@ import { ScreenShell } from '../../components/layout/ScreenShell';
 interface HomeStepProps {
   currentLocationLabel: string;
   onStartNavigation: () => void;
+  onOpenMapOverview: () => void;
 }
 
 export function HomeStep({
   currentLocationLabel,
   onStartNavigation,
+  onOpenMapOverview,
 }: HomeStepProps) {
   return (
     <ScreenShell
@@ -35,7 +37,9 @@ export function HomeStep({
         />
 
         <ActionDock
+          activeItemId="home"
           onStartPress={onStartNavigation}
+          onMapPress={onOpenMapOverview}
         />
       </View>
     </ScreenShell>

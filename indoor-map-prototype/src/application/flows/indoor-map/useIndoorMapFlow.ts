@@ -16,7 +16,7 @@ import {
 } from './navigationScenario';
 import { useSensorRouteTracking } from './useSensorRouteTracking';
 
-export type AppPage = 'home' | 'destination' | 'destination-rooms' | 'confirm' | 'map';
+export type AppPage = 'home' | 'destination' | 'destination-rooms' | 'confirm' | 'map-overview' | 'map';
 
 export interface IndoorMapFlowModel {
   page: AppPage;
@@ -38,6 +38,7 @@ export interface IndoorMapFlowModel {
     backToDestinationFloors: () => void;
     selectDestination: (destinationId: string) => void;
     openConfirm: () => void;
+    openMapOverview: () => void;
     startNavigation: () => void;
     resetToHome: () => void;
     backFromMap: () => void;
@@ -153,6 +154,11 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
     setPage('confirm');
   };
 
+  const openMapOverview = () => {
+    sensorTracking.reset();
+    setPage('map-overview');
+  };
+
   const startNavigation = () => {
     if (!selectedDestination || !route) {
       return;
@@ -206,6 +212,7 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
       backToDestinationFloors,
       selectDestination,
       openConfirm,
+      openMapOverview,
       startNavigation,
       resetToHome,
       backFromMap,

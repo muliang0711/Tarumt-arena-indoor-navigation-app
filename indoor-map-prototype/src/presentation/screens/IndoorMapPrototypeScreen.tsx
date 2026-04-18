@@ -1,12 +1,18 @@
 import React, { useEffect } from 'react';
 
+import type { AppPage } from '../../application/flows/indoor-map/useIndoorMapFlow';
 import { useIndoorMapFlow } from '../../application/flows/indoor-map/useIndoorMapFlow';
 import { DestinationStep } from './pages/DestinationStep';
 import { DestinationFloorRoomsStep } from './pages/DestinationFloorRoomsStep';
 import { ConfirmStep } from './pages/ConfirmStep';
 import { HomeStep } from './pages/HomeStep';
+import { MapOverviewStep } from './pages/MapOverviewStep';
 import { NavigationMapStep } from './pages/NavigationMapStep';
 import { useMapViewport } from '../hooks/useMapViewport';
+
+function isMapLikePage(page: AppPage) {
+  return page === 'map' || page === 'map-overview';
+}
 
 export default function IndoorMapPrototypeScreen() {
   const {
@@ -31,7 +37,7 @@ export default function IndoorMapPrototypeScreen() {
   });
 
   useEffect(() => {
-    if (page !== 'map') {
+    if (!isMapLikePage(page)) {
       return;
     }
 
@@ -46,74 +52,97 @@ export default function IndoorMapPrototypeScreen() {
     centerOn(selectedDestination.roomCenter, mapState === 'navigating' ? 1.25 : 1.08);
   }, [centerOn, mapState, page, selectedDestination]);
 
-  if (page === 'home') {
-    return (
-      <HomeStep
-        currentLocationLabel={scenario.currentLocationLabel}
-        onStartNavigation={actions.startDestinationFlow}
-      />
-    );
+  function renderPage(targetPage: AppPage) {
+    switch (targetPage) {
+      case 'home':
+        return (
+          <HomeStep
+            currentLocationLabel={scenario.currentLocationLabel}
+            onStartNavigation={actions.startDestinationFlow}
+            onOpenMapOverview={actions.openMapOverview}
+          />
+        );
+      case 'destination':
+        return (
+          <DestinationStep
+            floors={scenario.destinationFloors}
+            selectedFloorId={selectedDestinationFloor?.id ?? null}
+            onBack={actions.resetToHome}
+            onOpenMapOverview={actions.openMapOverview}
+            onSelectFloor={actions.selectDestinationFloor}
+          />
+        );
+      case 'destination-rooms':
+        if (!selectedDestinationFloor) {
+          return null;
+        }
+
+        return (
+          <DestinationFloorRoomsStep
+            floor={selectedDestinationFloor}
+            selectedDestinationId={selectedDestination?.id ?? null}
+            onBack={actions.backToDestinationFloors}
+            onOpenMapOverview={actions.openMapOverview}
+            onSelectDestination={actions.selectDestination}
+            onContinue={actions.openConfirm}
+          />
+        );
+      case 'confirm':
+        return (
+          <ConfirmStep
+            buildingName={scenario.buildingName}
+            currentLocationLabel={scenario.currentLocationLabel}
+            floorLabel={selectedDestination?.floorLabel ?? floor.label}
+            route={route}
+            selectedDestination={selectedDestination}
+            onGoHome={actions.resetToHome}
+            onChooseAnother={actions.restartRoute}
+            onOpenOverviewMap={actions.openMapOverview}
+            onOpenMap={actions.startNavigation}
+          />
+        );
+      case 'map-overview':
+        return (
+          <MapOverviewStep
+            activeFloorId={activeFloorId}
+            floor={floor}
+            floors={scenario.floors}
+            transform={transform}
+            userPosition={userPosition}
+            headingDegrees={telemetry.headingDegrees}
+            panHandlers={panHandlers}
+            onLayout={onLayout}
+            onGoHome={actions.resetToHome}
+            onStart={actions.startDestinationFlow}
+            onSelectFloor={actions.setActiveFloor}
+          />
+        );
+      case 'map':
+        return (
+          <NavigationMapStep
+            activeFloorId={activeFloorId}
+            floor={floor}
+            floors={scenario.floors}
+            mapState={mapState}
+            route={route}
+            routeProgress={routeProgress}
+            selectedDestination={selectedDestination}
+            transform={transform}
+            userPosition={userPosition}
+            telemetry={telemetry}
+            panHandlers={panHandlers}
+            onLayout={onLayout}
+            onBack={actions.backFromMap}
+            onSelectFloor={actions.setActiveFloor}
+            onZoomIn={() => zoomBy(0.22)}
+            onZoomOut={() => zoomBy(-0.22)}
+            onRecenter={() => centerOn(userPosition, Math.max(transform.scale, 1.08))}
+            onEnd={actions.resetToHome}
+            onNewRoute={actions.restartRoute}
+          />
+        );
+    }
   }
 
-  if (page === 'destination') {
-    return (
-      <DestinationStep
-        floors={scenario.destinationFloors}
-        selectedFloorId={selectedDestinationFloor?.id ?? null}
-        onBack={actions.resetToHome}
-        onSelectFloor={actions.selectDestinationFloor}
-      />
-    );
-  }
-
-  if (page === 'destination-rooms' && selectedDestinationFloor) {
-    return (
-      <DestinationFloorRoomsStep
-        floor={selectedDestinationFloor}
-        selectedDestinationId={selectedDestination?.id ?? null}
-        onBack={actions.backToDestinationFloors}
-        onSelectDestination={actions.selectDestination}
-        onContinue={actions.openConfirm}
-      />
-    );
-  }
-
-  if (page === 'confirm') {
-    return (
-      <ConfirmStep
-        buildingName={scenario.buildingName}
-        currentLocationLabel={scenario.currentLocationLabel}
-        floorLabel={selectedDestination?.floorLabel ?? floor.label}
-        route={route}
-        selectedDestination={selectedDestination}
-        onGoHome={actions.resetToHome}
-        onChooseAnother={actions.restartRoute}
-        onOpenMap={actions.startNavigation}
-      />
-    );
-  }
-
-  return (
-    <NavigationMapStep
-      activeFloorId={activeFloorId}
-      floor={floor}
-      floors={scenario.floors}
-      mapState={mapState}
-      route={route}
-      routeProgress={routeProgress}
-      selectedDestination={selectedDestination}
-      transform={transform}
-      userPosition={userPosition}
-      telemetry={telemetry}
-      panHandlers={panHandlers}
-      onLayout={onLayout}
-      onBack={actions.backFromMap}
-      onSelectFloor={actions.setActiveFloor}
-      onZoomIn={() => zoomBy(0.22)}
-      onZoomOut={() => zoomBy(-0.22)}
-      onRecenter={() => centerOn(userPosition, Math.max(transform.scale, 1.08))}
-      onEnd={actions.resetToHome}
-      onNewRoute={actions.restartRoute}
-    />
-  );
+  return renderPage(page);
 }

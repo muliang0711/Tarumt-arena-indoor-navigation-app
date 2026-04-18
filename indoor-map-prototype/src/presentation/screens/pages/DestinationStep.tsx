@@ -12,6 +12,7 @@ interface DestinationStepProps {
   floors: DestinationFloorCatalog[];
   selectedFloorId: string | null;
   onBack: () => void;
+  onOpenMapOverview: () => void;
   onSelectFloor: (floorId: string) => void;
 }
 
@@ -19,6 +20,7 @@ export function DestinationStep({
   floors,
   selectedFloorId,
   onBack,
+  onOpenMapOverview,
   onSelectFloor,
 }: DestinationStepProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -49,7 +51,12 @@ export function DestinationStep({
           onSelectFloor={onSelectFloor}
         />
 
-        <ActionDock onHomePress={onBack} onStartPress={() => {}} />
+        <ActionDock
+          activeItemId="start"
+          onHomePress={onBack}
+          onStartPress={() => {}}
+          onMapPress={onOpenMapOverview}
+        />
       </View>
     </ScreenShell>
   );

@@ -12,6 +12,7 @@ interface DestinationFloorRoomsStepProps {
   floor: DestinationFloorCatalog;
   selectedDestinationId: string | null;
   onBack: () => void;
+  onOpenMapOverview: () => void;
   onSelectDestination: (destinationId: string) => void;
   onContinue: () => void;
 }
@@ -20,6 +21,7 @@ export function DestinationFloorRoomsStep({
   floor,
   selectedDestinationId,
   onBack,
+  onOpenMapOverview,
   onSelectDestination,
   onContinue,
 }: DestinationFloorRoomsStepProps) {
@@ -69,7 +71,12 @@ export function DestinationFloorRoomsStep({
           onConfirmDestination={handleConfirmDestination}
         />
 
-        <ActionDock onHomePress={onBack} onStartPress={onBack} />
+        <ActionDock
+          activeItemId="start"
+          onHomePress={onBack}
+          onStartPress={onBack}
+          onMapPress={onOpenMapOverview}
+        />
       </View>
     </ScreenShell>
   );

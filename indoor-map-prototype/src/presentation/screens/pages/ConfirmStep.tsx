@@ -16,6 +16,7 @@ interface ConfirmStepProps {
   selectedDestination: DestinationAnchor | null;
   onGoHome: () => void;
   onChooseAnother: () => void;
+  onOpenOverviewMap: () => void;
   onOpenMap: () => void;
 }
 
@@ -27,6 +28,7 @@ export function ConfirmStep({
   selectedDestination,
   onGoHome,
   onChooseAnother,
+  onOpenOverviewMap,
   onOpenMap,
 }: ConfirmStepProps) {
   return (
@@ -43,9 +45,10 @@ export function ConfirmStep({
         />
 
         <ActionDock
+          activeItemId="start"
           onHomePress={onGoHome}
           onStartPress={onChooseAnother}
-          onMapPress={onOpenMap}
+          onMapPress={onOpenOverviewMap}
         />
       </View>
     </ScreenShell>
