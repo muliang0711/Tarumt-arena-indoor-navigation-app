@@ -1,13 +1,27 @@
 import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-import { ScreenHeader } from '../layout/ScreenHeader';
+import { colors, spacing } from '../../../shared/theme/tokens';
 
 export function ConfirmStepHeader() {
   return (
-    <ScreenHeader
-      eyebrow="Step 2"
-      title="Confirm route"
-      subtitle="Review the indoor route first. The live map opens only after you confirm."
-    />
+    <View style={styles.header}>
+      <Text style={styles.title}>Confirm route</Text>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  header: {
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
+    alignItems: 'center',
+  },
+  title: {
+    color: colors.textPrimary,
+    fontSize: 30,
+    fontWeight: '800',
+    textAlign: 'center',
+  },
+});
