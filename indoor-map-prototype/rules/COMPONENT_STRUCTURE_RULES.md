@@ -36,7 +36,7 @@ This file defines how components should be split, owned, and promoted in the pro
 - `HomeStep.tsx` should be able to control the spacing between its four main blocks directly
 - header to hero-card spacing belongs to `HomeStep.tsx` or `ScreenShell.tsx`
 - hero-card to bottom dock spacing also belongs to `HomeStep.tsx`
-- `HomeStepHeader.tsx`, `HomeHeroCard.tsx`, and `HomeActionStack.tsx` may control their internal padding, but not the layout distance between each other
+- `HomeStepHeader.tsx`, `HomeHeroCard.tsx` may control their internal padding, but not the layout distance between each other
 
 ## Splitting Rule
 

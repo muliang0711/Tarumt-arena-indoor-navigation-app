@@ -12,3 +12,4 @@ This folder is the source of truth for project-wide UI and component rules.
 - add new durable rules here instead of scattering them across feature READMEs
 - prefer updating an existing rule file before creating a new one when the topic already fits
 - when a local README needs to mention a rule, link back to the file in this folder instead of duplicating the full rule text
+- `../AGENT.md` is the execution guide that applies these rules to future patches; update both when the working expectations change

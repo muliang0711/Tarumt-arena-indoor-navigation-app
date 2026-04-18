@@ -33,6 +33,7 @@ Runtime code lives under `src/`. Static prototype map data and sprite assets liv
 
 ## Related Docs
 
+- [`AGENT.md`](./AGENT.md)
 - [`src/README.md`](./src/README.md)
 - [`assets/README.md`](./assets/README.md)
 - [`ARCHITECTURE.md`](./ARCHITECTURE.md)
