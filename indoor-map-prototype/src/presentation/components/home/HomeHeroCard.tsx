@@ -22,12 +22,20 @@ export function HomeHeroCard({
 }: HomeHeroCardProps) {
   return (
     <View style={[styles.card, style]}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.subtitle}>{subtitle}</Text>
+      <View pointerEvents="none" style={styles.glassWash} />
+      <View pointerEvents="none" style={styles.glassHighlight} />
+      <View pointerEvents="none" style={styles.glassBlueGlow} />
+      <View pointerEvents="none" style={styles.glassPurpleGlow} />
+      <View pointerEvents="none" style={styles.innerStroke} />
 
-      <InfoRow label="Current anchor" value={currentAnchorLabel} />
-      <InfoRow label="Camera permission" value={cameraPermissionLabel} />
-      <InfoRow label="Map package" value={mapPackageLabel} />
+      <View style={styles.content}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.subtitle}>{subtitle}</Text>
+
+        <InfoRow label="Current anchor" value={currentAnchorLabel} />
+        <InfoRow label="Camera permission" value={cameraPermissionLabel} />
+        <InfoRow label="Map package" value={mapPackageLabel} />
+      </View>
     </View>
   );
 }
@@ -48,16 +56,60 @@ function InfoRow({ label, value }: InfoRowProps) {
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.surface,
+    position: 'relative',
+    overflow: 'hidden',
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
     borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: colors.glassStroke,
+    borderColor: 'rgba(255, 255, 255, 0.26)',
     padding: spacing.lg,
     shadowColor: colors.shadow,
-    shadowOffset: { width: 0, height: 16 },
+    shadowOffset: { width: 0, height: 18 },
     shadowOpacity: 1,
-    shadowRadius: 28,
-    elevation: 12,
+    shadowRadius: 32,
+    elevation: 14,
+  },
+  glassWash: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(255, 255, 255, 0.04)',
+  },
+  glassHighlight: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '46%',
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
+  },
+  glassBlueGlow: {
+    position: 'absolute',
+    top: -42,
+    left: -18,
+    width: 170,
+    height: 170,
+    borderRadius: radii.pill,
+    backgroundColor: colors.accentBlueSoft,
+    opacity: 0.95,
+  },
+  glassPurpleGlow: {
+    position: 'absolute',
+    right: -52,
+    bottom: -70,
+    width: 190,
+    height: 190,
+    borderRadius: radii.pill,
+    backgroundColor: colors.accentPurpleSoft,
+    opacity: 0.82,
+  },
+  innerStroke: {
+    position: 'absolute',
+    inset: 1,
+    borderRadius: radii.lg - 1,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.12)',
+  },
+  content: {
+    position: 'relative',
     gap: spacing.md,
   },
   title: {
