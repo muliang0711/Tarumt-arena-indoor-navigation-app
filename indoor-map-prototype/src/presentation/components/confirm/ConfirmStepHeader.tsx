@@ -2,10 +2,12 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 import { colors, spacing } from '../../../shared/theme/tokens';
+import { HeaderSystemRow } from '../shared/HeaderSystemRow';
 
 export function ConfirmStepHeader() {
   return (
     <View style={styles.header}>
+      <HeaderSystemRow style={styles.systemRow} />
       <Text style={styles.title}>Confirm route</Text>
     </View>
   );
@@ -17,6 +19,10 @@ const styles = StyleSheet.create({
     paddingTop: spacing.lg,
     paddingBottom: spacing.md,
     alignItems: 'center',
+  },
+  systemRow: {
+    alignSelf: 'stretch',
+    marginBottom: spacing.lg,
   },
   title: {
     color: colors.textPrimary,
