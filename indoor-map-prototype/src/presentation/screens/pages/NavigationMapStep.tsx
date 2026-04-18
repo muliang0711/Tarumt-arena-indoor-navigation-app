@@ -20,6 +20,7 @@ import type {
 import { colors } from '../../../shared/theme/tokens';
 import IndoorMapCanvas from '../../components/map/IndoorMapCanvas';
 import { NavigationMapBottomPanel } from '../../components/map/NavigationMapBottomPanel';
+import { NavigationMapLocateButton } from '../../components/map/NavigationMapLocateButton';
 import { NavigationMapTopOverlay } from '../../components/map/NavigationMapTopOverlay';
 
 interface NavigationMapStepProps {
@@ -87,14 +88,20 @@ export function NavigationMapStep({
         <NavigationMapTopOverlay
           floorLabel={floor.label}
           headingLabel={headingLabel}
+          detailLabel={telemetry.detailLabel}
+          mapState={mapState}
           modeLabel={telemetry.modeLabel}
+          route={route}
           status={telemetry.status}
         />
+
+        <NavigationMapLocateButton onPress={onRecenter} />
 
         <NavigationMapBottomPanel
           mapState={mapState}
           route={route}
           routeProgress={routeProgress}
+          selectedDestination={selectedDestination}
           onExit={handleExit}
         />
       </SafeAreaView>

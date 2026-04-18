@@ -1,13 +1,14 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import type { FlowState, RouteModel } from '../../../shared/types';
+import type { DestinationAnchor, FlowState, RouteModel } from '../../../shared/types';
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
 
 interface NavigationMapBottomPanelProps {
   mapState: FlowState;
   route: RouteModel | null;
   routeProgress: number;
+  selectedDestination: DestinationAnchor | null;
   onExit: () => void;
 }
 
@@ -15,23 +16,27 @@ export function NavigationMapBottomPanel({
   mapState,
   route,
   routeProgress,
+  selectedDestination,
   onExit,
 }: NavigationMapBottomPanelProps) {
   const summaryLabel =
     mapState === 'arrived'
       ? 'Arrived'
       : `${route?.etaMinutes ?? 0} min`;
-
-  const instructionLabel =
-    mapState === 'arrived'
-      ? 'You have reached your destination.'
-      : route?.instruction ?? 'Turn left at the next intersection.';
+  const distanceLabel =
+    mapState === 'arrived' ? `${route?.distanceMeters ?? 0} m total` : `${route?.distanceMeters ?? 0} m route`;
 
   return (
     <View style={styles.wrap}>
       <View style={styles.panel}>
         <View style={styles.topRow}>
-          <Text style={styles.summaryText}>{summaryLabel}</Text>
+          <View style={styles.routeInfo}>
+            <Text style={styles.routeLabel}>Whole route</Text>
+            <Text style={styles.summaryText}>{summaryLabel}</Text>
+            <Text style={styles.distanceText} numberOfLines={1}>
+              {selectedDestination?.label ?? 'Destination'} / {distanceLabel}
+            </Text>
+          </View>
 
           <View style={styles.actionRow}>
             <View style={styles.turnBadge}>
@@ -46,10 +51,6 @@ export function NavigationMapBottomPanel({
             </Pressable>
           </View>
         </View>
-
-        <Text style={styles.instructionText} numberOfLines={1}>
-          {instructionLabel}
-        </Text>
 
         <View style={styles.progressTrack}>
           <View
@@ -87,14 +88,31 @@ const styles = StyleSheet.create({
   },
   topRow: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
     gap: spacing.md,
+  },
+  routeInfo: {
+    flex: 1,
+  },
+  routeLabel: {
+    color: 'rgba(248, 250, 253, 0.54)',
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
   },
   summaryText: {
     color: colors.textOnDark,
     fontSize: 18,
     fontWeight: '800',
+    marginTop: 4,
+  },
+  distanceText: {
+    color: 'rgba(248, 250, 253, 0.72)',
+    fontSize: 12,
+    fontWeight: '600',
+    marginTop: 4,
   },
   actionRow: {
     flexDirection: 'row',
@@ -141,12 +159,6 @@ const styles = StyleSheet.create({
     color: colors.white,
     fontSize: 15,
     fontWeight: '800',
-  },
-  instructionText: {
-    color: 'rgba(248, 250, 253, 0.88)',
-    fontSize: 15,
-    fontWeight: '700',
-    lineHeight: 20,
   },
   progressTrack: {
     height: 6,
