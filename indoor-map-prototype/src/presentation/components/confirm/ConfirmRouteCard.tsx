@@ -25,7 +25,7 @@ export function ConfirmRouteCard({
   onChooseAnother,
   onOpenMap,
 }: ConfirmRouteCardProps) {
-  const [activeAction, setActiveAction] = useState<ConfirmActionId | null>(null);
+  const [activeAction, setActiveAction] = useState<ConfirmActionId | null>('start-navigation');
   const chooseAnotherProgress = useRef(new Animated.Value(0)).current;
   const startNavigationProgress = useRef(new Animated.Value(0)).current;
   const helperProgress = useRef(new Animated.Value(0)).current;
@@ -71,10 +71,6 @@ export function ConfirmRouteCard({
 
   const activeActionTitle =
     activeAction === 'choose-another' ? 'Choose another route' : 'Start navigate';
-  const activeActionDescription =
-    activeAction === 'choose-another'
-      ? 'Reopen destination selection and pick a different room or floor.'
-      : 'Launch the live indoor map and begin turn-by-turn guidance.';
 
   return (
     <View style={styles.confirmCard}>
@@ -140,7 +136,6 @@ export function ConfirmRouteCard({
         ]}
       >
         <Text style={styles.actionHelperTitle}>{activeActionTitle}</Text>
-        <Text style={styles.actionHelperDescription}>{activeActionDescription}</Text>
         <Text style={styles.actionHelperHint}>Tap the highlighted control again to continue.</Text>
       </Animated.View>
     </View>
@@ -343,11 +338,6 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 15,
     fontWeight: '800',
-  },
-  actionHelperDescription: {
-    color: colors.textSecondary,
-    fontSize: 13,
-    lineHeight: 19,
   },
   actionHelperHint: {
     color: colors.textMuted,
