@@ -7,7 +7,8 @@ This folder contains the page-level components for each step of the prototype jo
 ## Contains
 
 - `HomeStep.tsx`: indoor detection entry screen and camera request CTA
-- `DestinationStep.tsx`: destination picker for the available rooms on the active floor
+- `DestinationStep.tsx`: floor chooser for the available destination catalogs
+- `DestinationFloorRoomsStep.tsx`: grouped room browser for the selected floor
 - `ConfirmStep.tsx`: route summary before opening the live map
 - `NavigationMapStep.tsx`: live navigation page with map canvas, telemetry, and floating controls
 

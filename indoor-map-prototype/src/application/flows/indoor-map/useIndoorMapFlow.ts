@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getPrototypeFloor } from '../../../integration/map/loadPrototypeFloor';
 import type {
   DestinationAnchor,
+  DestinationFloorCatalog,
   FlowState,
   NavigationTelemetry,
   ParsedMapFloor,
@@ -15,7 +16,7 @@ import {
 } from './navigationScenario';
 import { useSensorRouteTracking } from './useSensorRouteTracking';
 
-export type AppPage = 'home' | 'destination' | 'confirm' | 'map';
+export type AppPage = 'home' | 'destination' | 'destination-rooms' | 'confirm' | 'map';
 
 export interface IndoorMapFlowModel {
   page: AppPage;
@@ -23,6 +24,7 @@ export interface IndoorMapFlowModel {
   mapState: FlowState;
   activeFloorId: string;
   floor: ParsedMapFloor;
+  selectedDestinationFloor: DestinationFloorCatalog | null;
   selectedDestination: DestinationAnchor | null;
   route: RouteModel | null;
   routeProgress: number;
@@ -32,6 +34,8 @@ export interface IndoorMapFlowModel {
   actions: {
     requestCamera: () => void;
     startDestinationFlow: () => void;
+    selectDestinationFloor: (floorId: string) => void;
+    backToDestinationFloors: () => void;
     selectDestination: (destinationId: string) => void;
     openConfirm: () => void;
     startNavigation: () => void;
@@ -50,9 +54,22 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
   const [cameraGranted, setCameraGranted] = useState(false);
   const [mapState, setMapState] = useState<FlowState>('detected');
   const [activeFloorId, setActiveFloorId] = useState(scenario.activeFloorId);
-  const [selectedDestinationId, setSelectedDestinationId] = useState(
-    scenario.destinations[1]?.id ?? scenario.destinations[0]?.id ?? '',
+  const [selectedDestinationFloorId, setSelectedDestinationFloorId] = useState(
+    scenario.destinationFloors.find((destinationFloor) => destinationFloor.availability === 'available')?.id ??
+      scenario.destinationFloors[0]?.id ??
+      '',
   );
+  const [selectedDestinationId, setSelectedDestinationId] = useState(
+    scenario.destinationFloors
+      .find((destinationFloor) => destinationFloor.id === selectedDestinationFloorId)
+      ?.categories[0]?.rooms[0]?.id ??
+      scenario.destinations[0]?.id ??
+      '',
+  );
+
+  const selectedDestinationFloor =
+    scenario.destinationFloors.find((destinationFloor) => destinationFloor.id === selectedDestinationFloorId) ??
+    null;
 
   const selectedDestination =
     scenario.destinations.find((destination) => destination.id === selectedDestinationId) ?? null;
@@ -100,8 +117,32 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
     sensorTracking.reset();
   };
 
+  const selectDestinationFloor = (floorId: string) => {
+    const targetFloor =
+      scenario.destinationFloors.find((destinationFloor) => destinationFloor.id === floorId) ?? null;
+    setSelectedDestinationFloorId(floorId);
+
+    const firstRoom = targetFloor?.categories[0]?.rooms[0] ?? null;
+    if (firstRoom) {
+      setSelectedDestinationId(firstRoom.id);
+      setActiveFloorId(floorId);
+    }
+
+    setPage('destination-rooms');
+  };
+
+  const backToDestinationFloors = () => {
+    setPage('destination');
+  };
+
   const selectDestination = (destinationId: string) => {
     setSelectedDestinationId(destinationId);
+    const destination =
+      scenario.destinations.find((candidate) => candidate.id === destinationId) ?? null;
+    if (destination) {
+      setSelectedDestinationFloorId(destination.floorId);
+      setActiveFloorId(destination.floorId);
+    }
   };
 
   const openConfirm = () => {
@@ -151,6 +192,7 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
     mapState,
     activeFloorId,
     floor,
+    selectedDestinationFloor,
     selectedDestination,
     route,
     routeProgress: mapState === 'arrived' ? 1 : sensorTracking.routeProgress,
@@ -160,6 +202,8 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
     actions: {
       requestCamera,
       startDestinationFlow,
+      selectDestinationFloor,
+      backToDestinationFloors,
       selectDestination,
       openConfirm,
       startNavigation,

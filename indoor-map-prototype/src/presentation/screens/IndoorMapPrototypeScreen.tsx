@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 
 import { useIndoorMapFlow } from '../../application/flows/indoor-map/useIndoorMapFlow';
 import { DestinationStep } from './pages/DestinationStep';
+import { DestinationFloorRoomsStep } from './pages/DestinationFloorRoomsStep';
 import { ConfirmStep } from './pages/ConfirmStep';
 import { HomeStep } from './pages/HomeStep';
 import { NavigationMapStep } from './pages/NavigationMapStep';
@@ -13,6 +14,7 @@ export default function IndoorMapPrototypeScreen() {
     mapState,
     activeFloorId,
     floor,
+    selectedDestinationFloor,
     selectedDestination,
     route,
     scenario,
@@ -55,10 +57,20 @@ export default function IndoorMapPrototypeScreen() {
   if (page === 'destination') {
     return (
       <DestinationStep
-        floor={floor}
-        destinations={scenario.destinations}
-        selectedDestinationId={selectedDestination?.id ?? null}
+        floors={scenario.destinationFloors}
+        selectedFloorId={selectedDestinationFloor?.id ?? null}
         onBack={actions.resetToHome}
+        onSelectFloor={actions.selectDestinationFloor}
+      />
+    );
+  }
+
+  if (page === 'destination-rooms' && selectedDestinationFloor) {
+    return (
+      <DestinationFloorRoomsStep
+        floor={selectedDestinationFloor}
+        selectedDestinationId={selectedDestination?.id ?? null}
+        onBack={actions.backToDestinationFloors}
         onSelectDestination={actions.selectDestination}
         onContinue={actions.openConfirm}
       />
@@ -70,7 +82,7 @@ export default function IndoorMapPrototypeScreen() {
       <ConfirmStep
         buildingName={scenario.buildingName}
         currentLocationLabel={scenario.currentLocationLabel}
-        floor={floor}
+        floorLabel={selectedDestination?.floorLabel ?? floor.label}
         route={route}
         selectedDestination={selectedDestination}
         onChooseAnother={actions.restartRoute}

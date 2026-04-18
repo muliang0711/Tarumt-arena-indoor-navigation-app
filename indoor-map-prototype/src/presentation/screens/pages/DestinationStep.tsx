@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import type { DestinationAnchor, ParsedMapFloor } from '../../../shared/types';
+import type { DestinationFloorCatalog } from '../../../shared/types';
 import { spacing } from '../../../shared/theme/tokens';
 import { DestinationStepHeader } from '../../components/destination/DestinationStepHeader';
 import { DestinationSelectionList } from '../../components/destination/DestinationSelectionList';
@@ -9,38 +9,34 @@ import { ActionDock } from '../../components/layout/ActionDock';
 import { ScreenShell } from '../../components/layout/ScreenShell';
 
 interface DestinationStepProps {
-  floor: ParsedMapFloor;
-  destinations: DestinationAnchor[];
-  selectedDestinationId: string | null;
+  floors: DestinationFloorCatalog[];
+  selectedFloorId: string | null;
   onBack: () => void;
-  onSelectDestination: (destinationId: string) => void;
-  onContinue: () => void;
+  onSelectFloor: (floorId: string) => void;
 }
 
 export function DestinationStep({
-  floor,
-  destinations,
-  selectedDestinationId,
+  floors,
+  selectedFloorId,
   onBack,
-  onSelectDestination,
-  onContinue,
+  onSelectFloor,
 }: DestinationStepProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const normalizedQuery = searchQuery.trim().toLowerCase();
-  const visibleDestinations = normalizedQuery
-    ? destinations.filter((destination) => {
+  const visibleFloors = normalizedQuery
+    ? floors.filter((floor) => {
         const haystack = [
-          destination.label,
-          destination.subtitle,
           floor.label,
-          'student center',
+          floor.buildingName,
+          ...floor.categories.map((category) => category.label),
+          ...floor.categories.flatMap((category) => category.rooms.map((room) => room.label)),
         ]
           .join(' ')
           .toLowerCase();
 
         return haystack.includes(normalizedQuery);
       })
-    : destinations;
+    : floors;
 
   return (
     <ScreenShell
@@ -48,16 +44,12 @@ export function DestinationStep({
     >
       <View style={styles.content}>
         <DestinationSelectionList
-          floor={floor}
-          destinations={visibleDestinations}
-          selectedDestinationId={selectedDestinationId}
-          onSelectDestination={onSelectDestination}
+          floors={visibleFloors}
+          selectedFloorId={selectedFloorId}
+          onSelectFloor={onSelectFloor}
         />
 
-        <ActionDock
-          onHomePress={onBack}
-          onStartPress={() => {}}
-        />
+        <ActionDock onHomePress={onBack} onStartPress={() => {}} />
       </View>
     </ScreenShell>
   );

@@ -1,57 +1,58 @@
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-import type { DestinationAnchor, ParsedMapFloor } from '../../../shared/types';
+import type { DestinationFloorCatalog } from '../../../shared/types';
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
 
 interface DestinationSelectionListProps {
-  floor: ParsedMapFloor;
-  destinations: DestinationAnchor[];
-  selectedDestinationId: string | null;
-  onSelectDestination: (destinationId: string) => void;
+  floors: DestinationFloorCatalog[];
+  selectedFloorId: string | null;
+  onSelectFloor: (floorId: string) => void;
 }
 
 export function DestinationSelectionList({
-  floor,
-  destinations,
-  selectedDestinationId,
-  onSelectDestination,
+  floors,
+  selectedFloorId,
+  onSelectFloor,
 }: DestinationSelectionListProps) {
   return (
     <ScrollView contentContainerStyle={styles.destinationList}>
-      {destinations.map((destination) => {
-        const selected = destination.id === selectedDestinationId;
+      {floors.map((floor) => {
+        const selected = floor.id === selectedFloorId;
         return (
           <TouchableOpacity
-            key={destination.id}
+            key={floor.id}
             activeOpacity={0.9}
-            onPress={() => onSelectDestination(destination.id)}
+            onPress={() => onSelectFloor(floor.id)}
             style={[
               styles.destinationCard,
               selected && {
-                borderColor: destination.accentColor,
-                backgroundColor: `${destination.accentColor}18`,
+                borderColor: colors.accentBlue,
+                backgroundColor: `${colors.accentBlue}14`,
               },
             ]}
           >
-            <View
-              style={[
-                styles.destinationAccent,
-                { backgroundColor: destination.accentColor },
-              ]}
-            />
+            <View style={styles.floorBadge}>
+              <Text style={styles.floorBadgeText}>
+                {floor.label === 'Ground Floor' ? 'G' : floor.label[0]}
+              </Text>
+            </View>
             <View style={styles.destinationTextBlock}>
-              <Text style={styles.destinationTitle}>{destination.label}</Text>
-              <Text style={styles.destinationMeta}>{destination.subtitle}</Text>
-              <Text style={styles.destinationMeta}>Student Center / {floor.label}</Text>
+              <Text style={styles.destinationTitle}>{floor.label}</Text>
+              <Text style={styles.destinationMeta}>
+                {floor.roomCount} rooms across {floor.categories.length} categories
+              </Text>
+              <Text style={styles.destinationMeta}>
+                {floor.buildingName} / {floor.availability === 'available' ? 'Active now' : 'Preview catalog'}
+              </Text>
             </View>
           </TouchableOpacity>
         );
       })}
-      {!destinations.length ? (
+      {!floors.length ? (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyStateTitle}>No matching destination</Text>
-          <Text style={styles.emptyStateText}>Try a room code or destination name.</Text>
+          <Text style={styles.emptyStateTitle}>No floor available</Text>
+          <Text style={styles.emptyStateText}>Check the prototype floor catalog data.</Text>
         </View>
       ) : null}
     </ScrollView>
@@ -91,10 +92,18 @@ const styles = StyleSheet.create({
     borderColor: colors.glassStroke,
     padding: spacing.md,
   },
-  destinationAccent: {
-    width: 14,
-    alignSelf: 'stretch',
-    borderRadius: radii.pill,
+  floorBadge: {
+    width: 52,
+    height: 52,
+    borderRadius: radii.md,
+    backgroundColor: colors.accentBlueSoft,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  floorBadgeText: {
+    color: colors.accentBlue,
+    fontSize: 17,
+    fontWeight: '800',
   },
   destinationTextBlock: {
     flex: 1,

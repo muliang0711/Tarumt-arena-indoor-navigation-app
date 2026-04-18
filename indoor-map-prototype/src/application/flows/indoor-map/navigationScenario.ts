@@ -1,6 +1,8 @@
 import { colors } from '../../../shared/theme/tokens';
 import type {
   DestinationAnchor,
+  DestinationFloorCatalog,
+  DestinationRoomCategory,
   FloorOption,
   NavigationScenario,
   ParsedMapFloor,
@@ -8,59 +10,232 @@ import type {
   RouteModel,
 } from '../../../shared/types';
 
-const DESTINATION_BLUEPRINTS = [
-  { label: 'Studio 3A', subtitle: 'Collaborative classroom', accentColor: colors.accentAmber },
-  { label: 'Studio 3B', subtitle: 'Navigation lab', accentColor: colors.accentBlue },
-  { label: 'Studio 3C', subtitle: 'Project critique room', accentColor: colors.accentGreen },
+const FLOOR_OPTIONS: FloorOption[] = [
+  { id: 'student-center-level-1', label: '1st Floor', availability: 'preview' },
+  { id: 'student-center-level-2', label: '2nd Floor', availability: 'preview' },
+  { id: 'student-center-level-3', label: '3rd Floor', availability: 'available' },
+  { id: 'student-center-level-4', label: '4th Floor', availability: 'preview' },
+  { id: 'student-center-level-5', label: '5th Floor', availability: 'preview' },
+  { id: 'student-center-level-6', label: '6th Floor', availability: 'preview' },
+  { id: 'student-center-ground', label: 'Ground Floor', availability: 'preview' },
 ];
 
-const FLOOR_OPTIONS: FloorOption[] = [
-  { id: 'student-center-level-5', label: 'L5', availability: 'preview' },
-  { id: 'student-center-level-4', label: 'L4', availability: 'preview' },
-  { id: 'student-center-level-3', label: 'L3', availability: 'available' },
-  { id: 'student-center-level-2', label: 'L2', availability: 'preview' },
+const FLOOR_ROOM_BLUEPRINTS: Array<{
+  id: string;
+  categories: Array<{
+    label: string;
+    rooms: Array<{ label: string; subtitle: string; accentColor: string }>;
+  }>;
+}> = [
+  {
+    id: 'student-center-level-6',
+    categories: [
+      {
+        label: 'Teaching Rooms',
+        rooms: [
+          { label: 'TA601', subtitle: 'Interactive lecture room', accentColor: colors.accentBlue },
+          { label: 'TA602', subtitle: 'Seminar classroom', accentColor: colors.accentAmber },
+        ],
+      },
+      {
+        label: 'Studios',
+        rooms: [
+          { label: 'ST610', subtitle: 'Creative design studio', accentColor: colors.accentGreen },
+          { label: 'ST612', subtitle: 'Digital media studio', accentColor: colors.accentPurple },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'student-center-level-5',
+    categories: [
+      {
+        label: 'Labs',
+        rooms: [
+          { label: 'LB501', subtitle: 'Fabrication lab', accentColor: colors.accentBlue },
+          { label: 'LB503', subtitle: 'Navigation systems lab', accentColor: colors.accentGreen },
+        ],
+      },
+      {
+        label: 'Support',
+        rooms: [
+          { label: 'SR520', subtitle: 'Equipment store', accentColor: colors.accentAmber },
+          { label: 'SR522', subtitle: 'Faculty collaboration room', accentColor: colors.accentPurple },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'student-center-level-4',
+    categories: [
+      {
+        label: 'Classrooms',
+        rooms: [
+          { label: 'CR401', subtitle: 'General teaching room', accentColor: colors.accentBlue },
+          { label: 'CR403', subtitle: 'Presentation classroom', accentColor: colors.accentAmber },
+        ],
+      },
+      {
+        label: 'Facilities',
+        rooms: [
+          { label: 'FA410', subtitle: 'Pantry & break area', accentColor: colors.accentGreen },
+          { label: 'FA412', subtitle: 'Discussion lounge', accentColor: colors.accentPurple },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'student-center-level-3',
+    categories: [
+      {
+        label: 'Studios',
+        rooms: [
+          { label: 'Studio 3A', subtitle: 'Collaborative classroom', accentColor: colors.accentAmber },
+          { label: 'Studio 3B', subtitle: 'Navigation lab', accentColor: colors.accentBlue },
+        ],
+      },
+      {
+        label: 'Critique',
+        rooms: [
+          { label: 'Studio 3C', subtitle: 'Project critique room', accentColor: colors.accentGreen },
+          { label: 'TA201', subtitle: 'Tutorial room', accentColor: colors.accentPurple },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'student-center-level-2',
+    categories: [
+      {
+        label: 'Facilities',
+        rooms: [
+          { label: 'FC201', subtitle: 'Student services room', accentColor: colors.accentBlue },
+          { label: 'FC203', subtitle: 'Prayer room', accentColor: colors.accentGreen },
+        ],
+      },
+      {
+        label: 'Learning',
+        rooms: [
+          { label: 'LM210', subtitle: 'Quiet study room', accentColor: colors.accentAmber },
+          { label: 'LM212', subtitle: 'Open collaboration bay', accentColor: colors.accentPurple },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'student-center-level-1',
+    categories: [
+      {
+        label: 'Services',
+        rooms: [
+          { label: 'SV101', subtitle: 'Help desk', accentColor: colors.accentBlue },
+          { label: 'SV103', subtitle: 'Printing room', accentColor: colors.accentAmber },
+        ],
+      },
+      {
+        label: 'Commons',
+        rooms: [
+          { label: 'CM110', subtitle: 'Meeting pod', accentColor: colors.accentGreen },
+          { label: 'CM112', subtitle: 'Student commons', accentColor: colors.accentPurple },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'student-center-ground',
+    categories: [
+      {
+        label: 'Arrival',
+        rooms: [
+          { label: 'G001', subtitle: 'Main reception', accentColor: colors.accentBlue },
+          { label: 'G003', subtitle: 'Security post', accentColor: colors.accentAmber },
+        ],
+      },
+      {
+        label: 'Amenities',
+        rooms: [
+          { label: 'G010', subtitle: 'Cafe seating', accentColor: colors.accentGreen },
+          { label: 'G012', subtitle: 'Information kiosk', accentColor: colors.accentPurple },
+        ],
+      },
+    ],
+  },
 ];
 
 export function distanceBetweenPoints(a: Point, b: Point) {
   return Math.hypot(b.x - a.x, b.y - a.y);
 }
 
-function buildRoomAnchors(floor: ParsedMapFloor): DestinationAnchor[] {
-  return [...floor.rooms]
-    .sort((left, right) => left.x - right.x)
-    .map((room, index) => {
-      const blueprint = DESTINATION_BLUEPRINTS[index] ?? {
-        label: `Studio ${index + 1}`,
-        subtitle: 'Indoor destination',
-        accentColor: colors.accentBlue,
-      };
-      const roomCenter = {
-        x: room.x + room.width * 0.5,
-        y: room.y + room.height * 0.56,
-      };
-      const entrance = {
-        x: room.x + room.width * 0.5,
-        y: room.y + room.height,
-      };
+function buildBaseRoomAnchors(floor: ParsedMapFloor): DestinationAnchor[] {
+  return [...floor.rooms].sort((left, right) => left.x - right.x).map((room, index) => {
+    const roomCenter = {
+      x: room.x + room.width * 0.5,
+      y: room.y + room.height * 0.56,
+    };
+    const entrance = {
+      x: room.x + room.width * 0.5,
+      y: room.y + room.height,
+    };
 
-      return {
-        id: `destination-${index + 1}`,
-        label: blueprint.label,
-        subtitle: blueprint.subtitle,
-        floorId: floor.id,
-        buildingName: floor.buildingName,
-        roomPlacementId: room.id,
-        roomBounds: {
-          x: room.x,
-          y: room.y,
-          width: room.width,
-          height: room.height,
-        },
-        roomCenter,
-        entrance,
-        accentColor: blueprint.accentColor,
-      };
-    });
+    return {
+      id: `prototype-room-${index + 1}`,
+      label: `Room ${index + 1}`,
+      subtitle: 'Indoor destination',
+      floorId: floor.id,
+      floorLabel: floor.label,
+      buildingName: floor.buildingName,
+      roomPlacementId: room.id,
+      roomBounds: {
+        x: room.x,
+        y: room.y,
+        width: room.width,
+        height: room.height,
+      },
+      roomCenter,
+      entrance,
+      accentColor: colors.accentBlue,
+    };
+  });
+}
+
+function buildDestinationFloors(floor: ParsedMapFloor): DestinationFloorCatalog[] {
+  const baseAnchors = buildBaseRoomAnchors(floor);
+
+  return FLOOR_OPTIONS.map((floorOption) => {
+    const floorBlueprint =
+      FLOOR_ROOM_BLUEPRINTS.find((candidate) => candidate.id === floorOption.id) ??
+      FLOOR_ROOM_BLUEPRINTS[0];
+
+    const categories: DestinationRoomCategory[] = floorBlueprint.categories.map((category, categoryIndex) => ({
+      id: `${floorOption.id}-category-${categoryIndex + 1}`,
+      label: category.label,
+      rooms: category.rooms.map((roomBlueprint, roomIndex) => {
+        const baseAnchor =
+          baseAnchors[(categoryIndex * category.rooms.length + roomIndex) % baseAnchors.length];
+
+        return {
+          ...baseAnchor,
+          id: `${floorOption.id}-${roomBlueprint.label.toLowerCase()}`,
+          label: roomBlueprint.label,
+          subtitle: roomBlueprint.subtitle,
+          floorId: floorOption.id,
+          floorLabel: floorOption.label,
+          buildingName: floor.buildingName,
+          accentColor: roomBlueprint.accentColor,
+          categoryLabel: category.label,
+        };
+      }),
+    }));
+
+    return {
+      id: floorOption.id,
+      label: floorOption.label,
+      buildingName: floor.buildingName,
+      availability: floorOption.availability,
+      categories,
+      roomCount: categories.reduce((sum, category) => sum + category.rooms.length, 0),
+    };
+  });
 }
 
 function dedupeRoutePoints(points: Point[]) {
@@ -87,14 +262,19 @@ export function buildPrototypeScenario(floor: ParsedMapFloor): NavigationScenari
         y: floor.focusBounds.y + floor.focusBounds.height * 0.75,
       };
 
+  const destinationFloors = buildDestinationFloors(floor);
+
   return {
     buildingName: floor.buildingName,
     activeFloorId: floor.id,
     floors: FLOOR_OPTIONS,
+    destinationFloors,
     currentLocationLabel: 'West Entrance Lobby',
     currentPosition,
     detectedFloorLabel: floor.label,
-    destinations: buildRoomAnchors(floor),
+    destinations: destinationFloors.flatMap((destinationFloor) =>
+      destinationFloor.categories.flatMap((category) => category.rooms)
+    ),
   };
 }
 

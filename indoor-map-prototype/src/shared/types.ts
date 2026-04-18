@@ -110,12 +110,14 @@ export interface DestinationAnchor {
   label: string;
   subtitle: string;
   floorId: string;
+  floorLabel: string;
   buildingName: string;
   roomPlacementId: string;
   roomBounds: Bounds;
   roomCenter: Point;
   entrance: Point;
   accentColor: string;
+  categoryLabel?: string;
 }
 
 export interface FloorOption {
@@ -124,10 +126,26 @@ export interface FloorOption {
   availability: 'available' | 'preview';
 }
 
+export interface DestinationRoomCategory {
+  id: string;
+  label: string;
+  rooms: DestinationAnchor[];
+}
+
+export interface DestinationFloorCatalog {
+  id: string;
+  label: string;
+  buildingName: string;
+  availability: 'available' | 'preview';
+  categories: DestinationRoomCategory[];
+  roomCount: number;
+}
+
 export interface NavigationScenario {
   buildingName: string;
   activeFloorId: string;
   floors: FloorOption[];
+  destinationFloors: DestinationFloorCatalog[];
   currentLocationLabel: string;
   currentPosition: Point;
   detectedFloorLabel: string;

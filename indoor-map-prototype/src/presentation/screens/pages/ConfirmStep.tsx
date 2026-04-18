@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
-import type { DestinationAnchor, ParsedMapFloor, RouteModel } from '../../../shared/types';
+import type { DestinationAnchor, RouteModel } from '../../../shared/types';
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
 import { PrimaryActionButton, SecondaryActionButton } from '../../components/controls/ActionButtons';
 import { ScreenShell } from '../../components/layout/ScreenShell';
@@ -9,7 +9,7 @@ import { ScreenShell } from '../../components/layout/ScreenShell';
 interface ConfirmStepProps {
   buildingName: string;
   currentLocationLabel: string;
-  floor: ParsedMapFloor;
+  floorLabel: string;
   route: RouteModel | null;
   selectedDestination: DestinationAnchor | null;
   onChooseAnother: () => void;
@@ -19,7 +19,7 @@ interface ConfirmStepProps {
 export function ConfirmStep({
   buildingName,
   currentLocationLabel,
-  floor,
+  floorLabel,
   route,
   selectedDestination,
   onChooseAnother,
@@ -49,7 +49,7 @@ export function ConfirmStep({
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Floor</Text>
-            <Text style={styles.infoValue}>{floor.label}</Text>
+            <Text style={styles.infoValue}>{floorLabel}</Text>
           </View>
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Estimated walk</Text>
