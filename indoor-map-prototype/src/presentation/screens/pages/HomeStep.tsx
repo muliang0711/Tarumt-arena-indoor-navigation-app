@@ -35,11 +35,7 @@ export function HomeStep({
         />
 
         <ActionDock
-          items={[
-            { id: 'home', label: 'Home', icon: 'home', onPress: () => {} },
-            { id: 'start', label: 'Start', icon: 'start', onPress: onStartNavigation },
-            { id: 'map', label: 'Map', icon: 'map', onPress: () => {} },
-          ]}
+          onStartPress={onStartNavigation}
         />
       </View>
     </ScreenShell>

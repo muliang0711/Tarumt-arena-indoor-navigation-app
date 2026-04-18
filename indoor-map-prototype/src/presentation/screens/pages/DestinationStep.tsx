@@ -55,16 +55,8 @@ export function DestinationStep({
         />
 
         <ActionDock
-          items={[
-            { id: 'back', label: 'Back', icon: 'back', onPress: onBack },
-            {
-              id: 'continue',
-              label: 'Continue',
-              icon: 'continue',
-              onPress: selectedDestinationId ? onContinue : () => {},
-            },
-            { id: 'map', label: 'Map', icon: 'map', onPress: () => {} },
-          ]}
+          onHomePress={onBack}
+          onStartPress={selectedDestinationId ? onContinue : () => {}}
         />
       </View>
     </ScreenShell>

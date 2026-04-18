@@ -4,23 +4,27 @@ import { BlurView } from 'expo-blur';
 
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
 
-type DockItemIcon = 'home' | 'start' | 'map' | 'back' | 'continue';
-
-export interface ActionDockItem {
-  id: string;
-  label: string;
-  icon: DockItemIcon;
-  onPress: () => void;
-}
-
 interface ActionDockProps {
-  items: [ActionDockItem, ActionDockItem, ActionDockItem];
+  onHomePress?: () => void;
+  onStartPress: () => void;
+  onMapPress?: () => void;
 }
 
-export function ActionDock({ items }: ActionDockProps) {
-  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+type DockItemId = 'home' | 'start' | 'map';
 
-  function handlePress(item: ActionDockItem) {
+export function ActionDock({
+  onHomePress = () => {},
+  onStartPress,
+  onMapPress = () => {},
+}: ActionDockProps) {
+  const [activeItemId, setActiveItemId] = useState<string | null>(null);
+  const items: Array<{ id: DockItemId; label: string; icon: DockItemId; onPress: () => void }> = [
+    { id: 'home', label: 'Home', icon: 'home', onPress: onHomePress },
+    { id: 'start', label: 'Start', icon: 'start', onPress: onStartPress },
+    { id: 'map', label: 'Map', icon: 'map', onPress: onMapPress },
+  ];
+
+  function handlePress(item: (typeof items)[number]) {
     if (activeItemId === item.id) {
       item.onPress();
       return;
@@ -130,7 +134,7 @@ function DockItem({
   );
 }
 
-function DockGlyph({ icon, active }: { icon: DockItemIcon; active: boolean }) {
+function DockGlyph({ icon, active }: { icon: DockItemId; active: boolean }) {
   if (icon === 'home') {
     return (
       <View style={styles.glyphBox}>
@@ -165,19 +169,10 @@ function DockGlyph({ icon, active }: { icon: DockItemIcon; active: boolean }) {
     );
   }
 
-  if (icon === 'back') {
-    return (
-      <View style={styles.glyphBox}>
-        <View style={[styles.backGlyphHead, active && styles.glyphBorderActive]} />
-        <View style={[styles.backGlyphLine, active && styles.glyphLineActive]} />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.glyphBox}>
-      <View style={[styles.continueGlyphHead, active && styles.glyphBorderActive]} />
-      <View style={[styles.continueGlyphLine, active && styles.glyphLineActive]} />
+      <View style={[styles.startGlyphDiamond, active && styles.glyphBorderActive]} />
+      <View style={[styles.startGlyphTail, active && styles.glyphLineActive]} />
     </View>
   );
 }
@@ -363,41 +358,5 @@ const styles = StyleSheet.create({
   },
   mapGlyphFoldRight: {
     borderRightWidth: 1.8,
-  },
-  backGlyphHead: {
-    position: 'absolute',
-    left: 1,
-    width: 8,
-    height: 8,
-    borderLeftWidth: 1.8,
-    borderBottomWidth: 1.8,
-    borderColor: colors.textSecondary,
-    transform: [{ rotate: '45deg' }],
-  },
-  backGlyphLine: {
-    position: 'absolute',
-    width: 10,
-    height: 2,
-    borderRadius: radii.pill,
-    backgroundColor: colors.textSecondary,
-    left: 6,
-  },
-  continueGlyphHead: {
-    position: 'absolute',
-    right: 1,
-    width: 8,
-    height: 8,
-    borderTopWidth: 1.8,
-    borderRightWidth: 1.8,
-    borderColor: colors.textSecondary,
-    transform: [{ rotate: '45deg' }],
-  },
-  continueGlyphLine: {
-    position: 'absolute',
-    width: 10,
-    height: 2,
-    borderRadius: radii.pill,
-    backgroundColor: colors.textSecondary,
-    right: 6,
   },
 });
