@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-nati
 import type { DestinationAnchor, ParsedMapFloor } from '../../../shared/types';
 import { colors, radii, spacing } from '../../../shared/theme/tokens';
 import { PrimaryActionButton, SecondaryActionButton } from '../../components/controls/ActionButtons';
+import { DestinationStepHeader } from '../../components/destination/DestinationStepHeader';
 import { ScreenShell } from '../../components/layout/ScreenShell';
 
 interface DestinationStepProps {
@@ -24,11 +25,7 @@ export function DestinationStep({
   onContinue,
 }: DestinationStepProps) {
   return (
-    <ScreenShell
-      eyebrow="Step 1"
-      title="Where do you want to go?"
-      subtitle="Pick a destination before opening the map. This page keeps route selection off the navigation screen."
-    >
+    <ScreenShell header={<DestinationStepHeader />}>
       <View style={styles.content}>
         <ScrollView contentContainerStyle={styles.destinationList}>
           {destinations.map((destination) => {
