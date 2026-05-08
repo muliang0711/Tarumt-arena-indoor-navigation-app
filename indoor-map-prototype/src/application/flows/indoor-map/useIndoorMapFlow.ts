@@ -37,6 +37,7 @@ export interface IndoorMapFlowModel {
     selectDestinationFloor: (floorId: string) => void;
     backToDestinationFloors: () => void;
     selectDestination: (destinationId: string) => void;
+    confirmDestination: (destinationId: string) => void;
     openConfirm: () => void;
     openMapOverview: () => void;
     startNavigation: () => void;
@@ -146,6 +147,20 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
     }
   };
 
+  const confirmDestination = (destinationId: string) => {
+    const destination =
+      scenario.destinations.find((candidate) => candidate.id === destinationId) ?? null;
+    if (!destination) {
+      return;
+    }
+
+    setSelectedDestinationId(destinationId);
+    setSelectedDestinationFloorId(destination.floorId);
+    setActiveFloorId(destination.floorId);
+    setMapState('confirmed');
+    setPage('confirm');
+  };
+
   const openConfirm = () => {
     if (!selectedDestination) {
       return;
@@ -211,6 +226,7 @@ export function useIndoorMapFlow(): IndoorMapFlowModel {
       selectDestinationFloor,
       backToDestinationFloors,
       selectDestination,
+      confirmDestination,
       openConfirm,
       openMapOverview,
       startNavigation,

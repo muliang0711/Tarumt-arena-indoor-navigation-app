@@ -60,6 +60,7 @@ export default function IndoorMapPrototypeScreen() {
             currentLocationLabel={scenario.currentLocationLabel}
             onStartNavigation={actions.startDestinationFlow}
             onOpenMapOverview={actions.openMapOverview}
+            onScanAnchor={actions.requestCamera}
           />
         );
       case 'destination':
@@ -70,6 +71,7 @@ export default function IndoorMapPrototypeScreen() {
             onBack={actions.resetToHome}
             onOpenMapOverview={actions.openMapOverview}
             onSelectFloor={actions.selectDestinationFloor}
+            onConfirmDestination={actions.confirmDestination}
           />
         );
       case 'destination-rooms':
@@ -83,6 +85,7 @@ export default function IndoorMapPrototypeScreen() {
             selectedDestinationId={selectedDestination?.id ?? null}
             onBack={actions.backToDestinationFloors}
             onOpenMapOverview={actions.openMapOverview}
+            onGoHome={actions.resetToHome}
             onSelectDestination={actions.selectDestination}
             onContinue={actions.openConfirm}
           />
