@@ -21,6 +21,9 @@ This folder holds reusable visual building blocks used by one or more screens. T
 - `shared/HeaderSystemRow.tsx`: shared time and system-status strip used by multiple headers
 - `shared/DestinationSearchBar.tsx`: reusable expanding search bar shared by destination flow headers
 - `shared/ActionDock.tsx`: shared frosted bottom action dock used by multiple pages
+- `shared/DashboardBottomNavigation.tsx`: shared dashboard-style bottom navigation
+- `shared/DashboardGlassPanel.tsx`: shared frosted panel primitive for dashboard-style cards
+- `home/HomeDashboard.tsx`: home dashboard composition container
 
 ## Dependencies And Coupling
 
