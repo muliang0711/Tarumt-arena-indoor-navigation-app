@@ -4,7 +4,6 @@ import { HomeDashboard } from '../../components/home/HomeDashboard';
 import { ScreenShell } from '../../components/layout/ScreenShell';
 
 interface HomeStepProps {
-  currentLocationLabel: string;
   onStartNavigation: () => void;
   onOpenMapOverview: () => void;
   onScanAnchor?: () => void;

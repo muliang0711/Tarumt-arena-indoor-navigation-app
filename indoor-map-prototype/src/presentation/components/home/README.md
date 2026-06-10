@@ -8,14 +8,11 @@ This folder holds visual pieces that are specific to the home step but still wor
 
 - `HomeDashboard.tsx`: home step composition container that wires state, callbacks, and section order
 - `HomeDashboardHeader.tsx`: home-only title, status, and system row section
-- `HomeLocationCard.tsx`: current location status card and metrics grid
 - `HomePrimaryActions.tsx`: start navigation and scan anchor action row
 - `HomeQuickDestinations.tsx`: horizontal quick destination chip list
 - `HomeMapPreviewCard.tsx`: level preview card with map overview action
 - `HomeMiniMapPreview.tsx`: home-specific mini route preview graphic
 - `HomeRecentRoutes.tsx`: recent route list card
-- `HomeStepHeader.tsx`: legacy page-specific header block for the earlier home layout
-- `HomeHeroCard.tsx`: legacy status card for the earlier home layout
 
 ## Dependencies And Coupling
 

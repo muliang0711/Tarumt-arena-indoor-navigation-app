@@ -6,7 +6,6 @@ This folder holds reusable visual building blocks used by one or more screens. T
 
 ## Contains
 
-- `controls/`: shared buttons, floor selector, zoom controls, and recenter affordances
 - `home/`: isolated visuals for the home step that may evolve independently
 - `layout/`: reusable page shell, shell background, and frame-level composition for the non-map steps
 - `map/`: SVG-based map canvas that renders tiles, route overlays, rooms, and the user marker
@@ -15,7 +14,6 @@ This folder holds reusable visual building blocks used by one or more screens. T
 ## Entry Points
 
 - `map/IndoorMapCanvas.tsx`: primary rendering surface for the indoor floor
-- `controls/FloatingControls.tsx`: overlays floor and zoom controls on the map screen
 - `layout/ScreenShell.tsx`: shared frame for the home, destination, and confirm pages
 - `layout/ScreenHeader.tsx`: generic cross-page header for non-home steps
 - `shared/HeaderSystemRow.tsx`: shared time and system-status strip used by multiple headers

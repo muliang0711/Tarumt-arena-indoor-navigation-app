@@ -49,6 +49,6 @@ After any component move, promotion, or structural refactor:
 
 ## Practical Examples
 
-- if `HomeStepHeader` starts being used by another page, it should be promoted out of `home/` in that same patch
+- if `HomeDashboardHeader` starts being used by another page, it should be promoted out of `home/` in that same patch
 - if a destination search bar is reused by multiple pages, it should move to `shared/` and the components docs should be updated in that same patch
 - if a component stays used by only one page, it should stay in that feature folder even if it looks reusable

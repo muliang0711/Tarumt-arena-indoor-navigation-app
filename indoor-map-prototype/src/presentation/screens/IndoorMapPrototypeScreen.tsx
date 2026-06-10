@@ -57,7 +57,6 @@ export default function IndoorMapPrototypeScreen() {
       case 'home':
         return (
           <HomeStep
-            currentLocationLabel={scenario.currentLocationLabel}
             onStartNavigation={actions.startDestinationFlow}
             onOpenMapOverview={actions.openMapOverview}
             onScanAnchor={actions.requestCamera}

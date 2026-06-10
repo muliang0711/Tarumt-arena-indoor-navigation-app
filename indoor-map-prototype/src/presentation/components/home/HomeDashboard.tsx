@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
-import { spacing } from '../../../shared/theme/tokens';
+import { colors, spacing } from '../../../shared/theme/tokens';
 import { DashboardBottomNavigation } from '../shared/DashboardBottomNavigation';
 import { DashboardFloorPlanBackground } from '../shared/DashboardFloorPlanBackground';
 import { HomeDashboardHeader } from './HomeDashboardHeader';
@@ -11,7 +11,6 @@ import { HomeQuickDestinations } from './HomeQuickDestinations';
 import { HomeRecentRoutes } from './HomeRecentRoutes';
 
 interface HomeDashboardProps {
-  currentLocationLabel: string;
   onStartNavigation: () => void;
   onOpenMapOverview: () => void;
   onScanAnchor?: () => void;
@@ -62,7 +61,7 @@ export function HomeDashboard({
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#F7FAFC',
+    backgroundColor: colors.pageBackground,
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,

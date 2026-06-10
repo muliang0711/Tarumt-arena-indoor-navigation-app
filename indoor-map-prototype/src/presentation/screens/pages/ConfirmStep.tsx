@@ -227,7 +227,7 @@ function DetailPill({ title, value }: { title: string; value: string }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#F7FAFC',
+    backgroundColor: colors.pageBackground,
   },
   scrollContent: {
     paddingHorizontal: spacing.lg,

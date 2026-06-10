@@ -2,11 +2,13 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Svg, { Line, Path, Rect } from 'react-native-svg';
 
+import { colors } from '../../../shared/theme/tokens';
+
 export function DashboardFloorPlanBackground() {
   return (
     <View pointerEvents="none" style={styles.backgroundLayer}>
       <Svg width="100%" height="100%" viewBox="0 0 430 920" preserveAspectRatio="none">
-        <Rect width="430" height="920" fill="#F7FAFC" />
+        <Rect width="430" height="920" fill={colors.pageBackground} />
         {Array.from({ length: 12 }).map((_, index) => (
           <Line
             key={`vertical-${index}`}
