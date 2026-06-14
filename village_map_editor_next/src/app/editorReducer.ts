@@ -67,6 +67,20 @@ function shouldGrowForPoint(document: EditorDocument, x: number, y: number): boo
   );
 }
 
+function shouldGrowForPlacement(document: EditorDocument, placement: MapPlacement): boolean {
+  const asset = assetForPlacement(document, placement.assetId);
+  if (!asset) {
+    return shouldGrowForPoint(document, placement.x, placement.y);
+  }
+
+  return (
+    placement.x <= AUTO_GROW_EDGE_DISTANCE ||
+    placement.y <= AUTO_GROW_EDGE_DISTANCE ||
+    placement.x + asset.widthTiles - 1 >= document.map.width - 1 - AUTO_GROW_EDGE_DISTANCE ||
+    placement.y + asset.heightTiles - 1 >= document.map.height - 1 - AUTO_GROW_EDGE_DISTANCE
+  );
+}
+
 function shiftDocumentContent(document: EditorDocument, offsetX: number, offsetY: number): void {
   document.layers.visual = document.layers.visual.map((placement) => ({
     ...placement,
@@ -92,6 +106,17 @@ function shiftDocumentContent(document: EditorDocument, offsetX: number, offsetY
 
 function growMapAroundContentIfNeeded(document: EditorDocument, x: number, y: number): { x: number; y: number } {
   if (!shouldGrowForPoint(document, x, y)) {
+    return { x, y };
+  }
+
+  document.map.width += AUTO_GROW_PADDING * 2;
+  document.map.height += AUTO_GROW_PADDING * 2;
+  shiftDocumentContent(document, AUTO_GROW_PADDING, AUTO_GROW_PADDING);
+  return { x: x + AUTO_GROW_PADDING, y: y + AUTO_GROW_PADDING };
+}
+
+function growMapForPlacementIfNeeded(document: EditorDocument, placement: MapPlacement, x: number, y: number): { x: number; y: number } {
+  if (!shouldGrowForPlacement(document, placement)) {
     return { x, y };
   }
 
@@ -333,7 +358,8 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return updateDocument(
         state,
         (document) => {
-          const target = growMapAroundContentIfNeeded(document, action.x, action.y);
+          const edgeCheckPlacement = placementFromClick(document, action.placementId, action.assetId, action.x, action.y);
+          const target = growMapForPlacementIfNeeded(document, edgeCheckPlacement, action.x, action.y);
           const placement = placementFromClick(document, action.placementId, action.assetId, target.x, target.y);
           document.layers.visual.push(placement);
           autoBlockPlacementFootprint(document, placement);
