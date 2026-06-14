@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/actors/ActorController.gd" id="1_actor_controller"]
+[ext_resource type="Script" path="res://scripts/camera/FollowCamera.gd" id="2_follow_camera"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_actor"]
+size = Vector2(20, 20)
+
+[node name="Actor" type="CharacterBody2D"]
+script = ExtResource("1_actor_controller")
+
+[node name="Body" type="ColorRect" parent="."]
+offset_left = -10.0
+offset_top = -10.0
+offset_right = 10.0
+offset_bottom = 10.0
+color = Color(0.95, 0.86, 0.36, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_actor")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(1.2, 1.2)
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+script = ExtResource("2_follow_camera")
+
