@@ -14,8 +14,13 @@ z_index = 1
 [node name="BuildingLayer" type="TileMapLayer" parent="."]
 z_index = 2
 
-[node name="CollisionLayer" type="TileMapLayer" parent="."]
+[node name="FurnitureLayer" type="TileMapLayer" parent="."]
 z_index = 3
 
-[node name="CollisionBodies" type="Node2D" parent="."]
+[node name="DecorationLayer" type="TileMapLayer" parent="."]
+z_index = 4
 
+[node name="CollisionLayer" type="TileMapLayer" parent="."]
+z_index = 5
+
+[node name="CollisionBodies" type="Node2D" parent="."]

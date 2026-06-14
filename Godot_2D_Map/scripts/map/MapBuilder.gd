@@ -6,9 +6,17 @@ const MAP_HEIGHT := 16
 
 const TILE_PATHS := {
 	"floor": "res://assets/tiles/floor.png",
+	"floor_alt": "res://assets/tiles/floor_alt.png",
 	"path": "res://assets/tiles/path.png",
 	"building": "res://assets/tiles/building.png",
 	"wall": "res://assets/tiles/wall.png",
+	"shoji": "res://assets/tiles/shoji.png",
+	"table": "res://assets/tiles/table.png",
+	"chair": "res://assets/tiles/chair.png",
+	"bed": "res://assets/tiles/bed.png",
+	"shelf": "res://assets/tiles/shelf.png",
+	"plant": "res://assets/tiles/plant.png",
+	"art": "res://assets/tiles/art.png",
 	"marker_a": "res://assets/tiles/marker_a.png",
 	"marker_b": "res://assets/tiles/marker_b.png",
 }
@@ -16,6 +24,8 @@ const TILE_PATHS := {
 @onready var ground_layer: TileMapLayer = $GroundLayer
 @onready var path_layer: TileMapLayer = $PathLayer
 @onready var building_layer: TileMapLayer = $BuildingLayer
+@onready var furniture_layer: TileMapLayer = $FurnitureLayer
+@onready var decoration_layer: TileMapLayer = $DecorationLayer
 @onready var collision_layer: TileMapLayer = $CollisionLayer
 @onready var collision_bodies: Node2D = $CollisionBodies
 
@@ -24,13 +34,16 @@ var source_ids: Dictionary = {}
 
 func _ready() -> void:
 	var tile_set := _create_tile_set()
-	for layer in [ground_layer, path_layer, building_layer, collision_layer]:
+	for layer in [ground_layer, path_layer, building_layer, furniture_layer, decoration_layer, collision_layer]:
 		layer.tile_set = tile_set
 
 	_build_ground()
-	_build_building(Rect2i(2, 4, 6, 7), Vector2i(7, 7), "marker_a")
-	_build_building(Rect2i(20, 4, 6, 7), Vector2i(20, 7), "marker_b")
+	_build_shell()
+	_build_room_dividers()
 	_build_path()
+	_build_destinations()
+	_build_furniture()
+	_build_decorations()
 
 
 func _create_tile_set() -> TileSet:
@@ -62,39 +75,94 @@ func _load_tile_texture(resource_path: String) -> Texture2D:
 func _build_ground() -> void:
 	for y in range(MAP_HEIGHT):
 		for x in range(MAP_WIDTH):
-			_set_tile(ground_layer, Vector2i(x, y), "floor")
+			var tile_name := "floor_alt" if (x + y) % 5 == 0 else "floor"
+			_set_tile(ground_layer, Vector2i(x, y), tile_name)
+
+
+func _build_shell() -> void:
+	for x in range(MAP_WIDTH):
+		_place_wall(Vector2i(x, 0))
+		_place_wall(Vector2i(x, MAP_HEIGHT - 1))
+	for y in range(MAP_HEIGHT):
+		_place_wall(Vector2i(0, y))
+		_place_wall(Vector2i(MAP_WIDTH - 1, y))
+
+
+func _build_room_dividers() -> void:
+	for x in range(3, 12):
+		if x not in [6, 7]:
+			_place_shoji(Vector2i(x, 4))
+	for x in range(15, 25):
+		if x not in [19, 20]:
+			_place_shoji(Vector2i(x, 4))
+	for x in range(4, 12):
+		if x not in [7, 8]:
+			_place_shoji(Vector2i(x, 11))
+	for x in range(17, 26):
+		if x not in [21, 22]:
+			_place_shoji(Vector2i(x, 11))
+
+	for y in range(5, 11):
+		if y != 8:
+			_place_wall(Vector2i(14, y))
 
 
 func _build_path() -> void:
-	for x in range(7, 21):
-		_set_tile(path_layer, Vector2i(x, 7), "path")
-	for y in range(6, 9):
-		_set_tile(path_layer, Vector2i(13, y), "path")
+	for x in range(3, 25):
+		_set_tile(path_layer, Vector2i(x, 8), "path")
+	for y in range(5, 12):
+		_set_tile(path_layer, Vector2i(7, y), "path")
+	for y in range(5, 12):
+		_set_tile(path_layer, Vector2i(21, y), "path")
 
 
-func _build_building(rect: Rect2i, door_cell: Vector2i, marker_name: String) -> void:
-	var marker_cell := Vector2i(
-		rect.position.x + floori(rect.size.x * 0.5),
-		rect.position.y + floori(rect.size.y * 0.5)
-	)
+func _build_destinations() -> void:
+	_set_tile(building_layer, Vector2i(4, 8), "marker_a")
+	_set_tile(building_layer, Vector2i(24, 8), "marker_b")
 
-	for y in range(rect.position.y, rect.position.y + rect.size.y):
-		for x in range(rect.position.x, rect.position.x + rect.size.x):
-			var cell := Vector2i(x, y)
-			var is_boundary := (
-				x == rect.position.x
-				or x == rect.position.x + rect.size.x - 1
-				or y == rect.position.y
-				or y == rect.position.y + rect.size.y - 1
-			)
 
-			if is_boundary and cell != door_cell:
-				_set_tile(collision_layer, cell, "wall")
-				_add_blocking_cell(cell)
-			else:
-				_set_tile(building_layer, cell, "building")
+func _build_furniture() -> void:
+	var furniture := {
+		Vector2i(3, 2): "shelf",
+		Vector2i(5, 2): "table",
+		Vector2i(8, 2): "chair",
+		Vector2i(18, 2): "shelf",
+		Vector2i(22, 2): "plant",
+		Vector2i(24, 2): "table",
+		Vector2i(3, 13): "table",
+		Vector2i(4, 13): "chair",
+		Vector2i(10, 13): "table",
+		Vector2i(11, 13): "chair",
+		Vector2i(18, 13): "shelf",
+		Vector2i(20, 13): "table",
+		Vector2i(23, 13): "chair",
+		Vector2i(24, 6): "bed",
+		Vector2i(23, 9): "shelf",
+		Vector2i(5, 6): "table",
+		Vector2i(9, 7): "plant",
+	}
 
-	_set_tile(building_layer, marker_cell, marker_name)
+	for cell in furniture.keys():
+		_set_tile(furniture_layer, cell, furniture[cell])
+		if furniture[cell] in ["table", "shelf", "bed"]:
+			_add_blocking_cell(cell)
+
+
+func _build_decorations() -> void:
+	for cell in [Vector2i(2, 2), Vector2i(12, 2), Vector2i(16, 2), Vector2i(25, 2), Vector2i(2, 14), Vector2i(13, 13), Vector2i(25, 14)]:
+		_set_tile(decoration_layer, cell, "plant")
+	for cell in [Vector2i(11, 1), Vector2i(17, 1), Vector2i(25, 5), Vector2i(16, 10)]:
+		_set_tile(decoration_layer, cell, "art")
+
+
+func _place_wall(cell: Vector2i) -> void:
+	_set_tile(collision_layer, cell, "wall")
+	_add_blocking_cell(cell)
+
+
+func _place_shoji(cell: Vector2i) -> void:
+	_set_tile(building_layer, cell, "shoji")
+	_add_blocking_cell(cell)
 
 
 func _set_tile(layer: TileMapLayer, cell: Vector2i, tile_name: String) -> void:
