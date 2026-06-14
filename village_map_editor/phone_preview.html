@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Village Tileset Phone Reviewer</title>
+    <script>
+      if (window.location.protocol === "file:") {
+        const target = `http://localhost:4173/phone_preview.html${window.location.search}${window.location.hash}`;
+        window.location.replace(target);
+      }
+    </script>
+    <link rel="stylesheet" href="./phone_preview.css" />
+  </head>
+  <body>
+    <div class="review-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Village Tileset Reviewer</p>
+          <h1>Check how each PNG feels on a phone screen before you ship it.</h1>
+          <p class="intro">
+            This page loads every PNG from <code>village_tileset_placeholders</code> and shows the selected file inside a phone-sized viewport.
+          </p>
+        </div>
+
+        <div class="topbar-actions">
+          <a class="ghost-link" href="./index.html">Back to map editor</a>
+        </div>
+      </header>
+
+      <main class="layout">
+        <aside class="sidebar">
+          <section class="panel">
+            <div class="section-head">
+              <h2>Review Source</h2>
+              <p class="muted">Switch between tileset PNGs, the latest map snapshot, or your own uploaded PNG.</p>
+            </div>
+
+            <label class="field">
+              <span>Source</span>
+              <select id="source-select">
+                <option value="asset">Tileset PNG</option>
+                <option value="map">Latest map snapshot</option>
+                <option value="upload">Uploaded PNG</option>
+              </select>
+            </label>
+
+            <div class="button-row button-row-single">
+              <label class="upload-button">
+                <input id="upload-input" type="file" accept="image/png" />
+                <span>Upload PNG</span>
+              </label>
+            </div>
+
+            <div id="source-status" class="stat-block">Loading source...</div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <h2>Device</h2>
+              <p class="muted">Pick the phone size you want to simulate.</p>
+            </div>
+
+            <label class="field">
+              <span>Phone preset</span>
+              <select id="device-select"></select>
+            </label>
+
+            <div id="device-summary" class="stat-block"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <h2>Render Size</h2>
+              <p class="muted">100% means the PNG is shown at its native CSS pixel size.</p>
+            </div>
+
+            <label class="field">
+              <span>Scale</span>
+              <input id="scale-range" type="range" min="10" max="300" value="100" />
+            </label>
+
+            <label class="field">
+              <span>Scale value</span>
+              <input id="scale-input" type="number" min="10" max="300" value="100" />
+            </label>
+
+            <label class="field">
+              <span>Background</span>
+              <select id="background-select">
+                <option value="transparent">Transparent checker</option>
+                <option value="light">Light surface</option>
+                <option value="dark">Dark surface</option>
+                <option value="grass">Grass tone</option>
+              </select>
+            </label>
+
+            <div class="button-row">
+              <button id="native-size-button" type="button">Reset to 100%</button>
+              <button id="fit-width-button" type="button">Fit to phone width</button>
+              <button id="readable-view-button" type="button">Readable view</button>
+              <button id="detail-view-button" type="button">Detail view</button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <h2>Selected Image</h2>
+              <p class="muted">This is the file currently shown in the phone preview.</p>
+            </div>
+
+            <div id="asset-meta" class="stat-block">Loading images...</div>
+          </section>
+
+          <section id="navigator-panel" class="panel is-hidden">
+            <div class="section-head">
+              <h2>Map Navigator</h2>
+              <p class="muted">Use overview for layout. Use readable or detail view when you need to inspect rooms.</p>
+            </div>
+
+            <div id="minimap-surface" class="minimap-surface">
+              <img id="minimap-image" class="minimap-image" alt="" />
+              <div id="minimap-viewport" class="minimap-viewport"></div>
+            </div>
+
+            <div class="nav-pad">
+              <button id="nav-up-button" type="button">Up</button>
+              <button id="nav-left-button" type="button">Left</button>
+              <button id="nav-right-button" type="button">Right</button>
+              <button id="nav-down-button" type="button">Down</button>
+            </div>
+          </section>
+
+          <section id="overlay-panel" class="panel is-hidden">
+            <div class="section-head">
+              <h2>Semantic Overlay</h2>
+              <p class="muted">Tap one node as current location, then tap another node to start a navigation preview.</p>
+            </div>
+
+            <div id="interaction-status" class="stat-block">Tap a node on the map to set current location.</div>
+
+            <div class="toggle-list">
+              <label class="checkbox-row">
+                <input id="overlay-nodes-toggle" type="checkbox" checked />
+                <span>Show nodes</span>
+              </label>
+
+              <label class="checkbox-row">
+                <input id="overlay-labels-toggle" type="checkbox" checked />
+                <span>Show labels</span>
+              </label>
+            </div>
+
+            <label class="field">
+              <span>Start node</span>
+              <select id="route-start-select"></select>
+            </label>
+
+            <label class="field">
+              <span>Destination node</span>
+              <select id="route-end-select"></select>
+            </label>
+
+            <div class="button-row button-row-single">
+              <button id="clear-route-button" type="button">Clear route</button>
+            </div>
+
+            <div id="overlay-status" class="stat-block">No map metadata loaded.</div>
+          </section>
+
+          <section id="asset-library-panel" class="panel panel-library">
+            <div class="section-head">
+              <h2>Tileset Library</h2>
+              <p class="muted">Choose any PNG from the tileset folder.</p>
+            </div>
+
+            <label class="field">
+              <span>Search</span>
+              <input id="search-input" type="search" placeholder="tree, house, grass..." />
+            </label>
+
+            <div id="asset-groups" class="asset-groups"></div>
+          </section>
+        </aside>
+
+        <section class="stage-column">
+          <section class="panel stage-panel">
+            <div class="stage-head">
+              <div>
+                <p class="eyebrow">Phone Preview</p>
+                <h2 id="stage-title">Loading...</h2>
+              </div>
+              <p id="coverage-summary" class="coverage-summary"></p>
+            </div>
+
+            <div class="stage-wrap">
+              <div id="phone-stage" class="phone-stage background-transparent">
+                <div class="phone-frame">
+                  <div class="phone-notch"></div>
+                  <div id="phone-screen" class="phone-screen">
+                    <div id="preview-stack" class="preview-stack">
+                      <img id="preview-image" alt="" />
+                      <div id="nav-top-card" class="nav-top-card is-hidden">
+                        <p class="nav-kicker">Navigation</p>
+                        <strong id="nav-title">Follow highlighted path</strong>
+                        <span id="nav-subtitle">Pick a start and destination node.</span>
+                      </div>
+                      <div id="nav-bottom-bar" class="nav-bottom-bar is-hidden">
+                        <div class="nav-bottom-copy">
+                          <span class="nav-bottom-label">Destination</span>
+                          <strong id="nav-destination">Not selected</strong>
+                        </div>
+                        <button id="exit-nav-button" class="nav-bottom-button" type="button">Exit</button>
+                      </div>
+                      <svg id="overlay-svg" class="overlay-svg" aria-hidden="true"></svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel notes-panel">
+            <div class="section-head">
+              <h2>How To Use It</h2>
+            </div>
+
+            <div class="notes-grid">
+              <article>
+                <h3>Desktop check</h3>
+                <p>Use the device presets and scale controls to compare how much screen space a PNG or full map takes.</p>
+              </article>
+
+              <article>
+                <h3>Real phone check</h3>
+                <p>For real phone testing, export the map PNG from the editor and upload it here on your phone.</p>
+              </article>
+
+              <article>
+                <h3>Quick handoff</h3>
+                <p>The editor can also push the current map into this page directly when both pages are opened on the same browser.</p>
+              </article>
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="./phone_preview.js" defer></script>
+  </body>
+</html>
