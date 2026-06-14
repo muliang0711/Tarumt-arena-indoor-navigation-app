@@ -4,6 +4,7 @@ export interface SourceAssetFile {
   relativePath: string;
   widthPixels?: number;
   heightPixels?: number;
+  blockedOffsets?: Array<{ x: number; y: number }>;
 }
 
 function fileNameFromPath(path: string): string {
@@ -35,6 +36,7 @@ export function createAssetManifestItems(files: Array<string | SourceAssetFile>,
         widthTiles: Math.max(1, Math.ceil((source.widthPixels ?? tileSize) / tileSize)),
         heightTiles: Math.max(1, Math.ceil((source.heightPixels ?? tileSize) / tileSize)),
         blocksMovement: inferBlocksMovement(source.relativePath),
+        blockedOffsets: source.blockedOffsets,
       };
     })
     .sort((left, right) => left.id.localeCompare(right.id));

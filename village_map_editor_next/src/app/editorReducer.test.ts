@@ -18,6 +18,20 @@ const largeAsset = {
   blocksMovement: true,
 };
 
+const shapedBuildingAsset = {
+  id: "shaped_building",
+  src: "shaped_building.png",
+  widthTiles: 4,
+  heightTiles: 3,
+  blocksMovement: true,
+  blockedOffsets: [
+    { x: 1, y: 0 },
+    { x: 2, y: 0 },
+    { x: 1, y: 1 },
+    { x: 2, y: 1 },
+  ],
+};
+
 const roadAsset = {
   id: "walkable_road_clean",
   src: "walkable_road_clean.png",
@@ -74,6 +88,20 @@ describe("editorReducer", () => {
       { x: 1, y: 3, state: "blocked" },
       { x: 2, y: 3, state: "blocked" },
       { x: 3, y: 3, state: "blocked" },
+    ]);
+  });
+
+  it("auto-blocks only shaped blocked offsets when an asset provides them", () => {
+    let state = createInitialEditorState({ assets: [shapedBuildingAsset] });
+
+    state = editorReducer(state, { type: "placeAsset", placementId: "p1", assetId: "shaped_building", x: 6, y: 6 });
+
+    expect(state.document.layers.visual).toEqual([{ id: "p1", assetId: "shaped_building", x: 4, y: 5 }]);
+    expect(state.document.layers.collision).toEqual([
+      { x: 5, y: 5, state: "blocked" },
+      { x: 6, y: 5, state: "blocked" },
+      { x: 5, y: 6, state: "blocked" },
+      { x: 6, y: 6, state: "blocked" },
     ]);
   });
 

@@ -130,11 +130,16 @@ function autoBlockPlacementFootprint(document: EditorDocument, placement: MapPla
     return;
   }
 
-  for (let y = placement.y; y < placement.y + asset.heightTiles; y += 1) {
-    for (let x = placement.x; x < placement.x + asset.widthTiles; x += 1) {
-      if (x >= 0 && y >= 0 && x < document.map.width && y < document.map.height) {
-        upsertCollision(document, x, y, "blocked");
-      }
+  const offsets =
+    asset.blockedOffsets && asset.blockedOffsets.length > 0
+      ? asset.blockedOffsets
+      : Array.from({ length: asset.heightTiles }, (_, y) => Array.from({ length: asset.widthTiles }, (__, x) => ({ x, y }))).flat();
+
+  for (const offset of offsets) {
+    const x = placement.x + offset.x;
+    const y = placement.y + offset.y;
+    if (x >= 0 && y >= 0 && x < document.map.width && y < document.map.height) {
+      upsertCollision(document, x, y, "blocked");
     }
   }
 }

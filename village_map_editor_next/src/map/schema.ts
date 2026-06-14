@@ -18,6 +18,7 @@ export interface MapAsset {
   widthTiles: number;
   heightTiles: number;
   blocksMovement: boolean;
+  blockedOffsets?: Array<{ x: number; y: number }>;
 }
 
 export interface MapAssets {
