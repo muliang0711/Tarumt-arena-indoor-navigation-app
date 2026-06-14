@@ -1,6 +1,6 @@
 import type { CollisionState, MapPlacement, NavigationLink, NavigationNode, SpawnDirection } from "../map/schema";
 import type { EditorDocument, EditorState, EditorTool } from "./editorState";
-import { cloneDocument } from "./editorState";
+import { cloneDocument, createLinkId } from "./editorState";
 
 export type EditorAction =
   | { type: "setTool"; tool: EditorTool }
@@ -21,6 +21,7 @@ export type EditorAction =
   | { type: "deleteNode"; nodeId: string }
   | { type: "createLink"; link: NavigationLink }
   | { type: "deleteLink"; linkId: string }
+  | { type: "autoLinkStraightNodes" }
   | { type: "setLinkStart"; nodeId: string | null }
   | { type: "replaceDocument"; document: EditorDocument }
   | { type: "undo" }
@@ -48,6 +49,101 @@ function upsertCollision(document: EditorDocument, x: number, y: number, state: 
   document.layers.collision = document.layers.collision.filter((cell) => !(cell.x === x && cell.y === y));
   document.layers.collision.push({ x, y, state });
   document.layers.collision.sort((left, right) => left.y - right.y || left.x - right.x);
+}
+
+function assetForPlacement(document: EditorDocument, assetId: string) {
+  return document.assets.items.find((asset) => asset.id === assetId) ?? null;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+function placementFromClick(document: EditorDocument, placementId: string, assetId: string, x: number, y: number): MapPlacement {
+  const asset = assetForPlacement(document, assetId);
+  const widthTiles = asset?.widthTiles ?? 1;
+  const heightTiles = asset?.heightTiles ?? 1;
+  const maxX = Math.max(0, document.map.width - widthTiles);
+  const maxY = Math.max(0, document.map.height - heightTiles);
+
+  return {
+    id: placementId,
+    assetId,
+    x: clamp(x - Math.floor(widthTiles / 2), 0, maxX),
+    y: clamp(y - Math.floor(heightTiles / 2), 0, maxY),
+  };
+}
+
+function autoBlockPlacementFootprint(document: EditorDocument, placement: MapPlacement): void {
+  const asset = assetForPlacement(document, placement.assetId);
+  if (!asset?.blocksMovement) {
+    return;
+  }
+
+  for (let y = placement.y; y < placement.y + asset.heightTiles; y += 1) {
+    for (let x = placement.x; x < placement.x + asset.widthTiles; x += 1) {
+      if (x >= 0 && y >= 0 && x < document.map.width && y < document.map.height) {
+        upsertCollision(document, x, y, "blocked");
+      }
+    }
+  }
+}
+
+function linkExists(document: EditorDocument, from: string, to: string): boolean {
+  return document.navigation.links.some(
+    (link) => (link.from === from && link.to === to) || (link.bidirectional && link.from === to && link.to === from),
+  );
+}
+
+function hasBlockedCellBetween(document: EditorDocument, from: NavigationNode, to: NavigationNode): boolean {
+  if (from.x !== to.x && from.y !== to.y) {
+    return true;
+  }
+
+  const blocked = new Set(document.layers.collision.filter((cell) => cell.state === "blocked").map((cell) => `${cell.x},${cell.y}`));
+  if (from.x === to.x) {
+    const start = Math.min(from.y, to.y) + 1;
+    const end = Math.max(from.y, to.y);
+    for (let y = start; y < end; y += 1) {
+      if (blocked.has(`${from.x},${y}`)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  const start = Math.min(from.x, to.x) + 1;
+  const end = Math.max(from.x, to.x);
+  for (let x = start; x < end; x += 1) {
+    if (blocked.has(`${x},${from.y}`)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function autoLinkStraightNodes(document: EditorDocument): void {
+  const additions: NavigationLink[] = [];
+
+  for (let leftIndex = 0; leftIndex < document.navigation.nodes.length; leftIndex += 1) {
+    for (let rightIndex = leftIndex + 1; rightIndex < document.navigation.nodes.length; rightIndex += 1) {
+      const from = document.navigation.nodes[leftIndex];
+      const to = document.navigation.nodes[rightIndex];
+      const aligned = from.x === to.x || from.y === to.y;
+      if (!aligned || linkExists(document, from.id, to.id) || hasBlockedCellBetween(document, from, to)) {
+        continue;
+      }
+
+      additions.push({
+        id: createLinkId(from.id, to.id, [...document.navigation.links, ...additions]),
+        from: from.id,
+        to: to.id,
+        bidirectional: true,
+      });
+    }
+  }
+
+  document.navigation.links.push(...additions);
 }
 
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
@@ -84,13 +180,9 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return updateDocument(
         state,
         (document) => {
-          const placement: MapPlacement = {
-            id: action.placementId,
-            assetId: action.assetId,
-            x: action.x,
-            y: action.y,
-          };
+          const placement = placementFromClick(document, action.placementId, action.assetId, action.x, action.y);
           document.layers.visual.push(placement);
+          autoBlockPlacementFootprint(document, placement);
         },
         { kind: "placement", id: action.placementId },
       );
@@ -153,6 +245,8 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
         },
         { kind: null, id: null },
       );
+    case "autoLinkStraightNodes":
+      return updateDocument(state, (document) => autoLinkStraightNodes(document));
     case "undo": {
       const previous = state.history.past.at(-1);
       if (!previous) {

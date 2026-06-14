@@ -15,6 +15,7 @@ export function AssetPalette({ state, dispatch, images }: AssetPaletteProps) {
         <p className="eyebrow">Assets</p>
         <h2>Serious Tiles</h2>
       </div>
+      <p className="muted">Blocking assets automatically paint blocked collision cells over their footprint.</p>
       <div className="asset-grid">
         {state.document.assets.items.map((asset) => (
           <button

@@ -1,4 +1,4 @@
-import { Download, Redo2, Save, Undo2 } from "lucide-react";
+import { Download, GitBranchPlus, Redo2, Save, Undo2 } from "lucide-react";
 import type { EditorAction } from "../app/editorReducer";
 import type { EditorState } from "../app/editorState";
 
@@ -40,6 +40,10 @@ export function ExportPanel({ state, errors, dispatch, onExport, onSave, onLoad 
         </button>
         <button type="button" onClick={onLoad}>
           Load
+        </button>
+        <button type="button" onClick={() => dispatch({ type: "autoLinkStraightNodes" })}>
+          <GitBranchPlus size={16} />
+          Auto link
         </button>
       </div>
       {errors.length > 0 ? (
