@@ -45,6 +45,9 @@ export function ExportPanel({ state, errors, dispatch, onExport, onSave, onLoad 
           <GitBranchPlus size={16} />
           Auto link
         </button>
+        <button type="button" onClick={() => dispatch({ type: "fillLinkedNodePaths" })}>
+          Fill paths
+        </button>
       </div>
       {errors.length > 0 ? (
         <div className="error-list">

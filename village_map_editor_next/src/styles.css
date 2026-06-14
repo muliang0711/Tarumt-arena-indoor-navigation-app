@@ -236,9 +236,29 @@ p {
 }
 
 .asset-tile {
-  flex-direction: column;
+  display: grid;
+  gap: 6px;
   min-height: 96px;
+  padding: 7px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  background: #fffef8;
   overflow: hidden;
+}
+
+.asset-main {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  min-height: 78px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.asset-main:hover {
+  border-color: transparent;
+  background: transparent;
 }
 
 .asset-tile img,
@@ -260,6 +280,19 @@ p {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.mix-button {
+  min-height: 26px;
+  padding: 4px 7px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.mix-button.active {
+  border-color: #d18b24;
+  background: #f8e3b8;
+  color: #4a3414;
 }
 
 .map-workspace {

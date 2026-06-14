@@ -4,6 +4,7 @@ export type EditorTool =
   | "place"
   | "select"
   | "erase"
+  | "random-brush"
   | "collision-walkable"
   | "collision-blocked"
   | "node"
@@ -26,6 +27,7 @@ export interface EditorDocument extends MapDocumentV2 {}
 export interface EditorState {
   document: EditorDocument;
   selectedAssetId: string | null;
+  selectedBrushAssetIds: string[];
   selected: EditorSelection;
   activeTool: EditorTool;
   linkStartNodeId: string | null;
@@ -76,6 +78,7 @@ export function createInitialEditorState(options: CreateInitialEditorStateOption
       },
     },
     selectedAssetId: options.assets?.[0]?.id ?? null,
+    selectedBrushAssetIds: options.assets?.[0] ? [options.assets[0].id] : [],
     selected: { kind: null, id: null },
     activeTool: "place",
     linkStartNodeId: null,
@@ -95,6 +98,7 @@ export function createInitialEditorState(options: CreateInitialEditorStateOption
 export interface SerializableEditorState {
   document: EditorDocument;
   selectedAssetId: string | null;
+  selectedBrushAssetIds: string[];
   activeTool: EditorTool;
   viewport: ViewportState;
 }
@@ -103,6 +107,7 @@ export function toSerializableState(state: EditorState): SerializableEditorState
   return {
     document: state.document,
     selectedAssetId: state.selectedAssetId,
+    selectedBrushAssetIds: state.selectedBrushAssetIds,
     activeTool: state.activeTool,
     viewport: state.viewport,
   };
@@ -112,6 +117,7 @@ export function fromSerializableState(serialized: SerializableEditorState): Edit
   return {
     document: serialized.document,
     selectedAssetId: serialized.selectedAssetId,
+    selectedBrushAssetIds: serialized.selectedBrushAssetIds ?? (serialized.selectedAssetId ? [serialized.selectedAssetId] : []),
     selected: { kind: null, id: null },
     activeTool: serialized.activeTool,
     linkStartNodeId: null,

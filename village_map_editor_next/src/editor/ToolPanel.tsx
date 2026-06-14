@@ -1,4 +1,4 @@
-import { Boxes, Eraser, Grid2X2, Link, MapPin, MousePointer2, Route, SquareDashedMousePointer } from "lucide-react";
+import { Boxes, Dices, Eraser, Grid2X2, Link, MapPin, MousePointer2, Route, SquareDashedMousePointer } from "lucide-react";
 import type { EditorAction } from "../app/editorReducer";
 import type { EditorState, EditorTool } from "../app/editorState";
 
@@ -9,6 +9,7 @@ interface ToolPanelProps {
 
 const TOOLS: Array<{ id: EditorTool; label: string; icon: React.ComponentType<{ size?: number }> }> = [
   { id: "place", label: "Place", icon: Boxes },
+  { id: "random-brush", label: "Random Brush", icon: Dices },
   { id: "select", label: "Select", icon: MousePointer2 },
   { id: "erase", label: "Erase", icon: Eraser },
   { id: "collision-walkable", label: "Walkable", icon: Route },

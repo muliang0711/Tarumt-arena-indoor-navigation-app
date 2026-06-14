@@ -47,6 +47,7 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
   const [hoverTile, setHoverTile] = useState<TilePoint | null>(null);
   const [dragPlacementId, setDragPlacementId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState<TilePoint>({ x: 0, y: 0 });
+  const [brushActive, setBrushActive] = useState(false);
 
   const canvasWidth = state.document.map.width * state.document.map.tileSize * state.viewport.zoom;
   const canvasHeight = state.document.map.height * state.document.map.tileSize * state.viewport.zoom;
@@ -148,6 +149,13 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
       return;
     }
 
+    if (state.activeTool === "random-brush") {
+      setBrushActive(true);
+      dispatch({ type: "paintRandomBrush", placementId: `brush_${tile.x}_${tile.y}_${Date.now().toString(36)}`, x: tile.x, y: tile.y });
+      event.currentTarget.setPointerCapture(event.pointerId);
+      return;
+    }
+
     if (state.activeTool === "select") {
       const placement = placementAt(state, tile);
       if (placement) {
@@ -194,13 +202,18 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
     if (dragPlacementId && tile) {
       dispatch({ type: "movePlacement", placementId: dragPlacementId, x: tile.x - dragOffset.x, y: tile.y - dragOffset.y });
     }
+
+    if (brushActive && tile) {
+      dispatch({ type: "paintRandomBrush", placementId: `brush_${tile.x}_${tile.y}_${Date.now().toString(36)}`, x: tile.x, y: tile.y });
+    }
   }
 
   function stopDragging(event: React.PointerEvent<HTMLCanvasElement>): void {
-    if (dragPlacementId) {
+    if (dragPlacementId || brushActive) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
     setDragPlacementId(null);
+    setBrushActive(false);
   }
 
   return (

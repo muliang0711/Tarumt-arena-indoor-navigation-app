@@ -5,6 +5,8 @@ import { cloneDocument, createLinkId } from "./editorState";
 export type EditorAction =
   | { type: "setTool"; tool: EditorTool }
   | { type: "setSelectedAsset"; assetId: string | null }
+  | { type: "setBrushAssets"; assetIds: string[] }
+  | { type: "toggleBrushAsset"; assetId: string }
   | { type: "setMapInfo"; map: Partial<EditorDocument["map"]> }
   | { type: "setResourceRoot"; resourceRoot: string }
   | { type: "setSpawn"; x: number; y: number; direction: SpawnDirection }
@@ -12,6 +14,7 @@ export type EditorAction =
   | { type: "select"; selection: EditorState["selected"] }
   | { type: "setAssets"; assets: EditorDocument["assets"]["items"] }
   | { type: "placeAsset"; placementId: string; assetId: string; x: number; y: number }
+  | { type: "paintRandomBrush"; placementId: string; x: number; y: number }
   | { type: "movePlacement"; placementId: string; x: number; y: number }
   | { type: "deletePlacement"; placementId: string }
   | { type: "paintCollision"; x: number; y: number; state: CollisionState }
@@ -22,6 +25,7 @@ export type EditorAction =
   | { type: "createLink"; link: NavigationLink }
   | { type: "deleteLink"; linkId: string }
   | { type: "autoLinkStraightNodes" }
+  | { type: "fillLinkedNodePaths" }
   | { type: "setLinkStart"; nodeId: string | null }
   | { type: "replaceDocument"; document: EditorDocument }
   | { type: "undo" }
@@ -89,6 +93,53 @@ function autoBlockPlacementFootprint(document: EditorDocument, placement: MapPla
   }
 }
 
+function assetCoversTile(asset: { widthTiles: number; heightTiles: number }, placement: MapPlacement, x: number, y: number): boolean {
+  return x >= placement.x && y >= placement.y && x < placement.x + asset.widthTiles && y < placement.y + asset.heightTiles;
+}
+
+function hasBlockingPlacementAt(document: EditorDocument, x: number, y: number): boolean {
+  return document.layers.visual.some((placement) => {
+    const asset = assetForPlacement(document, placement.assetId);
+    return Boolean(asset?.blocksMovement && assetCoversTile(asset, placement, x, y));
+  });
+}
+
+function removeReplaceableTilePlacement(document: EditorDocument, x: number, y: number): void {
+  document.layers.visual = document.layers.visual.filter((placement) => {
+    const asset = assetForPlacement(document, placement.assetId);
+    if (!asset || asset.blocksMovement) {
+      return true;
+    }
+    return !(placement.x === x && placement.y === y && asset.widthTiles === 1 && asset.heightTiles === 1);
+  });
+}
+
+function chooseBrushAssetId(document: EditorDocument, state: EditorState, x: number, y: number): string | null {
+  const candidateIds = (state.selectedBrushAssetIds.length > 0 ? state.selectedBrushAssetIds : state.selectedAssetId ? [state.selectedAssetId] : [])
+    .filter((assetId) => document.assets.items.some((asset) => asset.id === assetId));
+
+  if (candidateIds.length === 0) {
+    return null;
+  }
+
+  return candidateIds[Math.abs(x + y) % candidateIds.length];
+}
+
+function paintBrushTile(document: EditorDocument, state: EditorState, placementId: string, x: number, y: number): void {
+  if (hasBlockingPlacementAt(document, x, y)) {
+    return;
+  }
+
+  const assetId = chooseBrushAssetId(document, state, x, y);
+  if (!assetId) {
+    return;
+  }
+
+  removeReplaceableTilePlacement(document, x, y);
+  document.layers.visual.push({ id: placementId, assetId, x, y });
+  upsertCollision(document, x, y, "walkable");
+}
+
 function linkExists(document: EditorDocument, from: string, to: string): boolean {
   return document.navigation.links.some(
     (link) => (link.from === from && link.to === to) || (link.bidirectional && link.from === to && link.to === from),
@@ -146,12 +197,63 @@ function autoLinkStraightNodes(document: EditorDocument): void {
   document.navigation.links.push(...additions);
 }
 
+function cellsBetweenInclusive(from: NavigationNode, to: NavigationNode): Array<{ x: number; y: number }> {
+  if (from.x === to.x) {
+    const start = Math.min(from.y, to.y);
+    const end = Math.max(from.y, to.y);
+    return Array.from({ length: end - start + 1 }, (_, index) => ({ x: from.x, y: start + index }));
+  }
+
+  if (from.y === to.y) {
+    const start = Math.min(from.x, to.x);
+    const end = Math.max(from.x, to.x);
+    return Array.from({ length: end - start + 1 }, (_, index) => ({ x: start + index, y: from.y }));
+  }
+
+  return [];
+}
+
+function fillLinkedNodePaths(document: EditorDocument, state: EditorState): void {
+  const nodeById = new Map(document.navigation.nodes.map((node) => [node.id, node]));
+  const painted = new Set<string>();
+
+  for (const link of document.navigation.links) {
+    const from = nodeById.get(link.from);
+    const to = nodeById.get(link.to);
+    if (!from || !to) {
+      continue;
+    }
+
+    const cells = cellsBetweenInclusive(from, to);
+    if (cells.length === 0 || cells.some((cell) => hasBlockingPlacementAt(document, cell.x, cell.y))) {
+      continue;
+    }
+
+    for (const cell of cells) {
+      const key = `${cell.x},${cell.y}`;
+      if (painted.has(key)) {
+        continue;
+      }
+      painted.add(key);
+      paintBrushTile(document, state, `path_${cell.x}_${cell.y}`, cell.x, cell.y);
+    }
+  }
+}
+
 export function editorReducer(state: EditorState, action: EditorAction): EditorState {
   switch (action.type) {
     case "setTool":
       return { ...state, activeTool: action.tool, linkStartNodeId: action.tool === "link" ? state.linkStartNodeId : null };
     case "setSelectedAsset":
       return { ...state, selectedAssetId: action.assetId };
+    case "setBrushAssets":
+      return { ...state, selectedBrushAssetIds: action.assetIds };
+    case "toggleBrushAsset": {
+      const selected = state.selectedBrushAssetIds.includes(action.assetId)
+        ? state.selectedBrushAssetIds.filter((assetId) => assetId !== action.assetId)
+        : [...state.selectedBrushAssetIds, action.assetId];
+      return { ...state, selectedBrushAssetIds: selected };
+    }
     case "setViewport":
       return { ...state, viewport: { ...state.viewport, ...action.viewport } };
     case "select":
@@ -186,6 +288,8 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
         },
         { kind: "placement", id: action.placementId },
       );
+    case "paintRandomBrush":
+      return updateDocument(state, (document) => paintBrushTile(document, state, action.placementId, action.x, action.y));
     case "movePlacement":
       return updateDocument(state, (document) => {
         document.layers.visual = document.layers.visual.map((placement) =>
@@ -247,6 +351,8 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       );
     case "autoLinkStraightNodes":
       return updateDocument(state, (document) => autoLinkStraightNodes(document));
+    case "fillLinkedNodePaths":
+      return updateDocument(state, (document) => fillLinkedNodePaths(document, state));
     case "undo": {
       const previous = state.history.past.at(-1);
       if (!previous) {
