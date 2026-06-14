@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Maximize2 } from "lucide-react";
 import type { EditorAction } from "../app/editorReducer";
 import type { EditorState } from "../app/editorState";
 import { createLinkId, createNodeId } from "../app/editorState";
@@ -247,11 +248,19 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
   return (
     <section className="map-workspace">
       <div className="canvas-toolbar">
-        <span>
-          {state.document.map.width} x {state.document.map.height}
-        </span>
-        <span>{hoverTile ? `Tile ${hoverTile.x}, ${hoverTile.y}` : "No tile"}</span>
-        {state.linkStartNodeId ? <span>Link from {state.linkStartNodeId}</span> : null}
+        <div className="canvas-toolbar-group">
+          <span>
+            {state.document.map.width} x {state.document.map.height}
+          </span>
+          <button title="Expand map" type="button" onClick={() => dispatch({ type: "expandMap" })}>
+            <Maximize2 size={15} />
+            Expand Map
+          </button>
+        </div>
+        <div className="canvas-toolbar-group">
+          <span>{hoverTile ? `Tile ${hoverTile.x}, ${hoverTile.y}` : "No tile"}</span>
+          {state.linkStartNodeId ? <span>Link from {state.linkStartNodeId}</span> : null}
+        </div>
       </div>
       <div className="canvas-scroll">
         <canvas

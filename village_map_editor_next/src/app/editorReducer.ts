@@ -2,7 +2,6 @@ import type { CollisionState, MapPlacement, NavigationLink, NavigationNode, Spaw
 import type { EditorDocument, EditorState, EditorTool } from "./editorState";
 import { cloneDocument, createLinkId } from "./editorState";
 
-const AUTO_GROW_EDGE_DISTANCE = 0;
 const AUTO_GROW_PADDING = 10;
 
 export type EditorAction =
@@ -16,6 +15,7 @@ export type EditorAction =
   | { type: "setViewport"; viewport: Partial<EditorState["viewport"]> }
   | { type: "select"; selection: EditorState["selected"] }
   | { type: "setAssets"; assets: EditorDocument["assets"]["items"] }
+  | { type: "expandMap" }
   | { type: "placeAsset"; placementId: string; assetId: string; x: number; y: number }
   | { type: "paintRandomBrush"; placementId: string; x: number; y: number }
   | { type: "movePlacement"; placementId: string; x: number; y: number }
@@ -58,29 +58,6 @@ function upsertCollision(document: EditorDocument, x: number, y: number, state: 
   document.layers.collision.sort((left, right) => left.y - right.y || left.x - right.x);
 }
 
-function shouldGrowForPoint(document: EditorDocument, x: number, y: number): boolean {
-  return (
-    x <= AUTO_GROW_EDGE_DISTANCE ||
-    y <= AUTO_GROW_EDGE_DISTANCE ||
-    x >= document.map.width - 1 - AUTO_GROW_EDGE_DISTANCE ||
-    y >= document.map.height - 1 - AUTO_GROW_EDGE_DISTANCE
-  );
-}
-
-function shouldGrowForPlacement(document: EditorDocument, placement: MapPlacement): boolean {
-  const asset = assetForPlacement(document, placement.assetId);
-  if (!asset) {
-    return shouldGrowForPoint(document, placement.x, placement.y);
-  }
-
-  return (
-    placement.x <= AUTO_GROW_EDGE_DISTANCE ||
-    placement.y <= AUTO_GROW_EDGE_DISTANCE ||
-    placement.x + asset.widthTiles - 1 >= document.map.width - 1 - AUTO_GROW_EDGE_DISTANCE ||
-    placement.y + asset.heightTiles - 1 >= document.map.height - 1 - AUTO_GROW_EDGE_DISTANCE
-  );
-}
-
 function shiftDocumentContent(document: EditorDocument, offsetX: number, offsetY: number): void {
   document.layers.visual = document.layers.visual.map((placement) => ({
     ...placement,
@@ -104,26 +81,10 @@ function shiftDocumentContent(document: EditorDocument, offsetX: number, offsetY
   };
 }
 
-function growMapAroundContentIfNeeded(document: EditorDocument, x: number, y: number): { x: number; y: number } {
-  if (!shouldGrowForPoint(document, x, y)) {
-    return { x, y };
-  }
-
+function expandMapAroundContent(document: EditorDocument): void {
   document.map.width += AUTO_GROW_PADDING * 2;
   document.map.height += AUTO_GROW_PADDING * 2;
   shiftDocumentContent(document, AUTO_GROW_PADDING, AUTO_GROW_PADDING);
-  return { x: x + AUTO_GROW_PADDING, y: y + AUTO_GROW_PADDING };
-}
-
-function growMapForPlacementIfNeeded(document: EditorDocument, placement: MapPlacement, x: number, y: number): { x: number; y: number } {
-  if (!shouldGrowForPlacement(document, placement)) {
-    return { x, y };
-  }
-
-  document.map.width += AUTO_GROW_PADDING * 2;
-  document.map.height += AUTO_GROW_PADDING * 2;
-  shiftDocumentContent(document, AUTO_GROW_PADDING, AUTO_GROW_PADDING);
-  return { x: x + AUTO_GROW_PADDING, y: y + AUTO_GROW_PADDING };
 }
 
 function assetForPlacement(document: EditorDocument, assetId: string) {
@@ -352,15 +313,17 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return updateDocument(state, (document) => {
         document.assets.items = action.assets;
       });
+    case "expandMap":
+      return updateDocument(state, (document) => {
+        expandMapAroundContent(document);
+      });
     case "replaceDocument":
       return withHistory(state, cloneDocument(action.document), { kind: null, id: null });
     case "placeAsset":
       return updateDocument(
         state,
         (document) => {
-          const edgeCheckPlacement = placementFromClick(document, action.placementId, action.assetId, action.x, action.y);
-          const target = growMapForPlacementIfNeeded(document, edgeCheckPlacement, action.x, action.y);
-          const placement = placementFromClick(document, action.placementId, action.assetId, target.x, target.y);
+          const placement = placementFromClick(document, action.placementId, action.assetId, action.x, action.y);
           document.layers.visual.push(placement);
           autoBlockPlacementFootprint(document, placement);
         },
@@ -368,8 +331,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       );
     case "paintRandomBrush":
       return updateDocument(state, (document) => {
-        const target = growMapAroundContentIfNeeded(document, action.x, action.y);
-        paintBrushTile(document, state, action.placementId, target.x, target.y);
+        paintBrushTile(document, state, action.placementId, action.x, action.y);
       });
     case "movePlacement":
       return updateDocument(state, (document) => {
@@ -387,8 +349,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       );
     case "paintCollision":
       return updateDocument(state, (document) => {
-        const target = growMapAroundContentIfNeeded(document, action.x, action.y);
-        upsertCollision(document, target.x, target.y, action.state);
+        upsertCollision(document, action.x, action.y, action.state);
       });
     case "eraseCollision":
       return updateDocument(state, (document) => {
@@ -398,8 +359,7 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return updateDocument(
         state,
         (document) => {
-          const target = growMapAroundContentIfNeeded(document, action.node.x, action.node.y);
-          document.navigation.nodes.push({ ...action.node, x: target.x, y: target.y });
+          document.navigation.nodes.push(action.node);
         },
         { kind: "node", id: action.node.id },
       );

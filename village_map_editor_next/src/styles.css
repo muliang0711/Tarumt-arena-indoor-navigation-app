@@ -306,6 +306,7 @@ p {
 .canvas-toolbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 8px;
   flex-wrap: wrap;
   min-height: 42px;
@@ -315,10 +316,27 @@ p {
   font-size: 13px;
 }
 
+.canvas-toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .canvas-toolbar span {
   padding: 4px 8px;
   border-radius: 6px;
   background: #edf2ea;
+}
+
+.canvas-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .canvas-scroll {

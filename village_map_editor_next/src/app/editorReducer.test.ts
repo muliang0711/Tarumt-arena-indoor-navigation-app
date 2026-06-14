@@ -75,21 +75,19 @@ describe("editorReducer", () => {
 
     state = editorReducer(state, { type: "placeAsset", placementId: "p1", assetId: "large_building", x: 2, y: 2 });
 
-    expect(state.document.map.width).toBe(50);
-    expect(state.document.map.height).toBe(40);
     expect(state.document.layers.collision).toEqual([
-      { x: 10, y: 11, state: "blocked" },
-      { x: 11, y: 11, state: "blocked" },
-      { x: 12, y: 11, state: "blocked" },
-      { x: 13, y: 11, state: "blocked" },
-      { x: 10, y: 12, state: "blocked" },
-      { x: 11, y: 12, state: "blocked" },
-      { x: 12, y: 12, state: "blocked" },
-      { x: 13, y: 12, state: "blocked" },
-      { x: 10, y: 13, state: "blocked" },
-      { x: 11, y: 13, state: "blocked" },
-      { x: 12, y: 13, state: "blocked" },
-      { x: 13, y: 13, state: "blocked" },
+      { x: 0, y: 1, state: "blocked" },
+      { x: 1, y: 1, state: "blocked" },
+      { x: 2, y: 1, state: "blocked" },
+      { x: 3, y: 1, state: "blocked" },
+      { x: 0, y: 2, state: "blocked" },
+      { x: 1, y: 2, state: "blocked" },
+      { x: 2, y: 2, state: "blocked" },
+      { x: 3, y: 2, state: "blocked" },
+      { x: 0, y: 3, state: "blocked" },
+      { x: 1, y: 3, state: "blocked" },
+      { x: 2, y: 3, state: "blocked" },
+      { x: 3, y: 3, state: "blocked" },
     ]);
   });
 
@@ -107,7 +105,7 @@ describe("editorReducer", () => {
     ]);
   });
 
-  it("grows the map and recenters existing content when placing near an edge", () => {
+  it("expands the map and recenters existing content when requested", () => {
     let state = createInitialEditorState({ assets: [roadAsset] });
     state = editorReducer(state, { type: "placeAsset", placementId: "existing", assetId: "walkable_road_clean", x: 5, y: 5 });
     state = editorReducer(state, { type: "paintCollision", x: 6, y: 5, state: "walkable" });
@@ -116,39 +114,36 @@ describe("editorReducer", () => {
       node: { id: "a", label: "A", type: "destination", x: 7, y: 5 },
     });
 
-    state = editorReducer(state, { type: "placeAsset", placementId: "edge", assetId: "walkable_road_clean", x: 29, y: 19 });
+    state = editorReducer(state, { type: "expandMap" });
 
     expect(state.document.map.width).toBe(50);
     expect(state.document.map.height).toBe(40);
-    expect(state.document.layers.visual).toEqual([
-      { id: "existing", assetId: "walkable_road_clean", x: 15, y: 15 },
-      { id: "edge", assetId: "walkable_road_clean", x: 39, y: 29 },
-    ]);
+    expect(state.document.layers.visual).toEqual([{ id: "existing", assetId: "walkable_road_clean", x: 15, y: 15 }]);
     expect(state.document.layers.collision).toEqual([{ x: 16, y: 15, state: "walkable" }]);
     expect(state.document.navigation.nodes).toEqual([{ id: "a", label: "A", type: "destination", x: 17, y: 15 }]);
     expect(state.document.spawn).toEqual({ x: 11, y: 11, direction: "down" });
   });
 
-  it("grows when a multi-tile placement footprint touches an edge", () => {
+  it("does not expand automatically when a multi-tile placement footprint touches an edge", () => {
     let state = createInitialEditorState({ assets: [largeAsset] });
 
     state = editorReducer(state, { type: "placeAsset", placementId: "edge_large", assetId: "large_building", x: 28, y: 10 });
 
-    expect(state.document.map.width).toBe(50);
-    expect(state.document.map.height).toBe(40);
-    expect(state.document.layers.visual).toEqual([{ id: "edge_large", assetId: "large_building", x: 36, y: 19 }]);
+    expect(state.document.map.width).toBe(30);
+    expect(state.document.map.height).toBe(20);
+    expect(state.document.layers.visual).toEqual([{ id: "edge_large", assetId: "large_building", x: 26, y: 9 }]);
   });
 
-  it("grows the map and recenters brush painting near an edge", () => {
+  it("does not expand automatically when brush painting on an edge", () => {
     let state = createInitialEditorState({ assets: [roadAsset] });
     state = editorReducer(state, { type: "setBrushAssets", assetIds: ["walkable_road_clean"] });
 
     state = editorReducer(state, { type: "paintRandomBrush", placementId: "edge_brush", x: 0, y: 0 });
 
-    expect(state.document.map.width).toBe(50);
-    expect(state.document.map.height).toBe(40);
-    expect(state.document.layers.visual).toEqual([{ id: "edge_brush", assetId: "walkable_road_clean", x: 10, y: 10 }]);
-    expect(state.document.layers.collision).toEqual([{ x: 10, y: 10, state: "walkable" }]);
+    expect(state.document.map.width).toBe(30);
+    expect(state.document.map.height).toBe(20);
+    expect(state.document.layers.visual).toEqual([{ id: "edge_brush", assetId: "walkable_road_clean", x: 0, y: 0 }]);
+    expect(state.document.layers.collision).toEqual([{ x: 0, y: 0, state: "walkable" }]);
   });
 
   it("does not auto-block non-blocking road assets", () => {
@@ -288,7 +283,7 @@ describe("editorReducer", () => {
   it("does not fill node paths through blocking building placements", () => {
     let state = createInitialEditorState({ assets: [roadAsset, largeAsset] });
     state = editorReducer(state, { type: "setBrushAssets", assetIds: ["walkable_road_clean"] });
-    state = editorReducer(state, { type: "placeAsset", placementId: "building", assetId: "large_building", x: 3, y: 2 });
+    state = editorReducer(state, { type: "placeAsset", placementId: "building", assetId: "large_building", x: 3, y: 1 });
     state = editorReducer(state, {
       type: "createNode",
       node: { id: "a", label: "A", type: "destination", x: 1, y: 1 },
