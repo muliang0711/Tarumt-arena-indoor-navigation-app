@@ -77,6 +77,40 @@ describe("editorReducer", () => {
     ]);
   });
 
+  it("grows the map and recenters existing content when placing near an edge", () => {
+    let state = createInitialEditorState({ assets: [roadAsset] });
+    state = editorReducer(state, { type: "placeAsset", placementId: "existing", assetId: "walkable_road_clean", x: 5, y: 5 });
+    state = editorReducer(state, { type: "paintCollision", x: 6, y: 5, state: "walkable" });
+    state = editorReducer(state, {
+      type: "createNode",
+      node: { id: "a", label: "A", type: "destination", x: 7, y: 5 },
+    });
+
+    state = editorReducer(state, { type: "placeAsset", placementId: "edge", assetId: "walkable_road_clean", x: 29, y: 19 });
+
+    expect(state.document.map.width).toBe(50);
+    expect(state.document.map.height).toBe(40);
+    expect(state.document.layers.visual).toEqual([
+      { id: "existing", assetId: "walkable_road_clean", x: 15, y: 15 },
+      { id: "edge", assetId: "walkable_road_clean", x: 39, y: 29 },
+    ]);
+    expect(state.document.layers.collision).toEqual([{ x: 16, y: 15, state: "walkable" }]);
+    expect(state.document.navigation.nodes).toEqual([{ id: "a", label: "A", type: "destination", x: 17, y: 15 }]);
+    expect(state.document.spawn).toEqual({ x: 11, y: 11, direction: "down" });
+  });
+
+  it("grows the map and recenters brush painting near an edge", () => {
+    let state = createInitialEditorState({ assets: [roadAsset] });
+    state = editorReducer(state, { type: "setBrushAssets", assetIds: ["walkable_road_clean"] });
+
+    state = editorReducer(state, { type: "paintRandomBrush", placementId: "edge_brush", x: 0, y: 0 });
+
+    expect(state.document.map.width).toBe(50);
+    expect(state.document.map.height).toBe(40);
+    expect(state.document.layers.visual).toEqual([{ id: "edge_brush", assetId: "walkable_road_clean", x: 10, y: 10 }]);
+    expect(state.document.layers.collision).toEqual([{ x: 10, y: 10, state: "walkable" }]);
+  });
+
   it("does not auto-block non-blocking road assets", () => {
     let state = createInitialEditorState({ assets: [roadAsset] });
 

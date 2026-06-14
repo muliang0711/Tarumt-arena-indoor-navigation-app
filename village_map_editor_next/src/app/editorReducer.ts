@@ -2,6 +2,9 @@ import type { CollisionState, MapPlacement, NavigationLink, NavigationNode, Spaw
 import type { EditorDocument, EditorState, EditorTool } from "./editorState";
 import { cloneDocument, createLinkId } from "./editorState";
 
+const AUTO_GROW_EDGE_DISTANCE = 0;
+const AUTO_GROW_PADDING = 10;
+
 export type EditorAction =
   | { type: "setTool"; tool: EditorTool }
   | { type: "setSelectedAsset"; assetId: string | null }
@@ -53,6 +56,49 @@ function upsertCollision(document: EditorDocument, x: number, y: number, state: 
   document.layers.collision = document.layers.collision.filter((cell) => !(cell.x === x && cell.y === y));
   document.layers.collision.push({ x, y, state });
   document.layers.collision.sort((left, right) => left.y - right.y || left.x - right.x);
+}
+
+function shouldGrowForPoint(document: EditorDocument, x: number, y: number): boolean {
+  return (
+    x <= AUTO_GROW_EDGE_DISTANCE ||
+    y <= AUTO_GROW_EDGE_DISTANCE ||
+    x >= document.map.width - 1 - AUTO_GROW_EDGE_DISTANCE ||
+    y >= document.map.height - 1 - AUTO_GROW_EDGE_DISTANCE
+  );
+}
+
+function shiftDocumentContent(document: EditorDocument, offsetX: number, offsetY: number): void {
+  document.layers.visual = document.layers.visual.map((placement) => ({
+    ...placement,
+    x: placement.x + offsetX,
+    y: placement.y + offsetY,
+  }));
+  document.layers.collision = document.layers.collision.map((cell) => ({
+    ...cell,
+    x: cell.x + offsetX,
+    y: cell.y + offsetY,
+  }));
+  document.navigation.nodes = document.navigation.nodes.map((node) => ({
+    ...node,
+    x: node.x + offsetX,
+    y: node.y + offsetY,
+  }));
+  document.spawn = {
+    ...document.spawn,
+    x: document.spawn.x + offsetX,
+    y: document.spawn.y + offsetY,
+  };
+}
+
+function growMapAroundContentIfNeeded(document: EditorDocument, x: number, y: number): { x: number; y: number } {
+  if (!shouldGrowForPoint(document, x, y)) {
+    return { x, y };
+  }
+
+  document.map.width += AUTO_GROW_PADDING * 2;
+  document.map.height += AUTO_GROW_PADDING * 2;
+  shiftDocumentContent(document, AUTO_GROW_PADDING, AUTO_GROW_PADDING);
+  return { x: x + AUTO_GROW_PADDING, y: y + AUTO_GROW_PADDING };
 }
 
 function assetForPlacement(document: EditorDocument, assetId: string) {
@@ -282,14 +328,18 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return updateDocument(
         state,
         (document) => {
-          const placement = placementFromClick(document, action.placementId, action.assetId, action.x, action.y);
+          const target = growMapAroundContentIfNeeded(document, action.x, action.y);
+          const placement = placementFromClick(document, action.placementId, action.assetId, target.x, target.y);
           document.layers.visual.push(placement);
           autoBlockPlacementFootprint(document, placement);
         },
         { kind: "placement", id: action.placementId },
       );
     case "paintRandomBrush":
-      return updateDocument(state, (document) => paintBrushTile(document, state, action.placementId, action.x, action.y));
+      return updateDocument(state, (document) => {
+        const target = growMapAroundContentIfNeeded(document, action.x, action.y);
+        paintBrushTile(document, state, action.placementId, target.x, target.y);
+      });
     case "movePlacement":
       return updateDocument(state, (document) => {
         document.layers.visual = document.layers.visual.map((placement) =>
@@ -305,7 +355,10 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
         { kind: null, id: null },
       );
     case "paintCollision":
-      return updateDocument(state, (document) => upsertCollision(document, action.x, action.y, action.state));
+      return updateDocument(state, (document) => {
+        const target = growMapAroundContentIfNeeded(document, action.x, action.y);
+        upsertCollision(document, target.x, target.y, action.state);
+      });
     case "eraseCollision":
       return updateDocument(state, (document) => {
         document.layers.collision = document.layers.collision.filter((cell) => !(cell.x === action.x && cell.y === action.y));
@@ -314,7 +367,8 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return updateDocument(
         state,
         (document) => {
-          document.navigation.nodes.push(action.node);
+          const target = growMapAroundContentIfNeeded(document, action.node.x, action.node.y);
+          document.navigation.nodes.push({ ...action.node, x: target.x, y: target.y });
         },
         { kind: "node", id: action.node.id },
       );

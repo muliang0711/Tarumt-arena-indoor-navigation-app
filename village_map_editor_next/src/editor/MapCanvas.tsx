@@ -42,6 +42,34 @@ function isInsideMap(state: EditorState, tile: TilePoint): boolean {
   return tile.x >= 0 && tile.y >= 0 && tile.x < state.document.map.width && tile.y < state.document.map.height;
 }
 
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(Math.max(value, min), max);
+}
+
+function placementPreviewForHover(state: EditorState, hoverTile: TilePoint | null) {
+  if (!hoverTile) {
+    return null;
+  }
+
+  const assetId =
+    state.activeTool === "place"
+      ? state.selectedAssetId
+      : state.activeTool === "random-brush"
+        ? state.selectedBrushAssetIds[Math.abs(hoverTile.x + hoverTile.y) % state.selectedBrushAssetIds.length] ?? state.selectedAssetId
+        : null;
+
+  const asset = state.document.assets.items.find((item) => item.id === assetId);
+  if (!asset || !assetId) {
+    return null;
+  }
+
+  return {
+    assetId,
+    x: clamp(hoverTile.x - Math.floor(asset.widthTiles / 2), 0, Math.max(0, state.document.map.width - asset.widthTiles)),
+    y: clamp(hoverTile.y - Math.floor(asset.heightTiles / 2), 0, Math.max(0, state.document.map.height - asset.heightTiles)),
+  };
+}
+
 export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [hoverTile, setHoverTile] = useState<TilePoint | null>(null);
@@ -61,7 +89,7 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
 
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
-    renderMap(ctx, { state, images, hoverTile });
+    renderMap(ctx, { state, images, hoverTile, previewPlacement: placementPreviewForHover(state, hoverTile) });
   }, [canvasHeight, canvasWidth, hoverTile, images, state]);
 
   function eventToTile(event: React.PointerEvent<HTMLCanvasElement>): TilePoint | null {

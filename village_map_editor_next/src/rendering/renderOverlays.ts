@@ -22,8 +22,9 @@ export function renderOverlays(ctx: CanvasRenderingContext2D, options: OverlayRe
 
   for (const cell of state.document.layers.collision) {
     const rect = tileRect(tileSize, zoom, cell.x, cell.y);
-    ctx.fillStyle = cell.state === "blocked" ? "rgba(203, 77, 68, 0.34)" : "rgba(69, 152, 92, 0.32)";
-    ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+    ctx.strokeStyle = cell.state === "blocked" ? "rgba(203, 77, 68, 0.9)" : "rgba(69, 152, 92, 0.82)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(rect.x + 1.5, rect.y + 1.5, rect.width - 3, rect.height - 3);
   }
 
   ctx.lineWidth = Math.max(2, zoom);
