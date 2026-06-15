@@ -295,6 +295,19 @@ describe("editorReducer", () => {
     expect(state.document.layers.collision.filter((cell) => cell.state === "walkable")).toHaveLength(484);
   });
 
+  it("fills a large expanded map without quadratic collision updates", () => {
+    let state = createInitialEditorState({ assets: [road2Asset] });
+    state = editorReducer(state, { type: "setMapInfo", map: { width: 90, height: 80 } });
+
+    const startedAt = performance.now();
+    state = editorReducer(state, { type: "fillMapWithRoad2" });
+    const elapsedMs = performance.now() - startedAt;
+
+    expect(state.document.layers.visual.filter((placement) => placement.assetId === "road_2")).toHaveLength(7200);
+    expect(state.document.layers.collision.filter((cell) => cell.state === "walkable")).toHaveLength(7200);
+    expect(elapsedMs).toBeLessThan(500);
+  });
+
   it("paints collision cells by replacing previous cell state", () => {
     let state = createInitialEditorState({ assets: [asset] });
 

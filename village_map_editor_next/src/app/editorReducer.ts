@@ -291,7 +291,9 @@ function fillMapWithRoad2(document: EditorDocument): void {
     return false;
   });
 
+  const collisionByCell = new Map(document.layers.collision.map((cell) => [`${cell.x},${cell.y}`, cell]));
   const filledCells = new Set<string>();
+  const roadPlacements: MapPlacement[] = [];
   for (let y = 0; y < document.map.height; y += 1) {
     for (let x = 0; x < document.map.width; x += 1) {
       if (hasBlockingPlacementAt(document, x, y)) {
@@ -300,15 +302,16 @@ function fillMapWithRoad2(document: EditorDocument): void {
 
       const key = `${x},${y}`;
       filledCells.add(key);
-      document.layers.visual.push({ id: `road_2_fill_${x}_${y}`, assetId: "road_2", x, y });
-      upsertCollision(document, x, y, "walkable");
+      roadPlacements.push({ id: `road_2_fill_${x}_${y}`, assetId: "road_2", x, y });
+      collisionByCell.set(key, { x, y, state: "walkable" });
     }
   }
 
-  document.layers.collision = document.layers.collision.filter((cell) => {
+  document.layers.visual.push(...roadPlacements);
+  document.layers.collision = [...collisionByCell.values()].filter((cell) => {
     const key = `${cell.x},${cell.y}`;
     return !(cell.state === "walkable" && existingRoadCells.has(key) && !filledCells.has(key));
-  });
+  }).sort((left, right) => left.y - right.y || left.x - right.x);
 }
 
 function chooseBrushAssetId(document: EditorDocument, state: EditorState, x: number, y: number): string | null {
