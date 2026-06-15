@@ -1,0 +1,119 @@
+[
+  {
+    "node_id": "node_1",
+    "floor_id": 1,
+    "x": 9,
+    "y": 15,
+    "type": "destination",
+    "name": "Node 1",
+    "enabled": true
+  },
+  {
+    "node_id": "node_2",
+    "floor_id": 1,
+    "x": 17,
+    "y": 15,
+    "type": "destination",
+    "name": "Node 2",
+    "enabled": true
+  },
+  {
+    "node_id": "node_3",
+    "floor_id": 1,
+    "x": 24,
+    "y": 15,
+    "type": "destination",
+    "name": "Node 3",
+    "enabled": true
+  },
+  {
+    "node_id": "node_5",
+    "floor_id": 1,
+    "x": 34,
+    "y": 39,
+    "type": "destination",
+    "name": "Node 5",
+    "enabled": true
+  },
+  {
+    "node_id": "node_6",
+    "floor_id": 1,
+    "x": 34,
+    "y": 30,
+    "type": "destination",
+    "name": "Node 6",
+    "enabled": true
+  },
+  {
+    "node_id": "node_7",
+    "floor_id": 1,
+    "x": 25,
+    "y": 30,
+    "type": "destination",
+    "name": "Node 7",
+    "enabled": true
+  },
+  {
+    "node_id": "node_8",
+    "floor_id": 1,
+    "x": 18,
+    "y": 30,
+    "type": "destination",
+    "name": "Node 8",
+    "enabled": true
+  },
+  {
+    "node_id": "node_9",
+    "floor_id": 1,
+    "x": 10,
+    "y": 30,
+    "type": "destination",
+    "name": "Node 9",
+    "enabled": true
+  },
+  {
+    "node_id": "node_10",
+    "floor_id": 1,
+    "x": 10,
+    "y": 32,
+    "type": "destination",
+    "name": "Node 10",
+    "enabled": true
+  },
+  {
+    "node_id": "node_11",
+    "floor_id": 1,
+    "x": 18,
+    "y": 32,
+    "type": "destination",
+    "name": "Node 11",
+    "enabled": true
+  },
+  {
+    "node_id": "node_12",
+    "floor_id": 1,
+    "x": 25,
+    "y": 32,
+    "type": "destination",
+    "name": "Node 12",
+    "enabled": true
+  },
+  {
+    "node_id": "node_13",
+    "floor_id": 1,
+    "x": 24,
+    "y": 39,
+    "type": "destination",
+    "name": "Node 13",
+    "enabled": true
+  },
+  {
+    "node_id": "node_13_2",
+    "floor_id": 1,
+    "x": 34,
+    "y": 15,
+    "type": "destination",
+    "name": "Node 13",
+    "enabled": true
+  }
+]

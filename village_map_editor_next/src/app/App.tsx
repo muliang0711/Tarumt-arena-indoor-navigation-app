@@ -7,23 +7,33 @@ import { MapCanvas } from "../editor/MapCanvas";
 import { MapSettingsPanel } from "../editor/MapSettingsPanel";
 import { ToolPanel } from "../editor/ToolPanel";
 import { exportMapDocument, mapDocumentToJson } from "../map/exportMap";
+import { createNodeSystemExport, nodeSystemGraphToJsonFiles, type NodeSystemJsonFile } from "../map/nodeSystemExport";
 import { editorReducer } from "./editorReducer";
 import { createInitialEditorState, loadEditorState, saveEditorState } from "./editorState";
 
 const initialState = createInitialEditorState();
 const STORAGE_KEY = "village-map-editor-next-state-v1";
 
-async function exportJsonToGeneratedMap(fileName: string, content: string): Promise<{ fileName: string; path: string }> {
+async function exportJsonToGeneratedMap(
+  fileName: string,
+  content: string,
+  nodeSystemFiles: NodeSystemJsonFile[],
+): Promise<{ fileName: string; path: string; nodeSystemFiles: Array<{ fileName: string; path: string }> }> {
   const response = await fetch("/api/export", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ fileName, content }),
+    body: JSON.stringify({ fileName, content, nodeSystemFiles }),
   });
-  const result = (await response.json()) as { fileName?: string; path?: string; error?: string };
+  const result = (await response.json()) as {
+    fileName?: string;
+    path?: string;
+    nodeSystemFiles?: Array<{ fileName: string; path: string }>;
+    error?: string;
+  };
   if (!response.ok || !result.fileName || !result.path) {
     throw new Error(result.error || "Unable to export map.");
   }
-  return { fileName: result.fileName, path: result.path };
+  return { fileName: result.fileName, path: result.path, nodeSystemFiles: result.nodeSystemFiles ?? [] };
 }
 
 export function App() {
@@ -62,8 +72,15 @@ export function App() {
       return;
     }
     try {
-      const result = await exportJsonToGeneratedMap(`${state.document.map.id || "map"}.json`, mapDocumentToJson(exportResult.document));
-      setExportStatus(`Saved ${result.fileName} to ${result.path}`);
+      const graph = createNodeSystemExport(exportResult.document);
+      const nodeSystemFiles = nodeSystemGraphToJsonFiles(graph);
+      const result = await exportJsonToGeneratedMap(
+        `${state.document.map.id || "map"}.json`,
+        mapDocumentToJson(exportResult.document),
+        nodeSystemFiles,
+      );
+      const graphFileNames = result.nodeSystemFiles.map((file) => file.fileName).join(", ");
+      setExportStatus(`Saved ${result.fileName} to ${result.path}; node_system files: ${graphFileNames}`);
     } catch (error) {
       setExportStatus(error instanceof Error ? error.message : "Unable to export map.");
     }
