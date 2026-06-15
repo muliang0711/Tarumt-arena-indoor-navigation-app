@@ -13,7 +13,7 @@ import { createInitialEditorState, loadEditorState, saveEditorState } from "./ed
 const initialState = createInitialEditorState();
 const STORAGE_KEY = "village-map-editor-next-state-v1";
 
-async function exportJsonToProjectRoot(fileName: string, content: string): Promise<{ fileName: string; path: string }> {
+async function exportJsonToGeneratedMap(fileName: string, content: string): Promise<{ fileName: string; path: string }> {
   const response = await fetch("/api/export", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -62,7 +62,7 @@ export function App() {
       return;
     }
     try {
-      const result = await exportJsonToProjectRoot(`${state.document.map.id || "map"}.json`, mapDocumentToJson(exportResult.document));
+      const result = await exportJsonToGeneratedMap(`${state.document.map.id || "map"}.json`, mapDocumentToJson(exportResult.document));
       setExportStatus(`Saved ${result.fileName} to ${result.path}`);
     } catch (error) {
       setExportStatus(error instanceof Error ? error.message : "Unable to export map.");

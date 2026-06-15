@@ -62,7 +62,7 @@ export function ExportPanel({ state, errors, exportStatus, dispatch, onExport, o
       {exportStatus ? <p className="muted">{exportStatus}</p> : null}
       <button className="primary-action" disabled={errors.length > 0} type="button" onClick={onExport}>
         <Download size={18} />
-        Export v2 JSON to root
+        Export v2 JSON to generated_map
       </button>
     </section>
   );

@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const PROJECT_ROOT = path.resolve(__dirname, "..");
+export const GENERATED_MAP_DIR = "generated_map";
 const MAX_EXPORT_BYTES = 25 * 1024 * 1024;
 
 export function sanitizeExportFileName(fileName) {
@@ -20,11 +21,13 @@ export async function writeProjectExportFile(fileName, content, root = PROJECT_R
 
   const safeFileName = sanitizeExportFileName(fileName);
   const resolvedRoot = path.resolve(root);
-  const outputPath = path.resolve(resolvedRoot, safeFileName);
-  if (path.dirname(outputPath) !== resolvedRoot) {
-    throw new Error("Export path must stay inside the project root.");
+  const outputDir = path.resolve(resolvedRoot, GENERATED_MAP_DIR);
+  const outputPath = path.resolve(outputDir, safeFileName);
+  if (path.dirname(outputPath) !== outputDir) {
+    throw new Error("Export path must stay inside generated_map.");
   }
 
+  await fs.mkdir(outputDir, { recursive: true });
   await fs.writeFile(outputPath, content, "utf8");
   return { fileName: safeFileName, path: outputPath };
 }

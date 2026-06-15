@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 
 export const PROJECT_ROOT: string;
+export const GENERATED_MAP_DIR: string;
 export function sanitizeExportFileName(fileName: unknown): string;
 export function writeProjectExportFile(
   fileName: unknown,

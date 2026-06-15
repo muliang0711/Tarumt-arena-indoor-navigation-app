@@ -17,21 +17,22 @@ async function createTempRoot() {
 }
 
 describe("project export writer", () => {
-  it("sanitizes export filenames to root-level json files", () => {
+  it("sanitizes export filenames to generated map json files", () => {
     expect(sanitizeExportFileName("../bad name!.txt")).toBe("bad_name_txt.json");
     expect(sanitizeExportFileName("village_demo_01.json")).toBe("village_demo_01.json");
     expect(sanitizeExportFileName("")).toBe("map.json");
   });
 
-  it("writes and replaces the export file inside the project root", async () => {
+  it("writes and replaces the export file inside generated_map", async () => {
     const root = await createTempRoot();
 
     const first = await writeProjectExportFile("demo.json", "{\"version\":1}\n", root);
     const second = await writeProjectExportFile("../demo.json", "{\"version\":2}\n", root);
 
-    expect(first.path).toBe(path.join(root, "demo.json"));
-    expect(second.path).toBe(path.join(root, "demo.json"));
-    await expect(fs.readFile(path.join(root, "demo.json"), "utf8")).resolves.toBe("{\"version\":2}\n");
-    await expect(fs.readdir(root)).resolves.toEqual(["demo.json"]);
+    expect(first.path).toBe(path.join(root, "generated_map", "demo.json"));
+    expect(second.path).toBe(path.join(root, "generated_map", "demo.json"));
+    await expect(fs.readFile(path.join(root, "generated_map", "demo.json"), "utf8")).resolves.toBe("{\"version\":2}\n");
+    await expect(fs.readdir(root)).resolves.toEqual(["generated_map"]);
+    await expect(fs.readdir(path.join(root, "generated_map"))).resolves.toEqual(["demo.json"]);
   });
 });
