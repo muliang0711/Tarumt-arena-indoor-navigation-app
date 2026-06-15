@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
+import { handleProjectExportRequest } from "./projectExport.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const assetDir = path.resolve(__dirname, "../village_tileset_placeholders/serious_shit");
@@ -29,6 +30,11 @@ export default defineConfig({
           if (requestUrl.pathname === "/api/assets") {
             response.setHeader("Content-Type", "application/json; charset=utf-8");
             response.end(JSON.stringify(assetEntries()));
+            return;
+          }
+
+          if (requestUrl.pathname === "/api/export") {
+            void handleProjectExportRequest(request, response);
             return;
           }
 

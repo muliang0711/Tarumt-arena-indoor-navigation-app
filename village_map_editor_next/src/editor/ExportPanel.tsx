@@ -5,13 +5,14 @@ import type { EditorState } from "../app/editorState";
 interface ExportPanelProps {
   state: EditorState;
   errors: string[];
+  exportStatus: string | null;
   dispatch: React.Dispatch<EditorAction>;
-  onExport: () => void;
+  onExport: () => void | Promise<void>;
   onSave: () => void;
   onLoad: () => void;
 }
 
-export function ExportPanel({ state, errors, dispatch, onExport, onSave, onLoad }: ExportPanelProps) {
+export function ExportPanel({ state, errors, exportStatus, dispatch, onExport, onSave, onLoad }: ExportPanelProps) {
   return (
     <section className="panel">
       <div className="panel-heading">
@@ -58,9 +59,10 @@ export function ExportPanel({ state, errors, dispatch, onExport, onSave, onLoad 
       ) : (
         <p className="ok-text">Map validates as schema v2.</p>
       )}
+      {exportStatus ? <p className="muted">{exportStatus}</p> : null}
       <button className="primary-action" disabled={errors.length > 0} type="button" onClick={onExport}>
         <Download size={18} />
-        Export v2 JSON
+        Export v2 JSON to root
       </button>
     </section>
   );

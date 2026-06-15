@@ -13,22 +13,24 @@ import { createInitialEditorState, loadEditorState, saveEditorState } from "./ed
 const initialState = createInitialEditorState();
 const STORAGE_KEY = "village-map-editor-next-state-v1";
 
-function downloadJson(fileName: string, content: string): void {
-  const blob = new Blob([content], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  URL.revokeObjectURL(url);
+async function exportJsonToProjectRoot(fileName: string, content: string): Promise<{ fileName: string; path: string }> {
+  const response = await fetch("/api/export", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ fileName, content }),
+  });
+  const result = (await response.json()) as { fileName?: string; path?: string; error?: string };
+  if (!response.ok || !result.fileName || !result.path) {
+    throw new Error(result.error || "Unable to export map.");
+  }
+  return { fileName: result.fileName, path: result.path };
 }
 
 export function App() {
   const [state, dispatch] = useReducer(editorReducer, initialState);
   const [images, setImages] = useState(() => new Map<string, HTMLImageElement>());
   const [assetStatus, setAssetStatus] = useState("Loading assets...");
+  const [exportStatus, setExportStatus] = useState<string | null>(null);
   const exportResult = useMemo(() => exportMapDocument(state), [state]);
 
   useEffect(() => {
@@ -55,11 +57,16 @@ export function App() {
     };
   }, [state.document.map.tileSize]);
 
-  function handleExport(): void {
+  async function handleExport(): Promise<void> {
     if (exportResult.errors.length > 0) {
       return;
     }
-    downloadJson(`${state.document.map.id || "map"}.json`, mapDocumentToJson(exportResult.document));
+    try {
+      const result = await exportJsonToProjectRoot(`${state.document.map.id || "map"}.json`, mapDocumentToJson(exportResult.document));
+      setExportStatus(`Saved ${result.fileName} to ${result.path}`);
+    } catch (error) {
+      setExportStatus(error instanceof Error ? error.message : "Unable to export map.");
+    }
   }
 
   function handleSave(): void {
@@ -101,6 +108,7 @@ export function App() {
           <ExportPanel
             dispatch={dispatch}
             errors={exportResult.errors}
+            exportStatus={exportStatus}
             state={state}
             onExport={handleExport}
             onLoad={handleLoad}

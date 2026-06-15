@@ -3,6 +3,7 @@ import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { handleProjectExportRequest } from "./projectExport.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = Number(process.env.PORT || 4174);
@@ -67,6 +68,11 @@ const server = http.createServer((request, response) => {
 
   if (requestUrl.pathname === "/api/assets") {
     sendJson(response, assetEntries());
+    return;
+  }
+
+  if (requestUrl.pathname === "/api/export") {
+    handleProjectExportRequest(request, response);
     return;
   }
 
