@@ -57,20 +57,6 @@ export function HomeScreen({ onOpenFloors }: HomeScreenProps) {
           <QuickAccessCard key={item.label} label={item.label} icon={item.icon} tone={item.tone} />
         ))}
       </View>
-
-      <View style={styles.bottomBar}>
-        {[
-          ['home', 'Home'],
-          ['location-outline', 'Map'],
-          ['git-network-outline', 'Directory'],
-          ['person-outline', 'Profile'],
-        ].map(([icon, label], index) => (
-          <View key={label} style={styles.bottomItem}>
-            <Ionicons name={icon as keyof typeof Ionicons.glyphMap} size={20} color={index === 0 ? colors.orange : colors.textMuted} />
-            <Text style={[styles.bottomLabel, index === 0 && styles.bottomActive]}>{label}</Text>
-          </View>
-        ))}
-      </View>
     </ScreenScaffold>
   );
 }
@@ -172,28 +158,5 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     rowGap: 12,
-  },
-  bottomBar: {
-    minHeight: 72,
-    marginTop: 14,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    borderRadius: radius.lg,
-    backgroundColor: colors.surface,
-    ...shadow,
-  },
-  bottomItem: {
-    alignItems: 'center',
-    gap: 5,
-  },
-  bottomLabel: {
-    color: colors.textMuted,
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  bottomActive: {
-    color: colors.orange,
   },
 });
