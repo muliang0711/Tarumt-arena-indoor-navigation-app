@@ -17,6 +17,7 @@ export type EditorAction =
   | { type: "setAssets"; assets: EditorDocument["assets"]["items"] }
   | { type: "expandMap" }
   | { type: "placeAsset"; placementId: string; assetId: string; x: number; y: number }
+  | { type: "paintAssetTile"; placementId: string; assetId: string; x: number; y: number }
   | { type: "paintRandomBrush"; placementId: string; x: number; y: number }
   | { type: "movePlacement"; placementId: string; x: number; y: number }
   | { type: "deletePlacement"; placementId: string }
@@ -162,19 +163,28 @@ function chooseBrushAssetId(document: EditorDocument, state: EditorState, x: num
   return candidateIds[Math.abs(x + y) % candidateIds.length];
 }
 
-function paintBrushTile(document: EditorDocument, state: EditorState, placementId: string, x: number, y: number): void {
+function paintTileAsset(document: EditorDocument, placementId: string, assetId: string, x: number, y: number): void {
   if (hasBlockingPlacementAt(document, x, y)) {
     return;
   }
 
-  const assetId = chooseBrushAssetId(document, state, x, y);
-  if (!assetId) {
+  const asset = assetForPlacement(document, assetId);
+  if (!asset || asset.blocksMovement || asset.widthTiles !== 1 || asset.heightTiles !== 1) {
     return;
   }
 
   removeReplaceableTilePlacement(document, x, y);
   document.layers.visual.push({ id: placementId, assetId, x, y });
   upsertCollision(document, x, y, "walkable");
+}
+
+function paintBrushTile(document: EditorDocument, state: EditorState, placementId: string, x: number, y: number): void {
+  const assetId = chooseBrushAssetId(document, state, x, y);
+  if (!assetId) {
+    return;
+  }
+
+  paintTileAsset(document, placementId, assetId, x, y);
 }
 
 function linkExists(document: EditorDocument, from: string, to: string): boolean {
@@ -329,6 +339,10 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
         },
         { kind: "placement", id: action.placementId },
       );
+    case "paintAssetTile":
+      return updateDocument(state, (document) => {
+        paintTileAsset(document, action.placementId, action.assetId, action.x, action.y);
+      });
     case "paintRandomBrush":
       return updateDocument(state, (document) => {
         paintBrushTile(document, state, action.placementId, action.x, action.y);

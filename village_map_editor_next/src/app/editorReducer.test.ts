@@ -174,6 +174,23 @@ describe("editorReducer", () => {
     ]);
   });
 
+  it("paints a selected road tile by replacing existing 1x1 walkable tiles", () => {
+    let state = createInitialEditorState({ assets: [roadAsset, roadAssetAlt] });
+
+    state = editorReducer(state, { type: "paintAssetTile", placementId: "road_old", assetId: "walkable_road_dirt", x: 2, y: 2 });
+    state = editorReducer(state, { type: "paintAssetTile", placementId: "road_new", assetId: "walkable_road_clean", x: 2, y: 2 });
+    state = editorReducer(state, { type: "paintAssetTile", placementId: "road_next", assetId: "walkable_road_clean", x: 3, y: 2 });
+
+    expect(state.document.layers.visual).toEqual([
+      { id: "road_new", assetId: "walkable_road_clean", x: 2, y: 2 },
+      { id: "road_next", assetId: "walkable_road_clean", x: 3, y: 2 },
+    ]);
+    expect(state.document.layers.collision).toEqual([
+      { x: 2, y: 2, state: "walkable" },
+      { x: 3, y: 2, state: "walkable" },
+    ]);
+  });
+
   it("paints collision cells by replacing previous cell state", () => {
     let state = createInitialEditorState({ assets: [asset] });
 

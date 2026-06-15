@@ -39,6 +39,11 @@ function collisionAt(state: EditorState, tile: TilePoint) {
   return state.document.layers.collision.find((cell) => cell.x === tile.x && cell.y === tile.y) ?? null;
 }
 
+function isPaintableTileAsset(state: EditorState, assetId: string): boolean {
+  const asset = state.document.assets.items.find((item) => item.id === assetId);
+  return Boolean(asset && !asset.blocksMovement && asset.widthTiles === 1 && asset.heightTiles === 1);
+}
+
 function isInsideMap(state: EditorState, tile: TilePoint): boolean {
   return tile.x >= 0 && tile.y >= 0 && tile.x < state.document.map.width && tile.y < state.document.map.height;
 }
@@ -77,6 +82,8 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
   const [dragPlacementId, setDragPlacementId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState<TilePoint>({ x: 0, y: 0 });
   const [brushActive, setBrushActive] = useState(false);
+  const [paintDragAssetId, setPaintDragAssetId] = useState<string | null>(null);
+  const lastPaintTileKeyRef = useRef<string | null>(null);
 
   const canvasWidth = state.document.map.width * state.document.map.tileSize * state.viewport.zoom;
   const canvasHeight = state.document.map.height * state.document.map.tileSize * state.viewport.zoom;
@@ -137,6 +144,20 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
     });
   }
 
+  function tileKey(tile: TilePoint): string {
+    return `${tile.x},${tile.y}`;
+  }
+
+  function paintSelectedTile(assetId: string, tile: TilePoint): void {
+    dispatch({
+      type: "paintAssetTile",
+      placementId: `${assetId}_${tile.x}_${tile.y}_${Date.now().toString(36)}`,
+      assetId,
+      x: tile.x,
+      y: tile.y,
+    });
+  }
+
   function handleLink(tile: TilePoint): void {
     const node = nodeAt(state, tile);
     if (!node) {
@@ -168,6 +189,14 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
     }
 
     if (state.activeTool === "place" && state.selectedAssetId) {
+      if (isPaintableTileAsset(state, state.selectedAssetId)) {
+        setPaintDragAssetId(state.selectedAssetId);
+        lastPaintTileKeyRef.current = tileKey(tile);
+        paintSelectedTile(state.selectedAssetId, tile);
+        event.currentTarget.setPointerCapture(event.pointerId);
+        return;
+      }
+
       dispatch({
         type: "placeAsset",
         placementId: `${state.selectedAssetId}_${Date.now().toString(36)}`,
@@ -235,14 +264,24 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
     if (brushActive && tile) {
       dispatch({ type: "paintRandomBrush", placementId: `brush_${tile.x}_${tile.y}_${Date.now().toString(36)}`, x: tile.x, y: tile.y });
     }
+
+    if (paintDragAssetId && tile) {
+      const key = tileKey(tile);
+      if (lastPaintTileKeyRef.current !== key) {
+        lastPaintTileKeyRef.current = key;
+        paintSelectedTile(paintDragAssetId, tile);
+      }
+    }
   }
 
   function stopDragging(event: React.PointerEvent<HTMLCanvasElement>): void {
-    if (dragPlacementId || brushActive) {
+    if (dragPlacementId || brushActive || paintDragAssetId) {
       event.currentTarget.releasePointerCapture(event.pointerId);
     }
     setDragPlacementId(null);
     setBrushActive(false);
+    setPaintDragAssetId(null);
+    lastPaintTileKeyRef.current = null;
   }
 
   return (
