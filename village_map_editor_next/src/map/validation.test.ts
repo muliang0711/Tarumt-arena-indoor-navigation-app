@@ -28,9 +28,46 @@ const validMap = (): MapDocumentV2 => ({
   spawn: { x: 1, y: 1, direction: "down" },
 });
 
+const validMapV3 = () => ({
+  schemaVersion: 3 as const,
+  map: { id: "village_demo_01", name: "Village Demo", floor: "1", tileSize: 16, width: 30, height: 20 },
+  assets: validMap().assets,
+  display: {
+    assets: validMap().assets.items,
+    visualLayers: validMap().layers.visual,
+    labels: [],
+    icons: [],
+    layerOrder: ["assets", "visualLayers", "labels", "icons"],
+  },
+  movement: {
+    coordinateSystem: {
+      unit: "meter" as const,
+      origin: "top-left" as const,
+      scale: 0.4,
+      pixelsPerMeter: 40,
+      tilesPerMeter: 2.5,
+    },
+    bounds: { x: 0, y: 0, width: 12, height: 8 },
+    rooms: [],
+    corridors: [],
+    walkableAreas: [],
+    walls: [],
+    doors: [],
+    entrances: [],
+    routeGraph: { nodes: [], edges: [] },
+  },
+  layers: validMap().layers,
+  navigation: validMap().navigation,
+  spawn: validMap().spawn,
+});
+
 describe("validateMapDocument", () => {
   it("accepts a valid v2 map", () => {
     expect(validateMapDocument(validMap())).toEqual([]);
+  });
+
+  it("accepts a valid v3 map", () => {
+    expect(validateMapDocument(validMapV3())).toEqual([]);
   });
 
   it("rejects duplicate node ids", () => {

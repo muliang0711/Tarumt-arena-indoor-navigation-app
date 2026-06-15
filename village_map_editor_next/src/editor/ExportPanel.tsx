@@ -57,7 +57,7 @@ export function ExportPanel({ state, errors, exportStatus, dispatch, onExport, o
           ))}
         </div>
       ) : (
-        <p className="ok-text">Map validates as schema v2.</p>
+        <p className="ok-text">Map validates as schema v3 export.</p>
       )}
       {exportStatus ? <p className="muted">{exportStatus}</p> : null}
       <button className="primary-action" disabled={errors.length > 0} type="button" onClick={onExport}>

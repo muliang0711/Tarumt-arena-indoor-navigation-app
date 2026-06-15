@@ -108,7 +108,7 @@ export function App() {
           <h1>{state.document.map.name}</h1>
         </div>
         <div className="topbar-meta">
-          <span>Schema v2</span>
+          <span>Schema v3 export</span>
           <span>{state.document.assets.items.length} assets</span>
           <span>{assetStatus}</span>
         </div>

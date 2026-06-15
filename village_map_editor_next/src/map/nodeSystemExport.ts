@@ -1,4 +1,11 @@
-import type { MapDocumentV2, NavigationLink, NavigationNode } from "./schema";
+import type { NavigationLink, NavigationNode } from "./schema";
+
+type MapDocumentWithNavigation = {
+  navigation: {
+    nodes: NavigationNode[];
+    links: NavigationLink[];
+  };
+};
 
 export interface BackendNode {
   node_id: string;
@@ -70,7 +77,7 @@ function createBackendEdge(link: NavigationLink, nodesById: Map<string, Navigati
   };
 }
 
-export function createNodeSystemExport(document: MapDocumentV2): NodeSystemGraph {
+export function createNodeSystemExport(document: MapDocumentWithNavigation): NodeSystemGraph {
   const nodesById = new Map(document.navigation.nodes.map((node) => [node.id, node]));
 
   return {
