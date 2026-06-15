@@ -48,6 +48,14 @@ const roadAssetAlt = {
   blocksMovement: false,
 };
 
+const wallAsset = {
+  id: "wall_up",
+  src: "wall_up.png",
+  widthTiles: 1,
+  heightTiles: 1,
+  blocksMovement: true,
+};
+
 describe("editorReducer", () => {
   it("places, moves, and deletes a visual asset", () => {
     let state = createInitialEditorState({ assets: [asset] });
@@ -208,6 +216,41 @@ describe("editorReducer", () => {
       { x: 6, y: 5, state: "blocked" },
       { x: 5, y: 6, state: "blocked" },
       { x: 6, y: 6, state: "blocked" },
+    ]);
+  });
+
+  it("removes road tiles outside the enclosed wall when mapping is done", () => {
+    let state = createInitialEditorState({ assets: [roadAsset, wallAsset] });
+    for (let x = 2; x <= 6; x += 1) {
+      state = editorReducer(state, { type: "placeAsset", placementId: `wall_top_${x}`, assetId: "wall_up", x, y: 2 });
+      state = editorReducer(state, { type: "placeAsset", placementId: `wall_bottom_${x}`, assetId: "wall_up", x, y: 6 });
+    }
+    for (let y = 3; y <= 5; y += 1) {
+      state = editorReducer(state, { type: "placeAsset", placementId: `wall_left_${y}`, assetId: "wall_up", x: 2, y });
+      state = editorReducer(state, { type: "placeAsset", placementId: `wall_right_${y}`, assetId: "wall_up", x: 6, y });
+    }
+    state = editorReducer(state, { type: "paintAssetTile", placementId: "road_inside", assetId: "walkable_road_clean", x: 4, y: 4 });
+    state = editorReducer(state, { type: "paintAssetTile", placementId: "road_outside", assetId: "walkable_road_clean", x: 8, y: 4 });
+
+    state = editorReducer(state, { type: "doneMapping" });
+
+    expect(state.document.layers.visual.filter((placement) => placement.assetId === "walkable_road_clean")).toEqual([
+      { id: "road_inside", assetId: "walkable_road_clean", x: 4, y: 4 },
+    ]);
+    expect(state.document.layers.collision).toContainEqual({ x: 4, y: 4, state: "walkable" });
+    expect(state.document.layers.collision).not.toContainEqual({ x: 8, y: 4, state: "walkable" });
+  });
+
+  it("leaves roads unchanged when no enclosed wall exists", () => {
+    let state = createInitialEditorState({ assets: [roadAsset, wallAsset] });
+    state = editorReducer(state, { type: "paintAssetTile", placementId: "road_one", assetId: "walkable_road_clean", x: 4, y: 4 });
+    state = editorReducer(state, { type: "paintAssetTile", placementId: "road_two", assetId: "walkable_road_clean", x: 8, y: 4 });
+
+    state = editorReducer(state, { type: "doneMapping" });
+
+    expect(state.document.layers.visual.filter((placement) => placement.assetId === "walkable_road_clean")).toEqual([
+      { id: "road_one", assetId: "walkable_road_clean", x: 4, y: 4 },
+      { id: "road_two", assetId: "walkable_road_clean", x: 8, y: 4 },
     ]);
   });
 

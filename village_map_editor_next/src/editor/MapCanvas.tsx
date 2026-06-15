@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Maximize2 } from "lucide-react";
+import { CheckCheck, Maximize2 } from "lucide-react";
 import type { EditorAction } from "../app/editorReducer";
 import type { EditorState } from "../app/editorState";
 import { createLinkId, createNodeId } from "../app/editorState";
@@ -294,6 +294,10 @@ export function MapCanvas({ state, dispatch, images }: MapCanvasProps) {
           <button title="Expand map" type="button" onClick={() => dispatch({ type: "expandMap" })}>
             <Maximize2 size={15} />
             Expand Map
+          </button>
+          <button title="Remove roads outside the wall" type="button" onClick={() => dispatch({ type: "doneMapping" })}>
+            <CheckCheck size={15} />
+            Done Mapping
           </button>
         </div>
         <div className="canvas-toolbar-group">

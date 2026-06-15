@@ -30,6 +30,7 @@ export type EditorAction =
   | { type: "deleteLink"; linkId: string }
   | { type: "autoLinkStraightNodes" }
   | { type: "fillLinkedNodePaths" }
+  | { type: "doneMapping" }
   | { type: "setLinkStart"; nodeId: string | null }
   | { type: "replaceDocument"; document: EditorDocument }
   | { type: "undo" }
@@ -155,6 +156,119 @@ function removeReplaceableTilePlacement(document: EditorDocument, x: number, y: 
       return true;
     }
     return !(placement.x === x && placement.y === y && asset.widthTiles === 1 && asset.heightTiles === 1);
+  });
+}
+
+function isRoadAssetId(assetId: string): boolean {
+  return assetId.toLowerCase().includes("road");
+}
+
+function isWallAssetId(assetId: string): boolean {
+  return assetId.toLowerCase().startsWith("wall");
+}
+
+function placementCells(document: EditorDocument, placement: MapPlacement): Array<{ x: number; y: number }> {
+  const asset = assetForPlacement(document, placement.assetId);
+  if (!asset) {
+    return [{ x: placement.x, y: placement.y }];
+  }
+
+  return Array.from({ length: asset.heightTiles }, (_, y) => Array.from({ length: asset.widthTiles }, (__, x) => ({ x: placement.x + x, y: placement.y + y }))).flat();
+}
+
+function cleanupRoadsOutsideWalls(document: EditorDocument): void {
+  const wallCells = new Set<string>();
+  for (const placement of document.layers.visual) {
+    if (!isWallAssetId(placement.assetId)) {
+      continue;
+    }
+    for (const cell of placementCells(document, placement)) {
+      wallCells.add(`${cell.x},${cell.y}`);
+    }
+  }
+
+  if (wallCells.size === 0) {
+    return;
+  }
+
+  const exterior = new Set<string>();
+  const queue: Array<{ x: number; y: number }> = [];
+
+  function enqueue(x: number, y: number): void {
+    if (x < 0 || y < 0 || x >= document.map.width || y >= document.map.height) {
+      return;
+    }
+    const key = `${x},${y}`;
+    if (wallCells.has(key) || exterior.has(key)) {
+      return;
+    }
+    exterior.add(key);
+    queue.push({ x, y });
+  }
+
+  for (let x = 0; x < document.map.width; x += 1) {
+    enqueue(x, 0);
+    enqueue(x, document.map.height - 1);
+  }
+  for (let y = 0; y < document.map.height; y += 1) {
+    enqueue(0, y);
+    enqueue(document.map.width - 1, y);
+  }
+
+  while (queue.length > 0) {
+    const cell = queue.shift();
+    if (!cell) {
+      continue;
+    }
+    enqueue(cell.x + 1, cell.y);
+    enqueue(cell.x - 1, cell.y);
+    enqueue(cell.x, cell.y + 1);
+    enqueue(cell.x, cell.y - 1);
+  }
+
+  const enclosedCells = new Set<string>();
+  for (let y = 0; y < document.map.height; y += 1) {
+    for (let x = 0; x < document.map.width; x += 1) {
+      const key = `${x},${y}`;
+      if (!wallCells.has(key) && !exterior.has(key)) {
+        enclosedCells.add(key);
+      }
+    }
+  }
+
+  if (enclosedCells.size === 0) {
+    return;
+  }
+
+  const removedRoadCells = new Set<string>();
+  document.layers.visual = document.layers.visual.filter((placement) => {
+    if (!isRoadAssetId(placement.assetId)) {
+      return true;
+    }
+
+    const cells = placementCells(document, placement);
+    const inside = cells.every((cell) => enclosedCells.has(`${cell.x},${cell.y}`));
+    if (!inside) {
+      for (const cell of cells) {
+        removedRoadCells.add(`${cell.x},${cell.y}`);
+      }
+    }
+    return inside;
+  });
+
+  const remainingRoadCells = new Set<string>();
+  for (const placement of document.layers.visual) {
+    if (!isRoadAssetId(placement.assetId)) {
+      continue;
+    }
+    for (const cell of placementCells(document, placement)) {
+      remainingRoadCells.add(`${cell.x},${cell.y}`);
+    }
+  }
+
+  document.layers.collision = document.layers.collision.filter((cell) => {
+    const key = `${cell.x},${cell.y}`;
+    return !(cell.state === "walkable" && removedRoadCells.has(key) && !remainingRoadCells.has(key));
   });
 }
 
@@ -418,6 +532,8 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return updateDocument(state, (document) => autoLinkStraightNodes(document));
     case "fillLinkedNodePaths":
       return updateDocument(state, (document) => fillLinkedNodePaths(document, state));
+    case "doneMapping":
+      return updateDocument(state, (document) => cleanupRoadsOutsideWalls(document));
     case "undo": {
       const previous = state.history.past.at(-1);
       if (!previous) {
