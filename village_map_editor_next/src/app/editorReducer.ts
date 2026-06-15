@@ -30,6 +30,7 @@ export type EditorAction =
   | { type: "deleteLink"; linkId: string }
   | { type: "autoLinkStraightNodes" }
   | { type: "fillLinkedNodePaths" }
+  | { type: "fillMapWithRoad2" }
   | { type: "doneMapping" }
   | { type: "setLinkStart"; nodeId: string | null }
   | { type: "replaceDocument"; document: EditorDocument }
@@ -269,6 +270,44 @@ function cleanupRoadsOutsideWalls(document: EditorDocument): void {
   document.layers.collision = document.layers.collision.filter((cell) => {
     const key = `${cell.x},${cell.y}`;
     return !(cell.state === "walkable" && removedRoadCells.has(key) && !remainingRoadCells.has(key));
+  });
+}
+
+function fillMapWithRoad2(document: EditorDocument): void {
+  const roadAsset = assetForPlacement(document, "road_2");
+  if (!roadAsset || roadAsset.blocksMovement || roadAsset.widthTiles !== 1 || roadAsset.heightTiles !== 1) {
+    return;
+  }
+
+  const existingRoadCells = new Set<string>();
+  document.layers.visual = document.layers.visual.filter((placement) => {
+    if (!isRoadAssetId(placement.assetId)) {
+      return true;
+    }
+
+    for (const cell of placementCells(document, placement)) {
+      existingRoadCells.add(`${cell.x},${cell.y}`);
+    }
+    return false;
+  });
+
+  const filledCells = new Set<string>();
+  for (let y = 0; y < document.map.height; y += 1) {
+    for (let x = 0; x < document.map.width; x += 1) {
+      if (hasBlockingPlacementAt(document, x, y)) {
+        continue;
+      }
+
+      const key = `${x},${y}`;
+      filledCells.add(key);
+      document.layers.visual.push({ id: `road_2_fill_${x}_${y}`, assetId: "road_2", x, y });
+      upsertCollision(document, x, y, "walkable");
+    }
+  }
+
+  document.layers.collision = document.layers.collision.filter((cell) => {
+    const key = `${cell.x},${cell.y}`;
+    return !(cell.state === "walkable" && existingRoadCells.has(key) && !filledCells.has(key));
   });
 }
 
@@ -532,6 +571,8 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return updateDocument(state, (document) => autoLinkStraightNodes(document));
     case "fillLinkedNodePaths":
       return updateDocument(state, (document) => fillLinkedNodePaths(document, state));
+    case "fillMapWithRoad2":
+      return updateDocument(state, (document) => fillMapWithRoad2(document));
     case "doneMapping":
       return updateDocument(state, (document) => cleanupRoadsOutsideWalls(document));
     case "undo": {
