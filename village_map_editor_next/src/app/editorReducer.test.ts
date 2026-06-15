@@ -191,6 +191,26 @@ describe("editorReducer", () => {
     ]);
   });
 
+  it("allows road painting inside transparent margins of shaped blocking assets", () => {
+    let state = createInitialEditorState({ assets: [shapedBuildingAsset, roadAsset] });
+    state = editorReducer(state, { type: "placeAsset", placementId: "building", assetId: "shaped_building", x: 6, y: 6 });
+
+    state = editorReducer(state, { type: "paintAssetTile", placementId: "road_margin", assetId: "walkable_road_clean", x: 4, y: 5 });
+    state = editorReducer(state, { type: "paintAssetTile", placementId: "road_blocked", assetId: "walkable_road_clean", x: 5, y: 5 });
+
+    expect(state.document.layers.visual).toEqual([
+      { id: "building", assetId: "shaped_building", x: 4, y: 5 },
+      { id: "road_margin", assetId: "walkable_road_clean", x: 4, y: 5 },
+    ]);
+    expect(state.document.layers.collision).toEqual([
+      { x: 4, y: 5, state: "walkable" },
+      { x: 5, y: 5, state: "blocked" },
+      { x: 6, y: 5, state: "blocked" },
+      { x: 5, y: 6, state: "blocked" },
+      { x: 6, y: 6, state: "blocked" },
+    ]);
+  });
+
   it("paints collision cells by replacing previous cell state", () => {
     let state = createInitialEditorState({ assets: [asset] });
 

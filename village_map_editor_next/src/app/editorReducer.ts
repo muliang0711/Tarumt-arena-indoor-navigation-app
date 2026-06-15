@@ -111,18 +111,19 @@ function placementFromClick(document: EditorDocument, placementId: string, asset
   };
 }
 
+function blockingOffsetsForAsset(asset: { widthTiles: number; heightTiles: number; blockedOffsets?: Array<{ x: number; y: number }> }) {
+  return asset.blockedOffsets && asset.blockedOffsets.length > 0
+    ? asset.blockedOffsets
+    : Array.from({ length: asset.heightTiles }, (_, y) => Array.from({ length: asset.widthTiles }, (__, x) => ({ x, y }))).flat();
+}
+
 function autoBlockPlacementFootprint(document: EditorDocument, placement: MapPlacement): void {
   const asset = assetForPlacement(document, placement.assetId);
   if (!asset?.blocksMovement) {
     return;
   }
 
-  const offsets =
-    asset.blockedOffsets && asset.blockedOffsets.length > 0
-      ? asset.blockedOffsets
-      : Array.from({ length: asset.heightTiles }, (_, y) => Array.from({ length: asset.widthTiles }, (__, x) => ({ x, y }))).flat();
-
-  for (const offset of offsets) {
+  for (const offset of blockingOffsetsForAsset(asset)) {
     const x = placement.x + offset.x;
     const y = placement.y + offset.y;
     if (x >= 0 && y >= 0 && x < document.map.width && y < document.map.height) {
@@ -131,14 +132,19 @@ function autoBlockPlacementFootprint(document: EditorDocument, placement: MapPla
   }
 }
 
-function assetCoversTile(asset: { widthTiles: number; heightTiles: number }, placement: MapPlacement, x: number, y: number): boolean {
-  return x >= placement.x && y >= placement.y && x < placement.x + asset.widthTiles && y < placement.y + asset.heightTiles;
+function blockingPlacementCoversTile(
+  asset: { widthTiles: number; heightTiles: number; blockedOffsets?: Array<{ x: number; y: number }> },
+  placement: MapPlacement,
+  x: number,
+  y: number,
+): boolean {
+  return blockingOffsetsForAsset(asset).some((offset) => placement.x + offset.x === x && placement.y + offset.y === y);
 }
 
 function hasBlockingPlacementAt(document: EditorDocument, x: number, y: number): boolean {
   return document.layers.visual.some((placement) => {
     const asset = assetForPlacement(document, placement.assetId);
-    return Boolean(asset?.blocksMovement && assetCoversTile(asset, placement, x, y));
+    return Boolean(asset?.blocksMovement && blockingPlacementCoversTile(asset, placement, x, y));
   });
 }
 
