@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   searchWrap: {
-    marginTop: -28,
+    marginTop: 12,
     paddingHorizontal: 0,
   },
   primaryButton: {
