@@ -262,7 +262,7 @@ describe("editorReducer", () => {
     ]);
   });
 
-  it("fills paintable map cells with road_2 and skips wall cells", () => {
+  it("fills base layer cells with road_2 under wall cells without changing blocked collision", () => {
     let state = createInitialEditorState({ assets: [road2Asset, roadAsset, wallAsset] });
     state = editorReducer(state, { type: "setMapInfo", map: { width: 4, height: 3 } });
     state = editorReducer(state, { type: "placeAsset", placementId: "wall", assetId: "wall_up", x: 1, y: 1 });
@@ -271,11 +271,12 @@ describe("editorReducer", () => {
     state = editorReducer(state, { type: "fillMapWithRoad2" });
 
     const roadPlacements = state.document.layers.visual.filter((placement) => placement.assetId === "road_2");
-    expect(roadPlacements).toHaveLength(11);
+    expect(roadPlacements).toHaveLength(12);
     expect(roadPlacements).toContainEqual({ id: "road_2_fill_0_0", assetId: "road_2", x: 0, y: 0 });
+    expect(roadPlacements).toContainEqual({ id: "road_2_fill_1_1", assetId: "road_2", x: 1, y: 1 });
     expect(roadPlacements).toContainEqual({ id: "road_2_fill_2_1", assetId: "road_2", x: 2, y: 1 });
-    expect(roadPlacements).not.toContainEqual({ id: "road_2_fill_1_1", assetId: "road_2", x: 1, y: 1 });
     expect(state.document.layers.visual).toContainEqual({ id: "wall", assetId: "wall_up", x: 1, y: 1 });
+    expect(state.document.layers.visual.at(-1)).toEqual({ id: "wall", assetId: "wall_up", x: 1, y: 1 });
     expect(state.document.layers.visual.some((placement) => placement.id === "old_road")).toBe(false);
     expect(state.document.layers.collision).toContainEqual({ x: 1, y: 1, state: "blocked" });
     expect(state.document.layers.collision).not.toContainEqual({ x: 1, y: 1, state: "walkable" });

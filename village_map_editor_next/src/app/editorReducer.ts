@@ -280,34 +280,33 @@ function fillMapWithRoad2(document: EditorDocument): void {
   }
 
   const existingRoadCells = new Set<string>();
-  document.layers.visual = document.layers.visual.filter((placement) => {
+  const nonRoadPlacements: MapPlacement[] = [];
+  for (const placement of document.layers.visual) {
     if (!isRoadAssetId(placement.assetId)) {
-      return true;
+      nonRoadPlacements.push(placement);
+      continue;
     }
 
     for (const cell of placementCells(document, placement)) {
       existingRoadCells.add(`${cell.x},${cell.y}`);
     }
-    return false;
-  });
+  }
 
   const collisionByCell = new Map(document.layers.collision.map((cell) => [`${cell.x},${cell.y}`, cell]));
   const filledCells = new Set<string>();
   const roadPlacements: MapPlacement[] = [];
   for (let y = 0; y < document.map.height; y += 1) {
     for (let x = 0; x < document.map.width; x += 1) {
-      if (hasBlockingPlacementAt(document, x, y)) {
-        continue;
-      }
-
       const key = `${x},${y}`;
       filledCells.add(key);
       roadPlacements.push({ id: `road_2_fill_${x}_${y}`, assetId: "road_2", x, y });
-      collisionByCell.set(key, { x, y, state: "walkable" });
+      if (collisionByCell.get(key)?.state !== "blocked") {
+        collisionByCell.set(key, { x, y, state: "walkable" });
+      }
     }
   }
 
-  document.layers.visual.push(...roadPlacements);
+  document.layers.visual = [...roadPlacements, ...nonRoadPlacements];
   document.layers.collision = [...collisionByCell.values()].filter((cell) => {
     const key = `${cell.x},${cell.y}`;
     return !(cell.state === "walkable" && existingRoadCells.has(key) && !filledCells.has(key));
