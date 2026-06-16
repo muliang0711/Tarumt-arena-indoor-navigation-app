@@ -1,4 +1,11 @@
 import { ActorLayer, buildBobActorAtNode, routeNodeToPixels } from './actor_system/actorSystem';
+import {
+  CameraViewport,
+  centerCameraOnPoint,
+  fitCameraToBounds,
+  panCamera,
+  zoomCamera,
+} from './cameran_system/cameranSystem';
 import { ArenaMapEngineView, ArenaMapView } from './map-controller';
 import {
   getVisualBounds,
@@ -32,10 +39,16 @@ const orderedIds: string[] = orderVisualLayers(parsed.visualLayers).map((layer) 
 const bounds = getVisualBounds(parsed);
 const bob = buildBobActorAtNode(parsed, 'node_1');
 const bobPixels = routeNodeToPixels(bob, parsed.movement.coordinateSystem.pixelsPerMeter);
+const fittedCamera = fitCameraToBounds(bounds, { width: 360, height: 390 });
+const followedCamera = centerCameraOnPoint(fittedCamera, bobPixels, { width: 360, height: 390 });
+const zoomedCamera = zoomCamera(followedCamera, 1.2);
+const pannedCamera = panCamera(zoomedCamera, { x: 12, y: -8 });
 
 void ActorLayer;
 void ArenaMapEngineView;
 void ArenaMapView;
+void CameraViewport;
 void orderedIds;
 void bounds;
 void bobPixels;
+void pannedCamera;

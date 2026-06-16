@@ -25,10 +25,10 @@ export function ActorLayer({ actors, layout, pixelsPerMeter }: ActorLayerProps) 
             style={[
               styles.actor,
               {
-                left: (point.x - layout.bounds.x) * layout.scale - (BOB_SIZE * layout.scale) / 2,
-                top: (point.y - layout.bounds.y) * layout.scale - BOB_SIZE * layout.scale,
-                width: BOB_SIZE * layout.scale,
-                height: BOB_SIZE * layout.scale,
+                left: point.x - layout.bounds.x - BOB_SIZE / 2,
+                top: point.y - layout.bounds.y - BOB_SIZE,
+                width: BOB_SIZE,
+                height: BOB_SIZE,
               },
             ]}
           />

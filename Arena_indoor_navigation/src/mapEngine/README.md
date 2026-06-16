@@ -37,4 +37,10 @@ Owns movement estimation and future path updates. It should output positions or 
 
 ## `cameran_system/`
 
-Reserved for viewport/camera behavior. It should transform or follow view state; it should not own map or actor rendering.
+Owns viewport/camera behavior.
+
+- `cameraModel.ts`: pure camera math for fitting bounds, following a point, zooming, and panning.
+- `CameraViewport.tsx`: React Native transform wrapper that applies camera state to child content.
+- `cameranSystem.ts`: subsystem barrel export.
+
+Do not put map tile rendering, Bob creation, actor rendering, movement, or sensor logic in this folder.
