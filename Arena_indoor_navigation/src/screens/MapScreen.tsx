@@ -5,6 +5,7 @@ import { Header } from '../components/Header';
 import { ScreenScaffold } from '../components/ScreenScaffold';
 import { SearchBar } from '../components/SearchBar';
 import { colors, radius, shadow } from '../components/theme';
+import { ArenaMapView } from '../mapEngine/map-controller';
 
 const destinations: Array<{
   label: string;
@@ -34,41 +35,16 @@ export function MapScreen() {
           </View>
         </View>
 
-        <View style={styles.mapCanvas}>
-          <View style={[styles.room, styles.roomA]}>
-            <Text style={styles.roomLabel}>A101</Text>
-          </View>
-          <View style={[styles.room, styles.roomB]}>
-            <Text style={styles.roomLabel}>Lab</Text>
-          </View>
-          <View style={[styles.room, styles.roomC]}>
-            <Text style={styles.roomLabel}>Office</Text>
-          </View>
-          <View style={[styles.room, styles.roomD]}>
-            <Text style={styles.roomLabel}>Cafe</Text>
-          </View>
-
-          <View style={styles.corridorHorizontal} />
-          <View style={styles.corridorVertical} />
-          <View style={styles.routeLine} />
-          <View style={styles.routeTurn} />
-
-          <View style={[styles.marker, styles.startMarker]}>
-            <Ionicons name="person" size={17} color="#ffffff" />
-          </View>
-          <View style={[styles.marker, styles.endMarker]}>
-            <Ionicons name="flag" size={17} color="#ffffff" />
-          </View>
-        </View>
+        <ArenaMapView height={390} />
       </View>
 
       <View style={styles.routeSummary}>
         <View>
-          <Text style={styles.summaryLabel}>Current route</Text>
-          <Text style={styles.summaryTitle}>Entrance to Lecture Hall A</Text>
+          <Text style={styles.summaryLabel}>Map render</Text>
+          <Text style={styles.summaryTitle}>Village demo map loaded</Text>
         </View>
         <View style={styles.distanceBadge}>
-          <Text style={styles.distanceText}>80 m</Text>
+          <Text style={styles.distanceText}>Level 2</Text>
         </View>
       </View>
 
@@ -135,105 +111,6 @@ const styles = StyleSheet.create({
     color: colors.green,
     fontSize: 12,
     fontWeight: '900',
-  },
-  mapCanvas: {
-    height: 390,
-    overflow: 'hidden',
-    borderRadius: radius.md,
-    backgroundColor: '#e9ddcf',
-  },
-  room: {
-    position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: colors.border,
-    borderRadius: radius.sm,
-    backgroundColor: colors.surfaceMuted,
-  },
-  roomA: {
-    top: 24,
-    left: 20,
-    width: 116,
-    height: 112,
-  },
-  roomB: {
-    top: 24,
-    right: 20,
-    width: 132,
-    height: 112,
-  },
-  roomC: {
-    bottom: 26,
-    left: 20,
-    width: 126,
-    height: 122,
-  },
-  roomD: {
-    bottom: 26,
-    right: 20,
-    width: 122,
-    height: 122,
-  },
-  roomLabel: {
-    color: colors.text,
-    fontSize: 13,
-    fontWeight: '900',
-  },
-  corridorHorizontal: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: 175,
-    height: 42,
-    backgroundColor: '#fff8ef',
-  },
-  corridorVertical: {
-    position: 'absolute',
-    left: '46%',
-    top: 0,
-    bottom: 0,
-    width: 42,
-    backgroundColor: '#fff8ef',
-  },
-  routeLine: {
-    position: 'absolute',
-    left: 82,
-    top: 191,
-    width: 158,
-    height: 8,
-    borderRadius: radius.pill,
-    backgroundColor: colors.orange,
-  },
-  routeTurn: {
-    position: 'absolute',
-    left: 232,
-    top: 78,
-    width: 8,
-    height: 120,
-    borderRadius: radius.pill,
-    backgroundColor: colors.orange,
-  },
-  marker: {
-    position: 'absolute',
-    width: 34,
-    height: 34,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.pill,
-    borderWidth: 3,
-    borderColor: '#ffffff',
-    ...shadow,
-  },
-  startMarker: {
-    left: 64,
-    top: 178,
-    backgroundColor: colors.green,
-  },
-  endMarker: {
-    left: 217,
-    top: 64,
-    backgroundColor: colors.orange,
   },
   routeSummary: {
     minHeight: 74,

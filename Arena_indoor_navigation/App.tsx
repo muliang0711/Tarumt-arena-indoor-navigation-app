@@ -9,7 +9,7 @@ import { MapScreen } from './src/screens/MapScreen';
 import { RoomSelectionScreen } from './src/screens/RoomSelectionScreen';
 
 export default function App() {
-  const [activeScreen, setActiveScreen] = useState<ScreenKey>('home');
+  const [activeScreen, setActiveScreen] = useState<ScreenKey>('map');
 
   return (
     <SafeAreaView style={styles.safeArea}>
