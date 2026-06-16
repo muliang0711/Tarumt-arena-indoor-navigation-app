@@ -6,6 +6,7 @@ import { getVisualBounds, orderVisualLayers } from "../map-renderer/LayerCompose
 import { ActorRenderer, metersToPixels, routeNodeToPixels, verifyNodeACheck } from "../actor-system/index.js";
 import { createBobSpriteManifest, selectBobSprite } from "../actor-system/BobSprites.js";
 import { buildNodePath, createBobAtNode, createNodeRouteRunner } from "../tmp-system/BobRouteRunner.js";
+import { CameraController, Transform } from "../camera-system/index.js";
 
 const rawMap = JSON.parse(await readFile(new URL("../assets/map.json", import.meta.url), "utf8"));
 const parsed = normalizeMapSchema(rawMap);
@@ -113,4 +114,51 @@ const selectedRunSprite = selectBobSprite({
 }, { action: "run", direction: "right", animationMs: 120 }, { frameDurationMs: 100 });
 assert.equal(selectedRunSprite.image.id, "run_right_2");
 
+const followViewport = createTestViewport({ scale: 2 });
+const followCamera = new CameraController(followViewport, { followSmoothing: 1 });
+followCamera.follow(() => ({ x: 100, y: 80 }));
+followCamera.update(16);
+assert.equal(followViewport.transform.offsetX, 200);
+assert.equal(followViewport.transform.offsetY, 140);
+
+const zoomViewport = createTestViewport({ scale: 1 });
+const zoomCamera = new CameraController(zoomViewport, { zoomFactor: 2 });
+zoomCamera.zoomIn({ x: 400, y: 300 });
+assert.equal(zoomViewport.transform.scale, 2);
+assert.equal(zoomViewport.transform.offsetX, -400);
+assert.equal(zoomViewport.transform.offsetY, -300);
+zoomCamera.zoomOut({ x: 400, y: 300 });
+assert.equal(zoomViewport.transform.scale, 1);
+assert.equal(zoomViewport.transform.offsetX, 0);
+assert.equal(zoomViewport.transform.offsetY, 0);
+
+const panViewport = createTestViewport({ scale: 1 });
+const panCamera = new CameraController(panViewport, { panSpeedPixelsPerSecond: 100 });
+panCamera.panByDirection({ x: 1, y: 0 }, 1000);
+assert.equal(panViewport.transform.offsetX, -100);
+panCamera.panByDirection({ x: -1, y: 0 }, 1000);
+assert.equal(panViewport.transform.offsetX, 0);
+panCamera.panByDirection({ x: 0, y: -1 }, 1000);
+assert.equal(panViewport.transform.offsetY, 100);
+panCamera.panByDirection({ x: 0, y: 1 }, 1000);
+assert.equal(panViewport.transform.offsetY, 0);
+
+const manualViewport = createTestViewport({ scale: 1 });
+const manualCamera = new CameraController(manualViewport, { panSpeedPixelsPerSecond: 100 });
+manualCamera.follow(() => ({ x: 100, y: 100 }));
+manualCamera.panByDirection({ x: 1, y: 0 }, 1000);
+assert.equal(manualCamera.followEnabled, false);
+
 console.log("map_pipeline_test tests passed");
+
+function createTestViewport({ scale = 1, offsetX = 0, offsetY = 0 } = {}) {
+  return {
+    canvas: {
+      width: 800,
+      height: 600,
+    },
+    minScale: 0.5,
+    maxScale: 4,
+    transform: new Transform({ scale, offsetX, offsetY }),
+  };
+}

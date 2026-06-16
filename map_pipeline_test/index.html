@@ -33,9 +33,9 @@
       import { loadMapSchema } from "./shared/SchemaParser.js";
       import { loadAssets } from "./shared/AssetLoader.js";
       import { createTileGrid, LayerComposer } from "./map-renderer/index.js";
-      import { loadBobSprites, selectBobSprite, verifyNodeACheck } from "./actor-system/index.js";
+      import { loadBobSprites, routeNodeToPixels, selectBobSprite, verifyNodeACheck } from "./actor-system/index.js";
       import { buildNodePath, createBobAtNode, createNodeRouteRunner } from "./tmp-system/BobRouteRunner.js";
-      import { Viewport } from "./camera-system/index.js";
+      import { CameraController, Viewport } from "./camera-system/index.js";
       import { startRenderLoop } from "./renderLoop.js";
 
       const canvas = document.getElementById("map-canvas");
@@ -55,11 +55,18 @@
         const grid = createTileGrid(mapData);
         const composer = new LayerComposer(mapData, assetBundle, grid);
         const viewport = new Viewport(canvas, { width: grid.worldWidth, height: grid.worldHeight }, composer.visualBounds);
+        const camera = new CameraController(viewport, {
+          followSmoothing: 1,
+          panSpeedPixelsPerSecond: 520,
+          zoomFactor: 1.18,
+        });
         const bobSprites = await loadBobSprites();
         const bob = createBobAtNode(mapData, "node_1");
         const bobPath = buildNodePath(mapData, "node_1", "node_4");
         const bobRunner = createNodeRouteRunner(mapData, bob, bobPath, { speedMetersPerSecond: 1.4 });
         const actors = [bob];
+        camera.follow(() => routeNodeToPixels(bob, mapData.movement.coordinateSystem.pixelsPerMeter));
+        camera.attachKeyboard(window);
         window.addEventListener("resize", () => viewport.resize());
         startRenderLoop(canvas, viewport, composer, {
           showCollision: false,
@@ -71,6 +78,7 @@
           update({ deltaMs }) {
             bobRunner.update(deltaMs);
             bob.sprite = selectBobSprite(bobSprites, bob);
+            camera.update(deltaMs);
           },
         });
       } catch (error) {
