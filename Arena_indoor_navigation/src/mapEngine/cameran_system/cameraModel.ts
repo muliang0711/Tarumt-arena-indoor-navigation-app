@@ -36,10 +36,37 @@ export function centerCameraOnPoint(camera: CameraState, point: Point, viewport:
   };
 }
 
-export function zoomCamera(camera: CameraState, factor: number, minScale = 0.2, maxScale = 6): CameraState {
+export function zoomCamera(
+  camera: CameraState,
+  factor: number,
+  minScale = 0.2,
+  maxScale = 6,
+  focalPoint?: Point,
+): CameraState {
+  return setCameraZoom(camera, camera.scale * factor, minScale, maxScale, focalPoint);
+}
+
+export function setCameraZoom(
+  camera: CameraState,
+  scale: number,
+  minScale = 0.2,
+  maxScale = 6,
+  focalPoint?: Point,
+): CameraState {
+  const nextScale = clamp(scale, minScale, maxScale);
+  if (!focalPoint || camera.scale === 0) {
+    return {
+      ...camera,
+      scale: nextScale,
+    };
+  }
+
+  const worldX = (focalPoint.x - camera.offsetX) / camera.scale;
+  const worldY = (focalPoint.y - camera.offsetY) / camera.scale;
   return {
-    ...camera,
-    scale: clamp(camera.scale * factor, minScale, maxScale),
+    scale: nextScale,
+    offsetX: Math.round(focalPoint.x - worldX * nextScale),
+    offsetY: Math.round(focalPoint.y - worldY * nextScale),
   };
 }
 

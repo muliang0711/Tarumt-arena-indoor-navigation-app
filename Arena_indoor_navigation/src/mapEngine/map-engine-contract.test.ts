@@ -4,6 +4,7 @@ import {
   createInitialCameraState,
   centerCameraOnPoint,
   fitCameraToBounds,
+  setCameraZoom,
   panCamera,
   zoomCamera,
 } from './cameran_system/cameranSystem';
@@ -44,6 +45,7 @@ const fittedCamera = fitCameraToBounds(bounds, { width: 360, height: 390 });
 const initialCamera = createInitialCameraState(bounds, { width: 360, height: 390 });
 const followedCamera = centerCameraOnPoint(fittedCamera, bobPixels, { width: 360, height: 390 });
 const zoomedCamera = zoomCamera(followedCamera, 1.2);
+const exactZoomCamera = setCameraZoom(zoomedCamera, 2);
 const pannedCamera = panCamera(zoomedCamera, { x: 12, y: -8 });
 
 void ActorLayer;
@@ -54,4 +56,5 @@ void orderedIds;
 void bounds;
 void bobPixels;
 void initialCamera;
+void exactZoomCamera;
 void pannedCamera;

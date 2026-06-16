@@ -4,6 +4,7 @@ export {
   createInitialCameraState,
   fitCameraToBounds,
   panCamera,
+  setCameraZoom,
   zoomCamera,
 } from './cameraModel';
 export type { CameraState, Point, ViewportSize } from './cameraModel';

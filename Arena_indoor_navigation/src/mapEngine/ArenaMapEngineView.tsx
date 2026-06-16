@@ -1,13 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
-import { LayoutChangeEvent } from 'react-native';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { ActorLayer, buildBobActorAtNode } from './actor_system/actorSystem';
+import { colors, radius, shadow } from '../components/theme';
+import { ActorLayer, buildBobActorAtNode, routeNodeToPixels } from './actor_system/actorSystem';
 import {
   CameraState,
   CameraViewport,
+  centerCameraOnPoint,
   createInitialCameraState,
   panCamera,
+  zoomCamera,
 } from './cameran_system/cameranSystem';
+import { Point } from './mapGeometry';
 import { ArenaMapView, getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRenderingSystem';
 
 type ArenaMapEngineViewProps = {
@@ -20,22 +24,54 @@ const defaultMapData = require('../storage/map-assets/map.json');
 export function ArenaMapEngineView({ mapData: rawMapData = defaultMapData, height = 390 }: ArenaMapEngineViewProps) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
+  const [isFollowingBob, setIsFollowingBob] = useState(true);
   const mapData = useMemo(() => normalizeMapSchema(rawMapData), [rawMapData]);
   const actors = useMemo(() => [buildBobActorAtNode(mapData, 'node_1')], [mapData]);
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
   const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);
+  const bobPoint = useMemo(
+    () => routeNodeToPixels(actors[0], mapData.movement.coordinateSystem.pixelsPerMeter),
+    [actors, mapData.movement.coordinateSystem.pixelsPerMeter],
+  );
   const initialCamera = useMemo(() => createInitialCameraState(bounds, viewportSize), [bounds, viewportSize]);
+  const applyFollowTarget = useCallback(
+    (nextCamera: CameraState) => centerCameraOnPoint(nextCamera, bobPoint, viewportSize),
+    [bobPoint, viewportSize],
+  );
 
   useEffect(() => {
     if (viewportWidth > 0) {
-      setCamera(createInitialCameraState(bounds, viewportSize));
+      const fittedCamera = createInitialCameraState(bounds, viewportSize);
+      setCamera(isFollowingBob ? applyFollowTarget(fittedCamera) : fittedCamera);
     }
-  }, [bounds, viewportSize, viewportWidth]);
+  }, [applyFollowTarget, bounds, viewportSize, viewportWidth]);
 
-  const renderedCamera = camera ?? initialCamera;
+  const renderedCamera = camera ?? (isFollowingBob ? applyFollowTarget(initialCamera) : initialCamera);
 
-  function handlePanBy(delta: { x: number; y: number }) {
+  function handlePanBy(delta: Point) {
+    setIsFollowingBob(false);
     setCamera((currentCamera) => panCamera(currentCamera ?? initialCamera, delta));
+  }
+
+  function handleZoomBy(factor: number, focalPoint: Point) {
+    setCamera((currentCamera) => {
+      const zoomedCamera = zoomCamera(currentCamera ?? renderedCamera, factor, 0.2, 6, focalPoint);
+      return isFollowingBob ? applyFollowTarget(zoomedCamera) : zoomedCamera;
+    });
+  }
+
+  function handleZoomButton(factor: number) {
+    handleZoomBy(factor, { x: viewportSize.width / 2, y: viewportSize.height / 2 });
+  }
+
+  function handleToggleFollowBob() {
+    setIsFollowingBob((currentValue) => {
+      const nextValue = !currentValue;
+      if (nextValue) {
+        setCamera((currentCamera) => applyFollowTarget(currentCamera ?? renderedCamera));
+      }
+      return nextValue;
+    });
   }
 
   function handleLayout(event: LayoutChangeEvent) {
@@ -43,24 +79,93 @@ export function ArenaMapEngineView({ mapData: rawMapData = defaultMapData, heigh
   }
 
   return (
-    <CameraViewport
-      camera={renderedCamera}
-      contentWidth={bounds.width}
-      contentHeight={bounds.height}
-      height={height}
-      onLayout={handleLayout}
-      onPanBy={handlePanBy}
-    >
-      <ArenaMapView
-        mapData={mapData}
-        renderOverlay={(layout) => (
-          <ActorLayer
-            actors={actors}
-            layout={layout}
-            pixelsPerMeter={mapData.movement.coordinateSystem.pixelsPerMeter}
-          />
-        )}
-      />
-    </CameraViewport>
+    <View style={styles.engine}>
+      <CameraViewport
+        camera={renderedCamera}
+        contentWidth={bounds.width}
+        contentHeight={bounds.height}
+        height={height}
+        onLayout={handleLayout}
+        onPanBy={handlePanBy}
+        onZoomBy={handleZoomBy}
+      >
+        <ArenaMapView
+          mapData={mapData}
+          renderOverlay={(layout) => (
+            <ActorLayer
+              actors={actors}
+              layout={layout}
+              pixelsPerMeter={mapData.movement.coordinateSystem.pixelsPerMeter}
+            />
+          )}
+        />
+      </CameraViewport>
+
+      <View style={styles.cameraControls}>
+        <Pressable style={styles.controlButton} onPress={() => handleZoomButton(1.2)}>
+          <Text style={styles.controlButtonText}>+</Text>
+        </Pressable>
+        <Pressable style={styles.controlButton} onPress={() => handleZoomButton(1 / 1.2)}>
+          <Text style={styles.controlButtonText}>-</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.followButton, isFollowingBob && styles.followButtonActive]}
+          onPress={handleToggleFollowBob}
+        >
+          <Text style={[styles.followButtonText, isFollowingBob && styles.followButtonTextActive]}>
+            {isFollowingBob ? 'Following Bob' : 'Free look'}
+          </Text>
+        </Pressable>
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  engine: {
+    position: 'relative',
+  },
+  cameraControls: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  controlButton: {
+    width: 34,
+    height: 34,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    ...shadow,
+  },
+  controlButtonText: {
+    color: colors.text,
+    fontSize: 20,
+    fontWeight: '900',
+    lineHeight: 22,
+  },
+  followButton: {
+    minHeight: 34,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: colors.surface,
+    ...shadow,
+  },
+  followButtonActive: {
+    backgroundColor: colors.green,
+  },
+  followButtonText: {
+    color: colors.text,
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  followButtonTextActive: {
+    color: '#ffffff',
+  },
+});
