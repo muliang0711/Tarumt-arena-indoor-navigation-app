@@ -1,8 +1,8 @@
-import { ReactNode } from 'react';
-import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { ReactNode, useMemo, useRef } from 'react';
+import { LayoutChangeEvent, PanResponder, StyleSheet, View } from 'react-native';
 
 import { radius } from '../../components/theme';
-import { CameraState } from './cameraModel';
+import { CameraState, Point } from './cameraModel';
 
 type CameraViewportProps = {
   camera: CameraState;
@@ -10,12 +10,51 @@ type CameraViewportProps = {
   contentHeight: number;
   height: number;
   onLayout?: (event: LayoutChangeEvent) => void;
+  onPanBy?: (delta: Point) => void;
   children: ReactNode;
 };
 
-export function CameraViewport({ camera, contentWidth, contentHeight, height, onLayout, children }: CameraViewportProps) {
+export function CameraViewport({
+  camera,
+  contentWidth,
+  contentHeight,
+  height,
+  onLayout,
+  onPanBy,
+  children,
+}: CameraViewportProps) {
+  const lastPan = useRef({ x: 0, y: 0 });
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => Boolean(onPanBy),
+        onMoveShouldSetPanResponder: () => Boolean(onPanBy),
+        onPanResponderGrant: () => {
+          lastPan.current = { x: 0, y: 0 };
+        },
+        onPanResponderMove: (_event, gestureState) => {
+          if (!onPanBy || gestureState.numberActiveTouches > 1) {
+            return;
+          }
+          const nextPan = { x: gestureState.dx, y: gestureState.dy };
+          onPanBy({
+            x: nextPan.x - lastPan.current.x,
+            y: nextPan.y - lastPan.current.y,
+          });
+          lastPan.current = nextPan;
+        },
+        onPanResponderRelease: () => {
+          lastPan.current = { x: 0, y: 0 };
+        },
+        onPanResponderTerminate: () => {
+          lastPan.current = { x: 0, y: 0 };
+        },
+      }),
+    [onPanBy],
+  );
+
   return (
-    <View style={[styles.viewport, { height }]} onLayout={onLayout}>
+    <View style={[styles.viewport, { height }]} onLayout={onLayout} {...panResponder.panHandlers}>
       <View
         style={[
           styles.stage,

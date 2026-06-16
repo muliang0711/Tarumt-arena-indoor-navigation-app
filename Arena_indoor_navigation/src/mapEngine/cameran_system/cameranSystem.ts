@@ -1,6 +1,7 @@
 export { CameraViewport } from './CameraViewport';
 export {
   centerCameraOnPoint,
+  createInitialCameraState,
   fitCameraToBounds,
   panCamera,
   zoomCamera,

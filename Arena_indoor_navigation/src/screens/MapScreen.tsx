@@ -7,6 +7,8 @@ import { SearchBar } from '../components/SearchBar';
 import { colors, radius, shadow } from '../components/theme';
 import { ArenaMapEngineView } from '../mapEngine/map-controller';
 
+const rawMapData = require('../storage/map-assets/map.json');
+
 const destinations: Array<{
   label: string;
   icon: keyof typeof MaterialCommunityIcons.glyphMap;
@@ -35,7 +37,7 @@ export function MapScreen() {
           </View>
         </View>
 
-        <ArenaMapEngineView height={390} />
+        <ArenaMapEngineView mapData={rawMapData} height={390} />
       </View>
 
       <View style={styles.routeSummary}>

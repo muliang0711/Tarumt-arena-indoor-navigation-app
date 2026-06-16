@@ -13,6 +13,10 @@ export type CameraState = {
   offsetY: number;
 };
 
+export function createInitialCameraState(bounds: Bounds, viewport: ViewportSize, padding = 0): CameraState {
+  return fitCameraToBounds(bounds, viewport, padding);
+}
+
 export function fitCameraToBounds(bounds: Bounds, viewport: ViewportSize, padding = 0): CameraState {
   const availableWidth = Math.max(1, viewport.width - padding * 2);
   const availableHeight = Math.max(1, viewport.height - padding * 2);
