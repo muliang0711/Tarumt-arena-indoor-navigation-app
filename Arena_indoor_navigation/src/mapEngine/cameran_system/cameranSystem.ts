@@ -1,5 +1,7 @@
 export { CameraViewport } from './CameraViewport';
 export {
+  CAMERA_MAX_ZOOM,
+  CAMERA_MIN_ZOOM,
   centerCameraOnPoint,
   createInitialCameraState,
   fitCameraToBounds,

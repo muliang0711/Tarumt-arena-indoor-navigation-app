@@ -8,10 +8,8 @@ import {
   CameraViewport,
   centerCameraOnPoint,
   createInitialCameraState,
-  panCamera,
   zoomCamera,
 } from './cameran_system/cameranSystem';
-import { Point } from './mapGeometry';
 import { ArenaMapView, getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRenderingSystem';
 
 type ArenaMapEngineViewProps = {
@@ -48,20 +46,20 @@ export function ArenaMapEngineView({ mapData: rawMapData = defaultMapData, heigh
 
   const renderedCamera = camera ?? (isFollowingBob ? applyFollowTarget(initialCamera) : initialCamera);
 
-  function handlePanBy(delta: Point) {
+  function handleGestureStart() {
     setIsFollowingBob(false);
-    setCamera((currentCamera) => panCamera(currentCamera ?? initialCamera, delta));
   }
 
-  function handleZoomBy(factor: number, focalPoint: Point) {
-    setCamera((currentCamera) => {
-      const zoomedCamera = zoomCamera(currentCamera ?? renderedCamera, factor, 0.2, 6, focalPoint);
-      return isFollowingBob ? applyFollowTarget(zoomedCamera) : zoomedCamera;
-    });
+  function handleCameraChange(nextCamera: CameraState) {
+    setCamera(nextCamera);
   }
 
   function handleZoomButton(factor: number) {
-    handleZoomBy(factor, { x: viewportSize.width / 2, y: viewportSize.height / 2 });
+    const focalPoint = { x: viewportSize.width / 2, y: viewportSize.height / 2 };
+    setCamera((currentCamera) => {
+      const zoomedCamera = zoomCamera(currentCamera ?? renderedCamera, factor, undefined, undefined, focalPoint);
+      return isFollowingBob ? applyFollowTarget(zoomedCamera) : zoomedCamera;
+    });
   }
 
   function handleToggleFollowBob() {
@@ -86,8 +84,8 @@ export function ArenaMapEngineView({ mapData: rawMapData = defaultMapData, heigh
         contentHeight={bounds.height}
         height={height}
         onLayout={handleLayout}
-        onPanBy={handlePanBy}
-        onZoomBy={handleZoomBy}
+        onGestureStart={handleGestureStart}
+        onCameraChange={handleCameraChange}
       >
         <ArenaMapView
           mapData={mapData}

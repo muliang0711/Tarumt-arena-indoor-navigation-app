@@ -1,8 +1,9 @@
-import { ReactNode, useMemo, useRef } from 'react';
-import { LayoutChangeEvent, PanResponder, StyleSheet, View } from 'react-native';
+import { ReactNode, useEffect, useMemo, useRef } from 'react';
+import { Animated, LayoutChangeEvent, StyleSheet, View } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 import { radius } from '../../components/theme';
-import { CameraState, Point } from './cameraModel';
+import { CAMERA_MAX_ZOOM, CAMERA_MIN_ZOOM, CameraState } from './cameraModel';
 
 type CameraViewportProps = {
   camera: CameraState;
@@ -10,8 +11,8 @@ type CameraViewportProps = {
   contentHeight: number;
   height: number;
   onLayout?: (event: LayoutChangeEvent) => void;
-  onPanBy?: (delta: Point) => void;
-  onZoomBy?: (factor: number, focalPoint: Point) => void;
+  onCameraChange?: (camera: CameraState) => void;
+  onGestureStart?: () => void;
   children: ReactNode;
 };
 
@@ -21,95 +22,121 @@ export function CameraViewport({
   contentHeight,
   height,
   onLayout,
-  onPanBy,
-  onZoomBy,
+  onCameraChange,
+  onGestureStart,
   children,
 }: CameraViewportProps) {
-  const lastPan = useRef({ x: 0, y: 0 });
-  const lastPinchDistance = useRef<number | null>(null);
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => Boolean(onPanBy || onZoomBy),
-        onMoveShouldSetPanResponder: () => Boolean(onPanBy || onZoomBy),
-        onPanResponderGrant: (event) => {
-          lastPan.current = { x: 0, y: 0 };
-          lastPinchDistance.current = getTouchDistance(event.nativeEvent.touches);
-        },
-        onPanResponderMove: (event, gestureState) => {
-          if (gestureState.numberActiveTouches > 1) {
-            const touches = event.nativeEvent.touches;
-            const nextDistance = getTouchDistance(touches);
-            const focalPoint = getTouchCenter(touches);
-            if (onZoomBy && lastPinchDistance.current && nextDistance && focalPoint) {
-              onZoomBy(nextDistance / lastPinchDistance.current, focalPoint);
-            }
-            lastPinchDistance.current = nextDistance;
-            return;
-          }
+  const translateX = useRef(new Animated.Value(camera.offsetX)).current;
+  const translateY = useRef(new Animated.Value(camera.offsetY)).current;
+  const scale = useRef(new Animated.Value(clampZoom(camera.scale))).current;
+  const cameraRef = useRef(camera);
+  const panStart = useRef({ x: camera.offsetX, y: camera.offsetY });
+  const pinchStart = useRef({
+    x: camera.offsetX,
+    y: camera.offsetY,
+    scale: clampZoom(camera.scale),
+  });
 
-          lastPinchDistance.current = null;
-          if (!onPanBy) {
-            return;
-          }
-          const nextPan = { x: gestureState.dx, y: gestureState.dy };
-          onPanBy({
-            x: nextPan.x - lastPan.current.x,
-            y: nextPan.y - lastPan.current.y,
-          });
-          lastPan.current = nextPan;
-        },
-        onPanResponderRelease: () => {
-          lastPan.current = { x: 0, y: 0 };
-          lastPinchDistance.current = null;
-        },
-        onPanResponderTerminate: () => {
-          lastPan.current = { x: 0, y: 0 };
-          lastPinchDistance.current = null;
-        },
-      }),
-    [onPanBy, onZoomBy],
-  );
+  useEffect(() => {
+    const nextCamera = {
+      ...camera,
+      scale: clampZoom(camera.scale),
+    };
+    cameraRef.current = nextCamera;
+    translateX.setValue(nextCamera.offsetX);
+    translateY.setValue(nextCamera.offsetY);
+    scale.setValue(nextCamera.scale);
+  }, [camera, scale, translateX, translateY]);
+
+  const gestures = useMemo(() => {
+    function updateCamera(nextCamera: CameraState) {
+      cameraRef.current = nextCamera;
+      translateX.setValue(nextCamera.offsetX);
+      translateY.setValue(nextCamera.offsetY);
+      scale.setValue(nextCamera.scale);
+    }
+
+    function commitCamera() {
+      onCameraChange?.(cameraRef.current);
+    }
+
+    const panGesture = Gesture.Pan()
+      .runOnJS(true)
+      .minPointers(1)
+      .maxPointers(1)
+      .onBegin(() => {
+        onGestureStart?.();
+        panStart.current = {
+          x: cameraRef.current.offsetX,
+          y: cameraRef.current.offsetY,
+        };
+      })
+      .onUpdate((event) => {
+        updateCamera({
+          ...cameraRef.current,
+          offsetX: panStart.current.x + event.translationX,
+          offsetY: panStart.current.y + event.translationY,
+        });
+      })
+      .onFinalize(commitCamera);
+
+    const pinchGesture = Gesture.Pinch()
+      .runOnJS(true)
+      .onBegin(() => {
+        onGestureStart?.();
+        pinchStart.current = {
+          x: cameraRef.current.offsetX,
+          y: cameraRef.current.offsetY,
+          scale: clampZoom(cameraRef.current.scale),
+        };
+      })
+      .onUpdate((event) => {
+        const nextScale = clampZoom(pinchStart.current.scale * event.scale);
+        const focalX = Number.isFinite(event.focalX) ? event.focalX : 0;
+        const focalY = Number.isFinite(event.focalY) ? event.focalY : 0;
+        const worldX = (focalX - pinchStart.current.x) / Math.max(CAMERA_MIN_ZOOM, pinchStart.current.scale);
+        const worldY = (focalY - pinchStart.current.y) / Math.max(CAMERA_MIN_ZOOM, pinchStart.current.scale);
+
+        updateCamera({
+          scale: nextScale,
+          offsetX: focalX - worldX * nextScale,
+          offsetY: focalY - worldY * nextScale,
+        });
+      })
+      .onFinalize(commitCamera);
+
+    return Gesture.Simultaneous(panGesture, pinchGesture);
+  }, [onCameraChange, onGestureStart, scale, translateX, translateY]);
 
   return (
-    <View style={[styles.viewport, { height }]} onLayout={onLayout} {...panResponder.panHandlers}>
-      <View
-        style={[
-          styles.stage,
-          {
-            width: contentWidth,
-            height: contentHeight,
-            transform: [
-              { translateX: camera.offsetX },
-              { translateY: camera.offsetY },
-              { scale: camera.scale },
-            ],
-          },
-        ]}
-      >
-        {children}
+    <GestureDetector gesture={gestures}>
+      <View style={[styles.viewport, { height }]} onLayout={onLayout}>
+        <Animated.View
+          style={[
+            styles.stage,
+            {
+              width: contentWidth,
+              height: contentHeight,
+              transform: [
+                { translateX },
+                { translateY },
+                { scale },
+              ],
+            },
+          ]}
+        >
+          {children}
+        </Animated.View>
       </View>
-    </View>
+    </GestureDetector>
   );
 }
 
-function getTouchDistance(touches: Array<{ locationX: number; locationY: number }>) {
-  if (touches.length < 2) {
-    return null;
+function clampZoom(value: number) {
+  if (!Number.isFinite(value)) {
+    return CAMERA_MIN_ZOOM;
   }
-  const [first, second] = touches;
-  return Math.hypot(second.locationX - first.locationX, second.locationY - first.locationY);
-}
-
-function getTouchCenter(touches: Array<{ locationX: number; locationY: number }>): Point | null {
-  if (touches.length < 2) {
-    return null;
-  }
-  const [first, second] = touches;
-  return {
-    x: (first.locationX + second.locationX) / 2,
-    y: (first.locationY + second.locationY) / 2,
-  };
+  return Math.min(CAMERA_MAX_ZOOM, Math.max(CAMERA_MIN_ZOOM, value));
 }
 
 const styles = StyleSheet.create({

@@ -13,6 +13,9 @@ export type CameraState = {
   offsetY: number;
 };
 
+export const CAMERA_MIN_ZOOM = 0.5;
+export const CAMERA_MAX_ZOOM = 4;
+
 export function createInitialCameraState(bounds: Bounds, viewport: ViewportSize, padding = 0): CameraState {
   return fitCameraToBounds(bounds, viewport, padding);
 }
@@ -39,8 +42,8 @@ export function centerCameraOnPoint(camera: CameraState, point: Point, viewport:
 export function zoomCamera(
   camera: CameraState,
   factor: number,
-  minScale = 0.2,
-  maxScale = 6,
+  minScale = CAMERA_MIN_ZOOM,
+  maxScale = CAMERA_MAX_ZOOM,
   focalPoint?: Point,
 ): CameraState {
   return setCameraZoom(camera, camera.scale * factor, minScale, maxScale, focalPoint);
@@ -49,8 +52,8 @@ export function zoomCamera(
 export function setCameraZoom(
   camera: CameraState,
   scale: number,
-  minScale = 0.2,
-  maxScale = 6,
+  minScale = CAMERA_MIN_ZOOM,
+  maxScale = CAMERA_MAX_ZOOM,
   focalPoint?: Point,
 ): CameraState {
   const nextScale = clamp(scale, minScale, maxScale);
@@ -73,11 +76,14 @@ export function setCameraZoom(
 export function panCamera(camera: CameraState, delta: Point): CameraState {
   return {
     ...camera,
-    offsetX: Math.round(camera.offsetX + delta.x),
-    offsetY: Math.round(camera.offsetY + delta.y),
+    offsetX: camera.offsetX + delta.x,
+    offsetY: camera.offsetY + delta.y,
   };
 }
 
 function clamp(value: number, min: number, max: number) {
+  if (!Number.isFinite(value)) {
+    return min;
+  }
   return Math.min(max, Math.max(min, value));
 }

@@ -1,6 +1,9 @@
+import 'react-native-gesture-handler';
+
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { PreviewTabs, ScreenKey } from './src/components/PreviewTabs';
 import { FloorSelectionScreen } from './src/screens/FloorSelectionScreen';
@@ -12,20 +15,25 @@ export default function App() {
   const [activeScreen, setActiveScreen] = useState<ScreenKey>('map');
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="dark" />
-      <View style={styles.app}>
-        {activeScreen === 'home' && <HomeScreen onOpenFloors={() => setActiveScreen('floors')} />}
-        {activeScreen === 'map' && <MapScreen />}
-        {activeScreen === 'floors' && <FloorSelectionScreen onBack={() => setActiveScreen('home')} onChooseFloor={() => setActiveScreen('rooms')} />}
-        {activeScreen === 'rooms' && <RoomSelectionScreen onBack={() => setActiveScreen('floors')} />}
-      </View>
-      <PreviewTabs activeScreen={activeScreen} onChange={setActiveScreen} />
-    </SafeAreaView>
+    <GestureHandlerRootView style={styles.root}>
+      <SafeAreaView style={styles.safeArea}>
+        <StatusBar style="dark" />
+        <View style={styles.app}>
+          {activeScreen === 'home' && <HomeScreen onOpenFloors={() => setActiveScreen('floors')} />}
+          {activeScreen === 'map' && <MapScreen />}
+          {activeScreen === 'floors' && <FloorSelectionScreen onBack={() => setActiveScreen('home')} onChooseFloor={() => setActiveScreen('rooms')} />}
+          {activeScreen === 'rooms' && <RoomSelectionScreen onBack={() => setActiveScreen('floors')} />}
+        </View>
+        <PreviewTabs activeScreen={activeScreen} onChange={setActiveScreen} />
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
     backgroundColor: '#f7f2eb',
