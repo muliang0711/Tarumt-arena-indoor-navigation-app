@@ -1,4 +1,6 @@
-import { Bounds } from '../map_rendering_system/mapRendererModel';
+import { Bounds, Point } from '../mapGeometry';
+
+export type { Point } from '../mapGeometry';
 
 export type ViewportSize = {
   width: number;
@@ -9,11 +11,6 @@ export type CameraState = {
   scale: number;
   offsetX: number;
   offsetY: number;
-};
-
-export type Point = {
-  x: number;
-  y: number;
 };
 
 export function fitCameraToBounds(bounds: Bounds, viewport: ViewportSize, padding = 0): CameraState {

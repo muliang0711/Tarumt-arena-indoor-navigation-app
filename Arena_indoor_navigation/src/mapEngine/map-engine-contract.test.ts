@@ -11,7 +11,7 @@ import {
   getVisualBounds,
   normalizeMapSchema,
   orderVisualLayers,
-} from './map_rendering_system/mapRendererModel';
+} from './map_rendering_system/mapRenderingSystem';
 
 const parsed = normalizeMapSchema({
   schemaVersion: 3,

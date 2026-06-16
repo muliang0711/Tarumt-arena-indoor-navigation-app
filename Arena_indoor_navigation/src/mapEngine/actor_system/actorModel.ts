@@ -1,5 +1,3 @@
-import { NormalizedMapSchema } from '../map_rendering_system/mapRendererModel';
-
 export type Actor = {
   id: string;
   name: string;
@@ -12,7 +10,22 @@ export type Actor = {
   action: 'idle' | 'run';
 };
 
-export function buildBobActorAtNode(mapData: NormalizedMapSchema, nodeId = 'node_1'): Actor {
+type RouteGraphMap = {
+  movement: {
+    routeGraph: {
+      nodes: {
+        node_id?: string;
+        id?: string;
+        position: {
+          x: number;
+          y: number;
+        };
+      }[];
+    };
+  };
+};
+
+export function buildBobActorAtNode(mapData: RouteGraphMap, nodeId = 'node_1'): Actor {
   const node = mapData.movement.routeGraph.nodes.find((item) => item.node_id === nodeId || item.id === nodeId);
   if (!node) {
     throw new Error(`Route node "${nodeId}" was not found.`);

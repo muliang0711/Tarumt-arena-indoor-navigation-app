@@ -1,12 +1,9 @@
 import { useMemo, useState } from 'react';
 import { LayoutChangeEvent } from 'react-native';
 
-import { ActorLayer } from './actor_system/ActorLayer';
-import { buildBobActorAtNode, routeNodeToPixels } from './actor_system/actorModel';
-import { CameraViewport } from './cameran_system/CameraViewport';
-import { centerCameraOnPoint, fitCameraToBounds } from './cameran_system/cameraModel';
-import { ArenaMapView } from './map_rendering_system/ArenaMapView';
-import { getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRendererModel';
+import { ActorLayer, buildBobActorAtNode, routeNodeToPixels } from './actor_system/actorSystem';
+import { CameraViewport, centerCameraOnPoint, fitCameraToBounds } from './cameran_system/cameranSystem';
+import { ArenaMapView, getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRenderingSystem';
 
 type ArenaMapEngineViewProps = {
   height?: number;

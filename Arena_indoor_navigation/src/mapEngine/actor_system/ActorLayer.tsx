@@ -1,12 +1,16 @@
 import { Image, StyleSheet } from 'react-native';
 
-import { MapRenderLayout } from '../map_rendering_system/ArenaMapView';
+import { Bounds } from '../mapGeometry';
 import { bobActorAssets } from './actorAssetRegistry';
 import { Actor, routeNodeToPixels } from './actorModel';
 
+type ActorLayerLayout = {
+  bounds: Bounds;
+};
+
 type ActorLayerProps = {
   actors: Actor[];
-  layout: MapRenderLayout;
+  layout: ActorLayerLayout;
   pixelsPerMeter: number;
 };
 

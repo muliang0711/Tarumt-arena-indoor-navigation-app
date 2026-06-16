@@ -1,3 +1,7 @@
+import type { Bounds } from '../mapGeometry';
+
+export type { Bounds } from '../mapGeometry';
+
 export type MapAsset = {
   id: string;
   src: string;
@@ -48,13 +52,6 @@ export type NormalizedMapSchema = {
       edges: unknown[];
     };
   };
-};
-
-export type Bounds = {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
 };
 
 const DEFAULT_TILE_SIZE = 16;
