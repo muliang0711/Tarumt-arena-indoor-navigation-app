@@ -9,11 +9,13 @@ import {
   zoomCamera,
 } from './cameran_system/cameranSystem';
 import { ArenaMapEngineView, ArenaMapView } from './map-controller';
+import { extractMovementConstraintMapInput } from './mapEngineController';
 import {
   getVisualBounds,
   normalizeMapSchema,
   orderVisualLayers,
 } from './map_rendering_system/mapRenderingSystem';
+import { createMovementConstraintProvider, updateMovementSystem } from './movement_system/indoorposition_engine';
 
 const parsed = normalizeMapSchema({
   schemaVersion: 3,
@@ -47,11 +49,42 @@ const followedCamera = centerCameraOnPoint(fittedCamera, bobPixels, { width: 360
 const zoomedCamera = zoomCamera(followedCamera, 1.2);
 const exactZoomCamera = setCameraZoom(zoomedCamera, 2);
 const pannedCamera = panCamera(zoomedCamera, { x: 12, y: -8 });
+const constraintInput = extractMovementConstraintMapInput({
+  schemaVersion: 3,
+  map: { id: 'constraint-test-map', tileSize: 16, width: 10, height: 10 },
+  movement: {
+    walkableAreas: [
+      [
+        { x: 0, y: 0 },
+        { x: 4, y: 0 },
+        { x: 4, y: 4 },
+        { x: 0, y: 4 },
+      ],
+    ],
+    blockedAreas: [
+      [
+        { x: 1, y: 1 },
+        { x: 2, y: 1 },
+        { x: 2, y: 2 },
+        { x: 1, y: 2 },
+      ],
+    ],
+    walls: [[{ x: 3, y: 0 }, { x: 3, y: 4 }]],
+  },
+});
+const constraintProvider = createMovementConstraintProvider(constraintInput);
+const movementUpdate = updateMovementSystem([], constraintInput, {
+  position: { x: 0.5, y: 0.5 },
+  headingRadians: 0,
+});
 
 void ActorLayer;
 void ArenaMapEngineView;
 void ArenaMapView;
 void CameraViewport;
+void constraintInput;
+void constraintProvider;
+void movementUpdate;
 void orderedIds;
 void bounds;
 void bobPixels;

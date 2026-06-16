@@ -9,3 +9,10 @@ export type Point = {
   x: number;
   y: number;
 };
+
+export type Polygon = Point[];
+
+export type LineSegment = {
+  from: Point;
+  to: Point;
+};

@@ -10,21 +10,48 @@ import {
   createInitialCameraState,
   zoomCamera,
 } from './cameran_system/cameranSystem';
+import { extractMovementConstraintMapInput } from './mapEngineController';
 import { ArenaMapView, getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRenderingSystem';
+import { updateMovementSystem } from './movement_system/indoorposition_engine';
+import type { RawSensorSample } from './movement_system/sensor/sensorTypes';
 
 type ArenaMapEngineViewProps = {
   mapData?: unknown;
+  sensorSamples?: RawSensorSample[];
   height?: number;
 };
 
 const defaultMapData = require('../storage/map-assets/map.json');
 
-export function ArenaMapEngineView({ mapData: rawMapData = defaultMapData, height = 390 }: ArenaMapEngineViewProps) {
+export function ArenaMapEngineView({
+  mapData: rawMapData = defaultMapData,
+  sensorSamples = [],
+  height = 390,
+}: ArenaMapEngineViewProps) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
   const [isFollowingBob, setIsFollowingBob] = useState(true);
   const mapData = useMemo(() => normalizeMapSchema(rawMapData), [rawMapData]);
-  const actors = useMemo(() => [buildBobActorAtNode(mapData, 'node_1')], [mapData]);
+  const startingActor = useMemo(() => buildBobActorAtNode(mapData, 'node_1'), [mapData]);
+  const constraintMapInput = useMemo(() => extractMovementConstraintMapInput(rawMapData), [rawMapData]);
+  const movementUpdate = useMemo(
+    () =>
+      updateMovementSystem(sensorSamples, constraintMapInput, {
+        position: startingActor.position,
+        headingRadians: 0,
+        confidence: 0.8,
+      }),
+    [constraintMapInput, sensorSamples, startingActor.position],
+  );
+  const actors = useMemo(
+    () => [
+      {
+        ...startingActor,
+        position: movementUpdate.position,
+      },
+    ],
+    [movementUpdate.position, startingActor],
+  );
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
   const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);
   const bobPoint = useMemo(
