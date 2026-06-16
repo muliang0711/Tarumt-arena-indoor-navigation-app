@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors } from './theme';
 
-export type ScreenKey = 'home' | 'floors' | 'rooms';
+export type ScreenKey = 'home' | 'map' | 'floors' | 'rooms';
 
 type PreviewTabsProps = {
   activeScreen: ScreenKey;
@@ -12,6 +12,7 @@ type PreviewTabsProps = {
 
 const tabs: Array<{ key: ScreenKey; label: string; icon: keyof typeof Ionicons.glyphMap }> = [
   { key: 'home', label: 'Home', icon: 'home' },
+  { key: 'map', label: 'Map', icon: 'map' },
   { key: 'floors', label: 'Floors', icon: 'layers' },
   { key: 'rooms', label: 'Rooms', icon: 'business' },
 ];
