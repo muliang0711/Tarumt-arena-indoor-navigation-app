@@ -5,7 +5,7 @@ import { Header } from '../components/Header';
 import { ScreenScaffold } from '../components/ScreenScaffold';
 import { SearchBar } from '../components/SearchBar';
 import { colors, radius, shadow } from '../components/theme';
-import { ArenaMapView } from '../mapEngine/map-controller';
+import { ArenaMapEngineView } from '../mapEngine/map-controller';
 
 const destinations: Array<{
   label: string;
@@ -35,16 +35,16 @@ export function MapScreen() {
           </View>
         </View>
 
-        <ArenaMapView height={390} />
+        <ArenaMapEngineView height={390} />
       </View>
 
       <View style={styles.routeSummary}>
         <View>
-          <Text style={styles.summaryLabel}>Map render</Text>
-          <Text style={styles.summaryTitle}>Village demo map loaded</Text>
+          <Text style={styles.summaryLabel}>Actor render</Text>
+          <Text style={styles.summaryTitle}>Bob is rendered by actor system</Text>
         </View>
         <View style={styles.distanceBadge}>
-          <Text style={styles.distanceText}>Level 2</Text>
+          <Text style={styles.distanceText}>Node 1</Text>
         </View>
       </View>
 

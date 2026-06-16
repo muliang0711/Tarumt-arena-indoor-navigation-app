@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { Image, LayoutChangeEvent, StyleSheet, View } from 'react-native';
 
 import { radius } from '../../components/theme';
@@ -6,23 +6,28 @@ import { mapAssetRegistry } from './mapAssetRegistry';
 import {
   Bounds,
   getVisualBounds,
-  normalizeMapSchema,
   NormalizedMapSchema,
   orderVisualLayers,
 } from './mapRendererModel';
 
 type ArenaMapViewProps = {
+  mapData: NormalizedMapSchema;
   height?: number;
+  renderOverlay?: (layout: MapRenderLayout) => ReactNode;
 };
 
-const rawMapData = require('../../storage/map-assets/map.json');
+export type MapRenderLayout = {
+  bounds: Bounds;
+  scale: number;
+};
 
-export function ArenaMapView({ height = 390 }: ArenaMapViewProps) {
+export function ArenaMapView({ mapData, height = 390, renderOverlay }: ArenaMapViewProps) {
   const [layoutWidth, setLayoutWidth] = useState(0);
-  const scene = useMemo(() => buildScene(rawMapData), []);
+  const scene = useMemo(() => buildScene(mapData), [mapData]);
   const scale = layoutWidth > 0 ? Math.min(layoutWidth / scene.bounds.width, height / scene.bounds.height) : 1;
   const contentWidth = scene.bounds.width * scale;
   const contentHeight = scene.bounds.height * scale;
+  const renderLayout = useMemo(() => ({ bounds: scene.bounds, scale }), [scene.bounds, scale]);
 
   function handleLayout(event: LayoutChangeEvent) {
     setLayoutWidth(event.nativeEvent.layout.width);
@@ -54,19 +59,18 @@ export function ArenaMapView({ height = 390 }: ArenaMapViewProps) {
             />
           );
         })}
-
+        {renderOverlay?.(renderLayout)}
       </View>
     </View>
   );
 }
 
-function buildScene(raw: unknown): {
+function buildScene(mapData: NormalizedMapSchema): {
   mapData: NormalizedMapSchema;
   bounds: Bounds;
   layers: ReturnType<typeof orderVisualLayers>;
   assetManifest: Map<string, NormalizedMapSchema['assets'][number]>;
 } {
-  const mapData = normalizeMapSchema(raw);
   return {
     mapData,
     bounds: getVisualBounds(mapData),

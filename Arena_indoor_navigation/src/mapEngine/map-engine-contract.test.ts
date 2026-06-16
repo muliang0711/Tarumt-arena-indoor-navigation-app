@@ -1,4 +1,5 @@
-import { ArenaMapView } from './map-controller';
+import { ActorLayer, buildBobActorAtNode, routeNodeToPixels } from './actor_system/actorSystem';
+import { ArenaMapEngineView, ArenaMapView } from './map-controller';
 import {
   getVisualBounds,
   normalizeMapSchema,
@@ -29,7 +30,12 @@ const parsed = normalizeMapSchema({
 
 const orderedIds: string[] = orderVisualLayers(parsed.visualLayers).map((layer) => layer.id);
 const bounds = getVisualBounds(parsed);
+const bob = buildBobActorAtNode(parsed, 'node_1');
+const bobPixels = routeNodeToPixels(bob, parsed.movement.coordinateSystem.pixelsPerMeter);
 
+void ActorLayer;
+void ArenaMapEngineView;
 void ArenaMapView;
 void orderedIds;
 void bounds;
+void bobPixels;
