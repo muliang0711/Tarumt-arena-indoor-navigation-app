@@ -27,6 +27,8 @@ The map renderer is out of scope for now. Use a stub/port so integration can hap
 
 ## 2. Recommended project structure
 
+NOTE: Treat `android-app/` as the root of the Android project.
+
 Use a modular structure so responsibilities stay clean and future changes do not turn the codebase into a haunted corridor of dependencies.
 
 ```text

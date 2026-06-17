@@ -1,5 +1,7 @@
 # Implementation Steps Checklist
 
+NOTE: Treat `android-app/` as the root of the Android project.
+
 This document provides a sequential, step-by-step guide to implementing the Indoor Positioning Android app. Verify the **Expected Output** of each section before proceeding to the next.
 
 ## Section 1: Project Initialization & Core Models
