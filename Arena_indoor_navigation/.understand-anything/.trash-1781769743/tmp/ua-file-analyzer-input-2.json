@@ -1,0 +1,45 @@
+{
+  "projectRoot": "C:\\Code\\project\\New folder\\Arena_indoor_navigation",
+  "batchFiles": [
+    {"path":"App.tsx","language":"typescript","sizeLines":44,"fileCategory":"code"},
+    {"path":"src/components/CategoryChip.tsx","language":"typescript","sizeLines":42,"fileCategory":"code"},
+    {"path":"src/components/FloorCard.tsx","language":"typescript","sizeLines":87,"fileCategory":"code"},
+    {"path":"src/components/Header.tsx","language":"typescript","sizeLines":66,"fileCategory":"code"},
+    {"path":"src/components/PreviewTabs.tsx","language":"typescript","sizeLines":60,"fileCategory":"code"},
+    {"path":"src/components/QuickAccessCard.tsx","language":"typescript","sizeLines":42,"fileCategory":"code"},
+    {"path":"src/components/RoomCard.tsx","language":"typescript","sizeLines":91,"fileCategory":"code"},
+    {"path":"src/components/ScreenScaffold.tsx","language":"typescript","sizeLines":36,"fileCategory":"code"},
+    {"path":"src/components/SearchBar.tsx","language":"typescript","sizeLines":47,"fileCategory":"code"},
+    {"path":"src/components/theme.ts","language":"typescript","sizeLines":28,"fileCategory":"code"},
+    {"path":"src/screens/FloorSelectionScreen.tsx","language":"typescript","sizeLines":88,"fileCategory":"code"},
+    {"path":"src/screens/HomeScreen.tsx","language":"typescript","sizeLines":162,"fileCategory":"code"},
+    {"path":"src/screens/MapScreen.tsx","language":"typescript","sizeLines":176,"fileCategory":"code"},
+    {"path":"src/screens/RoomSelectionScreen.tsx","language":"typescript","sizeLines":82,"fileCategory":"code"}
+  ],
+  "batchImportData": {
+    "App.tsx": ["src/components/PreviewTabs.tsx","src/screens/FloorSelectionScreen.tsx","src/screens/HomeScreen.tsx","src/screens/MapScreen.tsx","src/screens/RoomSelectionScreen.tsx"],
+    "src/components/CategoryChip.tsx": ["src/components/theme.ts"],
+    "src/components/FloorCard.tsx": ["src/components/theme.ts"],
+    "src/components/Header.tsx": ["src/components/theme.ts"],
+    "src/components/PreviewTabs.tsx": ["src/components/theme.ts"],
+    "src/components/QuickAccessCard.tsx": ["src/components/theme.ts"],
+    "src/components/RoomCard.tsx": ["src/components/theme.ts"],
+    "src/components/ScreenScaffold.tsx": ["src/components/theme.ts"],
+    "src/components/SearchBar.tsx": ["src/components/theme.ts"],
+    "src/components/theme.ts": [],
+    "src/screens/FloorSelectionScreen.tsx": ["src/components/FloorCard.tsx","src/components/Header.tsx","src/components/ScreenScaffold.tsx","src/components/theme.ts"],
+    "src/screens/HomeScreen.tsx": ["src/components/QuickAccessCard.tsx","src/components/ScreenScaffold.tsx","src/components/SearchBar.tsx","src/components/theme.ts"],
+    "src/screens/MapScreen.tsx": ["src/components/Header.tsx","src/components/ScreenScaffold.tsx","src/components/SearchBar.tsx","src/components/theme.ts","src/mapEngine/map-controller.ts","src/storage/map-assets/map.json"],
+    "src/screens/RoomSelectionScreen.tsx": ["src/components/CategoryChip.tsx","src/components/Header.tsx","src/components/RoomCard.tsx","src/components/ScreenScaffold.tsx","src/components/theme.ts"]
+  },
+  "neighborMap": {
+    "src/components/theme.ts": [
+      {"path":"src/mapEngine/ArenaMapEngineView.tsx","batchIndex":4,"symbols":["ArenaMapEngineView"]},
+      {"path":"src/mapEngine/cameran_system/CameraViewport.tsx","batchIndex":3,"symbols":["CameraViewport"]}
+    ],
+    "src/screens/MapScreen.tsx": [
+      {"path":"src/mapEngine/map-controller.ts","batchIndex":4,"symbols":["ArenaMapEngineView","extractMovementConstraintMapInput","ArenaMapView"]},
+      {"path":"src/storage/map-assets/map.json","batchIndex":6,"symbols":[]}
+    ]
+  }
+}

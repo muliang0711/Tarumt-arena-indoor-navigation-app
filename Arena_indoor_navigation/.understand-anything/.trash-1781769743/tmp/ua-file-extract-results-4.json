@@ -1,0 +1,942 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 7,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "src/mapEngine/ArenaMapEngineView.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 196,
+      "nonEmptyLines": 182,
+      "functions": [
+        {
+          "name": "ArenaMapEngineView",
+          "startLine": 26,
+          "endLine": 147,
+          "params": [
+            "{\n  mapData: rawMapData = defaultMapData,\n  sensorSamples = [],\n  height = 390,\n}"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ArenaMapEngineView",
+          "line": 26,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useState",
+          "lineNumber": 31
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useState",
+          "lineNumber": 32
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useState",
+          "lineNumber": 33
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useMemo",
+          "lineNumber": 34
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "normalizeMapSchema",
+          "lineNumber": 34
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useMemo",
+          "lineNumber": 35
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "buildBobActorAtNode",
+          "lineNumber": 35
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useMemo",
+          "lineNumber": 36
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "extractMovementConstraintMapInput",
+          "lineNumber": 36
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useMemo",
+          "lineNumber": 37
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "updateMovementSystem",
+          "lineNumber": 39
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useMemo",
+          "lineNumber": 46
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useMemo",
+          "lineNumber": 55
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "getVisualBounds",
+          "lineNumber": 55
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useMemo",
+          "lineNumber": 56
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "Math.max",
+          "lineNumber": 56
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useMemo",
+          "lineNumber": 57
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "routeNodeToPixels",
+          "lineNumber": 58
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useMemo",
+          "lineNumber": 61
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "createInitialCameraState",
+          "lineNumber": 61
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useCallback",
+          "lineNumber": 62
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "centerCameraOnPoint",
+          "lineNumber": 63
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "useEffect",
+          "lineNumber": 67
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "createInitialCameraState",
+          "lineNumber": 69
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "setCamera",
+          "lineNumber": 70
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "applyFollowTarget",
+          "lineNumber": 70
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "applyFollowTarget",
+          "lineNumber": 74
+        },
+        {
+          "caller": "handleGestureStart",
+          "callee": "setIsFollowingBob",
+          "lineNumber": 77
+        },
+        {
+          "caller": "handleCameraChange",
+          "callee": "setCamera",
+          "lineNumber": 81
+        },
+        {
+          "caller": "handleZoomButton",
+          "callee": "setCamera",
+          "lineNumber": 86
+        },
+        {
+          "caller": "handleZoomButton",
+          "callee": "zoomCamera",
+          "lineNumber": 87
+        },
+        {
+          "caller": "handleZoomButton",
+          "callee": "applyFollowTarget",
+          "lineNumber": 88
+        },
+        {
+          "caller": "handleToggleFollowBob",
+          "callee": "setIsFollowingBob",
+          "lineNumber": 93
+        },
+        {
+          "caller": "handleToggleFollowBob",
+          "callee": "setCamera",
+          "lineNumber": 96
+        },
+        {
+          "caller": "handleToggleFollowBob",
+          "callee": "applyFollowTarget",
+          "lineNumber": 96
+        },
+        {
+          "caller": "handleLayout",
+          "callee": "setViewportWidth",
+          "lineNumber": 103
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "handleZoomButton",
+          "lineNumber": 130
+        },
+        {
+          "caller": "ArenaMapEngineView",
+          "callee": "handleZoomButton",
+          "lineNumber": 133
+        }
+      ],
+      "metrics": {
+        "importCount": 8,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/actor_system/actorSystem.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 3,
+      "nonEmptyLines": 3,
+      "exports": [
+        {
+          "name": "ActorLayer",
+          "line": 1,
+          "isDefault": false
+        },
+        {
+          "name": "buildBobActorAtNode",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "routeNodeToPixels",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "Actor",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 4,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/cameran_system/cameranSystem.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 12,
+      "nonEmptyLines": 12,
+      "exports": [
+        {
+          "name": "CameraViewport",
+          "line": 1,
+          "isDefault": false
+        },
+        {
+          "name": "CAMERA_MAX_ZOOM",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "CAMERA_MIN_ZOOM",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "centerCameraOnPoint",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "createInitialCameraState",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "fitCameraToBounds",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "panCamera",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "setCameraZoom",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "zoomCamera",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "CameraState",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "Point",
+          "line": 12,
+          "isDefault": false
+        },
+        {
+          "name": "ViewportSize",
+          "line": 12,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 12,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/map-controller.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 3,
+      "nonEmptyLines": 3,
+      "exports": [
+        {
+          "name": "ArenaMapEngineView",
+          "line": 1,
+          "isDefault": false
+        },
+        {
+          "name": "extractMovementConstraintMapInput",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "ArenaMapView",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/map-engine-contract.test.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 93,
+      "nonEmptyLines": 90,
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/mapEngineController.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 167,
+      "nonEmptyLines": 138,
+      "functions": [
+        {
+          "name": "objectValue",
+          "startLine": 6,
+          "endLine": 8,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "arrayValue",
+          "startLine": 10,
+          "endLine": 12,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "finiteNumber",
+          "startLine": 14,
+          "endLine": 17,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "optionalString",
+          "startLine": 19,
+          "endLine": 21,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizePoint",
+          "startLine": 23,
+          "endLine": 33,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizePolygon",
+          "startLine": 35,
+          "endLine": 38,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizePolygons",
+          "startLine": 40,
+          "endLine": 42,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeLineSegment",
+          "startLine": 44,
+          "endLine": 54,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "normalizeLineSegments",
+          "startLine": 56,
+          "endLine": 58,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "polygonFromBounds",
+          "startLine": 60,
+          "endLine": 77,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "tilesPerMeter",
+          "startLine": 79,
+          "endLine": 97,
+          "params": [
+            "rawMapData"
+          ]
+        },
+        {
+          "name": "polygonFromTileRect",
+          "startLine": 99,
+          "endLine": 106,
+          "params": [
+            "x",
+            "y",
+            "width",
+            "height",
+            "tileScale"
+          ]
+        },
+        {
+          "name": "extractBlockedAreasFromAssets",
+          "startLine": 108,
+          "endLine": 151,
+          "params": [
+            "rawMapData"
+          ]
+        },
+        {
+          "name": "extractMovementConstraintMapInput",
+          "startLine": 153,
+          "endLine": 167,
+          "params": [
+            "rawMapData"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "extractMovementConstraintMapInput",
+          "line": 153,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "objectValue",
+          "callee": "Array.isArray",
+          "lineNumber": 7
+        },
+        {
+          "caller": "arrayValue",
+          "callee": "Array.isArray",
+          "lineNumber": 11
+        },
+        {
+          "caller": "finiteNumber",
+          "callee": "Number",
+          "lineNumber": 15
+        },
+        {
+          "caller": "finiteNumber",
+          "callee": "Number.isFinite",
+          "lineNumber": 16
+        },
+        {
+          "caller": "normalizePoint",
+          "callee": "objectValue",
+          "lineNumber": 24
+        },
+        {
+          "caller": "normalizePoint",
+          "callee": "finiteNumber",
+          "lineNumber": 25
+        },
+        {
+          "caller": "normalizePoint",
+          "callee": "finiteNumber",
+          "lineNumber": 26
+        },
+        {
+          "caller": "normalizePolygon",
+          "callee": "arrayValue(value).map(normalizePoint).filter",
+          "lineNumber": 36
+        },
+        {
+          "caller": "normalizePolygon",
+          "callee": "arrayValue(value).map",
+          "lineNumber": 36
+        },
+        {
+          "caller": "normalizePolygon",
+          "callee": "arrayValue",
+          "lineNumber": 36
+        },
+        {
+          "caller": "normalizePolygons",
+          "callee": "arrayValue(value).map(normalizePolygon).filter",
+          "lineNumber": 41
+        },
+        {
+          "caller": "normalizePolygons",
+          "callee": "arrayValue(value).map",
+          "lineNumber": 41
+        },
+        {
+          "caller": "normalizePolygons",
+          "callee": "arrayValue",
+          "lineNumber": 41
+        },
+        {
+          "caller": "normalizeLineSegment",
+          "callee": "arrayValue(value).map(normalizePoint).filter",
+          "lineNumber": 45
+        },
+        {
+          "caller": "normalizeLineSegment",
+          "callee": "arrayValue(value).map",
+          "lineNumber": 45
+        },
+        {
+          "caller": "normalizeLineSegment",
+          "callee": "arrayValue",
+          "lineNumber": 45
+        },
+        {
+          "caller": "normalizeLineSegment",
+          "callee": "objectValue",
+          "lineNumber": 50
+        },
+        {
+          "caller": "normalizeLineSegment",
+          "callee": "normalizePoint",
+          "lineNumber": 51
+        },
+        {
+          "caller": "normalizeLineSegment",
+          "callee": "normalizePoint",
+          "lineNumber": 52
+        },
+        {
+          "caller": "normalizeLineSegments",
+          "callee": "arrayValue(value).map(normalizeLineSegment).filter",
+          "lineNumber": 57
+        },
+        {
+          "caller": "normalizeLineSegments",
+          "callee": "arrayValue(value).map",
+          "lineNumber": 57
+        },
+        {
+          "caller": "normalizeLineSegments",
+          "callee": "arrayValue",
+          "lineNumber": 57
+        },
+        {
+          "caller": "polygonFromBounds",
+          "callee": "objectValue",
+          "lineNumber": 61
+        },
+        {
+          "caller": "polygonFromBounds",
+          "callee": "finiteNumber",
+          "lineNumber": 62
+        },
+        {
+          "caller": "polygonFromBounds",
+          "callee": "finiteNumber",
+          "lineNumber": 63
+        },
+        {
+          "caller": "polygonFromBounds",
+          "callee": "finiteNumber",
+          "lineNumber": 64
+        },
+        {
+          "caller": "polygonFromBounds",
+          "callee": "finiteNumber",
+          "lineNumber": 65
+        },
+        {
+          "caller": "tilesPerMeter",
+          "callee": "objectValue",
+          "lineNumber": 80
+        },
+        {
+          "caller": "tilesPerMeter",
+          "callee": "objectValue",
+          "lineNumber": 81
+        },
+        {
+          "caller": "tilesPerMeter",
+          "callee": "objectValue",
+          "lineNumber": 82
+        },
+        {
+          "caller": "tilesPerMeter",
+          "callee": "finiteNumber",
+          "lineNumber": 83
+        },
+        {
+          "caller": "tilesPerMeter",
+          "callee": "objectValue",
+          "lineNumber": 89
+        },
+        {
+          "caller": "tilesPerMeter",
+          "callee": "finiteNumber",
+          "lineNumber": 90
+        },
+        {
+          "caller": "tilesPerMeter",
+          "callee": "finiteNumber",
+          "lineNumber": 91
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "objectValue",
+          "lineNumber": 109
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "objectValue",
+          "lineNumber": 110
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "objectValue",
+          "lineNumber": 111
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "objectValue",
+          "lineNumber": 112
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "tilesPerMeter",
+          "lineNumber": 113
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "arrayValue(assets.items).map",
+          "lineNumber": 115
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "arrayValue",
+          "lineNumber": 115
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "objectValue",
+          "lineNumber": 116
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "optionalString",
+          "lineNumber": 117
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "arrayValue",
+          "lineNumber": 120
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "objectValue",
+          "lineNumber": 120
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "arrayValue",
+          "lineNumber": 121
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "objectValue",
+          "lineNumber": 121
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "arrayValue",
+          "lineNumber": 122
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "visualLayers.flatMap",
+          "lineNumber": 124
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "objectValue",
+          "lineNumber": 125
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "optionalString",
+          "lineNumber": 126
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "assetManifest.get",
+          "lineNumber": 127
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "finiteNumber",
+          "lineNumber": 133
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "finiteNumber",
+          "lineNumber": 134
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "arrayValue",
+          "lineNumber": 139
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "blockedOffsets.flatMap",
+          "lineNumber": 141
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "normalizePoint",
+          "lineNumber": 142
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "polygonFromTileRect",
+          "lineNumber": 143
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "finiteNumber",
+          "lineNumber": 147
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "finiteNumber",
+          "lineNumber": 148
+        },
+        {
+          "caller": "extractBlockedAreasFromAssets",
+          "callee": "polygonFromTileRect",
+          "lineNumber": 149
+        },
+        {
+          "caller": "extractMovementConstraintMapInput",
+          "callee": "objectValue",
+          "lineNumber": 154
+        },
+        {
+          "caller": "extractMovementConstraintMapInput",
+          "callee": "objectValue",
+          "lineNumber": 154
+        },
+        {
+          "caller": "extractMovementConstraintMapInput",
+          "callee": "polygonFromBounds",
+          "lineNumber": 155
+        },
+        {
+          "caller": "extractMovementConstraintMapInput",
+          "callee": "normalizePolygons",
+          "lineNumber": 156
+        },
+        {
+          "caller": "extractMovementConstraintMapInput",
+          "callee": "normalizePolygons",
+          "lineNumber": 157
+        },
+        {
+          "caller": "extractMovementConstraintMapInput",
+          "callee": "extractBlockedAreasFromAssets",
+          "lineNumber": 158
+        },
+        {
+          "caller": "extractMovementConstraintMapInput",
+          "callee": "normalizeLineSegments",
+          "lineNumber": 163
+        },
+        {
+          "caller": "extractMovementConstraintMapInput",
+          "callee": "normalizePolygons",
+          "lineNumber": 164
+        },
+        {
+          "caller": "extractMovementConstraintMapInput",
+          "callee": "normalizePolygons",
+          "lineNumber": 165
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 14,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 15,
+      "nonEmptyLines": 15,
+      "exports": [
+        {
+          "name": "ArenaMapView",
+          "line": 1,
+          "isDefault": false
+        },
+        {
+          "name": "classifyAsset",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "getVisualBounds",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "normalizeMapSchema",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "orderVisualLayers",
+          "line": 2,
+          "isDefault": false
+        },
+        {
+          "name": "Bounds",
+          "line": 8,
+          "isDefault": false
+        },
+        {
+          "name": "MapAsset",
+          "line": 8,
+          "isDefault": false
+        },
+        {
+          "name": "NormalizedMapSchema",
+          "line": 8,
+          "isDefault": false
+        },
+        {
+          "name": "RouteNode",
+          "line": 8,
+          "isDefault": false
+        },
+        {
+          "name": "VisualLayer",
+          "line": 8,
+          "isDefault": false
+        },
+        {
+          "name": "MapRenderLayout",
+          "line": 15,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 11,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

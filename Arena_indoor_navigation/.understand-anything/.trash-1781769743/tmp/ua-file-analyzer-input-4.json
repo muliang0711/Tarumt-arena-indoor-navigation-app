@@ -1,0 +1,75 @@
+{
+  "projectRoot": "C:\\Code\\project\\New folder\\Arena_indoor_navigation",
+  "batchFiles": [
+    {
+      "path": "src/mapEngine/ArenaMapEngineView.tsx",
+      "language": "typescript",
+      "sizeLines": 196,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/actor_system/actorSystem.ts",
+      "language": "typescript",
+      "sizeLines": 3,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/cameran_system/cameranSystem.ts",
+      "language": "typescript",
+      "sizeLines": 12,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/map-controller.ts",
+      "language": "typescript",
+      "sizeLines": 3,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/map-engine-contract.test.ts",
+      "language": "typescript",
+      "sizeLines": 93,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/mapEngineController.ts",
+      "language": "typescript",
+      "sizeLines": 167,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "language": "typescript",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "src/mapEngine/ArenaMapEngineView.tsx": [
+      "src/components/theme.ts",
+      "src/mapEngine/actor_system/actorSystem.ts",
+      "src/mapEngine/cameran_system/cameranSystem.ts",
+      "src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "src/mapEngine/mapEngineController.ts",
+      "src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "src/storage/map-assets/map.json"
+    ],
+    "src/mapEngine/actor_system/actorSystem.ts": [],
+    "src/mapEngine/cameran_system/cameranSystem.ts": [],
+    "src/mapEngine/map-controller.ts": [],
+    "src/mapEngine/map-engine-contract.test.ts": [
+      "src/mapEngine/actor_system/actorSystem.ts",
+      "src/mapEngine/cameran_system/cameranSystem.ts",
+      "src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "src/mapEngine/map-controller.ts",
+      "src/mapEngine/mapEngineController.ts",
+      "src/mapEngine/movement_system/indoorposition_engine.tsx"
+    ],
+    "src/mapEngine/mapEngineController.ts": [
+      "src/mapEngine/mapGeometry.ts",
+      "src/mapEngine/movement_system/constraints/index.ts"
+    ],
+    "src/mapEngine/map_rendering_system/mapRenderingSystem.ts": []
+  }
+}

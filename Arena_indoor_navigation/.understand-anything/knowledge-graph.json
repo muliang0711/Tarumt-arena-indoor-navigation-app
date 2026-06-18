@@ -1,0 +1,4735 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "arena-indoor-navigation",
+    "languages": [
+      "json",
+      "markdown",
+      "typescript",
+      "unknown"
+    ],
+    "frameworks": [
+      "React",
+      "React Native",
+      "Expo"
+    ],
+    "description": "An Expo and React Native indoor-navigation application with reusable screens, a tile-based map engine, camera and actor systems, movement constraints, and particle-filter/PDR positioning.",
+    "analyzedAt": "2026-06-18T08:01:31.122Z",
+    "gitCommitHash": "not-a-git-repository"
+  },
+  "nodes": [
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "type": "file",
+      "name": "createParticles.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "summary": "Creates an initial particle cloud around a world position using a deterministic golden-angle spatial spread and bounded heading, weight, and confidence values.",
+      "tags": [
+        "particle-filter",
+        "factory",
+        "initialization",
+        "positioning"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses readonly TypeScript model types and immutable particle construction."
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/algorithms/createParticles.ts:createParticles",
+      "type": "function",
+      "name": "createParticles",
+      "filePath": "src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "lineRange": [
+        33,
+        69
+      ],
+      "summary": "Builds a normalized set of particles distributed around an initial position with configurable position and heading spread.",
+      "tags": [
+        "factory",
+        "particle-filter",
+        "initialization",
+        "geometry"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "type": "file",
+      "name": "particleFilter.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "summary": "Orchestrates particle-filter initialization and update cycles, combining prediction, scoring, resampling, weight normalization, and weighted pose estimation.",
+      "tags": [
+        "particle-filter",
+        "service",
+        "positioning",
+        "state-management"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Implements immutable snapshot updates and circular averaging for headings."
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:createParticleFilterState",
+      "type": "function",
+      "name": "createParticleFilterState",
+      "filePath": "src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "lineRange": [
+        108,
+        126
+      ],
+      "summary": "Initializes a normalized particle-filter snapshot and derives its weighted position, heading, confidence, and best particle.",
+      "tags": [
+        "particle-filter",
+        "factory",
+        "state-management",
+        "positioning"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:updateParticleFilterState",
+      "type": "function",
+      "name": "updateParticleFilterState",
+      "filePath": "src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "lineRange": [
+        128,
+        173
+      ],
+      "summary": "Advances a filter snapshot through prediction, motion scoring, systematic resampling, and aggregate pose calculation.",
+      "tags": [
+        "particle-filter",
+        "state-transition",
+        "positioning",
+        "estimation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:runParticleFilter",
+      "type": "function",
+      "name": "runParticleFilter",
+      "filePath": "src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "lineRange": [
+        175,
+        188
+      ],
+      "summary": "Runs a sequence of motion estimates through a newly initialized particle filter and returns the final snapshot.",
+      "tags": [
+        "particle-filter",
+        "orchestration",
+        "batch-processing",
+        "estimation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "file",
+      "name": "particleTypes.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "summary": "Defines the particle, filter snapshot, world-position, motion-history, scoring, and algorithm option contracts shared by the movement filter.",
+      "tags": [
+        "type-definition",
+        "particle-filter",
+        "data-model",
+        "configuration"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses readonly interfaces and interface composition to model immutable filter state and options."
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "type": "file",
+      "name": "predictParticles.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "summary": "Projects particles according to a motion estimate while blending headings and injecting configurable distance, heading, and position noise.",
+      "tags": [
+        "particle-filter",
+        "prediction",
+        "motion-model",
+        "positioning"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/algorithms/predictParticles.ts:predictParticles",
+      "type": "function",
+      "name": "predictParticles",
+      "filePath": "src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "lineRange": [
+        47,
+        93
+      ],
+      "summary": "Produces the next particle generation by applying noisy heading and displacement updates while retaining each particle's motion history.",
+      "tags": [
+        "particle-filter",
+        "prediction",
+        "motion-model",
+        "randomization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "type": "file",
+      "name": "resampleParticles.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "summary": "Resamples weighted particles to a requested population using cumulative weights and evenly spaced stochastic thresholds.",
+      "tags": [
+        "particle-filter",
+        "resampling",
+        "probability",
+        "utility"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/algorithms/resampleParticles.ts:resampleParticles",
+      "type": "function",
+      "name": "resampleParticles",
+      "filePath": "src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "lineRange": [
+        35,
+        73
+      ],
+      "summary": "Performs systematic resampling from normalized particle weights and assigns generation-specific identifiers to cloned particles.",
+      "tags": [
+        "particle-filter",
+        "resampling",
+        "probability",
+        "factory"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "type": "file",
+      "name": "scoreParticles.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "summary": "Scores predicted particles against expected distance, heading, and confidence, with support for custom constraint-based scoring.",
+      "tags": [
+        "particle-filter",
+        "scoring",
+        "validation",
+        "positioning"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/algorithms/scoreParticles.ts:scoreParticle",
+      "type": "function",
+      "name": "scoreParticle",
+      "filePath": "src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "lineRange": [
+        44,
+        69
+      ],
+      "summary": "Computes a bounded weight and confidence for one particle from motion agreement, prior confidence, and an optional custom score.",
+      "tags": [
+        "particle-filter",
+        "scoring",
+        "validation",
+        "confidence"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/algorithms/scoreParticles.ts:scoreParticles",
+      "type": "function",
+      "name": "scoreParticles",
+      "filePath": "src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "lineRange": [
+        71,
+        76
+      ],
+      "summary": "Applies particle scoring to an entire predicted population.",
+      "tags": [
+        "particle-filter",
+        "scoring",
+        "collection-transform",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "src/mapEngine/movement_system/constraints/index.ts",
+      "summary": "Exposes the movement-constraint provider, particle-position validation helper, and related map contracts through a compact barrel module.",
+      "tags": [
+        "barrel",
+        "constraint-system",
+        "exports",
+        "validation"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses value and type-only re-exports to define the public constraint API."
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "type": "file",
+      "name": "displacementEstimate.ts",
+      "filePath": "src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "summary": "Defines normalized displacement estimates and converts step deltas into traveled distance using a configurable step length.",
+      "tags": [
+        "estimation",
+        "displacement",
+        "factory",
+        "data-model"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/estimate/displacementEstimate.ts:createDisplacementEstimate",
+      "type": "function",
+      "name": "createDisplacementEstimate",
+      "filePath": "src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "lineRange": [
+        29,
+        44
+      ],
+      "summary": "Creates a bounded displacement estimate with normalized timestamp, distance, confidence, heading, and optional step length.",
+      "tags": [
+        "factory",
+        "displacement",
+        "normalization",
+        "estimation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/estimate/displacementEstimate.ts:createDisplacementEstimateFromStepEstimate",
+      "type": "function",
+      "name": "createDisplacementEstimateFromStepEstimate",
+      "filePath": "src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "lineRange": [
+        46,
+        62
+      ],
+      "summary": "Converts a step estimate into traveled distance and delegates construction of the resulting displacement estimate.",
+      "tags": [
+        "factory",
+        "displacement",
+        "step-conversion",
+        "estimation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "file",
+      "name": "headingEstimate.ts",
+      "filePath": "src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "summary": "Defines heading estimates and conversion helpers that normalize angles and provide radians, degrees, and unit-vector representations.",
+      "tags": [
+        "estimation",
+        "heading",
+        "normalization",
+        "geometry"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:normalizeHeadingRadians",
+      "type": "function",
+      "name": "normalizeHeadingRadians",
+      "filePath": "src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "lineRange": [
+        26,
+        32
+      ],
+      "summary": "Wraps a finite radian angle into the nonnegative range of one full turn.",
+      "tags": [
+        "utility",
+        "heading",
+        "normalization",
+        "geometry"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:normalizeHeadingDegrees",
+      "type": "function",
+      "name": "normalizeHeadingDegrees",
+      "filePath": "src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "lineRange": [
+        34,
+        39
+      ],
+      "summary": "Wraps a finite degree angle into the range from zero through 360 degrees.",
+      "tags": [
+        "utility",
+        "heading",
+        "normalization",
+        "geometry"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:createHeadingEstimateFromRadians",
+      "type": "function",
+      "name": "createHeadingEstimateFromRadians",
+      "filePath": "src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "lineRange": [
+        48,
+        65
+      ],
+      "summary": "Creates a complete heading estimate from radians, including degrees, unit vector, confidence, and source metadata.",
+      "tags": [
+        "factory",
+        "heading",
+        "estimation",
+        "geometry"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:createHeadingEstimateFromDegrees",
+      "type": "function",
+      "name": "createHeadingEstimateFromDegrees",
+      "filePath": "src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "lineRange": [
+        67,
+        77
+      ],
+      "summary": "Normalizes a degree heading, converts it to radians, and creates the standard heading estimate representation.",
+      "tags": [
+        "factory",
+        "heading",
+        "conversion",
+        "estimation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "file",
+      "name": "motionEstimate.ts",
+      "filePath": "src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "summary": "Combines step and heading observations into a motion estimate with derived displacement and aggregate confidence.",
+      "tags": [
+        "estimation",
+        "motion-model",
+        "factory",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/estimate/motionEstimate.ts:createMotionEstimate",
+      "type": "function",
+      "name": "createMotionEstimate",
+      "filePath": "src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "lineRange": [
+        26,
+        48
+      ],
+      "summary": "Builds a motion estimate by converting steps to displacement and combining step, heading, and resolved confidence values.",
+      "tags": [
+        "factory",
+        "motion-model",
+        "estimation",
+        "confidence"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "file",
+      "name": "stepEstimate.ts",
+      "filePath": "src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "summary": "Creates normalized cumulative-step and step-delta estimates from pedometer samples or raw count values.",
+      "tags": [
+        "estimation",
+        "pedometer",
+        "factory",
+        "normalization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/estimate/stepEstimate.ts:createStepEstimate",
+      "type": "function",
+      "name": "createStepEstimate",
+      "filePath": "src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "lineRange": [
+        27,
+        45
+      ],
+      "summary": "Creates a step estimate from a pedometer sample while preventing negative counts and step deltas.",
+      "tags": [
+        "factory",
+        "pedometer",
+        "estimation",
+        "normalization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/estimate/stepEstimate.ts:createStepEstimateFromCount",
+      "type": "function",
+      "name": "createStepEstimateFromCount",
+      "filePath": "src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "lineRange": [
+        47,
+        67
+      ],
+      "summary": "Creates a step estimate directly from timestamped count data, optional cadence, confidence, and source.",
+      "tags": [
+        "factory",
+        "pedometer",
+        "estimation",
+        "normalization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "file",
+      "name": "indoorposition_engine.tsx",
+      "filePath": "src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "summary": "Coordinates sensor normalization, step and heading estimation, particle-filter updates, and map constraints to produce the next indoor position state.",
+      "tags": [
+        "service",
+        "indoor-positioning",
+        "orchestration",
+        "particle-filter",
+        "sensor-fusion",
+        "tested"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "type": "function",
+      "name": "updateMovementSystem",
+      "filePath": "src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "lineRange": [
+        60,
+        106
+      ],
+      "summary": "Processes a sensor batch into constrained position, heading, confidence, and particle-filter state for the movement system.",
+      "tags": [
+        "orchestration",
+        "indoor-positioning",
+        "sensor-fusion",
+        "state-transition"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "type": "file",
+      "name": "normalizeSensorSample.ts",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "summary": "Sanitizes all supported raw sensor sample variants by normalizing timestamps, vectors, counts, attitudes, and optional numeric fields.",
+      "tags": [
+        "normalization",
+        "sensor-fusion",
+        "validation",
+        "preprocessing"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses a discriminated union switch to preserve each concrete sensor sample type."
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorTimestamp",
+      "type": "function",
+      "name": "normalizeSensorTimestamp",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "lineRange": [
+        29,
+        31
+      ],
+      "summary": "Converts a non-finite sensor timestamp to a safe numeric value.",
+      "tags": [
+        "normalization",
+        "sensor-data",
+        "validation",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorVector3",
+      "type": "function",
+      "name": "normalizeSensorVector3",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "lineRange": [
+        33,
+        39
+      ],
+      "summary": "Returns a finite three-axis sensor vector, replacing missing or invalid coordinates with zero.",
+      "tags": [
+        "normalization",
+        "sensor-data",
+        "validation",
+        "geometry"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorSample",
+      "type": "function",
+      "name": "normalizeSensorSample",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "lineRange": [
+        65,
+        80
+      ],
+      "summary": "Dispatches a raw sensor sample to the normalizer matching its discriminated sensor kind.",
+      "tags": [
+        "normalization",
+        "sensor-fusion",
+        "dispatcher",
+        "preprocessing"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeAccelerometerSample",
+      "type": "function",
+      "name": "normalizeAccelerometerSample",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "lineRange": [
+        82,
+        90
+      ],
+      "summary": "Normalizes accelerometer timestamp, acceleration, optional gravity, and sample interval fields.",
+      "tags": [
+        "normalization",
+        "accelerometer",
+        "sensor-data",
+        "preprocessing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeGyroscopeSample",
+      "type": "function",
+      "name": "normalizeGyroscopeSample",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "lineRange": [
+        92,
+        99
+      ],
+      "summary": "Normalizes gyroscope timestamp, rotation-rate vector, and optional sample interval.",
+      "tags": [
+        "normalization",
+        "gyroscope",
+        "sensor-data",
+        "preprocessing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeMagnetometerSample",
+      "type": "function",
+      "name": "normalizeMagnetometerSample",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "lineRange": [
+        101,
+        109
+      ],
+      "summary": "Normalizes magnetometer timestamp, magnetic-field vector, accuracy, and sample interval.",
+      "tags": [
+        "normalization",
+        "magnetometer",
+        "sensor-data",
+        "preprocessing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizePedometerStepSample",
+      "type": "function",
+      "name": "normalizePedometerStepSample",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "lineRange": [
+        111,
+        118
+      ],
+      "summary": "Normalizes pedometer timestamp, nonnegative integer step count, and optional cadence.",
+      "tags": [
+        "normalization",
+        "pedometer",
+        "sensor-data",
+        "preprocessing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeDeviceMotionSample",
+      "type": "function",
+      "name": "normalizeDeviceMotionSample",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "lineRange": [
+        120,
+        130
+      ],
+      "summary": "Normalizes device-motion vectors, attitude angles, timestamp, and optional sampling interval while preserving nullability.",
+      "tags": [
+        "normalization",
+        "device-motion",
+        "sensor-data",
+        "preprocessing"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "type": "file",
+      "name": "sensorSampleWindow.ts",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "summary": "Provides immutable, capacity-limited windows of timestamped sensor samples with chronological ordering and inspection helpers.",
+      "tags": [
+        "sensor-data",
+        "windowing",
+        "utility",
+        "preprocessing"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Generic constraints preserve each concrete timestamped sample type across window operations."
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:createSensorSampleWindow",
+      "type": "function",
+      "name": "createSensorSampleWindow",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "lineRange": [
+        29,
+        40
+      ],
+      "summary": "Creates a chronologically sorted sensor window trimmed to a normalized positive capacity.",
+      "tags": [
+        "factory",
+        "sensor-data",
+        "windowing",
+        "preprocessing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:pushSensorSample",
+      "type": "function",
+      "name": "pushSensorSample",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "lineRange": [
+        42,
+        47
+      ],
+      "summary": "Returns a new capacity-limited sensor window containing an additional sample.",
+      "tags": [
+        "sensor-data",
+        "windowing",
+        "immutable-update",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:getLatestSensorSample",
+      "type": "function",
+      "name": "getLatestSensorSample",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "lineRange": [
+        49,
+        53
+      ],
+      "summary": "Returns the newest sample in a chronological sensor window when available.",
+      "tags": [
+        "sensor-data",
+        "windowing",
+        "query",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:getOldestSensorSample",
+      "type": "function",
+      "name": "getOldestSensorSample",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "lineRange": [
+        55,
+        59
+      ],
+      "summary": "Returns the oldest sample in a chronological sensor window when available.",
+      "tags": [
+        "sensor-data",
+        "windowing",
+        "query",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:getSensorSampleWindowDurationMs",
+      "type": "function",
+      "name": "getSensorSampleWindowDurationMs",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "lineRange": [
+        61,
+        72
+      ],
+      "summary": "Calculates the nonnegative elapsed time between the oldest and newest samples in a window.",
+      "tags": [
+        "sensor-data",
+        "windowing",
+        "time-series",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:isSensorSampleWindowFull",
+      "type": "function",
+      "name": "isSensorSampleWindowFull",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "lineRange": [
+        74,
+        78
+      ],
+      "summary": "Reports whether a sensor window has reached its configured capacity.",
+      "tags": [
+        "sensor-data",
+        "windowing",
+        "validation",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "file",
+      "name": "sensorTypes.ts",
+      "filePath": "src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "summary": "Defines the discriminated sensor sample union and shared vector, timestamp, accelerometer, gyroscope, magnetometer, pedometer, and device-motion contracts.",
+      "tags": [
+        "type-definition",
+        "sensor-data",
+        "data-model",
+        "sensor-fusion"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "A discriminated union keyed by kind enables type-safe sensor-specific processing."
+    },
+    {
+      "id": "file:App.tsx",
+      "type": "file",
+      "name": "App.tsx",
+      "filePath": "App.tsx",
+      "summary": "Bootstraps the Expo application, owns the preview navigation state, and switches among the home, map, floor, and room screens inside gesture and safe-area containers.",
+      "tags": [
+        "entry-point",
+        "component",
+        "navigation",
+        "state-management"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Uses a local ScreenKey union and conditional JSX as a lightweight preview navigator."
+    },
+    {
+      "id": "function:App.tsx:App",
+      "type": "function",
+      "name": "App",
+      "filePath": "App.tsx",
+      "lineRange": [
+        14,
+        31
+      ],
+      "summary": "Renders the application shell and changes the active screen in response to tab and screen-level navigation callbacks.",
+      "tags": [
+        "component",
+        "entry-point",
+        "navigation",
+        "state-management"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/CategoryChip.tsx",
+      "type": "file",
+      "name": "CategoryChip.tsx",
+      "filePath": "src/components/CategoryChip.tsx",
+      "summary": "Defines a compact selectable category chip with active and inactive visual states for room filtering interfaces.",
+      "tags": [
+        "component",
+        "selection-control",
+        "room-filter",
+        "presentational"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/CategoryChip.tsx:CategoryChip",
+      "type": "function",
+      "name": "CategoryChip",
+      "filePath": "src/components/CategoryChip.tsx",
+      "lineRange": [
+        10,
+        18
+      ],
+      "summary": "Renders a labeled pressable chip and applies highlighted colors when the category is active.",
+      "tags": [
+        "component",
+        "selection-control",
+        "presentational"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/FloorCard.tsx",
+      "type": "file",
+      "name": "FloorCard.tsx",
+      "filePath": "src/components/FloorCard.tsx",
+      "summary": "Provides an interactive floor summary card with a building image, room metadata, selection highlighting, and navigation affordance.",
+      "tags": [
+        "component",
+        "floor-selection",
+        "card",
+        "event-handler"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/FloorCard.tsx:FloorCard",
+      "type": "function",
+      "name": "FloorCard",
+      "filePath": "src/components/FloorCard.tsx",
+      "lineRange": [
+        15,
+        33
+      ],
+      "summary": "Renders floor details and invokes an optional press callback while switching between selected and navigable indicators.",
+      "tags": [
+        "component",
+        "floor-selection",
+        "card",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/Header.tsx",
+      "type": "file",
+      "name": "Header.tsx",
+      "filePath": "src/components/Header.tsx",
+      "summary": "Implements a centered screen header with optional subtitle and back navigation while preserving symmetric layout.",
+      "tags": [
+        "component",
+        "navigation",
+        "header",
+        "presentational"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/Header.tsx:Header",
+      "type": "function",
+      "name": "Header",
+      "filePath": "src/components/Header.tsx",
+      "lineRange": [
+        12,
+        29
+      ],
+      "summary": "Renders screen title content and conditionally exposes a back button connected to the supplied callback.",
+      "tags": [
+        "component",
+        "navigation",
+        "header",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/PreviewTabs.tsx",
+      "type": "file",
+      "name": "PreviewTabs.tsx",
+      "filePath": "src/components/PreviewTabs.tsx",
+      "summary": "Defines the four-screen preview navigation contract and renders a bottom tab bar for switching between app prototypes.",
+      "tags": [
+        "component",
+        "navigation",
+        "tab-bar",
+        "type-definition"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/PreviewTabs.tsx:PreviewTabs",
+      "type": "function",
+      "name": "PreviewTabs",
+      "filePath": "src/components/PreviewTabs.tsx",
+      "lineRange": [
+        20,
+        34
+      ],
+      "summary": "Maps screen descriptors into pressable tabs and reports the selected ScreenKey through the change callback.",
+      "tags": [
+        "component",
+        "navigation",
+        "tab-bar",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/QuickAccessCard.tsx",
+      "type": "file",
+      "name": "QuickAccessCard.tsx",
+      "filePath": "src/components/QuickAccessCard.tsx",
+      "summary": "Displays a compact home-screen shortcut tile with configurable icon family, label, and orange or green tone.",
+      "tags": [
+        "component",
+        "quick-access",
+        "card",
+        "presentational"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/QuickAccessCard.tsx:QuickAccessCard",
+      "type": "function",
+      "name": "QuickAccessCard",
+      "filePath": "src/components/QuickAccessCard.tsx",
+      "lineRange": [
+        13,
+        23
+      ],
+      "summary": "Selects the requested Expo icon set and renders a themed shortcut label and icon.",
+      "tags": [
+        "component",
+        "quick-access",
+        "icon-adapter"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/RoomCard.tsx",
+      "type": "file",
+      "name": "RoomCard.tsx",
+      "filePath": "src/components/RoomCard.tsx",
+      "summary": "Provides a room destination card showing room type, distance, icon, and selected-state feedback for destination lists.",
+      "tags": [
+        "component",
+        "room-selection",
+        "card",
+        "presentational"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/components/RoomCard.tsx:RoomCard",
+      "type": "function",
+      "name": "RoomCard",
+      "filePath": "src/components/RoomCard.tsx",
+      "lineRange": [
+        14,
+        34
+      ],
+      "summary": "Renders room metadata with a themed facility icon and either a selection checkmark or forward affordance.",
+      "tags": [
+        "component",
+        "room-selection",
+        "card",
+        "selection-state"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/ScreenScaffold.tsx",
+      "type": "file",
+      "name": "ScreenScaffold.tsx",
+      "filePath": "src/components/ScreenScaffold.tsx",
+      "summary": "Supplies the shared screen background and horizontal spacing, choosing between scrollable and fixed content containers.",
+      "tags": [
+        "component",
+        "layout",
+        "screen-shell",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/ScreenScaffold.tsx:ScreenScaffold",
+      "type": "function",
+      "name": "ScreenScaffold",
+      "filePath": "src/components/ScreenScaffold.tsx",
+      "lineRange": [
+        11,
+        21
+      ],
+      "summary": "Wraps child content in either a styled ScrollView or a full-height View according to the scroll option.",
+      "tags": [
+        "component",
+        "layout",
+        "screen-shell"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/SearchBar.tsx",
+      "type": "file",
+      "name": "SearchBar.tsx",
+      "filePath": "src/components/SearchBar.tsx",
+      "summary": "Defines a visual search control with placeholder text and a filter affordance for home and map discovery screens.",
+      "tags": [
+        "component",
+        "search",
+        "filter-control",
+        "presentational"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/components/SearchBar.tsx:SearchBar",
+      "type": "function",
+      "name": "SearchBar",
+      "filePath": "src/components/SearchBar.tsx",
+      "lineRange": [
+        10,
+        20
+      ],
+      "summary": "Renders search and filter icons around supplied placeholder text as a reusable visual search bar.",
+      "tags": [
+        "component",
+        "search",
+        "filter-control"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/components/theme.ts",
+      "type": "file",
+      "name": "theme.ts",
+      "filePath": "src/components/theme.ts",
+      "summary": "Centralizes the warm neutral color palette, border radii, and reusable platform shadow settings shared by the app UI and map viewport.",
+      "tags": [
+        "theme",
+        "design-tokens",
+        "configuration",
+        "styling"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Exports immutable-style token objects consumed directly by React Native StyleSheet definitions."
+    },
+    {
+      "id": "file:src/screens/FloorSelectionScreen.tsx",
+      "type": "file",
+      "name": "FloorSelectionScreen.tsx",
+      "filePath": "src/screens/FloorSelectionScreen.tsx",
+      "summary": "Presents the Arena TARUMT building and a list of floors, allowing the highlighted level to advance into room selection.",
+      "tags": [
+        "component",
+        "screen",
+        "floor-selection",
+        "navigation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/screens/FloorSelectionScreen.tsx:FloorSelectionScreen",
+      "type": "function",
+      "name": "FloorSelectionScreen",
+      "filePath": "src/screens/FloorSelectionScreen.tsx",
+      "lineRange": [
+        23,
+        50
+      ],
+      "summary": "Composes the shared header and floor cards around building imagery, wiring back navigation and the selected floor action.",
+      "tags": [
+        "component",
+        "screen",
+        "floor-selection",
+        "navigation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/screens/HomeScreen.tsx",
+      "type": "file",
+      "name": "HomeScreen.tsx",
+      "filePath": "src/screens/HomeScreen.tsx",
+      "summary": "Builds the navigator landing screen with branded hero imagery, destination search, a start-navigation action, and facility shortcuts.",
+      "tags": [
+        "component",
+        "screen",
+        "home",
+        "navigation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/screens/HomeScreen.tsx:HomeScreen",
+      "type": "function",
+      "name": "HomeScreen",
+      "filePath": "src/screens/HomeScreen.tsx",
+      "lineRange": [
+        24,
+        62
+      ],
+      "summary": "Composes the home hero, search control, floor-navigation button, and quick-access facility grid.",
+      "tags": [
+        "component",
+        "screen",
+        "home",
+        "event-handler"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/screens/MapScreen.tsx",
+      "type": "file",
+      "name": "MapScreen.tsx",
+      "filePath": "src/screens/MapScreen.tsx",
+      "summary": "Hosts the indoor map engine for Level 2 and surrounds it with search, live-status, actor summary, and destination UI.",
+      "tags": [
+        "component",
+        "screen",
+        "indoor-map",
+        "map-engine"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/screens/MapScreen.tsx:MapScreen",
+      "type": "function",
+      "name": "MapScreen",
+      "filePath": "src/screens/MapScreen.tsx",
+      "lineRange": [
+        22,
+        67
+      ],
+      "summary": "Renders raw map asset data through ArenaMapEngineView and composes the surrounding level, status, actor, and destination panels.",
+      "tags": [
+        "component",
+        "screen",
+        "indoor-map",
+        "map-engine"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/screens/RoomSelectionScreen.tsx",
+      "type": "file",
+      "name": "RoomSelectionScreen.tsx",
+      "filePath": "src/screens/RoomSelectionScreen.tsx",
+      "summary": "Presents Level 2 room destinations with a horizontal category selector and distance-aware room cards.",
+      "tags": [
+        "component",
+        "screen",
+        "room-selection",
+        "navigation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/screens/RoomSelectionScreen.tsx:RoomSelectionScreen",
+      "type": "function",
+      "name": "RoomSelectionScreen",
+      "filePath": "src/screens/RoomSelectionScreen.tsx",
+      "lineRange": [
+        32,
+        55
+      ],
+      "summary": "Composes the room screen header, floor badge, category chips, and room destination list.",
+      "tags": [
+        "component",
+        "screen",
+        "room-selection",
+        "list-rendering"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "type": "file",
+      "name": "ActorLayer.tsx",
+      "filePath": "src/mapEngine/actor_system/ActorLayer.tsx",
+      "summary": "Renders actor sprites over the map by converting world positions to pixels and offsetting them against the visible map bounds.",
+      "tags": [
+        "component",
+        "actor-rendering",
+        "map-overlay"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/actor_system/ActorLayer.tsx:ActorLayer",
+      "type": "function",
+      "name": "ActorLayer",
+      "filePath": "src/mapEngine/actor_system/ActorLayer.tsx",
+      "lineRange": [
+        19,
+        43
+      ],
+      "summary": "Maps actor models to positioned React Native images within the current map layout.",
+      "tags": [
+        "component",
+        "actor-rendering",
+        "map-overlay"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "type": "file",
+      "name": "actorAssetRegistry.ts",
+      "filePath": "src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "summary": "Registers the bundled image asset used to render Bob's idle actor state.",
+      "tags": [
+        "asset-registry",
+        "actor-rendering",
+        "configuration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/actorModel.ts",
+      "type": "file",
+      "name": "actorModel.ts",
+      "filePath": "src/mapEngine/actor_system/actorModel.ts",
+      "summary": "Defines actor state and provides helpers for creating Bob from a route node and converting actor coordinates to screen pixels.",
+      "tags": [
+        "data-model",
+        "actor-state",
+        "coordinate-conversion"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/actor_system/actorModel.ts:buildBobActorAtNode",
+      "type": "function",
+      "name": "buildBobActorAtNode",
+      "filePath": "src/mapEngine/actor_system/actorModel.ts",
+      "lineRange": [
+        28,
+        42
+      ],
+      "summary": "Finds a route graph node and constructs the initial Bob actor state at that position.",
+      "tags": [
+        "factory",
+        "actor-state",
+        "route-graph"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/actor_system/actorModel.ts:routeNodeToPixels",
+      "type": "function",
+      "name": "routeNodeToPixels",
+      "filePath": "src/mapEngine/actor_system/actorModel.ts",
+      "lineRange": [
+        44,
+        49
+      ],
+      "summary": "Scales an actor's world coordinates into rounded pixel coordinates.",
+      "tags": [
+        "utility",
+        "coordinate-conversion",
+        "map-rendering"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "type": "file",
+      "name": "CameraViewport.tsx",
+      "filePath": "src/mapEngine/cameran_system/CameraViewport.tsx",
+      "summary": "Provides an animated viewport with simultaneous pan and pinch gestures, maintaining camera offsets and focal-point zoom behavior.",
+      "tags": [
+        "component",
+        "gesture-handler",
+        "camera-control",
+        "animation"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses React refs to synchronize gesture state with React Native Animated values without rerendering every gesture update."
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/CameraViewport.tsx:CameraViewport",
+      "type": "function",
+      "name": "CameraViewport",
+      "filePath": "src/mapEngine/cameran_system/CameraViewport.tsx",
+      "lineRange": [
+        19,
+        133
+      ],
+      "summary": "Wraps map content in an animated stage and coordinates pan and pinch gestures with camera state callbacks.",
+      "tags": [
+        "component",
+        "gesture-handler",
+        "camera-control",
+        "animation"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "type": "file",
+      "name": "cameraModel.ts",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "summary": "Implements pure camera transformations for fitting bounds, centering, zooming around a focal point, and panning.",
+      "tags": [
+        "camera-model",
+        "coordinate-conversion",
+        "utility",
+        "state-management"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:createInitialCameraState",
+      "type": "function",
+      "name": "createInitialCameraState",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [
+        19,
+        21
+      ],
+      "summary": "Creates the initial camera by fitting map bounds into a viewport.",
+      "tags": [
+        "factory",
+        "camera-model",
+        "viewport"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:fitCameraToBounds",
+      "type": "function",
+      "name": "fitCameraToBounds",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [
+        23,
+        32
+      ],
+      "summary": "Calculates a centered scale and offsets that fit specified bounds within a padded viewport.",
+      "tags": [
+        "camera-model",
+        "viewport",
+        "coordinate-conversion"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:centerCameraOnPoint",
+      "type": "function",
+      "name": "centerCameraOnPoint",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [
+        34,
+        40
+      ],
+      "summary": "Repositions a camera so a world point appears at the center of the viewport.",
+      "tags": [
+        "camera-model",
+        "centering",
+        "coordinate-conversion"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:zoomCamera",
+      "type": "function",
+      "name": "zoomCamera",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [
+        42,
+        50
+      ],
+      "summary": "Applies a multiplicative zoom factor while preserving an optional focal point.",
+      "tags": [
+        "camera-model",
+        "zoom",
+        "coordinate-conversion"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:setCameraZoom",
+      "type": "function",
+      "name": "setCameraZoom",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [
+        52,
+        74
+      ],
+      "summary": "Clamps an absolute zoom level and adjusts offsets to keep a focal screen point anchored.",
+      "tags": [
+        "camera-model",
+        "zoom",
+        "validation",
+        "coordinate-conversion"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:panCamera",
+      "type": "function",
+      "name": "panCamera",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [
+        76,
+        82
+      ],
+      "summary": "Produces a camera state translated by a two-dimensional delta.",
+      "tags": [
+        "camera-model",
+        "pan",
+        "state-management"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/mapGeometry.ts",
+      "type": "file",
+      "name": "mapGeometry.ts",
+      "filePath": "src/mapEngine/mapGeometry.ts",
+      "summary": "Defines shared geometric types for points, bounds, polygons, and line segments used throughout the map engine.",
+      "tags": [
+        "type-definition",
+        "geometry",
+        "shared-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "type": "file",
+      "name": "ArenaMapView.tsx",
+      "filePath": "src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "summary": "Builds and renders the normalized arena scene as positioned image layers with support for caller-provided overlays.",
+      "tags": [
+        "component",
+        "map-rendering",
+        "scene-graph",
+        "asset-registry"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:ArenaMapView",
+      "type": "function",
+      "name": "ArenaMapView",
+      "filePath": "src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "lineRange": [
+        21,
+        53
+      ],
+      "summary": "Renders ordered map asset layers inside calculated visual bounds and invokes an optional overlay renderer.",
+      "tags": [
+        "component",
+        "map-rendering",
+        "scene-graph"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:buildScene",
+      "type": "function",
+      "name": "buildScene",
+      "filePath": "src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "lineRange": [
+        55,
+        67
+      ],
+      "summary": "Assembles render bounds, ordered layers, and an asset lookup manifest for a normalized map.",
+      "tags": [
+        "factory",
+        "scene-graph",
+        "map-rendering"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "type": "file",
+      "name": "mapAssetRegistry.ts",
+      "filePath": "src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "summary": "Maps normalized map asset identifiers to bundled React Native image resources.",
+      "tags": [
+        "asset-registry",
+        "map-rendering",
+        "configuration"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "type": "file",
+      "name": "mapRendererModel.ts",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "summary": "Normalizes loosely structured map data into a validated renderer model, classifies and orders visual assets, and computes scene bounds.",
+      "tags": [
+        "serialization",
+        "validation",
+        "map-rendering",
+        "data-model"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Uses runtime type guards and normalization helpers to convert unknown JSON-shaped input into strongly typed TypeScript structures."
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeMapSchema",
+      "type": "function",
+      "name": "normalizeMapSchema",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [
+        69,
+        109
+      ],
+      "summary": "Validates raw map input and constructs a normalized schema with dimensions, assets, visual layers, and movement graph data.",
+      "tags": [
+        "serialization",
+        "validation",
+        "data-model",
+        "map-schema"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:orderVisualLayers",
+      "type": "function",
+      "name": "orderVisualLayers",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [
+        111,
+        119
+      ],
+      "summary": "Stably orders visual placements by semantic asset category while preserving source order within categories.",
+      "tags": [
+        "sorting",
+        "map-rendering",
+        "scene-graph"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:getVisualBounds",
+      "type": "function",
+      "name": "getVisualBounds",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [
+        121,
+        150
+      ],
+      "summary": "Computes the pixel-space bounding rectangle enclosing all placed visual assets.",
+      "tags": [
+        "geometry",
+        "map-rendering",
+        "coordinate-conversion"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:classifyAsset",
+      "type": "function",
+      "name": "classifyAsset",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [
+        152,
+        169
+      ],
+      "summary": "Classifies asset identifiers into floor, room, wall, door, decoration, or unknown render groups.",
+      "tags": [
+        "classification",
+        "map-rendering",
+        "asset-registry"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeAssets",
+      "type": "function",
+      "name": "normalizeAssets",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [
+        171,
+        186
+      ],
+      "summary": "Validates asset records and derives their pixel dimensions from tile dimensions.",
+      "tags": [
+        "serialization",
+        "validation",
+        "asset-registry"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeVisualLayers",
+      "type": "function",
+      "name": "normalizeVisualLayers",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [
+        188,
+        199
+      ],
+      "summary": "Normalizes visual placement records with generated identifiers and validated coordinates.",
+      "tags": [
+        "serialization",
+        "validation",
+        "scene-graph"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeRouteNodes",
+      "type": "function",
+      "name": "normalizeRouteNodes",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [
+        201,
+        214
+      ],
+      "summary": "Normalizes route graph nodes and validates their positional coordinates.",
+      "tags": [
+        "serialization",
+        "validation",
+        "route-graph"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "type": "file",
+      "name": "movementConstraintProvider.ts",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "summary": "Implements geometric collision and containment tests used to validate movement through walkable areas, blocked polygons, and walls.",
+      "tags": [
+        "service",
+        "movement-validation",
+        "computational-geometry",
+        "collision-detection"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Uses epsilon-aware orientation, segment intersection, and ray-casting tests to handle geometric boundary cases."
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:distanceToSegment",
+      "type": "function",
+      "name": "distanceToSegment",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [
+        12,
+        31
+      ],
+      "summary": "Calculates the shortest Euclidean distance from a point to a finite line segment.",
+      "tags": [
+        "computational-geometry",
+        "distance",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:segmentsIntersect",
+      "type": "function",
+      "name": "segmentsIntersect",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [
+        51,
+        67
+      ],
+      "summary": "Tests two line segments for general or collinear intersection using orientation checks.",
+      "tags": [
+        "computational-geometry",
+        "collision-detection",
+        "validation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:polygonEdges",
+      "type": "function",
+      "name": "polygonEdges",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [
+        69,
+        78
+      ],
+      "summary": "Converts polygon vertices into a closed sequence of line segments.",
+      "tags": [
+        "computational-geometry",
+        "polygon",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:pointInPolygon",
+      "type": "function",
+      "name": "pointInPolygon",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [
+        80,
+        103
+      ],
+      "summary": "Determines whether a point lies inside or on the boundary of a polygon using boundary and ray-casting tests.",
+      "tags": [
+        "computational-geometry",
+        "polygon",
+        "collision-detection"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:createMovementConstraintProvider",
+      "type": "function",
+      "name": "createMovementConstraintProvider",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [
+        109,
+        144
+      ],
+      "summary": "Builds a movement constraint service that checks walkability, path validity, and distance to walls.",
+      "tags": [
+        "factory",
+        "movement-validation",
+        "collision-detection",
+        "service"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:isParticlePositionValid",
+      "type": "function",
+      "name": "isParticlePositionValid",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [
+        146,
+        152
+      ],
+      "summary": "Validates a particle position either as an initial walkable point or as a permitted movement from its previous position.",
+      "tags": [
+        "movement-validation",
+        "particle-filter",
+        "collision-detection"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "type": "file",
+      "name": "movementConstraintTypes.ts",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "summary": "Defines the map geometry input and provider interface for movement constraint evaluation.",
+      "tags": [
+        "type-definition",
+        "movement-validation",
+        "service-contract"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "type": "file",
+      "name": "ArenaMapEngineView.tsx",
+      "filePath": "src/mapEngine/ArenaMapEngineView.tsx",
+      "summary": "Composes map normalization, movement estimation, actor rendering, and camera controls into the interactive indoor navigation view. It supports zooming, free-look gestures, and automatic camera following of the estimated user actor.",
+      "tags": [
+        "component",
+        "map-engine",
+        "camera-controls",
+        "movement-estimation",
+        "react-native"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "A React function component uses memoized domain transformations and camera state to coordinate several map-engine subsystems."
+    },
+    {
+      "id": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "type": "function",
+      "name": "ArenaMapEngineView",
+      "filePath": "src/mapEngine/ArenaMapEngineView.tsx",
+      "lineRange": [
+        26,
+        147
+      ],
+      "summary": "Renders the indoor map engine, estimates the actor position from sensor samples, and manages viewport fitting, zoom, and follow-mode interactions.",
+      "tags": [
+        "component",
+        "event-handler",
+        "camera-controls",
+        "movement-estimation",
+        "map-rendering"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "file",
+      "name": "actorSystem.ts",
+      "filePath": "src/mapEngine/actor_system/actorSystem.ts",
+      "summary": "Provides the actor-system public surface by re-exporting the actor layer, actor model helpers, and Actor type.",
+      "tags": [
+        "barrel",
+        "actor-system",
+        "type-definition",
+        "map-engine",
+        "tested"
+      ],
+      "complexity": "simple",
+      "languageNotes": "This TypeScript barrel separates runtime exports from the type-only Actor export."
+    },
+    {
+      "id": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "file",
+      "name": "cameranSystem.ts",
+      "filePath": "src/mapEngine/cameran_system/cameranSystem.ts",
+      "summary": "Defines the camera subsystem's public API, exposing the viewport component, camera transforms, zoom limits, and shared camera types.",
+      "tags": [
+        "barrel",
+        "camera-system",
+        "type-definition",
+        "map-engine",
+        "tested"
+      ],
+      "complexity": "simple",
+      "languageNotes": "The module centralizes runtime and type-only re-exports for camera rendering and camera-model operations."
+    },
+    {
+      "id": "file:src/mapEngine/map-controller.ts",
+      "type": "file",
+      "name": "map-controller.ts",
+      "filePath": "src/mapEngine/map-controller.ts",
+      "summary": "Acts as the map engine's compact public entry point, re-exporting the main engine view, constraint extraction, and map rendering view.",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "map-engine",
+        "public-api",
+        "tested"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "file",
+      "name": "map-engine-contract.test.ts",
+      "filePath": "src/mapEngine/map-engine-contract.test.ts",
+      "summary": "Compile-time contract exercise that instantiates the map renderer, actor, camera, constraint, and movement APIs against representative map data. It verifies that the map-engine public surfaces compose without executing a test framework assertion suite.",
+      "tags": [
+        "test",
+        "contract-test",
+        "map-engine",
+        "integration"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Top-level typed expressions and void references make this file primarily a TypeScript API compatibility check."
+    },
+    {
+      "id": "file:src/mapEngine/mapEngineController.ts",
+      "type": "file",
+      "name": "mapEngineController.ts",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "summary": "Converts loosely typed map JSON into normalized movement constraints, including walkable regions, walls, doors, corridors, and blocked polygons derived from visual assets.",
+      "tags": [
+        "map-engine",
+        "validation",
+        "serialization",
+        "geometry",
+        "movement-constraints",
+        "tested"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "Defensive unknown-value parsing and TypeScript type guards normalize legacy or partial map schemas without trusting input shapes."
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:normalizePoint",
+      "type": "function",
+      "name": "normalizePoint",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [
+        23,
+        33
+      ],
+      "summary": "Validates an unknown object as a finite two-dimensional point, returning null when either coordinate is invalid.",
+      "tags": [
+        "validation",
+        "geometry",
+        "normalization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:normalizeLineSegment",
+      "type": "function",
+      "name": "normalizeLineSegment",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [
+        44,
+        54
+      ],
+      "summary": "Normalizes either a point-pair array or a from/to object into a valid line segment.",
+      "tags": [
+        "validation",
+        "geometry",
+        "normalization"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:polygonFromBounds",
+      "type": "function",
+      "name": "polygonFromBounds",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [
+        60,
+        77
+      ],
+      "summary": "Converts a valid positive rectangular bounds object into a four-corner polygon for movement constraints.",
+      "tags": [
+        "geometry",
+        "normalization",
+        "movement-constraints"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:tilesPerMeter",
+      "type": "function",
+      "name": "tilesPerMeter",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [
+        79,
+        97
+      ],
+      "summary": "Determines the map's tile-to-meter scale from an explicit value or derives it from pixel density and tile size, with a safe fallback.",
+      "tags": [
+        "coordinate-system",
+        "normalization",
+        "map-scale"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "type": "function",
+      "name": "extractBlockedAreasFromAssets",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [
+        108,
+        151
+      ],
+      "summary": "Builds blocked movement polygons for visual-layer assets marked as impassable, honoring per-tile blocked offsets and asset dimensions.",
+      "tags": [
+        "movement-constraints",
+        "asset-processing",
+        "geometry",
+        "normalization"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "type": "function",
+      "name": "extractMovementConstraintMapInput",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [
+        153,
+        167
+      ],
+      "summary": "Extracts the complete movement-constraint input from raw map data, combining explicit geometry with asset-derived obstacles and bounds fallbacks.",
+      "tags": [
+        "factory",
+        "movement-constraints",
+        "normalization",
+        "public-api"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "file",
+      "name": "mapRenderingSystem.ts",
+      "filePath": "src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "summary": "Provides the rendering subsystem's public API by re-exporting the map view, schema normalization and layer utilities, and rendering model types.",
+      "tags": [
+        "barrel",
+        "map-rendering",
+        "type-definition",
+        "map-engine",
+        "tested"
+      ],
+      "complexity": "simple",
+      "languageNotes": "The barrel exposes rendering behavior and type-only contracts from separate view and model modules."
+    },
+    {
+      "id": "document:ARCHITECTURE_README.md",
+      "type": "document",
+      "name": "ARCHITECTURE_README.md",
+      "filePath": "ARCHITECTURE_README.md",
+      "summary": "Defines the intended early-stage React Native project structure and assigns responsibilities to navigation, screens, components, services, hooks, state, storage, and shared types. It also records that these areas were initially placeholders awaiting implementation.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "folder-structure",
+        "separation-of-concerns"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:app.json",
+      "type": "config",
+      "name": "app.json",
+      "filePath": "app.json",
+      "summary": "Configures Expo application identity and platform behavior, including portrait orientation, light appearance, the new architecture, bundled assets, tablet support, and Android adaptive-icon background.",
+      "tags": [
+        "configuration",
+        "expo",
+        "mobile-app",
+        "platform-settings"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "Defines the Expo application entry point, development and type-checking scripts, and the React Native runtime dependencies. It pins the Expo 54, React 19, React Native 0.81, and TypeScript toolchain used by the project.",
+      "tags": [
+        "configuration",
+        "dependency-management",
+        "build-system",
+        "expo"
+      ],
+      "complexity": "simple",
+      "languageNotes": "The package uses Expo's managed entry point and includes an explicit expo-font override alongside tightly pinned framework versions."
+    },
+    {
+      "id": "config:tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "tsconfig.json",
+      "summary": "Extends Expo's base TypeScript compiler configuration and enables strict type checking for the application source.",
+      "tags": [
+        "configuration",
+        "typescript",
+        "strict-mode",
+        "build-system"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.expo/devices.json",
+      "type": "config",
+      "name": "devices.json",
+      "filePath": ".expo/devices.json",
+      "summary": "Stores the machine-local list of devices that recently opened the Expo project. The current development-session list is empty.",
+      "tags": [
+        "configuration",
+        "expo",
+        "development-session",
+        "device-metadata"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:.expo/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": ".expo/README.md",
+      "summary": "Explains why Expo creates the machine-specific .expo directory, what its generated files contain, and why the directory should not be committed.",
+      "tags": [
+        "documentation",
+        "expo",
+        "local-state",
+        "development-tooling"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Provides commented ignore-pattern examples for excluding tests and generated directories from Understand Anything analysis. No optional project-specific exclusion pattern is currently enabled.",
+      "tags": [
+        "configuration",
+        "analysis-tooling",
+        "ignore-patterns",
+        "project-metadata"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:.understand-anything/config.json",
+      "type": "config",
+      "name": "config.json",
+      "filePath": ".understand-anything/config.json",
+      "summary": "Configures Understand Anything to generate project-analysis output in English.",
+      "tags": [
+        "configuration",
+        "analysis-tooling",
+        "language-setting",
+        "project-metadata"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:generated_map/village_demo_01.json",
+      "type": "config",
+      "name": "village_demo_01.json",
+      "filePath": "generated_map/village_demo_01.json",
+      "summary": "Defines the generated schema-v3 Village Demo indoor map, including a 70-by-60 tile floor, 20 assets, 449 visual layers, collision data, spawn and display metadata, and a four-node route graph.",
+      "tags": [
+        "configuration",
+        "map-schema",
+        "navigation-data",
+        "generated-asset",
+        "collision-map"
+      ],
+      "complexity": "complex",
+      "languageNotes": "The JSON combines rendering, collision, navigation, and movement-oriented map representations in one versioned schema."
+    },
+    {
+      "id": "file:src/components/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/components/.gitkeep",
+      "summary": "Preserves the components directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "components"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/hooks/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/hooks/.gitkeep",
+      "summary": "Preserves the hooks directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "hooks"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/algorithms/.gitkeep",
+      "summary": "Preserves the movement algorithms directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "movement-algorithms"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+      "type": "document",
+      "name": "particle-filter-layer-readme-zh.md",
+      "filePath": "src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+      "summary": "Documents the particle-filter layer from particle creation through prediction, scoring, systematic resampling, and weighted position estimation. It emphasizes that the current implementation smooths PDR motion without yet applying map constraints.",
+      "tags": [
+        "documentation",
+        "particle-filter",
+        "indoor-positioning",
+        "movement-estimation",
+        "algorithm-design"
+      ],
+      "complexity": "complex",
+      "languageNotes": "The source is primarily Chinese with TypeScript identifiers and English indoor-positioning terminology."
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/constraints/.gitkeep",
+      "summary": "Preserves the movement constraints directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "movement-constraints"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/estimate/.gitkeep",
+      "summary": "Preserves the movement estimate directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "movement-estimation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "type": "document",
+      "name": "estimate-pdr-layer-readme-zh.md",
+      "filePath": "src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "summary": "Explains how the PDR estimate layer converts cleaned sensor inputs into step, heading, displacement, and combined motion estimates. It defines the boundary between raw-sensor preprocessing, particle filtering, and later map constraints.",
+      "tags": [
+        "documentation",
+        "pdr",
+        "movement-estimation",
+        "sensor-fusion",
+        "indoor-positioning"
+      ],
+      "complexity": "complex",
+      "languageNotes": "The source is primarily Chinese and uses formulas and TypeScript data-contract names to explain the PDR pipeline."
+    },
+    {
+      "id": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "type": "document",
+      "name": "MOVEMENT_SYSTEM_README.md",
+      "filePath": "src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "summary": "Defines the movement system architecture that turns phone sensor data into stable indoor positions through collection, preprocessing, estimation, algorithms, constraints, and orchestration. It also establishes strict boundaries with collision, actor, renderer, and camera subsystems.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "movement-system",
+        "indoor-positioning",
+        "separation-of-concerns"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/preprocessing/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/preprocessing/.gitkeep",
+      "summary": "Preserves the sensor preprocessing directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "sensor-preprocessing"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:src/mapEngine/movement_system/preprocessing/sensor-preprocessing-readme-zh.md",
+      "type": "document",
+      "name": "sensor-preprocessing-readme-zh.md",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensor-preprocessing-readme-zh.md",
+      "summary": "Documents sensor-sample normalization and fixed-capacity time windows used to provide safe, ordered input to movement estimation. It covers fallback handling for invalid numeric values and sensor-specific cleanup without performing position estimation itself.",
+      "tags": [
+        "documentation",
+        "sensor-preprocessing",
+        "data-normalization",
+        "sliding-window",
+        "input-validation"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "The source is primarily Chinese with TypeScript examples for discriminated sensor samples and immutable window operations."
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/sensor/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/sensor/.gitkeep",
+      "summary": "Preserves the raw sensor collection directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "sensor-input"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "document:src/mapEngine/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "src/mapEngine/README.md",
+      "summary": "Defines ownership boundaries among the map engine's controller, composition view, rendering, actor, movement, and camera subsystems. It directs screens through the public controller surface and prevents rendering or state responsibilities from leaking across subsystem folders.",
+      "tags": [
+        "documentation",
+        "map-engine",
+        "architecture",
+        "module-boundaries",
+        "separation-of-concerns"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/navigation/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/navigation/.gitkeep",
+      "summary": "Preserves the navigation directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "navigation"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/screens/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/screens/.gitkeep",
+      "summary": "Preserves the screens directory in version control independently of its implemented screen components.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "screens"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/services/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/services/.gitkeep",
+      "summary": "Preserves the services directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "services"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/storage/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/storage/.gitkeep",
+      "summary": "Preserves the storage directory in version control alongside stored map assets.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "storage"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:src/storage/map-assets/map.json",
+      "type": "config",
+      "name": "map.json",
+      "filePath": "src/storage/map-assets/map.json",
+      "summary": "Provides the runtime copy of the schema-v3 Village Demo indoor map consumed by the application, with visual and collision layers, asset metadata, spawn configuration, labels, icons, and a four-node navigation graph.",
+      "tags": [
+        "configuration",
+        "map-schema",
+        "runtime-asset",
+        "navigation-data",
+        "collision-map"
+      ],
+      "complexity": "complex",
+      "languageNotes": "This file is byte-identical to generated_map/village_demo_01.json and serves as the application-facing stored map asset."
+    },
+    {
+      "id": "file:src/store/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/store/.gitkeep",
+      "summary": "Preserves the application state-store directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "state-management"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/types/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/types/.gitkeep",
+      "summary": "Preserves the shared types directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "type-definition"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/constraints/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:createParticleFilterState",
+      "target": "function:src/mapEngine/movement_system/algorithms/createParticles.ts:createParticles",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:updateParticleFilterState",
+      "target": "function:src/mapEngine/movement_system/algorithms/predictParticles.ts:predictParticles",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:updateParticleFilterState",
+      "target": "function:src/mapEngine/movement_system/algorithms/scoreParticles.ts:scoreParticles",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:updateParticleFilterState",
+      "target": "function:src/mapEngine/movement_system/algorithms/resampleParticles.ts:resampleParticles",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/estimate/motionEstimate.ts:createMotionEstimate",
+      "target": "function:src/mapEngine/movement_system/estimate/displacementEstimate.ts:createDisplacementEstimateFromStepEstimate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "target": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:createParticleFilterState",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "target": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:updateParticleFilterState",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "target": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:createHeadingEstimateFromRadians",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "target": "function:src/mapEngine/movement_system/estimate/motionEstimate.ts:createMotionEstimate",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "target": "function:src/mapEngine/movement_system/estimate/stepEstimate.ts:createStepEstimateFromCount",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorSample",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/createParticles.ts:createParticles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/createParticles.ts:createParticles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:createParticleFilterState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:createParticleFilterState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:updateParticleFilterState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:updateParticleFilterState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:runParticleFilter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/particleFilter.ts:runParticleFilter",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/predictParticles.ts:predictParticles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/predictParticles.ts:predictParticles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/resampleParticles.ts:resampleParticles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/resampleParticles.ts:resampleParticles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/scoreParticles.ts:scoreParticle",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/scoreParticles.ts:scoreParticle",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/scoreParticles.ts:scoreParticles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "function:src/mapEngine/movement_system/algorithms/scoreParticles.ts:scoreParticles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/displacementEstimate.ts:createDisplacementEstimate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/displacementEstimate.ts:createDisplacementEstimate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/displacementEstimate.ts:createDisplacementEstimateFromStepEstimate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/displacementEstimate.ts:createDisplacementEstimateFromStepEstimate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:normalizeHeadingRadians",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:normalizeHeadingRadians",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:normalizeHeadingDegrees",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:normalizeHeadingDegrees",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:createHeadingEstimateFromRadians",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:createHeadingEstimateFromRadians",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:createHeadingEstimateFromDegrees",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/headingEstimate.ts:createHeadingEstimateFromDegrees",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/motionEstimate.ts:createMotionEstimate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/motionEstimate.ts:createMotionEstimate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/stepEstimate.ts:createStepEstimate",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/stepEstimate.ts:createStepEstimate",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/stepEstimate.ts:createStepEstimateFromCount",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "target": "function:src/mapEngine/movement_system/estimate/stepEstimate.ts:createStepEstimateFromCount",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorTimestamp",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorTimestamp",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorVector3",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorVector3",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorSample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeSensorSample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeAccelerometerSample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeAccelerometerSample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeGyroscopeSample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeGyroscopeSample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeMagnetometerSample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeMagnetometerSample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizePedometerStepSample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizePedometerStepSample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeDeviceMotionSample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts:normalizeDeviceMotionSample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:createSensorSampleWindow",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:createSensorSampleWindow",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:pushSensorSample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:pushSensorSample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:getLatestSensorSample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:getLatestSensorSample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:getOldestSensorSample",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:getOldestSensorSample",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:getSensorSampleWindowDurationMs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:getSensorSampleWindowDurationMs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:isSensorSampleWindowFull",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "function:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts:isSensorSampleWindowFull",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/components/PreviewTabs.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/FloorSelectionScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/HomeScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/MapScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/RoomSelectionScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/CategoryChip.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FloorCard.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/Header.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/PreviewTabs.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/QuickAccessCard.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/RoomCard.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/ScreenScaffold.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/SearchBar.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/FloorCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/Header.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/QuickAccessCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/SearchBar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/Header.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/SearchBar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/mapEngine/map-controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/CategoryChip.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/Header.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/RoomCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "function:App.tsx:App",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/CategoryChip.tsx",
+      "target": "function:src/components/CategoryChip.tsx:CategoryChip",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/FloorCard.tsx",
+      "target": "function:src/components/FloorCard.tsx:FloorCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/Header.tsx",
+      "target": "function:src/components/Header.tsx:Header",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/PreviewTabs.tsx",
+      "target": "function:src/components/PreviewTabs.tsx:PreviewTabs",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/QuickAccessCard.tsx",
+      "target": "function:src/components/QuickAccessCard.tsx:QuickAccessCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/RoomCard.tsx",
+      "target": "function:src/components/RoomCard.tsx:RoomCard",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/ScreenScaffold.tsx",
+      "target": "function:src/components/ScreenScaffold.tsx:ScreenScaffold",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/components/SearchBar.tsx",
+      "target": "function:src/components/SearchBar.tsx:SearchBar",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "function:src/screens/FloorSelectionScreen.tsx:FloorSelectionScreen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "function:src/screens/HomeScreen.tsx:HomeScreen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "function:src/screens/MapScreen.tsx:MapScreen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "function:src/screens/RoomSelectionScreen.tsx:RoomSelectionScreen",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "function:App.tsx:App",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/CategoryChip.tsx",
+      "target": "function:src/components/CategoryChip.tsx:CategoryChip",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/FloorCard.tsx",
+      "target": "function:src/components/FloorCard.tsx:FloorCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/Header.tsx",
+      "target": "function:src/components/Header.tsx:Header",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/PreviewTabs.tsx",
+      "target": "function:src/components/PreviewTabs.tsx:PreviewTabs",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/QuickAccessCard.tsx",
+      "target": "function:src/components/QuickAccessCard.tsx:QuickAccessCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/RoomCard.tsx",
+      "target": "function:src/components/RoomCard.tsx:RoomCard",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/ScreenScaffold.tsx",
+      "target": "function:src/components/ScreenScaffold.tsx:ScreenScaffold",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/components/SearchBar.tsx",
+      "target": "function:src/components/SearchBar.tsx:SearchBar",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "function:src/screens/FloorSelectionScreen.tsx:FloorSelectionScreen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "function:src/screens/HomeScreen.tsx:HomeScreen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "function:src/screens/MapScreen.tsx:MapScreen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "function:src/screens/RoomSelectionScreen.tsx:RoomSelectionScreen",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:App.tsx:App",
+      "target": "function:src/components/PreviewTabs.tsx:PreviewTabs",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:App.tsx:App",
+      "target": "function:src/screens/FloorSelectionScreen.tsx:FloorSelectionScreen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:App.tsx:App",
+      "target": "function:src/screens/HomeScreen.tsx:HomeScreen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:App.tsx:App",
+      "target": "function:src/screens/MapScreen.tsx:MapScreen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:App.tsx:App",
+      "target": "function:src/screens/RoomSelectionScreen.tsx:RoomSelectionScreen",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/FloorSelectionScreen.tsx:FloorSelectionScreen",
+      "target": "function:src/components/FloorCard.tsx:FloorCard",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/FloorSelectionScreen.tsx:FloorSelectionScreen",
+      "target": "function:src/components/Header.tsx:Header",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/FloorSelectionScreen.tsx:FloorSelectionScreen",
+      "target": "function:src/components/ScreenScaffold.tsx:ScreenScaffold",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/HomeScreen.tsx:HomeScreen",
+      "target": "function:src/components/QuickAccessCard.tsx:QuickAccessCard",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/HomeScreen.tsx:HomeScreen",
+      "target": "function:src/components/ScreenScaffold.tsx:ScreenScaffold",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/HomeScreen.tsx:HomeScreen",
+      "target": "function:src/components/SearchBar.tsx:SearchBar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/MapScreen.tsx:MapScreen",
+      "target": "function:src/components/Header.tsx:Header",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/MapScreen.tsx:MapScreen",
+      "target": "function:src/components/ScreenScaffold.tsx:ScreenScaffold",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/MapScreen.tsx:MapScreen",
+      "target": "function:src/components/SearchBar.tsx:SearchBar",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/RoomSelectionScreen.tsx:RoomSelectionScreen",
+      "target": "function:src/components/CategoryChip.tsx:CategoryChip",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/RoomSelectionScreen.tsx:RoomSelectionScreen",
+      "target": "function:src/components/Header.tsx:Header",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/RoomSelectionScreen.tsx:RoomSelectionScreen",
+      "target": "function:src/components/RoomCard.tsx:RoomCard",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/screens/RoomSelectionScreen.tsx:RoomSelectionScreen",
+      "target": "function:src/components/ScreenScaffold.tsx:ScreenScaffold",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/actor_system/actorModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "function:src/mapEngine/actor_system/ActorLayer.tsx:ActorLayer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "function:src/mapEngine/actor_system/ActorLayer.tsx:ActorLayer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorModel.ts",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:buildBobActorAtNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorModel.ts",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:buildBobActorAtNode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorModel.ts",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:routeNodeToPixels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorModel.ts",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:routeNodeToPixels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/actor_system/ActorLayer.tsx:ActorLayer",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:routeNodeToPixels",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "function:src/mapEngine/cameran_system/CameraViewport.tsx:CameraViewport",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "function:src/mapEngine/cameran_system/CameraViewport.tsx:CameraViewport",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:createInitialCameraState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:createInitialCameraState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:fitCameraToBounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:fitCameraToBounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:centerCameraOnPoint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:centerCameraOnPoint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:zoomCamera",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:zoomCamera",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:setCameraZoom",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:setCameraZoom",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:panCamera",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:panCamera",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:ArenaMapView",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:ArenaMapView",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:buildScene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:buildScene",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:getVisualBounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:buildScene",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:orderVisualLayers",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeMapSchema",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeMapSchema",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:orderVisualLayers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:orderVisualLayers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:getVisualBounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:getVisualBounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:classifyAsset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:classifyAsset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeAssets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeVisualLayers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeRouteNodes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:distanceToSegment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:segmentsIntersect",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:polygonEdges",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:pointInPolygon",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:createMovementConstraintProvider",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:createMovementConstraintProvider",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:isParticlePositionValid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:isParticlePositionValid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/mapEngineController.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/map-controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/mapEngineController.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/movement_system/constraints/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:normalizePoint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:normalizeLineSegment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:polygonFromBounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:tilesPerMeter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "target": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:normalizeLineSegment",
+      "target": "function:src/mapEngine/mapEngineController.ts:normalizePoint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "target": "function:src/mapEngine/mapEngineController.ts:tilesPerMeter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "target": "function:src/mapEngine/mapEngineController.ts:normalizePoint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "target": "function:src/mapEngine/mapEngineController.ts:polygonFromBounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/map-controller.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:package.json",
+      "target": "config:tsconfig.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:app.json",
+      "target": "config:package.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.expo/README.md",
+      "target": "config:.expo/devices.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:.understand-anything/.understandignore",
+      "target": "config:.understand-anything/config.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:generated_map/village_demo_01.json",
+      "target": "config:src/storage/map-assets/map.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/README.md",
+      "target": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "target": "document:src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "target": "document:src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "target": "document:src/mapEngine/movement_system/preprocessing/sensor-preprocessing-readme-zh.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+      "target": "document:src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "target": "document:src/mapEngine/movement_system/preprocessing/sensor-preprocessing-readme-zh.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:src/storage/map-assets/map.json",
+      "target": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:src/storage/map-assets/map.json",
+      "target": "file:src/screens/MapScreen.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "config:src/storage/map-assets/map.json",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "config:src/storage/map-assets/map.json",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "function:src/screens/MapScreen.tsx:MapScreen",
+      "target": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:ui",
+      "name": "Application UI",
+      "description": "Expo entry-point, navigation previews, screens, reusable React Native components, and shared visual design tokens for the indoor navigation experience.",
+      "nodeIds": [
+        "file:App.tsx",
+        "file:src/components/CategoryChip.tsx",
+        "file:src/components/FloorCard.tsx",
+        "file:src/components/Header.tsx",
+        "file:src/components/PreviewTabs.tsx",
+        "file:src/components/QuickAccessCard.tsx",
+        "file:src/components/RoomCard.tsx",
+        "file:src/components/ScreenScaffold.tsx",
+        "file:src/components/SearchBar.tsx",
+        "file:src/components/theme.ts",
+        "file:src/screens/FloorSelectionScreen.tsx",
+        "file:src/screens/HomeScreen.tsx",
+        "file:src/screens/MapScreen.tsx",
+        "file:src/screens/RoomSelectionScreen.tsx",
+        "file:src/components/.gitkeep",
+        "file:src/navigation/.gitkeep",
+        "file:src/screens/.gitkeep"
+      ]
+    },
+    {
+      "id": "layer:map-engine",
+      "name": "Map Engine",
+      "description": "Interactive map orchestration, camera and actor systems, scene rendering, geometry contracts, asset registries, and engine-facing controllers.",
+      "nodeIds": [
+        "file:src/mapEngine/actor_system/ActorLayer.tsx",
+        "file:src/mapEngine/actor_system/actorAssetRegistry.ts",
+        "file:src/mapEngine/actor_system/actorModel.ts",
+        "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+        "file:src/mapEngine/cameran_system/cameraModel.ts",
+        "file:src/mapEngine/mapGeometry.ts",
+        "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+        "file:src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+        "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+        "file:src/mapEngine/ArenaMapEngineView.tsx",
+        "file:src/mapEngine/actor_system/actorSystem.ts",
+        "file:src/mapEngine/cameran_system/cameranSystem.ts",
+        "file:src/mapEngine/map-controller.ts",
+        "file:src/mapEngine/mapEngineController.ts",
+        "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts"
+      ]
+    },
+    {
+      "id": "layer:positioning",
+      "name": "Positioning and Movement",
+      "description": "Sensor normalization, PDR estimates, particle filtering, movement constraints, and indoor-position orchestration used to locate and validate the user on the map.",
+      "nodeIds": [
+        "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+        "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+        "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+        "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+        "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+        "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+        "file:src/mapEngine/movement_system/constraints/index.ts",
+        "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+        "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+        "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+        "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+        "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+        "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+        "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+        "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+        "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+        "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+        "file:src/mapEngine/movement_system/algorithms/.gitkeep",
+        "file:src/mapEngine/movement_system/constraints/.gitkeep",
+        "file:src/mapEngine/movement_system/estimate/.gitkeep",
+        "file:src/mapEngine/movement_system/preprocessing/.gitkeep",
+        "file:src/mapEngine/movement_system/sensor/.gitkeep"
+      ]
+    },
+    {
+      "id": "layer:data",
+      "name": "Map Data and Storage",
+      "description": "Generated and application-owned JSON map definitions plus the storage scaffold that supplies floor geometry, assets, routes, and navigation metadata.",
+      "nodeIds": [
+        "config:generated_map/village_demo_01.json",
+        "file:src/storage/.gitkeep",
+        "config:src/storage/map-assets/map.json"
+      ]
+    },
+    {
+      "id": "layer:test",
+      "name": "Contract Tests",
+      "description": "Contract-level verification of the map engine public surfaces and their integration across actor, camera, rendering, controller, and positioning subsystems.",
+      "nodeIds": [
+        "file:src/mapEngine/map-engine-contract.test.ts"
+      ]
+    },
+    {
+      "id": "layer:documentation",
+      "name": "Architecture Documentation",
+      "description": "Project, Expo, map-engine, movement-system, PDR, preprocessing, and particle-filter documentation that explains the application and its subsystem boundaries.",
+      "nodeIds": [
+        "document:ARCHITECTURE_README.md",
+        "document:.expo/README.md",
+        "document:src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+        "document:src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+        "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+        "document:src/mapEngine/movement_system/preprocessing/sensor-preprocessing-readme-zh.md",
+        "document:src/mapEngine/README.md"
+      ]
+    },
+    {
+      "id": "layer:config",
+      "name": "Project Configuration and Scaffolding",
+      "description": "Expo and TypeScript project settings, analysis-tool configuration, device metadata, and placeholders for planned hooks, services, state, and shared types.",
+      "nodeIds": [
+        "config:app.json",
+        "config:package.json",
+        "config:tsconfig.json",
+        "config:.expo/devices.json",
+        "file:.understand-anything/.understandignore",
+        "config:.understand-anything/config.json",
+        "file:src/hooks/.gitkeep",
+        "file:src/services/.gitkeep",
+        "file:src/store/.gitkeep",
+        "file:src/types/.gitkeep"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "Project Architecture",
+      "description": "Begin with the architecture document to understand the intended Expo and React Native folder responsibilities and the boundaries originally planned for navigation, screens, components, services, state, storage, and shared types. It also provides useful historical context: several areas began as placeholders, while the implemented application has since grown substantial UI, map-engine, and positioning systems.",
+      "nodeIds": [
+        "document:ARCHITECTURE_README.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "Application Bootstrap",
+      "description": "App.tsx turns the project structure into a running Expo application by owning preview navigation state and selecting the home, map, floor, or room screen. Reading it after the architecture overview reveals the current top-level composition and the gesture and safe-area containers shared by every screen.",
+      "nodeIds": [
+        "file:App.tsx",
+        "file:src/components/PreviewTabs.tsx"
+      ],
+      "languageLesson": "React function components combine declarative rendering with hook-managed state; a discriminated screen identifier keeps conditional navigation branches type-safe."
+    },
+    {
+      "order": 3,
+      "title": "Screen Journey",
+      "description": "The four screens form the user journey from discovery to floor selection, room selection, and live map navigation. Together they show how the application passes intent through UI callbacks while each screen remains responsible for one stage of the indoor-navigation experience.",
+      "nodeIds": [
+        "file:src/screens/HomeScreen.tsx",
+        "file:src/screens/FloorSelectionScreen.tsx",
+        "file:src/screens/RoomSelectionScreen.tsx",
+        "file:src/screens/MapScreen.tsx"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "Reusable UI System",
+      "description": "These shared components give the screen journey a consistent visual and interaction vocabulary, including layout scaffolding, headers, search, destination cards, and selection controls. The centralized theme is the most widely reused file in the graph, so it acts as the design foundation for both ordinary screens and the map viewport.",
+      "nodeIds": [
+        "file:src/components/theme.ts",
+        "file:src/components/ScreenScaffold.tsx",
+        "file:src/components/Header.tsx",
+        "file:src/components/SearchBar.tsx",
+        "file:src/components/RoomCard.tsx"
+      ],
+      "languageLesson": "React Native style objects and typed component props let small visual primitives be composed consistently across screens without relying on browser CSS."
+    },
+    {
+      "order": 5,
+      "title": "Map Engine Boundary",
+      "description": "The map-engine guide defines ownership boundaries among orchestration, rendering, actors, movement, and camera behavior, preventing screen concerns from leaking into engine internals. The public controller then gives MapScreen a compact integration surface instead of requiring it to import every subsystem directly.",
+      "nodeIds": [
+        "document:src/mapEngine/README.md",
+        "file:src/mapEngine/map-controller.ts"
+      ]
+    },
+    {
+      "order": 6,
+      "title": "Runtime Map Data",
+      "description": "The runtime map JSON supplies the floor geometry, visual and collision layers, assets, spawn information, labels, and route graph consumed by the engine. The controller normalizes that loosely typed data into movement constraints, connecting stored map content to rendering and position validation.",
+      "nodeIds": [
+        "config:src/storage/map-assets/map.json",
+        "file:src/mapEngine/mapEngineController.ts",
+        "file:src/mapEngine/mapGeometry.ts"
+      ],
+      "languageLesson": "JSON is flexible at storage boundaries, so TypeScript normalization code is essential for validating external shapes before the rest of the application relies on stronger geometric contracts."
+    },
+    {
+      "order": 7,
+      "title": "Interactive Map Composition",
+      "description": "ArenaMapEngineView composes normalized map rendering, actor overlays, movement estimation, and camera controls into the interactive view hosted by MapScreen. The rendering and camera components separate scene construction from pan, pinch, zoom, and follow behavior, keeping visual layers independent from viewport state.",
+      "nodeIds": [
+        "file:src/mapEngine/ArenaMapEngineView.tsx",
+        "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+        "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+        "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+        "file:src/mapEngine/cameran_system/cameraModel.ts"
+      ],
+      "languageLesson": "Gesture-driven React Native views often keep pure coordinate transformations separate from animated rendering state, making zoom and pan mathematics easier to test and reuse."
+    },
+    {
+      "order": 8,
+      "title": "Actor Overlay",
+      "description": "The actor subsystem converts route-based world positions into sprites positioned over the rendered floor. Its model and layer bridge engine coordinates to screen pixels, while the asset registry isolates bundled image lookup from actor behavior.",
+      "nodeIds": [
+        "file:src/mapEngine/actor_system/actorModel.ts",
+        "file:src/mapEngine/actor_system/ActorLayer.tsx",
+        "file:src/mapEngine/actor_system/actorAssetRegistry.ts"
+      ]
+    },
+    {
+      "order": 9,
+      "title": "Movement Pipeline",
+      "description": "The movement-system document explains the full positioning pipeline from phone sensors through preprocessing, PDR estimates, particle filtering, map constraints, and orchestration. It also clarifies how positioning remains separate from collision extraction, actor display, rendering, and camera control introduced in the preceding map-engine steps.",
+      "nodeIds": [
+        "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md"
+      ]
+    },
+    {
+      "order": 10,
+      "title": "Sensors to Motion",
+      "description": "Sensor contracts define a discriminated set of raw observations, after which normalization and bounded sample windows produce safe chronological inputs. Step, heading, and combined motion estimators then translate those inputs into displacement and confidence values suitable for probabilistic position updates.",
+      "nodeIds": [
+        "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+        "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+        "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+        "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+        "file:src/mapEngine/movement_system/estimate/motionEstimate.ts"
+      ],
+      "languageLesson": "TypeScript discriminated unions let preprocessing narrow each sensor variant safely, while immutable sample windows make time-ordered estimation behavior predictable."
+    },
+    {
+      "order": 11,
+      "title": "Particle Positioning",
+      "description": "The particle filter turns uncertain motion into a stable pose by creating candidate positions, predicting movement, scoring candidates, resampling, and calculating a weighted estimate. Shared particle contracts keep these stages interoperable, while the filter orchestrator exposes initialization and update cycles to the wider movement engine.",
+      "nodeIds": [
+        "document:src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+        "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+        "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+        "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+        "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts"
+      ]
+    },
+    {
+      "order": 12,
+      "title": "Constrained Position Output",
+      "description": "Map constraints test candidate movement against walkable regions, blocked polygons, and walls so probabilistic estimates remain physically plausible. The indoor-position engine is the capstone: it coordinates normalized sensors, motion estimates, particle updates, and those constraints to produce the next position state consumed by the interactive map.",
+      "nodeIds": [
+        "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+        "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+        "file:src/mapEngine/movement_system/constraints/index.ts",
+        "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+        "file:src/mapEngine/map-engine-contract.test.ts"
+      ],
+      "languageLesson": "A barrel module re-exports a subsystem's intended public API, while compile-time contract exercises verify that independently typed controllers, renderers, actors, cameras, and positioning modules still compose."
+    }
+  ]
+}

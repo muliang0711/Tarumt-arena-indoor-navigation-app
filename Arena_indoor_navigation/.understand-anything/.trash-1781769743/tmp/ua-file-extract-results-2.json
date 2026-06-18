@@ -1,0 +1,495 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 14,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "App.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 44,
+      "nonEmptyLines": 39,
+      "functions": [
+        {
+          "name": "App",
+          "startLine": 14,
+          "endLine": 31,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "App",
+          "line": 14,
+          "isDefault": true
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "App",
+          "callee": "useState",
+          "lineNumber": 15
+        },
+        {
+          "caller": "App",
+          "callee": "setActiveScreen",
+          "lineNumber": 22
+        },
+        {
+          "caller": "App",
+          "callee": "setActiveScreen",
+          "lineNumber": 24
+        },
+        {
+          "caller": "App",
+          "callee": "setActiveScreen",
+          "lineNumber": 24
+        },
+        {
+          "caller": "App",
+          "callee": "setActiveScreen",
+          "lineNumber": 25
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/CategoryChip.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 38,
+      "functions": [
+        {
+          "name": "CategoryChip",
+          "startLine": 10,
+          "endLine": 18,
+          "params": [
+            "{ label, active = false }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CategoryChip",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/FloorCard.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 87,
+      "nonEmptyLines": 83,
+      "functions": [
+        {
+          "name": "FloorCard",
+          "startLine": 15,
+          "endLine": 33,
+          "params": [
+            "{ title, subtitle, roomCount, image, selected = false, onPress }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FloorCard",
+          "line": 15,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/Header.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 66,
+      "nonEmptyLines": 62,
+      "functions": [
+        {
+          "name": "Header",
+          "startLine": 12,
+          "endLine": 29,
+          "params": [
+            "{ title, subtitle, onBack }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Header",
+          "line": 12,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/PreviewTabs.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 60,
+      "nonEmptyLines": 54,
+      "functions": [
+        {
+          "name": "PreviewTabs",
+          "startLine": 20,
+          "endLine": 34,
+          "params": [
+            "{ activeScreen, onChange }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "PreviewTabs",
+          "line": 20,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "PreviewTabs",
+          "callee": "tabs.map",
+          "lineNumber": 23
+        },
+        {
+          "caller": "PreviewTabs",
+          "callee": "onChange",
+          "lineNumber": 26
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/QuickAccessCard.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 42,
+      "nonEmptyLines": 37,
+      "functions": [
+        {
+          "name": "QuickAccessCard",
+          "startLine": 13,
+          "endLine": 23,
+          "params": [
+            "{ label, icon, iconSet = 'ion', tone = 'green' }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "QuickAccessCard",
+          "line": 13,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/RoomCard.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 91,
+      "nonEmptyLines": 87,
+      "functions": [
+        {
+          "name": "RoomCard",
+          "startLine": 14,
+          "endLine": 34,
+          "params": [
+            "{ title, type, distance, icon, selected = false }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "RoomCard",
+          "line": 14,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/ScreenScaffold.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 36,
+      "nonEmptyLines": 31,
+      "functions": [
+        {
+          "name": "ScreenScaffold",
+          "startLine": 11,
+          "endLine": 21,
+          "params": [
+            "{ children, scroll = true }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ScreenScaffold",
+          "line": 11,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/SearchBar.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 47,
+      "nonEmptyLines": 43,
+      "functions": [
+        {
+          "name": "SearchBar",
+          "startLine": 10,
+          "endLine": 20,
+          "params": [
+            "{ placeholder }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "SearchBar",
+          "line": 10,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/components/theme.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 28,
+      "nonEmptyLines": 26,
+      "exports": [
+        {
+          "name": "colors",
+          "line": 1,
+          "isDefault": false
+        },
+        {
+          "name": "radius",
+          "line": 15,
+          "isDefault": false
+        },
+        {
+          "name": "shadow",
+          "line": 22,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 3,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/screens/FloorSelectionScreen.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 88,
+      "nonEmptyLines": 81,
+      "functions": [
+        {
+          "name": "FloorSelectionScreen",
+          "startLine": 23,
+          "endLine": 50,
+          "params": [
+            "{ onBack, onChooseFloor }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "FloorSelectionScreen",
+          "line": 23,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "FloorSelectionScreen",
+          "callee": "floors.map",
+          "lineNumber": 36
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/screens/HomeScreen.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 162,
+      "nonEmptyLines": 153,
+      "functions": [
+        {
+          "name": "HomeScreen",
+          "startLine": 24,
+          "endLine": 62,
+          "params": [
+            "{ onOpenFloors }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "HomeScreen",
+          "line": 24,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "HomeScreen",
+          "callee": "quickAccess.map",
+          "lineNumber": 56
+        }
+      ],
+      "metrics": {
+        "importCount": 4,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/screens/MapScreen.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 176,
+      "nonEmptyLines": 167,
+      "functions": [
+        {
+          "name": "MapScreen",
+          "startLine": 22,
+          "endLine": 67,
+          "params": []
+        }
+      ],
+      "exports": [
+        {
+          "name": "MapScreen",
+          "line": 22,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "MapScreen",
+          "callee": "destinations.map",
+          "lineNumber": 54
+        }
+      ],
+      "metrics": {
+        "importCount": 6,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/screens/RoomSelectionScreen.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 82,
+      "nonEmptyLines": 73,
+      "functions": [
+        {
+          "name": "RoomSelectionScreen",
+          "startLine": 32,
+          "endLine": 55,
+          "params": [
+            "{ onBack }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "RoomSelectionScreen",
+          "line": 32,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "RoomSelectionScreen",
+          "callee": "categories.map",
+          "lineNumber": 43
+        },
+        {
+          "caller": "RoomSelectionScreen",
+          "callee": "rooms.map",
+          "lineNumber": 49
+        }
+      ],
+      "metrics": {
+        "importCount": 5,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 4,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "ARCHITECTURE_README.md",
+      "language": "markdown",
+      "fileCategory": "docs",
+      "totalLines": 86,
+      "nonEmptyLines": 50,
+      "sections": [
+        {
+          "heading": "Architecture README",
+          "level": 1,
+          "line": 1
+        },
+        {
+          "heading": "Folder Structure",
+          "level": 2,
+          "line": 5
+        },
+        {
+          "heading": "Folder Responsibilities",
+          "level": 2,
+          "line": 19
+        },
+        {
+          "heading": "`src/navigation/`",
+          "level": 3,
+          "line": 21
+        },
+        {
+          "heading": "`src/screens/`",
+          "level": 3,
+          "line": 27
+        },
+        {
+          "heading": "`src/components/`",
+          "level": 3,
+          "line": 35
+        },
+        {
+          "heading": "`src/services/`",
+          "level": 3,
+          "line": 43
+        },
+        {
+          "heading": "`src/hooks/`",
+          "level": 3,
+          "line": 51
+        },
+        {
+          "heading": "`src/store/`",
+          "level": 3,
+          "line": 59
+        },
+        {
+          "heading": "`src/storage/`",
+          "level": 3,
+          "line": 67
+        },
+        {
+          "heading": "`src/types/`",
+          "level": 3,
+          "line": 75
+        },
+        {
+          "heading": "Current Setup Notes",
+          "level": 2,
+          "line": 81
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 12
+      }
+    },
+    {
+      "path": "app.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 21,
+      "nonEmptyLines": 21,
+      "sections": [
+        {
+          "heading": "expo",
+          "level": 1,
+          "line": 2
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 1
+      }
+    },
+    {
+      "path": "package.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 28,
+      "nonEmptyLines": 28,
+      "sections": [
+        {
+          "heading": "name",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "version",
+          "level": 1,
+          "line": 3
+        },
+        {
+          "heading": "private",
+          "level": 1,
+          "line": 4
+        },
+        {
+          "heading": "main",
+          "level": 1,
+          "line": 5
+        },
+        {
+          "heading": "scripts",
+          "level": 1,
+          "line": 6
+        },
+        {
+          "heading": "dependencies",
+          "level": 1,
+          "line": 13
+        },
+        {
+          "heading": "devDependencies",
+          "level": 1,
+          "line": 21
+        },
+        {
+          "heading": "overrides",
+          "level": 1,
+          "line": 25
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 8
+      }
+    },
+    {
+      "path": "tsconfig.json",
+      "language": "json",
+      "fileCategory": "config",
+      "totalLines": 6,
+      "nonEmptyLines": 6,
+      "sections": [
+        {
+          "heading": "extends",
+          "level": 1,
+          "line": 2
+        },
+        {
+          "heading": "compilerOptions",
+          "level": 1,
+          "line": 3
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0,
+        "sectionCount": 2
+      }
+    }
+  ]
+}

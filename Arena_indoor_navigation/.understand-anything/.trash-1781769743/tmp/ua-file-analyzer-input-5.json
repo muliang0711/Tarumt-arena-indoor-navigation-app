@@ -1,0 +1,35 @@
+{
+  "projectRoot": "C:\\Code\\project\\New folder\\Arena_indoor_navigation",
+  "batchFiles": [
+    {
+      "path": "ARCHITECTURE_README.md",
+      "language": "markdown",
+      "sizeLines": 86,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "app.json",
+      "language": "json",
+      "sizeLines": 21,
+      "fileCategory": "config"
+    },
+    {
+      "path": "package.json",
+      "language": "json",
+      "sizeLines": 28,
+      "fileCategory": "config"
+    },
+    {
+      "path": "tsconfig.json",
+      "language": "json",
+      "sizeLines": 6,
+      "fileCategory": "config"
+    }
+  ],
+  "batchImportData": {
+    "ARCHITECTURE_README.md": [],
+    "app.json": [],
+    "package.json": [],
+    "tsconfig.json": []
+  }
+}

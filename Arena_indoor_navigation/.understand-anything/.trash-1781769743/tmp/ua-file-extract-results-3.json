@@ -1,0 +1,1634 @@
+{
+  "scriptCompleted": true,
+  "filesAnalyzed": 11,
+  "filesSkipped": [],
+  "results": [
+    {
+      "path": "src/mapEngine/actor_system/ActorLayer.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 50,
+      "nonEmptyLines": 44,
+      "functions": [
+        {
+          "name": "ActorLayer",
+          "startLine": 19,
+          "endLine": 43,
+          "params": [
+            "{ actors, layout, pixelsPerMeter }"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ActorLayer",
+          "line": 19,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ActorLayer",
+          "callee": "actors.map",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ActorLayer",
+          "callee": "routeNodeToPixels",
+          "lineNumber": 23
+        }
+      ],
+      "metrics": {
+        "importCount": 3,
+        "exportCount": 1,
+        "functionCount": 1,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 5,
+      "nonEmptyLines": 4,
+      "exports": [
+        {
+          "name": "bobActorAssets",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/actor_system/actorModel.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 49,
+      "nonEmptyLines": 45,
+      "functions": [
+        {
+          "name": "buildBobActorAtNode",
+          "startLine": 28,
+          "endLine": 42,
+          "params": [
+            "mapData",
+            "nodeId"
+          ]
+        },
+        {
+          "name": "routeNodeToPixels",
+          "startLine": 44,
+          "endLine": 49,
+          "params": [
+            "actor",
+            "pixelsPerMeter"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "buildBobActorAtNode",
+          "line": 28,
+          "isDefault": false
+        },
+        {
+          "name": "routeNodeToPixels",
+          "line": 44,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "buildBobActorAtNode",
+          "callee": "mapData.movement.routeGraph.nodes.find",
+          "lineNumber": 29
+        },
+        {
+          "caller": "routeNodeToPixels",
+          "callee": "Math.round",
+          "lineNumber": 46
+        },
+        {
+          "caller": "routeNodeToPixels",
+          "callee": "Math.round",
+          "lineNumber": 47
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 2,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/cameran_system/CameraViewport.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 154,
+      "nonEmptyLines": 141,
+      "functions": [
+        {
+          "name": "CameraViewport",
+          "startLine": 19,
+          "endLine": 133,
+          "params": [
+            "{\n  camera,\n  contentWidth,\n  contentHeight,\n  height,\n  onLayout,\n  onCameraChange,\n  onGestureStart,\n  children,\n}"
+          ]
+        },
+        {
+          "name": "clampZoom",
+          "startLine": 135,
+          "endLine": 140,
+          "params": [
+            "value"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "CameraViewport",
+          "line": 19,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "CameraViewport",
+          "callee": "useRef",
+          "lineNumber": 29
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "useRef",
+          "lineNumber": 30
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "useRef",
+          "lineNumber": 31
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "clampZoom",
+          "lineNumber": 31
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "useRef",
+          "lineNumber": 32
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "useRef",
+          "lineNumber": 33
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "useRef",
+          "lineNumber": 34
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "clampZoom",
+          "lineNumber": 37
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "useEffect",
+          "lineNumber": 40
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "clampZoom",
+          "lineNumber": 43
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "translateX.setValue",
+          "lineNumber": 46
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "translateY.setValue",
+          "lineNumber": 47
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "scale.setValue",
+          "lineNumber": 48
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "useMemo",
+          "lineNumber": 51
+        },
+        {
+          "caller": "updateCamera",
+          "callee": "translateX.setValue",
+          "lineNumber": 54
+        },
+        {
+          "caller": "updateCamera",
+          "callee": "translateY.setValue",
+          "lineNumber": 55
+        },
+        {
+          "caller": "updateCamera",
+          "callee": "scale.setValue",
+          "lineNumber": 56
+        },
+        {
+          "caller": "commitCamera",
+          "callee": "onCameraChange",
+          "lineNumber": 60
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pan()\n      .runOnJS(true)\n      .minPointers(1)\n      .maxPointers(1)\n      .onBegin(() => {\n        onGestureStart?.();\n        panStart.current = {\n          x: cameraRef.current.offsetX,\n          y: cameraRef.current.offsetY,\n        };\n      })\n      .onUpdate((event) => {\n        updateCamera({\n          ...cameraRef.current,\n          offsetX: panStart.current.x + event.translationX,\n          offsetY: panStart.current.y + event.translationY,\n        });\n      })\n      .onFinalize",
+          "lineNumber": 63
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pan()\n      .runOnJS(true)\n      .minPointers(1)\n      .maxPointers(1)\n      .onBegin(() => {\n        onGestureStart?.();\n        panStart.current = {\n          x: cameraRef.current.offsetX,\n          y: cameraRef.current.offsetY,\n        };\n      })\n      .onUpdate",
+          "lineNumber": 63
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pan()\n      .runOnJS(true)\n      .minPointers(1)\n      .maxPointers(1)\n      .onBegin",
+          "lineNumber": 63
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pan()\n      .runOnJS(true)\n      .minPointers(1)\n      .maxPointers",
+          "lineNumber": 63
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pan()\n      .runOnJS(true)\n      .minPointers",
+          "lineNumber": 63
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pan()\n      .runOnJS",
+          "lineNumber": 63
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pan",
+          "lineNumber": 63
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "onGestureStart",
+          "lineNumber": 68
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "updateCamera",
+          "lineNumber": 75
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pinch()\n      .runOnJS(true)\n      .onBegin(() => {\n        onGestureStart?.();\n        pinchStart.current = {\n          x: cameraRef.current.offsetX,\n          y: cameraRef.current.offsetY,\n          scale: clampZoom(cameraRef.current.scale),\n        };\n      })\n      .onUpdate((event) => {\n        const nextScale = clampZoom(pinchStart.current.scale * event.scale);\n        const focalX = Number.isFinite(event.focalX) ? event.focalX : 0;\n        const focalY = Number.isFinite(event.focalY) ? event.focalY : 0;\n        const worldX = (focalX - pinchStart.current.x) / Math.max(CAMERA_MIN_ZOOM, pinchStart.current.scale);\n        const worldY = (focalY - pinchStart.current.y) / Math.max(CAMERA_MIN_ZOOM, pinchStart.current.scale);\n\n        updateCamera({\n          scale: nextScale,\n          offsetX: focalX - worldX * nextScale,\n          offsetY: focalY - worldY * nextScale,\n        });\n      })\n      .onFinalize",
+          "lineNumber": 83
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pinch()\n      .runOnJS(true)\n      .onBegin(() => {\n        onGestureStart?.();\n        pinchStart.current = {\n          x: cameraRef.current.offsetX,\n          y: cameraRef.current.offsetY,\n          scale: clampZoom(cameraRef.current.scale),\n        };\n      })\n      .onUpdate",
+          "lineNumber": 83
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pinch()\n      .runOnJS(true)\n      .onBegin",
+          "lineNumber": 83
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pinch()\n      .runOnJS",
+          "lineNumber": 83
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Pinch",
+          "lineNumber": 83
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "onGestureStart",
+          "lineNumber": 86
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "clampZoom",
+          "lineNumber": 90
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "clampZoom",
+          "lineNumber": 94
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Number.isFinite",
+          "lineNumber": 95
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Number.isFinite",
+          "lineNumber": 96
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Math.max",
+          "lineNumber": 97
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Math.max",
+          "lineNumber": 98
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "updateCamera",
+          "lineNumber": 100
+        },
+        {
+          "caller": "CameraViewport",
+          "callee": "Gesture.Simultaneous",
+          "lineNumber": 108
+        },
+        {
+          "caller": "clampZoom",
+          "callee": "Number.isFinite",
+          "lineNumber": 136
+        },
+        {
+          "caller": "clampZoom",
+          "callee": "Math.min",
+          "lineNumber": 139
+        },
+        {
+          "caller": "clampZoom",
+          "callee": "Math.max",
+          "lineNumber": 139
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/cameran_system/cameraModel.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 89,
+      "nonEmptyLines": 77,
+      "functions": [
+        {
+          "name": "createInitialCameraState",
+          "startLine": 19,
+          "endLine": 21,
+          "params": [
+            "bounds",
+            "viewport",
+            "padding"
+          ]
+        },
+        {
+          "name": "fitCameraToBounds",
+          "startLine": 23,
+          "endLine": 32,
+          "params": [
+            "bounds",
+            "viewport",
+            "padding"
+          ]
+        },
+        {
+          "name": "centerCameraOnPoint",
+          "startLine": 34,
+          "endLine": 40,
+          "params": [
+            "camera",
+            "point",
+            "viewport"
+          ]
+        },
+        {
+          "name": "zoomCamera",
+          "startLine": 42,
+          "endLine": 50,
+          "params": [
+            "camera",
+            "factor",
+            "minScale",
+            "maxScale",
+            "focalPoint"
+          ]
+        },
+        {
+          "name": "setCameraZoom",
+          "startLine": 52,
+          "endLine": 74,
+          "params": [
+            "camera",
+            "scale",
+            "minScale",
+            "maxScale",
+            "focalPoint"
+          ]
+        },
+        {
+          "name": "panCamera",
+          "startLine": 76,
+          "endLine": 82,
+          "params": [
+            "camera",
+            "delta"
+          ]
+        },
+        {
+          "name": "clamp",
+          "startLine": 84,
+          "endLine": 89,
+          "params": [
+            "value",
+            "min",
+            "max"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Point",
+          "line": 3,
+          "isDefault": false
+        },
+        {
+          "name": "CAMERA_MIN_ZOOM",
+          "line": 16,
+          "isDefault": false
+        },
+        {
+          "name": "CAMERA_MAX_ZOOM",
+          "line": 17,
+          "isDefault": false
+        },
+        {
+          "name": "createInitialCameraState",
+          "line": 19,
+          "isDefault": false
+        },
+        {
+          "name": "fitCameraToBounds",
+          "line": 23,
+          "isDefault": false
+        },
+        {
+          "name": "centerCameraOnPoint",
+          "line": 34,
+          "isDefault": false
+        },
+        {
+          "name": "zoomCamera",
+          "line": 42,
+          "isDefault": false
+        },
+        {
+          "name": "setCameraZoom",
+          "line": 52,
+          "isDefault": false
+        },
+        {
+          "name": "panCamera",
+          "line": 76,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "createInitialCameraState",
+          "callee": "fitCameraToBounds",
+          "lineNumber": 20
+        },
+        {
+          "caller": "fitCameraToBounds",
+          "callee": "Math.max",
+          "lineNumber": 24
+        },
+        {
+          "caller": "fitCameraToBounds",
+          "callee": "Math.max",
+          "lineNumber": 25
+        },
+        {
+          "caller": "fitCameraToBounds",
+          "callee": "Math.min",
+          "lineNumber": 26
+        },
+        {
+          "caller": "fitCameraToBounds",
+          "callee": "Math.max",
+          "lineNumber": 26
+        },
+        {
+          "caller": "fitCameraToBounds",
+          "callee": "Math.max",
+          "lineNumber": 26
+        },
+        {
+          "caller": "fitCameraToBounds",
+          "callee": "Math.round",
+          "lineNumber": 29
+        },
+        {
+          "caller": "fitCameraToBounds",
+          "callee": "Math.round",
+          "lineNumber": 30
+        },
+        {
+          "caller": "centerCameraOnPoint",
+          "callee": "Math.round",
+          "lineNumber": 37
+        },
+        {
+          "caller": "centerCameraOnPoint",
+          "callee": "Math.round",
+          "lineNumber": 38
+        },
+        {
+          "caller": "zoomCamera",
+          "callee": "setCameraZoom",
+          "lineNumber": 49
+        },
+        {
+          "caller": "setCameraZoom",
+          "callee": "clamp",
+          "lineNumber": 59
+        },
+        {
+          "caller": "setCameraZoom",
+          "callee": "Math.round",
+          "lineNumber": 71
+        },
+        {
+          "caller": "setCameraZoom",
+          "callee": "Math.round",
+          "lineNumber": 72
+        },
+        {
+          "caller": "clamp",
+          "callee": "Number.isFinite",
+          "lineNumber": 85
+        },
+        {
+          "caller": "clamp",
+          "callee": "Math.min",
+          "lineNumber": 88
+        },
+        {
+          "caller": "clamp",
+          "callee": "Math.max",
+          "lineNumber": 88
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 9,
+        "functionCount": 7,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/mapGeometry.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 18,
+      "nonEmptyLines": 15,
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 77,
+      "nonEmptyLines": 70,
+      "functions": [
+        {
+          "name": "ArenaMapView",
+          "startLine": 21,
+          "endLine": 53,
+          "params": [
+            "{ mapData, renderOverlay }"
+          ]
+        },
+        {
+          "name": "buildScene",
+          "startLine": 55,
+          "endLine": 67,
+          "params": [
+            "mapData"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "ArenaMapView",
+          "line": 21,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "ArenaMapView",
+          "callee": "useMemo",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ArenaMapView",
+          "callee": "buildScene",
+          "lineNumber": 22
+        },
+        {
+          "caller": "ArenaMapView",
+          "callee": "useMemo",
+          "lineNumber": 23
+        },
+        {
+          "caller": "ArenaMapView",
+          "callee": "scene.layers.map",
+          "lineNumber": 27
+        },
+        {
+          "caller": "ArenaMapView",
+          "callee": "scene.assetManifest.get",
+          "lineNumber": 28
+        },
+        {
+          "caller": "ArenaMapView",
+          "callee": "renderOverlay",
+          "lineNumber": 50
+        },
+        {
+          "caller": "buildScene",
+          "callee": "getVisualBounds",
+          "lineNumber": 63
+        },
+        {
+          "caller": "buildScene",
+          "callee": "orderVisualLayers",
+          "lineNumber": 64
+        },
+        {
+          "caller": "buildScene",
+          "callee": "mapData.assets.map",
+          "lineNumber": 65
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 1,
+        "functionCount": 2,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 24,
+      "nonEmptyLines": 23,
+      "exports": [
+        {
+          "name": "mapAssetRegistry",
+          "line": 3,
+          "isDefault": false
+        }
+      ],
+      "metrics": {
+        "importCount": 0,
+        "exportCount": 1,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 254,
+      "nonEmptyLines": 229,
+      "functions": [
+        {
+          "name": "normalizeMapSchema",
+          "startLine": 69,
+          "endLine": 109,
+          "params": [
+            "raw"
+          ]
+        },
+        {
+          "name": "orderVisualLayers",
+          "startLine": 111,
+          "endLine": 119,
+          "params": [
+            "visualLayers"
+          ]
+        },
+        {
+          "name": "getVisualBounds",
+          "startLine": 121,
+          "endLine": 150,
+          "params": [
+            "mapData"
+          ]
+        },
+        {
+          "name": "classifyAsset",
+          "startLine": 152,
+          "endLine": 169,
+          "params": [
+            "assetId"
+          ]
+        },
+        {
+          "name": "normalizeAssets",
+          "startLine": 171,
+          "endLine": 186,
+          "params": [
+            "items",
+            "tileSize"
+          ]
+        },
+        {
+          "name": "normalizeVisualLayers",
+          "startLine": 188,
+          "endLine": 199,
+          "params": [
+            "items"
+          ]
+        },
+        {
+          "name": "normalizeRouteNodes",
+          "startLine": 201,
+          "endLine": 214,
+          "params": [
+            "items"
+          ]
+        },
+        {
+          "name": "objectValue",
+          "startLine": 216,
+          "endLine": 218,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "arrayValue",
+          "startLine": 220,
+          "endLine": 222,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "optionalString",
+          "startLine": 224,
+          "endLine": 226,
+          "params": [
+            "value"
+          ]
+        },
+        {
+          "name": "stringValue",
+          "startLine": 228,
+          "endLine": 233,
+          "params": [
+            "value",
+            "label"
+          ]
+        },
+        {
+          "name": "positiveNumber",
+          "startLine": 235,
+          "endLine": 238,
+          "params": [
+            "value",
+            "fallback"
+          ]
+        },
+        {
+          "name": "requiredPositiveNumber",
+          "startLine": 240,
+          "endLine": 246,
+          "params": [
+            "value",
+            "label"
+          ]
+        },
+        {
+          "name": "finiteNumber",
+          "startLine": 248,
+          "endLine": 254,
+          "params": [
+            "value",
+            "label"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "Bounds",
+          "line": 3,
+          "isDefault": false
+        },
+        {
+          "name": "normalizeMapSchema",
+          "line": 69,
+          "isDefault": false
+        },
+        {
+          "name": "orderVisualLayers",
+          "line": 111,
+          "isDefault": false
+        },
+        {
+          "name": "getVisualBounds",
+          "line": 121,
+          "isDefault": false
+        },
+        {
+          "name": "classifyAsset",
+          "line": 152,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "objectValue",
+          "lineNumber": 74
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "positiveNumber",
+          "lineNumber": 75
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "requiredPositiveNumber",
+          "lineNumber": 76
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "requiredPositiveNumber",
+          "lineNumber": 77
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "objectValue",
+          "lineNumber": 78
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "objectValue",
+          "lineNumber": 79
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "objectValue",
+          "lineNumber": 80
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "objectValue",
+          "lineNumber": 81
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "objectValue",
+          "lineNumber": 82
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "objectValue",
+          "lineNumber": 83
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "stringValue",
+          "lineNumber": 87
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "optionalString",
+          "lineNumber": 88
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "stringValue",
+          "lineNumber": 88
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "optionalString",
+          "lineNumber": 89
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "optionalString",
+          "lineNumber": 96
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "normalizeAssets",
+          "lineNumber": 97
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "arrayValue",
+          "lineNumber": 97
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "arrayValue",
+          "lineNumber": 97
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "normalizeVisualLayers",
+          "lineNumber": 98
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "arrayValue",
+          "lineNumber": 98
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "objectValue",
+          "lineNumber": 98
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "arrayValue",
+          "lineNumber": 98
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "positiveNumber",
+          "lineNumber": 101
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "normalizeRouteNodes",
+          "lineNumber": 104
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "arrayValue",
+          "lineNumber": 104
+        },
+        {
+          "caller": "normalizeMapSchema",
+          "callee": "arrayValue",
+          "lineNumber": 105
+        },
+        {
+          "caller": "orderVisualLayers",
+          "callee": "[...visualLayers]\n    .map((placement, index) => ({ placement, index, kind: classifyAsset(placement.assetId) }))\n    .sort((a, b) => {\n      const orderDiff = Number(KIND_ORDER.get(a.kind)) - Number(KIND_ORDER.get(b.kind));\n      return orderDiff || a.index - b.index;\n    })\n    .map",
+          "lineNumber": 112
+        },
+        {
+          "caller": "orderVisualLayers",
+          "callee": "[...visualLayers]\n    .map((placement, index) => ({ placement, index, kind: classifyAsset(placement.assetId) }))\n    .sort",
+          "lineNumber": 112
+        },
+        {
+          "caller": "orderVisualLayers",
+          "callee": "[...visualLayers]\n    .map",
+          "lineNumber": 112
+        },
+        {
+          "caller": "orderVisualLayers",
+          "callee": "classifyAsset",
+          "lineNumber": 113
+        },
+        {
+          "caller": "orderVisualLayers",
+          "callee": "Number",
+          "lineNumber": 115
+        },
+        {
+          "caller": "orderVisualLayers",
+          "callee": "KIND_ORDER.get",
+          "lineNumber": 115
+        },
+        {
+          "caller": "orderVisualLayers",
+          "callee": "Number",
+          "lineNumber": 115
+        },
+        {
+          "caller": "orderVisualLayers",
+          "callee": "KIND_ORDER.get",
+          "lineNumber": 115
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "mapData.assets.map",
+          "lineNumber": 126
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "manifest.get",
+          "lineNumber": 133
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "Math.min",
+          "lineNumber": 138
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "Math.min",
+          "lineNumber": 139
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "Math.max",
+          "lineNumber": 140
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "Math.max",
+          "lineNumber": 141
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "Math.round",
+          "lineNumber": 145
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "Math.round",
+          "lineNumber": 146
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "Math.round",
+          "lineNumber": 147
+        },
+        {
+          "caller": "getVisualBounds",
+          "callee": "Math.round",
+          "lineNumber": 148
+        },
+        {
+          "caller": "classifyAsset",
+          "callee": "/^(road_|walkable_|unwalkable_|white_?|white_|.*tile)/.test",
+          "lineNumber": 153
+        },
+        {
+          "caller": "classifyAsset",
+          "callee": "/^(classroom|examroom|meetingroom|toilet|staris|stairs)/.test",
+          "lineNumber": 156
+        },
+        {
+          "caller": "classifyAsset",
+          "callee": "/^wall_/.test",
+          "lineNumber": 159
+        },
+        {
+          "caller": "classifyAsset",
+          "callee": "/^(door|elevator)/.test",
+          "lineNumber": 162
+        },
+        {
+          "caller": "classifyAsset",
+          "callee": "/(tree|bush|flower|stump|sign|fence)/.test",
+          "lineNumber": 165
+        },
+        {
+          "caller": "normalizeAssets",
+          "callee": "items.map",
+          "lineNumber": 172
+        },
+        {
+          "caller": "normalizeAssets",
+          "callee": "objectValue",
+          "lineNumber": 173
+        },
+        {
+          "caller": "normalizeAssets",
+          "callee": "positiveNumber",
+          "lineNumber": 174
+        },
+        {
+          "caller": "normalizeAssets",
+          "callee": "positiveNumber",
+          "lineNumber": 175
+        },
+        {
+          "caller": "normalizeAssets",
+          "callee": "stringValue",
+          "lineNumber": 177
+        },
+        {
+          "caller": "normalizeAssets",
+          "callee": "stringValue",
+          "lineNumber": 178
+        },
+        {
+          "caller": "normalizeAssets",
+          "callee": "Boolean",
+          "lineNumber": 183
+        },
+        {
+          "caller": "normalizeVisualLayers",
+          "callee": "items.map",
+          "lineNumber": 189
+        },
+        {
+          "caller": "normalizeVisualLayers",
+          "callee": "objectValue",
+          "lineNumber": 190
+        },
+        {
+          "caller": "normalizeVisualLayers",
+          "callee": "optionalString",
+          "lineNumber": 192
+        },
+        {
+          "caller": "normalizeVisualLayers",
+          "callee": "optionalString",
+          "lineNumber": 192
+        },
+        {
+          "caller": "normalizeVisualLayers",
+          "callee": "stringValue",
+          "lineNumber": 193
+        },
+        {
+          "caller": "normalizeVisualLayers",
+          "callee": "finiteNumber",
+          "lineNumber": 194
+        },
+        {
+          "caller": "normalizeVisualLayers",
+          "callee": "finiteNumber",
+          "lineNumber": 195
+        },
+        {
+          "caller": "normalizeVisualLayers",
+          "callee": "Number.isFinite",
+          "lineNumber": 196
+        },
+        {
+          "caller": "normalizeVisualLayers",
+          "callee": "Number",
+          "lineNumber": 196
+        },
+        {
+          "caller": "normalizeRouteNodes",
+          "callee": "items.map",
+          "lineNumber": 202
+        },
+        {
+          "caller": "normalizeRouteNodes",
+          "callee": "objectValue",
+          "lineNumber": 203
+        },
+        {
+          "caller": "normalizeRouteNodes",
+          "callee": "objectValue",
+          "lineNumber": 204
+        },
+        {
+          "caller": "normalizeRouteNodes",
+          "callee": "optionalString",
+          "lineNumber": 206
+        },
+        {
+          "caller": "normalizeRouteNodes",
+          "callee": "optionalString",
+          "lineNumber": 207
+        },
+        {
+          "caller": "normalizeRouteNodes",
+          "callee": "finiteNumber",
+          "lineNumber": 209
+        },
+        {
+          "caller": "normalizeRouteNodes",
+          "callee": "finiteNumber",
+          "lineNumber": 210
+        },
+        {
+          "caller": "arrayValue",
+          "callee": "Array.isArray",
+          "lineNumber": 221
+        },
+        {
+          "caller": "positiveNumber",
+          "callee": "Number",
+          "lineNumber": 236
+        },
+        {
+          "caller": "positiveNumber",
+          "callee": "Number.isFinite",
+          "lineNumber": 237
+        },
+        {
+          "caller": "requiredPositiveNumber",
+          "callee": "Number",
+          "lineNumber": 241
+        },
+        {
+          "caller": "requiredPositiveNumber",
+          "callee": "Number.isFinite",
+          "lineNumber": 242
+        },
+        {
+          "caller": "finiteNumber",
+          "callee": "Number",
+          "lineNumber": 249
+        },
+        {
+          "caller": "finiteNumber",
+          "callee": "Number.isFinite",
+          "lineNumber": 250
+        }
+      ],
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 5,
+        "functionCount": 14,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 152,
+      "nonEmptyLines": 125,
+      "functions": [
+        {
+          "name": "squaredDistance",
+          "startLine": 6,
+          "endLine": 10,
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "distanceToSegment",
+          "startLine": 12,
+          "endLine": 31,
+          "params": [
+            "point",
+            "segment"
+          ]
+        },
+        {
+          "name": "orientation",
+          "startLine": 33,
+          "endLine": 39,
+          "params": [
+            "a",
+            "b",
+            "c"
+          ]
+        },
+        {
+          "name": "isPointOnSegment",
+          "startLine": 41,
+          "endLine": 49,
+          "params": [
+            "point",
+            "segment"
+          ]
+        },
+        {
+          "name": "segmentsIntersect",
+          "startLine": 51,
+          "endLine": 67,
+          "params": [
+            "left",
+            "right"
+          ]
+        },
+        {
+          "name": "polygonEdges",
+          "startLine": 69,
+          "endLine": 78,
+          "params": [
+            "polygon"
+          ]
+        },
+        {
+          "name": "pointInPolygon",
+          "startLine": 80,
+          "endLine": 103,
+          "params": [
+            "point",
+            "polygon"
+          ]
+        },
+        {
+          "name": "movementCrossesPolygon",
+          "startLine": 105,
+          "endLine": 107,
+          "params": [
+            "move",
+            "polygon"
+          ]
+        },
+        {
+          "name": "createMovementConstraintProvider",
+          "startLine": 109,
+          "endLine": 144,
+          "params": [
+            "input"
+          ]
+        },
+        {
+          "name": "isParticlePositionValid",
+          "startLine": 146,
+          "endLine": 152,
+          "params": [
+            "provider",
+            "previousPosition",
+            "nextPosition"
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "name": "createMovementConstraintProvider",
+          "line": 109,
+          "isDefault": false
+        },
+        {
+          "name": "isParticlePositionValid",
+          "line": 146,
+          "isDefault": false
+        }
+      ],
+      "callGraph": [
+        {
+          "caller": "distanceToSegment",
+          "callee": "Math.sqrt",
+          "lineNumber": 18
+        },
+        {
+          "caller": "distanceToSegment",
+          "callee": "squaredDistance",
+          "lineNumber": 18
+        },
+        {
+          "caller": "distanceToSegment",
+          "callee": "Math.max",
+          "lineNumber": 21
+        },
+        {
+          "caller": "distanceToSegment",
+          "callee": "Math.min",
+          "lineNumber": 23
+        },
+        {
+          "caller": "distanceToSegment",
+          "callee": "Math.sqrt",
+          "lineNumber": 30
+        },
+        {
+          "caller": "distanceToSegment",
+          "callee": "squaredDistance",
+          "lineNumber": 30
+        },
+        {
+          "caller": "orientation",
+          "callee": "Math.abs",
+          "lineNumber": 35
+        },
+        {
+          "caller": "isPointOnSegment",
+          "callee": "Math.max",
+          "lineNumber": 43
+        },
+        {
+          "caller": "isPointOnSegment",
+          "callee": "Math.min",
+          "lineNumber": 44
+        },
+        {
+          "caller": "isPointOnSegment",
+          "callee": "Math.max",
+          "lineNumber": 45
+        },
+        {
+          "caller": "isPointOnSegment",
+          "callee": "Math.min",
+          "lineNumber": 46
+        },
+        {
+          "caller": "isPointOnSegment",
+          "callee": "orientation",
+          "lineNumber": 47
+        },
+        {
+          "caller": "segmentsIntersect",
+          "callee": "orientation",
+          "lineNumber": 52
+        },
+        {
+          "caller": "segmentsIntersect",
+          "callee": "orientation",
+          "lineNumber": 53
+        },
+        {
+          "caller": "segmentsIntersect",
+          "callee": "orientation",
+          "lineNumber": 54
+        },
+        {
+          "caller": "segmentsIntersect",
+          "callee": "orientation",
+          "lineNumber": 55
+        },
+        {
+          "caller": "segmentsIntersect",
+          "callee": "isPointOnSegment",
+          "lineNumber": 62
+        },
+        {
+          "caller": "segmentsIntersect",
+          "callee": "isPointOnSegment",
+          "lineNumber": 63
+        },
+        {
+          "caller": "segmentsIntersect",
+          "callee": "isPointOnSegment",
+          "lineNumber": 64
+        },
+        {
+          "caller": "segmentsIntersect",
+          "callee": "isPointOnSegment",
+          "lineNumber": 65
+        },
+        {
+          "caller": "polygonEdges",
+          "callee": "polygon.map",
+          "lineNumber": 74
+        },
+        {
+          "caller": "pointInPolygon",
+          "callee": "polygonEdges(polygon).some",
+          "lineNumber": 85
+        },
+        {
+          "caller": "pointInPolygon",
+          "callee": "polygonEdges",
+          "lineNumber": 85
+        },
+        {
+          "caller": "pointInPolygon",
+          "callee": "isPointOnSegment",
+          "lineNumber": 85
+        },
+        {
+          "caller": "movementCrossesPolygon",
+          "callee": "pointInPolygon",
+          "lineNumber": 106
+        },
+        {
+          "caller": "movementCrossesPolygon",
+          "callee": "polygonEdges(polygon).some",
+          "lineNumber": 106
+        },
+        {
+          "caller": "movementCrossesPolygon",
+          "callee": "polygonEdges",
+          "lineNumber": 106
+        },
+        {
+          "caller": "movementCrossesPolygon",
+          "callee": "segmentsIntersect",
+          "lineNumber": 106
+        },
+        {
+          "caller": "isWalkable",
+          "callee": "walkableAreas.some",
+          "lineNumber": 115
+        },
+        {
+          "caller": "isWalkable",
+          "callee": "pointInPolygon",
+          "lineNumber": 115
+        },
+        {
+          "caller": "isWalkable",
+          "callee": "blockedAreas.some",
+          "lineNumber": 116
+        },
+        {
+          "caller": "isWalkable",
+          "callee": "pointInPolygon",
+          "lineNumber": 116
+        },
+        {
+          "caller": "canMove",
+          "callee": "isWalkable",
+          "lineNumber": 121
+        },
+        {
+          "caller": "canMove",
+          "callee": "isWalkable",
+          "lineNumber": 121
+        },
+        {
+          "caller": "canMove",
+          "callee": "walls.some",
+          "lineNumber": 126
+        },
+        {
+          "caller": "canMove",
+          "callee": "segmentsIntersect",
+          "lineNumber": 126
+        },
+        {
+          "caller": "canMove",
+          "callee": "blockedAreas.some",
+          "lineNumber": 127
+        },
+        {
+          "caller": "canMove",
+          "callee": "movementCrossesPolygon",
+          "lineNumber": 127
+        },
+        {
+          "caller": "distanceToWall",
+          "callee": "Math.min",
+          "lineNumber": 136
+        },
+        {
+          "caller": "distanceToWall",
+          "callee": "walls.map",
+          "lineNumber": 136
+        },
+        {
+          "caller": "distanceToWall",
+          "callee": "distanceToSegment",
+          "lineNumber": 136
+        },
+        {
+          "caller": "isParticlePositionValid",
+          "callee": "provider.canMove",
+          "lineNumber": 151
+        },
+        {
+          "caller": "isParticlePositionValid",
+          "callee": "provider.isWalkable",
+          "lineNumber": 151
+        }
+      ],
+      "metrics": {
+        "importCount": 2,
+        "exportCount": 2,
+        "functionCount": 10,
+        "classCount": 0
+      }
+    },
+    {
+      "path": "src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "language": "typescript",
+      "fileCategory": "code",
+      "totalLines": 15,
+      "nonEmptyLines": 13,
+      "metrics": {
+        "importCount": 1,
+        "exportCount": 0,
+        "functionCount": 0,
+        "classCount": 0
+      }
+    }
+  ]
+}

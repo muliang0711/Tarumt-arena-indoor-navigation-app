@@ -1,0 +1,77 @@
+{
+  "nodes": [
+    {
+      "id": "document:ARCHITECTURE_README.md",
+      "type": "document",
+      "name": "ARCHITECTURE_README.md",
+      "filePath": "ARCHITECTURE_README.md",
+      "summary": "Defines the intended early-stage React Native project structure and assigns responsibilities to navigation, screens, components, services, hooks, state, storage, and shared types. It also records that these areas were initially placeholders awaiting implementation.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "folder-structure",
+        "separation-of-concerns"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "config:app.json",
+      "type": "config",
+      "name": "app.json",
+      "filePath": "app.json",
+      "summary": "Configures Expo application identity and platform behavior, including portrait orientation, light appearance, the new architecture, bundled assets, tablet support, and Android adaptive-icon background.",
+      "tags": [
+        "configuration",
+        "expo",
+        "mobile-app",
+        "platform-settings"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "Defines the Expo application entry point, development and type-checking scripts, and the React Native runtime dependencies. It pins the Expo 54, React 19, React Native 0.81, and TypeScript toolchain used by the project.",
+      "tags": [
+        "configuration",
+        "dependency-management",
+        "build-system",
+        "expo"
+      ],
+      "complexity": "simple",
+      "languageNotes": "The package uses Expo's managed entry point and includes an explicit expo-font override alongside tightly pinned framework versions."
+    },
+    {
+      "id": "config:tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "tsconfig.json",
+      "summary": "Extends Expo's base TypeScript compiler configuration and enables strict type checking for the application source.",
+      "tags": [
+        "configuration",
+        "typescript",
+        "strict-mode",
+        "build-system"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "config:package.json",
+      "target": "config:tsconfig.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:app.json",
+      "target": "config:package.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

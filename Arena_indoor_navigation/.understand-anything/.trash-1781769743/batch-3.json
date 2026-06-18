@@ -1,0 +1,757 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "type": "file",
+      "name": "ActorLayer.tsx",
+      "filePath": "src/mapEngine/actor_system/ActorLayer.tsx",
+      "summary": "Renders actor sprites over the map by converting world positions to pixels and offsetting them against the visible map bounds.",
+      "tags": ["component", "actor-rendering", "map-overlay"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/actor_system/ActorLayer.tsx:ActorLayer",
+      "type": "function",
+      "name": "ActorLayer",
+      "filePath": "src/mapEngine/actor_system/ActorLayer.tsx",
+      "lineRange": [19, 43],
+      "summary": "Maps actor models to positioned React Native images within the current map layout.",
+      "tags": ["component", "actor-rendering", "map-overlay"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "type": "file",
+      "name": "actorAssetRegistry.ts",
+      "filePath": "src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "summary": "Registers the bundled image asset used to render Bob's idle actor state.",
+      "tags": ["asset-registry", "actor-rendering", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/actorModel.ts",
+      "type": "file",
+      "name": "actorModel.ts",
+      "filePath": "src/mapEngine/actor_system/actorModel.ts",
+      "summary": "Defines actor state and provides helpers for creating Bob from a route node and converting actor coordinates to screen pixels.",
+      "tags": ["data-model", "actor-state", "coordinate-conversion"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/actor_system/actorModel.ts:buildBobActorAtNode",
+      "type": "function",
+      "name": "buildBobActorAtNode",
+      "filePath": "src/mapEngine/actor_system/actorModel.ts",
+      "lineRange": [28, 42],
+      "summary": "Finds a route graph node and constructs the initial Bob actor state at that position.",
+      "tags": ["factory", "actor-state", "route-graph"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/actor_system/actorModel.ts:routeNodeToPixels",
+      "type": "function",
+      "name": "routeNodeToPixels",
+      "filePath": "src/mapEngine/actor_system/actorModel.ts",
+      "lineRange": [44, 49],
+      "summary": "Scales an actor's world coordinates into rounded pixel coordinates.",
+      "tags": ["utility", "coordinate-conversion", "map-rendering"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "type": "file",
+      "name": "CameraViewport.tsx",
+      "filePath": "src/mapEngine/cameran_system/CameraViewport.tsx",
+      "summary": "Provides an animated viewport with simultaneous pan and pinch gestures, maintaining camera offsets and focal-point zoom behavior.",
+      "tags": ["component", "gesture-handler", "camera-control", "animation"],
+      "complexity": "moderate",
+      "languageNotes": "Uses React refs to synchronize gesture state with React Native Animated values without rerendering every gesture update."
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/CameraViewport.tsx:CameraViewport",
+      "type": "function",
+      "name": "CameraViewport",
+      "filePath": "src/mapEngine/cameran_system/CameraViewport.tsx",
+      "lineRange": [19, 133],
+      "summary": "Wraps map content in an animated stage and coordinates pan and pinch gestures with camera state callbacks.",
+      "tags": ["component", "gesture-handler", "camera-control", "animation"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "type": "file",
+      "name": "cameraModel.ts",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "summary": "Implements pure camera transformations for fitting bounds, centering, zooming around a focal point, and panning.",
+      "tags": ["camera-model", "coordinate-conversion", "utility", "state-management"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:createInitialCameraState",
+      "type": "function",
+      "name": "createInitialCameraState",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [19, 21],
+      "summary": "Creates the initial camera by fitting map bounds into a viewport.",
+      "tags": ["factory", "camera-model", "viewport"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:fitCameraToBounds",
+      "type": "function",
+      "name": "fitCameraToBounds",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [23, 32],
+      "summary": "Calculates a centered scale and offsets that fit specified bounds within a padded viewport.",
+      "tags": ["camera-model", "viewport", "coordinate-conversion"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:centerCameraOnPoint",
+      "type": "function",
+      "name": "centerCameraOnPoint",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [34, 40],
+      "summary": "Repositions a camera so a world point appears at the center of the viewport.",
+      "tags": ["camera-model", "centering", "coordinate-conversion"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:zoomCamera",
+      "type": "function",
+      "name": "zoomCamera",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [42, 50],
+      "summary": "Applies a multiplicative zoom factor while preserving an optional focal point.",
+      "tags": ["camera-model", "zoom", "coordinate-conversion"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:setCameraZoom",
+      "type": "function",
+      "name": "setCameraZoom",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [52, 74],
+      "summary": "Clamps an absolute zoom level and adjusts offsets to keep a focal screen point anchored.",
+      "tags": ["camera-model", "zoom", "validation", "coordinate-conversion"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/cameran_system/cameraModel.ts:panCamera",
+      "type": "function",
+      "name": "panCamera",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "lineRange": [76, 82],
+      "summary": "Produces a camera state translated by a two-dimensional delta.",
+      "tags": ["camera-model", "pan", "state-management"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/mapGeometry.ts",
+      "type": "file",
+      "name": "mapGeometry.ts",
+      "filePath": "src/mapEngine/mapGeometry.ts",
+      "summary": "Defines shared geometric types for points, bounds, polygons, and line segments used throughout the map engine.",
+      "tags": ["type-definition", "geometry", "shared-model"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "type": "file",
+      "name": "ArenaMapView.tsx",
+      "filePath": "src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "summary": "Builds and renders the normalized arena scene as positioned image layers with support for caller-provided overlays.",
+      "tags": ["component", "map-rendering", "scene-graph", "asset-registry"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:ArenaMapView",
+      "type": "function",
+      "name": "ArenaMapView",
+      "filePath": "src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "lineRange": [21, 53],
+      "summary": "Renders ordered map asset layers inside calculated visual bounds and invokes an optional overlay renderer.",
+      "tags": ["component", "map-rendering", "scene-graph"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:buildScene",
+      "type": "function",
+      "name": "buildScene",
+      "filePath": "src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "lineRange": [55, 67],
+      "summary": "Assembles render bounds, ordered layers, and an asset lookup manifest for a normalized map.",
+      "tags": ["factory", "scene-graph", "map-rendering"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "type": "file",
+      "name": "mapAssetRegistry.ts",
+      "filePath": "src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "summary": "Maps normalized map asset identifiers to bundled React Native image resources.",
+      "tags": ["asset-registry", "map-rendering", "configuration"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "type": "file",
+      "name": "mapRendererModel.ts",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "summary": "Normalizes loosely structured map data into a validated renderer model, classifies and orders visual assets, and computes scene bounds.",
+      "tags": ["serialization", "validation", "map-rendering", "data-model"],
+      "complexity": "complex",
+      "languageNotes": "Uses runtime type guards and normalization helpers to convert unknown JSON-shaped input into strongly typed TypeScript structures."
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeMapSchema",
+      "type": "function",
+      "name": "normalizeMapSchema",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [69, 109],
+      "summary": "Validates raw map input and constructs a normalized schema with dimensions, assets, visual layers, and movement graph data.",
+      "tags": ["serialization", "validation", "data-model", "map-schema"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:orderVisualLayers",
+      "type": "function",
+      "name": "orderVisualLayers",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [111, 119],
+      "summary": "Stably orders visual placements by semantic asset category while preserving source order within categories.",
+      "tags": ["sorting", "map-rendering", "scene-graph"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:getVisualBounds",
+      "type": "function",
+      "name": "getVisualBounds",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [121, 150],
+      "summary": "Computes the pixel-space bounding rectangle enclosing all placed visual assets.",
+      "tags": ["geometry", "map-rendering", "coordinate-conversion"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:classifyAsset",
+      "type": "function",
+      "name": "classifyAsset",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [152, 169],
+      "summary": "Classifies asset identifiers into floor, room, wall, door, decoration, or unknown render groups.",
+      "tags": ["classification", "map-rendering", "asset-registry"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeAssets",
+      "type": "function",
+      "name": "normalizeAssets",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [171, 186],
+      "summary": "Validates asset records and derives their pixel dimensions from tile dimensions.",
+      "tags": ["serialization", "validation", "asset-registry"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeVisualLayers",
+      "type": "function",
+      "name": "normalizeVisualLayers",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [188, 199],
+      "summary": "Normalizes visual placement records with generated identifiers and validated coordinates.",
+      "tags": ["serialization", "validation", "scene-graph"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeRouteNodes",
+      "type": "function",
+      "name": "normalizeRouteNodes",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "lineRange": [201, 214],
+      "summary": "Normalizes route graph nodes and validates their positional coordinates.",
+      "tags": ["serialization", "validation", "route-graph"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "type": "file",
+      "name": "movementConstraintProvider.ts",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "summary": "Implements geometric collision and containment tests used to validate movement through walkable areas, blocked polygons, and walls.",
+      "tags": ["service", "movement-validation", "computational-geometry", "collision-detection"],
+      "complexity": "moderate",
+      "languageNotes": "Uses epsilon-aware orientation, segment intersection, and ray-casting tests to handle geometric boundary cases."
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:distanceToSegment",
+      "type": "function",
+      "name": "distanceToSegment",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [12, 31],
+      "summary": "Calculates the shortest Euclidean distance from a point to a finite line segment.",
+      "tags": ["computational-geometry", "distance", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:segmentsIntersect",
+      "type": "function",
+      "name": "segmentsIntersect",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [51, 67],
+      "summary": "Tests two line segments for general or collinear intersection using orientation checks.",
+      "tags": ["computational-geometry", "collision-detection", "validation"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:polygonEdges",
+      "type": "function",
+      "name": "polygonEdges",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [69, 78],
+      "summary": "Converts polygon vertices into a closed sequence of line segments.",
+      "tags": ["computational-geometry", "polygon", "utility"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:pointInPolygon",
+      "type": "function",
+      "name": "pointInPolygon",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [80, 103],
+      "summary": "Determines whether a point lies inside or on the boundary of a polygon using boundary and ray-casting tests.",
+      "tags": ["computational-geometry", "polygon", "collision-detection"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:createMovementConstraintProvider",
+      "type": "function",
+      "name": "createMovementConstraintProvider",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [109, 144],
+      "summary": "Builds a movement constraint service that checks walkability, path validity, and distance to walls.",
+      "tags": ["factory", "movement-validation", "collision-detection", "service"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:isParticlePositionValid",
+      "type": "function",
+      "name": "isParticlePositionValid",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "lineRange": [146, 152],
+      "summary": "Validates a particle position either as an initial walkable point or as a permitted movement from its previous position.",
+      "tags": ["movement-validation", "particle-filter", "collision-detection"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "type": "file",
+      "name": "movementConstraintTypes.ts",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "summary": "Defines the map geometry input and provider interface for movement constraint evaluation.",
+      "tags": ["type-definition", "movement-validation", "service-contract"],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/actor_system/actorModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "function:src/mapEngine/actor_system/ActorLayer.tsx:ActorLayer",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "function:src/mapEngine/actor_system/ActorLayer.tsx:ActorLayer",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorModel.ts",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:buildBobActorAtNode",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorModel.ts",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:buildBobActorAtNode",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorModel.ts",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:routeNodeToPixels",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorModel.ts",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:routeNodeToPixels",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/actor_system/ActorLayer.tsx:ActorLayer",
+      "target": "function:src/mapEngine/actor_system/actorModel.ts:routeNodeToPixels",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "function:src/mapEngine/cameran_system/CameraViewport.tsx:CameraViewport",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "function:src/mapEngine/cameran_system/CameraViewport.tsx:CameraViewport",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:createInitialCameraState",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:createInitialCameraState",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:fitCameraToBounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:fitCameraToBounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:centerCameraOnPoint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:centerCameraOnPoint",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:zoomCamera",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:zoomCamera",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:setCameraZoom",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:setCameraZoom",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:panCamera",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "function:src/mapEngine/cameran_system/cameraModel.ts:panCamera",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:ArenaMapView",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:ArenaMapView",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:buildScene",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:buildScene",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:getVisualBounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/map_rendering_system/ArenaMapView.tsx:buildScene",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:orderVisualLayers",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeMapSchema",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeMapSchema",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:orderVisualLayers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:orderVisualLayers",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:getVisualBounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:getVisualBounds",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:classifyAsset",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:classifyAsset",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeAssets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeVisualLayers",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "function:src/mapEngine/map_rendering_system/mapRendererModel.ts:normalizeRouteNodes",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:distanceToSegment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:segmentsIntersect",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:polygonEdges",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:pointInPolygon",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:createMovementConstraintProvider",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:createMovementConstraintProvider",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:isParticlePositionValid",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "function:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts:isParticlePositionValid",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ]
+}

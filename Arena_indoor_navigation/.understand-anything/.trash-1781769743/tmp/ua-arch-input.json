@@ -1,0 +1,2359 @@
+{
+  "fileNodes": [
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "type": "file",
+      "name": "createParticles.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "summary": "Creates an initial particle cloud around a world position using a deterministic golden-angle spatial spread and bounded heading, weight, and confidence values.",
+      "tags": [
+        "particle-filter",
+        "factory",
+        "initialization",
+        "positioning"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "type": "file",
+      "name": "particleFilter.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "summary": "Orchestrates particle-filter initialization and update cycles, combining prediction, scoring, resampling, weight normalization, and weighted pose estimation.",
+      "tags": [
+        "particle-filter",
+        "service",
+        "positioning",
+        "state-management"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "file",
+      "name": "particleTypes.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "summary": "Defines the particle, filter snapshot, world-position, motion-history, scoring, and algorithm option contracts shared by the movement filter.",
+      "tags": [
+        "type-definition",
+        "particle-filter",
+        "data-model",
+        "configuration"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "type": "file",
+      "name": "predictParticles.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "summary": "Projects particles according to a motion estimate while blending headings and injecting configurable distance, heading, and position noise.",
+      "tags": [
+        "particle-filter",
+        "prediction",
+        "motion-model",
+        "positioning"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "type": "file",
+      "name": "resampleParticles.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "summary": "Resamples weighted particles to a requested population using cumulative weights and evenly spaced stochastic thresholds.",
+      "tags": [
+        "particle-filter",
+        "resampling",
+        "probability",
+        "utility"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "type": "file",
+      "name": "scoreParticles.ts",
+      "filePath": "src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "summary": "Scores predicted particles against expected distance, heading, and confidence, with support for custom constraint-based scoring.",
+      "tags": [
+        "particle-filter",
+        "scoring",
+        "validation",
+        "positioning"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/index.ts",
+      "type": "file",
+      "name": "index.ts",
+      "filePath": "src/mapEngine/movement_system/constraints/index.ts",
+      "summary": "Exposes the movement-constraint provider, particle-position validation helper, and related map contracts through a compact barrel module.",
+      "tags": [
+        "barrel",
+        "constraint-system",
+        "exports",
+        "validation"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "type": "file",
+      "name": "displacementEstimate.ts",
+      "filePath": "src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "summary": "Defines normalized displacement estimates and converts step deltas into traveled distance using a configurable step length.",
+      "tags": [
+        "estimation",
+        "displacement",
+        "factory",
+        "data-model"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "file",
+      "name": "headingEstimate.ts",
+      "filePath": "src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "summary": "Defines heading estimates and conversion helpers that normalize angles and provide radians, degrees, and unit-vector representations.",
+      "tags": [
+        "estimation",
+        "heading",
+        "normalization",
+        "geometry"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "file",
+      "name": "motionEstimate.ts",
+      "filePath": "src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "summary": "Combines step and heading observations into a motion estimate with derived displacement and aggregate confidence.",
+      "tags": [
+        "estimation",
+        "motion-model",
+        "factory",
+        "data-model"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "file",
+      "name": "stepEstimate.ts",
+      "filePath": "src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "summary": "Creates normalized cumulative-step and step-delta estimates from pedometer samples or raw count values.",
+      "tags": [
+        "estimation",
+        "pedometer",
+        "factory",
+        "normalization"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "file",
+      "name": "indoorposition_engine.tsx",
+      "filePath": "src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "summary": "Coordinates sensor normalization, step and heading estimation, particle-filter updates, and map constraints to produce the next indoor position state.",
+      "tags": [
+        "service",
+        "indoor-positioning",
+        "orchestration",
+        "particle-filter",
+        "sensor-fusion",
+        "tested"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "type": "file",
+      "name": "normalizeSensorSample.ts",
+      "filePath": "src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "summary": "Sanitizes all supported raw sensor sample variants by normalizing timestamps, vectors, counts, attitudes, and optional numeric fields.",
+      "tags": [
+        "normalization",
+        "sensor-fusion",
+        "validation",
+        "preprocessing"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "type": "file",
+      "name": "sensorSampleWindow.ts",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "summary": "Provides immutable, capacity-limited windows of timestamped sensor samples with chronological ordering and inspection helpers.",
+      "tags": [
+        "sensor-data",
+        "windowing",
+        "utility",
+        "preprocessing"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "file",
+      "name": "sensorTypes.ts",
+      "filePath": "src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "summary": "Defines the discriminated sensor sample union and shared vector, timestamp, accelerometer, gyroscope, magnetometer, pedometer, and device-motion contracts.",
+      "tags": [
+        "type-definition",
+        "sensor-data",
+        "data-model",
+        "sensor-fusion"
+      ]
+    },
+    {
+      "id": "file:App.tsx",
+      "type": "file",
+      "name": "App.tsx",
+      "filePath": "App.tsx",
+      "summary": "Bootstraps the Expo application, owns the preview navigation state, and switches among the home, map, floor, and room screens inside gesture and safe-area containers.",
+      "tags": [
+        "entry-point",
+        "component",
+        "navigation",
+        "state-management"
+      ]
+    },
+    {
+      "id": "file:src/components/CategoryChip.tsx",
+      "type": "file",
+      "name": "CategoryChip.tsx",
+      "filePath": "src/components/CategoryChip.tsx",
+      "summary": "Defines a compact selectable category chip with active and inactive visual states for room filtering interfaces.",
+      "tags": [
+        "component",
+        "selection-control",
+        "room-filter",
+        "presentational"
+      ]
+    },
+    {
+      "id": "file:src/components/FloorCard.tsx",
+      "type": "file",
+      "name": "FloorCard.tsx",
+      "filePath": "src/components/FloorCard.tsx",
+      "summary": "Provides an interactive floor summary card with a building image, room metadata, selection highlighting, and navigation affordance.",
+      "tags": [
+        "component",
+        "floor-selection",
+        "card",
+        "event-handler"
+      ]
+    },
+    {
+      "id": "file:src/components/Header.tsx",
+      "type": "file",
+      "name": "Header.tsx",
+      "filePath": "src/components/Header.tsx",
+      "summary": "Implements a centered screen header with optional subtitle and back navigation while preserving symmetric layout.",
+      "tags": [
+        "component",
+        "navigation",
+        "header",
+        "presentational"
+      ]
+    },
+    {
+      "id": "file:src/components/PreviewTabs.tsx",
+      "type": "file",
+      "name": "PreviewTabs.tsx",
+      "filePath": "src/components/PreviewTabs.tsx",
+      "summary": "Defines the four-screen preview navigation contract and renders a bottom tab bar for switching between app prototypes.",
+      "tags": [
+        "component",
+        "navigation",
+        "tab-bar",
+        "type-definition"
+      ]
+    },
+    {
+      "id": "file:src/components/QuickAccessCard.tsx",
+      "type": "file",
+      "name": "QuickAccessCard.tsx",
+      "filePath": "src/components/QuickAccessCard.tsx",
+      "summary": "Displays a compact home-screen shortcut tile with configurable icon family, label, and orange or green tone.",
+      "tags": [
+        "component",
+        "quick-access",
+        "card",
+        "presentational"
+      ]
+    },
+    {
+      "id": "file:src/components/RoomCard.tsx",
+      "type": "file",
+      "name": "RoomCard.tsx",
+      "filePath": "src/components/RoomCard.tsx",
+      "summary": "Provides a room destination card showing room type, distance, icon, and selected-state feedback for destination lists.",
+      "tags": [
+        "component",
+        "room-selection",
+        "card",
+        "presentational"
+      ]
+    },
+    {
+      "id": "file:src/components/ScreenScaffold.tsx",
+      "type": "file",
+      "name": "ScreenScaffold.tsx",
+      "filePath": "src/components/ScreenScaffold.tsx",
+      "summary": "Supplies the shared screen background and horizontal spacing, choosing between scrollable and fixed content containers.",
+      "tags": [
+        "component",
+        "layout",
+        "screen-shell",
+        "utility"
+      ]
+    },
+    {
+      "id": "file:src/components/SearchBar.tsx",
+      "type": "file",
+      "name": "SearchBar.tsx",
+      "filePath": "src/components/SearchBar.tsx",
+      "summary": "Defines a visual search control with placeholder text and a filter affordance for home and map discovery screens.",
+      "tags": [
+        "component",
+        "search",
+        "filter-control",
+        "presentational"
+      ]
+    },
+    {
+      "id": "file:src/components/theme.ts",
+      "type": "file",
+      "name": "theme.ts",
+      "filePath": "src/components/theme.ts",
+      "summary": "Centralizes the warm neutral color palette, border radii, and reusable platform shadow settings shared by the app UI and map viewport.",
+      "tags": [
+        "theme",
+        "design-tokens",
+        "configuration",
+        "styling"
+      ]
+    },
+    {
+      "id": "file:src/screens/FloorSelectionScreen.tsx",
+      "type": "file",
+      "name": "FloorSelectionScreen.tsx",
+      "filePath": "src/screens/FloorSelectionScreen.tsx",
+      "summary": "Presents the Arena TARUMT building and a list of floors, allowing the highlighted level to advance into room selection.",
+      "tags": [
+        "component",
+        "screen",
+        "floor-selection",
+        "navigation"
+      ]
+    },
+    {
+      "id": "file:src/screens/HomeScreen.tsx",
+      "type": "file",
+      "name": "HomeScreen.tsx",
+      "filePath": "src/screens/HomeScreen.tsx",
+      "summary": "Builds the navigator landing screen with branded hero imagery, destination search, a start-navigation action, and facility shortcuts.",
+      "tags": [
+        "component",
+        "screen",
+        "home",
+        "navigation"
+      ]
+    },
+    {
+      "id": "file:src/screens/MapScreen.tsx",
+      "type": "file",
+      "name": "MapScreen.tsx",
+      "filePath": "src/screens/MapScreen.tsx",
+      "summary": "Hosts the indoor map engine for Level 2 and surrounds it with search, live-status, actor summary, and destination UI.",
+      "tags": [
+        "component",
+        "screen",
+        "indoor-map",
+        "map-engine"
+      ]
+    },
+    {
+      "id": "file:src/screens/RoomSelectionScreen.tsx",
+      "type": "file",
+      "name": "RoomSelectionScreen.tsx",
+      "filePath": "src/screens/RoomSelectionScreen.tsx",
+      "summary": "Presents Level 2 room destinations with a horizontal category selector and distance-aware room cards.",
+      "tags": [
+        "component",
+        "screen",
+        "room-selection",
+        "navigation"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "type": "file",
+      "name": "ActorLayer.tsx",
+      "filePath": "src/mapEngine/actor_system/ActorLayer.tsx",
+      "summary": "Renders actor sprites over the map by converting world positions to pixels and offsetting them against the visible map bounds.",
+      "tags": [
+        "component",
+        "actor-rendering",
+        "map-overlay"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "type": "file",
+      "name": "actorAssetRegistry.ts",
+      "filePath": "src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "summary": "Registers the bundled image asset used to render Bob's idle actor state.",
+      "tags": [
+        "asset-registry",
+        "actor-rendering",
+        "configuration"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/actorModel.ts",
+      "type": "file",
+      "name": "actorModel.ts",
+      "filePath": "src/mapEngine/actor_system/actorModel.ts",
+      "summary": "Defines actor state and provides helpers for creating Bob from a route node and converting actor coordinates to screen pixels.",
+      "tags": [
+        "data-model",
+        "actor-state",
+        "coordinate-conversion"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "type": "file",
+      "name": "CameraViewport.tsx",
+      "filePath": "src/mapEngine/cameran_system/CameraViewport.tsx",
+      "summary": "Provides an animated viewport with simultaneous pan and pinch gestures, maintaining camera offsets and focal-point zoom behavior.",
+      "tags": [
+        "component",
+        "gesture-handler",
+        "camera-control",
+        "animation"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "type": "file",
+      "name": "cameraModel.ts",
+      "filePath": "src/mapEngine/cameran_system/cameraModel.ts",
+      "summary": "Implements pure camera transformations for fitting bounds, centering, zooming around a focal point, and panning.",
+      "tags": [
+        "camera-model",
+        "coordinate-conversion",
+        "utility",
+        "state-management"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/mapGeometry.ts",
+      "type": "file",
+      "name": "mapGeometry.ts",
+      "filePath": "src/mapEngine/mapGeometry.ts",
+      "summary": "Defines shared geometric types for points, bounds, polygons, and line segments used throughout the map engine.",
+      "tags": [
+        "type-definition",
+        "geometry",
+        "shared-model"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "type": "file",
+      "name": "ArenaMapView.tsx",
+      "filePath": "src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "summary": "Builds and renders the normalized arena scene as positioned image layers with support for caller-provided overlays.",
+      "tags": [
+        "component",
+        "map-rendering",
+        "scene-graph",
+        "asset-registry"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "type": "file",
+      "name": "mapAssetRegistry.ts",
+      "filePath": "src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "summary": "Maps normalized map asset identifiers to bundled React Native image resources.",
+      "tags": [
+        "asset-registry",
+        "map-rendering",
+        "configuration"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "type": "file",
+      "name": "mapRendererModel.ts",
+      "filePath": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "summary": "Normalizes loosely structured map data into a validated renderer model, classifies and orders visual assets, and computes scene bounds.",
+      "tags": [
+        "serialization",
+        "validation",
+        "map-rendering",
+        "data-model"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "type": "file",
+      "name": "movementConstraintProvider.ts",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "summary": "Implements geometric collision and containment tests used to validate movement through walkable areas, blocked polygons, and walls.",
+      "tags": [
+        "service",
+        "movement-validation",
+        "computational-geometry",
+        "collision-detection"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "type": "file",
+      "name": "movementConstraintTypes.ts",
+      "filePath": "src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "summary": "Defines the map geometry input and provider interface for movement constraint evaluation.",
+      "tags": [
+        "type-definition",
+        "movement-validation",
+        "service-contract"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "type": "file",
+      "name": "ArenaMapEngineView.tsx",
+      "filePath": "src/mapEngine/ArenaMapEngineView.tsx",
+      "summary": "Composes map normalization, movement estimation, actor rendering, and camera controls into the interactive indoor navigation view. It supports zooming, free-look gestures, and automatic camera following of the estimated user actor.",
+      "tags": [
+        "component",
+        "map-engine",
+        "camera-controls",
+        "movement-estimation",
+        "react-native"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "file",
+      "name": "actorSystem.ts",
+      "filePath": "src/mapEngine/actor_system/actorSystem.ts",
+      "summary": "Provides the actor-system public surface by re-exporting the actor layer, actor model helpers, and Actor type.",
+      "tags": [
+        "barrel",
+        "actor-system",
+        "type-definition",
+        "map-engine",
+        "tested"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "file",
+      "name": "cameranSystem.ts",
+      "filePath": "src/mapEngine/cameran_system/cameranSystem.ts",
+      "summary": "Defines the camera subsystem's public API, exposing the viewport component, camera transforms, zoom limits, and shared camera types.",
+      "tags": [
+        "barrel",
+        "camera-system",
+        "type-definition",
+        "map-engine",
+        "tested"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/map-controller.ts",
+      "type": "file",
+      "name": "map-controller.ts",
+      "filePath": "src/mapEngine/map-controller.ts",
+      "summary": "Acts as the map engine's compact public entry point, re-exporting the main engine view, constraint extraction, and map rendering view.",
+      "tags": [
+        "entry-point",
+        "barrel",
+        "map-engine",
+        "public-api",
+        "tested"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "file",
+      "name": "map-engine-contract.test.ts",
+      "filePath": "src/mapEngine/map-engine-contract.test.ts",
+      "summary": "Compile-time contract exercise that instantiates the map renderer, actor, camera, constraint, and movement APIs against representative map data. It verifies that the map-engine public surfaces compose without executing a test framework assertion suite.",
+      "tags": [
+        "test",
+        "contract-test",
+        "map-engine",
+        "integration"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/mapEngineController.ts",
+      "type": "file",
+      "name": "mapEngineController.ts",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "summary": "Converts loosely typed map JSON into normalized movement constraints, including walkable regions, walls, doors, corridors, and blocked polygons derived from visual assets.",
+      "tags": [
+        "map-engine",
+        "validation",
+        "serialization",
+        "geometry",
+        "movement-constraints",
+        "tested"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "file",
+      "name": "mapRenderingSystem.ts",
+      "filePath": "src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "summary": "Provides the rendering subsystem's public API by re-exporting the map view, schema normalization and layer utilities, and rendering model types.",
+      "tags": [
+        "barrel",
+        "map-rendering",
+        "type-definition",
+        "map-engine",
+        "tested"
+      ]
+    },
+    {
+      "id": "document:ARCHITECTURE_README.md",
+      "type": "document",
+      "name": "ARCHITECTURE_README.md",
+      "filePath": "ARCHITECTURE_README.md",
+      "summary": "Defines the intended early-stage React Native project structure and assigns responsibilities to navigation, screens, components, services, hooks, state, storage, and shared types. It also records that these areas were initially placeholders awaiting implementation.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "folder-structure",
+        "separation-of-concerns"
+      ]
+    },
+    {
+      "id": "config:app.json",
+      "type": "config",
+      "name": "app.json",
+      "filePath": "app.json",
+      "summary": "Configures Expo application identity and platform behavior, including portrait orientation, light appearance, the new architecture, bundled assets, tablet support, and Android adaptive-icon background.",
+      "tags": [
+        "configuration",
+        "expo",
+        "mobile-app",
+        "platform-settings"
+      ]
+    },
+    {
+      "id": "config:package.json",
+      "type": "config",
+      "name": "package.json",
+      "filePath": "package.json",
+      "summary": "Defines the Expo application entry point, development and type-checking scripts, and the React Native runtime dependencies. It pins the Expo 54, React 19, React Native 0.81, and TypeScript toolchain used by the project.",
+      "tags": [
+        "configuration",
+        "dependency-management",
+        "build-system",
+        "expo"
+      ]
+    },
+    {
+      "id": "config:tsconfig.json",
+      "type": "config",
+      "name": "tsconfig.json",
+      "filePath": "tsconfig.json",
+      "summary": "Extends Expo's base TypeScript compiler configuration and enables strict type checking for the application source.",
+      "tags": [
+        "configuration",
+        "typescript",
+        "strict-mode",
+        "build-system"
+      ]
+    },
+    {
+      "id": "config:.expo/devices.json",
+      "type": "config",
+      "name": "devices.json",
+      "filePath": ".expo/devices.json",
+      "summary": "Stores the machine-local list of devices that recently opened the Expo project. The current development-session list is empty.",
+      "tags": [
+        "configuration",
+        "expo",
+        "development-session",
+        "device-metadata"
+      ]
+    },
+    {
+      "id": "document:.expo/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": ".expo/README.md",
+      "summary": "Explains why Expo creates the machine-specific .expo directory, what its generated files contain, and why the directory should not be committed.",
+      "tags": [
+        "documentation",
+        "expo",
+        "local-state",
+        "development-tooling"
+      ]
+    },
+    {
+      "id": "file:.understand-anything/.understandignore",
+      "type": "file",
+      "name": ".understandignore",
+      "filePath": ".understand-anything/.understandignore",
+      "summary": "Provides commented ignore-pattern examples for excluding tests and generated directories from Understand Anything analysis. No optional project-specific exclusion pattern is currently enabled.",
+      "tags": [
+        "configuration",
+        "analysis-tooling",
+        "ignore-patterns",
+        "project-metadata"
+      ]
+    },
+    {
+      "id": "config:.understand-anything/config.json",
+      "type": "config",
+      "name": "config.json",
+      "filePath": ".understand-anything/config.json",
+      "summary": "Configures Understand Anything to generate project-analysis output in English.",
+      "tags": [
+        "configuration",
+        "analysis-tooling",
+        "language-setting",
+        "project-metadata"
+      ]
+    },
+    {
+      "id": "config:generated_map/village_demo_01.json",
+      "type": "config",
+      "name": "village_demo_01.json",
+      "filePath": "generated_map/village_demo_01.json",
+      "summary": "Defines the generated schema-v3 Village Demo indoor map, including a 70-by-60 tile floor, 20 assets, 449 visual layers, collision data, spawn and display metadata, and a four-node route graph.",
+      "tags": [
+        "configuration",
+        "map-schema",
+        "navigation-data",
+        "generated-asset",
+        "collision-map"
+      ]
+    },
+    {
+      "id": "file:src/components/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/components/.gitkeep",
+      "summary": "Preserves the components directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "components"
+      ]
+    },
+    {
+      "id": "file:src/hooks/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/hooks/.gitkeep",
+      "summary": "Preserves the hooks directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "hooks"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/algorithms/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/algorithms/.gitkeep",
+      "summary": "Preserves the movement algorithms directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "movement-algorithms"
+      ]
+    },
+    {
+      "id": "document:src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+      "type": "document",
+      "name": "particle-filter-layer-readme-zh.md",
+      "filePath": "src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+      "summary": "Documents the particle-filter layer from particle creation through prediction, scoring, systematic resampling, and weighted position estimation. It emphasizes that the current implementation smooths PDR motion without yet applying map constraints.",
+      "tags": [
+        "documentation",
+        "particle-filter",
+        "indoor-positioning",
+        "movement-estimation",
+        "algorithm-design"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/constraints/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/constraints/.gitkeep",
+      "summary": "Preserves the movement constraints directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "movement-constraints"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/estimate/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/estimate/.gitkeep",
+      "summary": "Preserves the movement estimate directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "movement-estimation"
+      ]
+    },
+    {
+      "id": "document:src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "type": "document",
+      "name": "estimate-pdr-layer-readme-zh.md",
+      "filePath": "src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "summary": "Explains how the PDR estimate layer converts cleaned sensor inputs into step, heading, displacement, and combined motion estimates. It defines the boundary between raw-sensor preprocessing, particle filtering, and later map constraints.",
+      "tags": [
+        "documentation",
+        "pdr",
+        "movement-estimation",
+        "sensor-fusion",
+        "indoor-positioning"
+      ]
+    },
+    {
+      "id": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "type": "document",
+      "name": "MOVEMENT_SYSTEM_README.md",
+      "filePath": "src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "summary": "Defines the movement system architecture that turns phone sensor data into stable indoor positions through collection, preprocessing, estimation, algorithms, constraints, and orchestration. It also establishes strict boundaries with collision, actor, renderer, and camera subsystems.",
+      "tags": [
+        "documentation",
+        "architecture",
+        "movement-system",
+        "indoor-positioning",
+        "separation-of-concerns"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/preprocessing/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/preprocessing/.gitkeep",
+      "summary": "Preserves the sensor preprocessing directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "sensor-preprocessing"
+      ]
+    },
+    {
+      "id": "document:src/mapEngine/movement_system/preprocessing/sensor-preprocessing-readme-zh.md",
+      "type": "document",
+      "name": "sensor-preprocessing-readme-zh.md",
+      "filePath": "src/mapEngine/movement_system/preprocessing/sensor-preprocessing-readme-zh.md",
+      "summary": "Documents sensor-sample normalization and fixed-capacity time windows used to provide safe, ordered input to movement estimation. It covers fallback handling for invalid numeric values and sensor-specific cleanup without performing position estimation itself.",
+      "tags": [
+        "documentation",
+        "sensor-preprocessing",
+        "data-normalization",
+        "sliding-window",
+        "input-validation"
+      ]
+    },
+    {
+      "id": "file:src/mapEngine/movement_system/sensor/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/mapEngine/movement_system/sensor/.gitkeep",
+      "summary": "Preserves the raw sensor collection directory in version control independently of its implementation files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "sensor-input"
+      ]
+    },
+    {
+      "id": "document:src/mapEngine/README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "src/mapEngine/README.md",
+      "summary": "Defines ownership boundaries among the map engine's controller, composition view, rendering, actor, movement, and camera subsystems. It directs screens through the public controller surface and prevents rendering or state responsibilities from leaking across subsystem folders.",
+      "tags": [
+        "documentation",
+        "map-engine",
+        "architecture",
+        "module-boundaries",
+        "separation-of-concerns"
+      ]
+    },
+    {
+      "id": "file:src/navigation/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/navigation/.gitkeep",
+      "summary": "Preserves the navigation directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "navigation"
+      ]
+    },
+    {
+      "id": "file:src/screens/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/screens/.gitkeep",
+      "summary": "Preserves the screens directory in version control independently of its implemented screen components.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "screens"
+      ]
+    },
+    {
+      "id": "file:src/services/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/services/.gitkeep",
+      "summary": "Preserves the services directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "services"
+      ]
+    },
+    {
+      "id": "file:src/storage/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/storage/.gitkeep",
+      "summary": "Preserves the storage directory in version control alongside stored map assets.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "storage"
+      ]
+    },
+    {
+      "id": "config:src/storage/map-assets/map.json",
+      "type": "config",
+      "name": "map.json",
+      "filePath": "src/storage/map-assets/map.json",
+      "summary": "Provides the runtime copy of the schema-v3 Village Demo indoor map consumed by the application, with visual and collision layers, asset metadata, spawn configuration, labels, icons, and a four-node navigation graph.",
+      "tags": [
+        "configuration",
+        "map-schema",
+        "runtime-asset",
+        "navigation-data",
+        "collision-map"
+      ]
+    },
+    {
+      "id": "file:src/store/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/store/.gitkeep",
+      "summary": "Preserves the application state-store directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "state-management"
+      ]
+    },
+    {
+      "id": "file:src/types/.gitkeep",
+      "type": "file",
+      "name": ".gitkeep",
+      "filePath": "src/types/.gitkeep",
+      "summary": "Preserves the shared types directory in version control when it contains no other files.",
+      "tags": [
+        "placeholder",
+        "version-control",
+        "type-definition"
+      ]
+    }
+  ],
+  "importEdges": [
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/constraints/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/components/PreviewTabs.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/FloorSelectionScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/HomeScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/MapScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/RoomSelectionScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/CategoryChip.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FloorCard.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/Header.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/PreviewTabs.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/QuickAccessCard.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/RoomCard.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/ScreenScaffold.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/SearchBar.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/FloorCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/Header.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/QuickAccessCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/SearchBar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/Header.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/SearchBar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/mapEngine/map-controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/CategoryChip.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/Header.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/RoomCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/actor_system/actorModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/mapEngineController.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/map-controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/mapEngineController.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/movement_system/constraints/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "config:src/storage/map-assets/map.json",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "config:src/storage/map-assets/map.json",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ],
+  "allEdges": [
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/createParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/predictParticles.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/resampleParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/algorithms/scoreParticles.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/displacementEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleFilter.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/algorithms/particleTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/constraints/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/estimate/headingEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/estimate/motionEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/estimate/stepEstimate.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/normalizeSensorSample.ts",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/preprocessing/sensorSampleWindow.ts",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/components/PreviewTabs.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/FloorSelectionScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/HomeScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/MapScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:App.tsx",
+      "target": "file:src/screens/RoomSelectionScreen.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/CategoryChip.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/FloorCard.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/Header.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/PreviewTabs.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/QuickAccessCard.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/RoomCard.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/ScreenScaffold.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/components/SearchBar.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/FloorCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/Header.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/FloorSelectionScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/QuickAccessCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/SearchBar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/HomeScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/Header.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/SearchBar.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "file:src/mapEngine/map-controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/CategoryChip.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/Header.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/RoomCard.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/ScreenScaffold.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/screens/RoomSelectionScreen.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/actor_system/actorModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/ActorLayer.tsx",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/CameraViewport.tsx",
+      "target": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameraModel.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "target": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/mapEngineController.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/map-controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/mapEngineController.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/movement_system/constraints/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/map-controller.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:package.json",
+      "target": "config:tsconfig.json",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:app.json",
+      "target": "config:package.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:.expo/README.md",
+      "target": "config:.expo/devices.json",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:.understand-anything/.understandignore",
+      "target": "config:.understand-anything/config.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "config:generated_map/village_demo_01.json",
+      "target": "config:src/storage/map-assets/map.json",
+      "type": "related",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/README.md",
+      "target": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "target": "document:src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "target": "document:src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/MOVEMENT_SYSTEM_README.md",
+      "target": "document:src/mapEngine/movement_system/preprocessing/sensor-preprocessing-readme-zh.md",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/algorithms/particle-filter-layer-readme-zh.md",
+      "target": "document:src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "document:src/mapEngine/movement_system/estimate/estimate-pdr-layer-readme-zh.md",
+      "target": "document:src/mapEngine/movement_system/preprocessing/sensor-preprocessing-readme-zh.md",
+      "type": "depends_on",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:src/storage/map-assets/map.json",
+      "target": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "config:src/storage/map-assets/map.json",
+      "target": "file:src/screens/MapScreen.tsx",
+      "type": "configures",
+      "direction": "forward",
+      "weight": 0.6
+    },
+    {
+      "source": "file:src/screens/MapScreen.tsx",
+      "target": "config:src/storage/map-assets/map.json",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "config:src/storage/map-assets/map.json",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    }
+  ]
+}

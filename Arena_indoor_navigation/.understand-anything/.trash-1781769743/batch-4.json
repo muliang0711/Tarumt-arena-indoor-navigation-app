@@ -1,0 +1,411 @@
+{
+  "nodes": [
+    {
+      "id": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "type": "file",
+      "name": "ArenaMapEngineView.tsx",
+      "filePath": "src/mapEngine/ArenaMapEngineView.tsx",
+      "summary": "Composes map normalization, movement estimation, actor rendering, and camera controls into the interactive indoor navigation view. It supports zooming, free-look gestures, and automatic camera following of the estimated user actor.",
+      "tags": ["component", "map-engine", "camera-controls", "movement-estimation", "react-native"],
+      "complexity": "moderate",
+      "languageNotes": "A React function component uses memoized domain transformations and camera state to coordinate several map-engine subsystems."
+    },
+    {
+      "id": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "type": "function",
+      "name": "ArenaMapEngineView",
+      "filePath": "src/mapEngine/ArenaMapEngineView.tsx",
+      "lineRange": [26, 147],
+      "summary": "Renders the indoor map engine, estimates the actor position from sensor samples, and manages viewport fitting, zoom, and follow-mode interactions.",
+      "tags": ["component", "event-handler", "camera-controls", "movement-estimation", "map-rendering"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "file",
+      "name": "actorSystem.ts",
+      "filePath": "src/mapEngine/actor_system/actorSystem.ts",
+      "summary": "Provides the actor-system public surface by re-exporting the actor layer, actor model helpers, and Actor type.",
+      "tags": ["barrel", "actor-system", "type-definition", "map-engine"],
+      "complexity": "simple",
+      "languageNotes": "This TypeScript barrel separates runtime exports from the type-only Actor export."
+    },
+    {
+      "id": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "file",
+      "name": "cameranSystem.ts",
+      "filePath": "src/mapEngine/cameran_system/cameranSystem.ts",
+      "summary": "Defines the camera subsystem's public API, exposing the viewport component, camera transforms, zoom limits, and shared camera types.",
+      "tags": ["barrel", "camera-system", "type-definition", "map-engine"],
+      "complexity": "simple",
+      "languageNotes": "The module centralizes runtime and type-only re-exports for camera rendering and camera-model operations."
+    },
+    {
+      "id": "file:src/mapEngine/map-controller.ts",
+      "type": "file",
+      "name": "map-controller.ts",
+      "filePath": "src/mapEngine/map-controller.ts",
+      "summary": "Acts as the map engine's compact public entry point, re-exporting the main engine view, constraint extraction, and map rendering view.",
+      "tags": ["entry-point", "barrel", "map-engine", "public-api"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "file",
+      "name": "map-engine-contract.test.ts",
+      "filePath": "src/mapEngine/map-engine-contract.test.ts",
+      "summary": "Compile-time contract exercise that instantiates the map renderer, actor, camera, constraint, and movement APIs against representative map data. It verifies that the map-engine public surfaces compose without executing a test framework assertion suite.",
+      "tags": ["test", "contract-test", "map-engine", "integration"],
+      "complexity": "moderate",
+      "languageNotes": "Top-level typed expressions and void references make this file primarily a TypeScript API compatibility check."
+    },
+    {
+      "id": "file:src/mapEngine/mapEngineController.ts",
+      "type": "file",
+      "name": "mapEngineController.ts",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "summary": "Converts loosely typed map JSON into normalized movement constraints, including walkable regions, walls, doors, corridors, and blocked polygons derived from visual assets.",
+      "tags": ["map-engine", "validation", "serialization", "geometry", "movement-constraints"],
+      "complexity": "moderate",
+      "languageNotes": "Defensive unknown-value parsing and TypeScript type guards normalize legacy or partial map schemas without trusting input shapes."
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:normalizePoint",
+      "type": "function",
+      "name": "normalizePoint",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [23, 33],
+      "summary": "Validates an unknown object as a finite two-dimensional point, returning null when either coordinate is invalid.",
+      "tags": ["validation", "geometry", "normalization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:normalizeLineSegment",
+      "type": "function",
+      "name": "normalizeLineSegment",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [44, 54],
+      "summary": "Normalizes either a point-pair array or a from/to object into a valid line segment.",
+      "tags": ["validation", "geometry", "normalization"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:polygonFromBounds",
+      "type": "function",
+      "name": "polygonFromBounds",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [60, 77],
+      "summary": "Converts a valid positive rectangular bounds object into a four-corner polygon for movement constraints.",
+      "tags": ["geometry", "normalization", "movement-constraints"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:tilesPerMeter",
+      "type": "function",
+      "name": "tilesPerMeter",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [79, 97],
+      "summary": "Determines the map's tile-to-meter scale from an explicit value or derives it from pixel density and tile size, with a safe fallback.",
+      "tags": ["coordinate-system", "normalization", "map-scale"],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "type": "function",
+      "name": "extractBlockedAreasFromAssets",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [108, 151],
+      "summary": "Builds blocked movement polygons for visual-layer assets marked as impassable, honoring per-tile blocked offsets and asset dimensions.",
+      "tags": ["movement-constraints", "asset-processing", "geometry", "normalization"],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "type": "function",
+      "name": "extractMovementConstraintMapInput",
+      "filePath": "src/mapEngine/mapEngineController.ts",
+      "lineRange": [153, 167],
+      "summary": "Extracts the complete movement-constraint input from raw map data, combining explicit geometry with asset-derived obstacles and bounds fallbacks.",
+      "tags": ["factory", "movement-constraints", "normalization", "public-api"],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "file",
+      "name": "mapRenderingSystem.ts",
+      "filePath": "src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "summary": "Provides the rendering subsystem's public API by re-exporting the map view, schema normalization and layer utilities, and rendering model types.",
+      "tags": ["barrel", "map-rendering", "type-definition", "map-engine"],
+      "complexity": "simple",
+      "languageNotes": "The barrel exposes rendering behavior and type-only contracts from separate view and model modules."
+    }
+  ],
+  "edges": [
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/components/theme.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/mapEngineController.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/mapEngine/movement_system/sensor/sensorTypes.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "file:src/storage/map-assets/map.json",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/map-controller.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/mapEngineController.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/map-engine-contract.test.ts",
+      "target": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/mapGeometry.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/movement_system/constraints/index.ts",
+      "type": "imports",
+      "direction": "forward",
+      "weight": 0.7
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/ArenaMapEngineView.tsx",
+      "target": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:normalizePoint",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:normalizeLineSegment",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:polygonFromBounds",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:tilesPerMeter",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1.0
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/ArenaMapEngineView.tsx:ArenaMapEngineView",
+      "target": "function:src/mapEngine/movement_system/indoorposition_engine.tsx:updateMovementSystem",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:normalizeLineSegment",
+      "target": "function:src/mapEngine/mapEngineController.ts:normalizePoint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "target": "function:src/mapEngine/mapEngineController.ts:tilesPerMeter",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "target": "function:src/mapEngine/mapEngineController.ts:normalizePoint",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "target": "function:src/mapEngine/mapEngineController.ts:polygonFromBounds",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:src/mapEngine/mapEngineController.ts:extractMovementConstraintMapInput",
+      "target": "function:src/mapEngine/mapEngineController.ts:extractBlockedAreasFromAssets",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:src/mapEngine/actor_system/actorSystem.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/cameran_system/cameranSystem.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/map_rendering_system/mapRenderingSystem.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/map-controller.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/mapEngineController.ts",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:src/mapEngine/movement_system/indoorposition_engine.tsx",
+      "target": "file:src/mapEngine/map-engine-contract.test.ts",
+      "type": "tested_by",
+      "direction": "forward",
+      "weight": 0.5
+    }
+  ]
+}

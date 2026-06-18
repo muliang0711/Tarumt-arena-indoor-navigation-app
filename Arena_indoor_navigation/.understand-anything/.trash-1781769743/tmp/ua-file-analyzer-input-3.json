@@ -1,0 +1,103 @@
+{
+  "projectRoot": "C:\\Code\\project\\New folder\\Arena_indoor_navigation",
+  "batchFiles": [
+    {
+      "path": "src/mapEngine/actor_system/ActorLayer.tsx",
+      "language": "typescript",
+      "sizeLines": 50,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "language": "typescript",
+      "sizeLines": 5,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/actor_system/actorModel.ts",
+      "language": "typescript",
+      "sizeLines": 49,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/cameran_system/CameraViewport.tsx",
+      "language": "typescript",
+      "sizeLines": 154,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/cameran_system/cameraModel.ts",
+      "language": "typescript",
+      "sizeLines": 89,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/mapGeometry.ts",
+      "language": "typescript",
+      "sizeLines": 18,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/map_rendering_system/ArenaMapView.tsx",
+      "language": "typescript",
+      "sizeLines": 77,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "language": "typescript",
+      "sizeLines": 24,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/map_rendering_system/mapRendererModel.ts",
+      "language": "typescript",
+      "sizeLines": 254,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts",
+      "language": "typescript",
+      "sizeLines": 152,
+      "fileCategory": "code"
+    },
+    {
+      "path": "src/mapEngine/movement_system/constraints/movementConstraintTypes.ts",
+      "language": "typescript",
+      "sizeLines": 15,
+      "fileCategory": "code"
+    }
+  ],
+  "batchImportData": {
+    "src/mapEngine/actor_system/ActorLayer.tsx": [
+      "src/mapEngine/actor_system/actorAssetRegistry.ts",
+      "src/mapEngine/actor_system/actorModel.ts",
+      "src/mapEngine/mapGeometry.ts"
+    ],
+    "src/mapEngine/actor_system/actorAssetRegistry.ts": [],
+    "src/mapEngine/actor_system/actorModel.ts": [],
+    "src/mapEngine/cameran_system/CameraViewport.tsx": [
+      "src/components/theme.ts",
+      "src/mapEngine/cameran_system/cameraModel.ts"
+    ],
+    "src/mapEngine/cameran_system/cameraModel.ts": [
+      "src/mapEngine/mapGeometry.ts"
+    ],
+    "src/mapEngine/mapGeometry.ts": [],
+    "src/mapEngine/map_rendering_system/ArenaMapView.tsx": [
+      "src/mapEngine/map_rendering_system/mapAssetRegistry.ts",
+      "src/mapEngine/map_rendering_system/mapRendererModel.ts"
+    ],
+    "src/mapEngine/map_rendering_system/mapAssetRegistry.ts": [],
+    "src/mapEngine/map_rendering_system/mapRendererModel.ts": [
+      "src/mapEngine/mapGeometry.ts"
+    ],
+    "src/mapEngine/movement_system/constraints/movementConstraintProvider.ts": [
+      "src/mapEngine/mapGeometry.ts",
+      "src/mapEngine/movement_system/constraints/movementConstraintTypes.ts"
+    ],
+    "src/mapEngine/movement_system/constraints/movementConstraintTypes.ts": [
+      "src/mapEngine/mapGeometry.ts"
+    ]
+  }
+}
