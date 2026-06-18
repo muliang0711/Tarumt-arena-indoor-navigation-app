@@ -29,6 +29,7 @@ export type MovementSystemResult = {
   confidence: number;
   constraintProvider: MovementConstraintProvider;
   particleFilter: ParticleFilterSnapshot;
+  state: MovementSystemState;
 };
 
 function clamp01(value: number): number {
@@ -95,12 +96,20 @@ export function updateMovementSystem(
   const candidatePosition = nextFilter.position ?? currentState.position;
   const canUseCandidate = constraintProvider.canMove(currentState.position, candidatePosition);
   const position = canUseCandidate ? candidatePosition : currentState.position;
-
-  return {
+  const state: MovementSystemState = {
     position,
     headingRadians: nextFilter.headingRadians ?? heading.radians,
     confidence: clamp01(canUseCandidate ? nextFilter.confidence : (currentState.confidence ?? 0.5) * 0.5),
+    particleFilter: nextFilter,
+    previousStepCount: stepSample.steps,
+  };
+
+  return {
+    position: state.position,
+    headingRadians: state.headingRadians,
+    confidence: state.confidence ?? 0,
     constraintProvider,
     particleFilter: nextFilter,
+    state,
   };
 }

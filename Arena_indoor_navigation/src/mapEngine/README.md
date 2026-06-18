@@ -8,7 +8,26 @@ Public export surface for the map engine. Screens should import map engine UI fr
 
 ## `ArenaMapEngineView.tsx`
 
-Composition layer. It loads the map schema, creates initial actors, and wires subsystem outputs together. This file may import both map rendering and actor modules.
+Composition layer. It loads the map schema, creates initial actors, owns the persistent `MovementRuntime`, and wires subsystem outputs together. `MovementRuntime` keeps the previous `MovementSystemState` between sensor batches and is reset only when the normalized map or starting route node changes.
+
+## Runtime sensor and movement flow
+
+`MapScreen` owns the platform-facing `useMovementSensors` hook. The hook uses `expo-sensors`, checks availability and permissions, collects accelerometer, gyroscope, magnetometer, device-motion, and pedometer samples, and emits bounded chronological batches. It starts when `MapScreen` mounts and removes every native subscription when the screen unmounts.
+
+```text
+Expo phone sensors
+  -> useMovementSensors
+  -> bounded RawSensorSample batch
+  -> ArenaMapEngineView
+  -> previous MovementSystemState + map constraints
+  -> updateMovementSystem
+  -> returned MovementSystemState is saved
+  -> actor position is updated
+  -> ActorLayer renders the position
+  -> camera follow centers on the latest actor position
+```
+
+Empty batches, duplicate sample IDs, invalid timestamps, and samples older than the last processed timestamp do not trigger movement updates. A map or starting-node change clears the particle filter and step history, restores the actor to the selected route node, and marks the batch present at the reset boundary as already consumed.
 
 ## `map_rendering_system/`
 

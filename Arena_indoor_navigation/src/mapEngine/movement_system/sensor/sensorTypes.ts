@@ -14,6 +14,7 @@ export type SensorKind =
   | 'deviceMotion';
 
 export interface TimestampedSensorSample<TKind extends SensorKind = SensorKind> {
+  readonly id?: string;
   readonly kind: TKind;
   readonly timestamp: SensorTimestamp;
 }

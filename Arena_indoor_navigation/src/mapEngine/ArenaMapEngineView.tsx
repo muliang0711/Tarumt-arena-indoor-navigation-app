@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, radius, shadow } from '../components/theme';
@@ -11,46 +11,62 @@ import {
   zoomCamera,
 } from './cameran_system/cameranSystem';
 import { extractMovementConstraintMapInput } from './mapEngineController';
+import { MovementRuntime } from './movementRuntime';
 import { ArenaMapView, getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRenderingSystem';
 import { updateMovementSystem } from './movement_system/indoorposition_engine';
 import type { RawSensorSample } from './movement_system/sensor/sensorTypes';
 
 type ArenaMapEngineViewProps = {
   mapData?: unknown;
-  sensorSamples?: RawSensorSample[];
+  sensorSamples?: readonly RawSensorSample[];
+  startingNodeId?: string;
   height?: number;
 };
 
 const defaultMapData = require('../storage/map-assets/map.json');
+const EMPTY_SENSOR_SAMPLES: readonly RawSensorSample[] = Object.freeze([]);
 
 export function ArenaMapEngineView({
   mapData: rawMapData = defaultMapData,
-  sensorSamples = [],
+  sensorSamples = EMPTY_SENSOR_SAMPLES,
+  startingNodeId = 'node_1',
   height = 390,
 }: ArenaMapEngineViewProps) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
   const [isFollowingBob, setIsFollowingBob] = useState(true);
   const mapData = useMemo(() => normalizeMapSchema(rawMapData), [rawMapData]);
-  const startingActor = useMemo(() => buildBobActorAtNode(mapData, 'node_1'), [mapData]);
-  const constraintMapInput = useMemo(() => extractMovementConstraintMapInput(rawMapData), [rawMapData]);
-  const movementUpdate = useMemo(
-    () =>
-      updateMovementSystem(sensorSamples, constraintMapInput, {
-        position: startingActor.position,
-        headingRadians: 0,
-        confidence: 0.8,
-      }),
-    [constraintMapInput, sensorSamples, startingActor.position],
+  const startingActor = useMemo(
+    () => buildBobActorAtNode(mapData, startingNodeId),
+    [mapData, startingNodeId],
   );
+  const constraintMapInput = useMemo(() => extractMovementConstraintMapInput(rawMapData), [rawMapData]);
+  const movementRuntimeRef = useRef<MovementRuntime | null>(null);
+  if (movementRuntimeRef.current === null) {
+    movementRuntimeRef.current = new MovementRuntime(startingActor.position, updateMovementSystem);
+  }
+  const [actorPosition, setActorPosition] = useState(startingActor.position);
+
+  useEffect(() => {
+    movementRuntimeRef.current?.reset(startingActor.position, sensorSamples);
+    setActorPosition(startingActor.position);
+  }, [mapData, startingActor.position, startingNodeId]);
+
+  useEffect(() => {
+    const movementUpdate = movementRuntimeRef.current?.process(sensorSamples, constraintMapInput);
+    if (movementUpdate) {
+      setActorPosition(movementUpdate.position);
+    }
+  }, [constraintMapInput, sensorSamples]);
+
   const actors = useMemo(
     () => [
       {
         ...startingActor,
-        position: movementUpdate.position,
+        position: actorPosition,
       },
     ],
-    [movementUpdate.position, startingActor],
+    [actorPosition, startingActor],
   );
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
   const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);

@@ -9,6 +9,14 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": [
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Allow Arena Indoor Navigation to use motion sensors for indoor positioning."
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true
     },

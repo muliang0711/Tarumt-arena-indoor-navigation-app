@@ -6,6 +6,7 @@ import { ScreenScaffold } from '../components/ScreenScaffold';
 import { SearchBar } from '../components/SearchBar';
 import { colors, radius, shadow } from '../components/theme';
 import { ArenaMapEngineView } from '../mapEngine/map-controller';
+import { useMovementSensors } from '../sensors/useMovementSensors';
 
 const rawMapData = require('../storage/map-assets/map.json');
 
@@ -20,6 +21,8 @@ const destinations: Array<{
 ];
 
 export function MapScreen() {
+  const sensorSamples = useMovementSensors(true);
+
   return (
     <ScreenScaffold>
       <Header title="Indoor Map" subtitle="Level 2 navigation" />
@@ -37,7 +40,7 @@ export function MapScreen() {
           </View>
         </View>
 
-        <ArenaMapEngineView mapData={rawMapData} height={390} />
+        <ArenaMapEngineView mapData={rawMapData} sensorSamples={sensorSamples} height={390} />
       </View>
 
       <View style={styles.routeSummary}>

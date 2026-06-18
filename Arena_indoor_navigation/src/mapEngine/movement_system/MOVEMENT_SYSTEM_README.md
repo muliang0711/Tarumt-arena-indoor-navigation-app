@@ -20,6 +20,12 @@ src/mapEngine/movement_system/
 
 ## Responsibilities
 
+### Platform sensor owner
+
+Real Expo sensor collection is owned by `src/sensors/useMovementSensors.ts`, outside this folder. This keeps `movement_system/` platform-neutral and allows the movement pipeline to accept the same `RawSensorSample` contract in tests or on another platform.
+
+The collector checks sensor availability and permissions, creates native subscriptions once per active `MapScreen`, batches samples every 250 ms, caps pending samples at 128, and removes subscriptions during cleanup.
+
 ### `sensor/`
 
 Responsible for collecting raw phone sensor data.
@@ -182,6 +188,8 @@ renderer/
 `constraints/` uses map rules and collision answers to score or reject possible positions.
 
 `indoorposition_engine.ts` orchestrates the full pipeline and produces the final estimated position that can be applied to the user actor.
+
+`ArenaMapEngineView` owns the persistent `MovementSystemState` through `MovementRuntime`. Each accepted batch receives the exact state returned by the previous batch, including particle-filter generation and pedometer step count. Empty, duplicate, invalid, and older batches are ignored. The runtime resets only when the map or starting route node changes.
 
 ## Boundary With `collision/`
 
