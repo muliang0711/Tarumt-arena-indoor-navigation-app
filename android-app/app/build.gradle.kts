@@ -1,18 +1,18 @@
 plugins {
-//    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
 
 android {
     namespace = "com.hyandlh.tarumtarenanavigation"
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.hyandlh.tarumtarenanavigation"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -32,9 +32,9 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-//    kotlinOptions {
-//        jvmTarget = "11"
-//    }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 }
 
 dependencies {
