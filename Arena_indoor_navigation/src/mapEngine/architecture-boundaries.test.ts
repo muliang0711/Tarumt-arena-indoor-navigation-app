@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { dirname, extname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
@@ -79,4 +79,30 @@ test('gesture ownership and follow-disable wiring remain present', () => {
   assert.match(viewport, /Gesture\.Pinch\(\)/);
   assert.match(viewport, /onGestureStart\?\.\(\)/);
   assert.match(engine, /function handleGestureStart\(\)[\s\S]*setIsFollowingBob\(false\)/);
+});
+
+test('debugger exposes removable UI through one public entry', () => {
+  const debuggerRoot = join(mapEngineRoot, 'debugger');
+  const publicEntry = join(debuggerRoot, 'index.ts');
+
+  assert.equal(existsSync(publicEntry), true);
+  const source = readFileSync(publicEntry, 'utf8');
+  assert.match(source, /MovementDebugPanel/);
+  assert.match(source, /DestinationDebugLayer/);
+  assert.match(source, /buildMovementDebugSnapshot/);
+  assert.match(source, /findDestinationNode/);
+});
+
+test('map engine consumes debugger modules only through the debugger public entry', () => {
+  const violations = sourceFiles(mapEngineRoot).flatMap((filePath) => {
+    const normalized = filePath.replaceAll('\\', '/');
+    if (normalized.includes('/debugger/')) {
+      return [];
+    }
+    return importsFor(filePath)
+      .filter((importedPath) => /debugger\/.+/.test(importedPath))
+      .map((importedPath) => `${relative(mapEngineRoot, filePath)} -> ${importedPath}`);
+  });
+
+  assert.deepEqual(violations, []);
 });
