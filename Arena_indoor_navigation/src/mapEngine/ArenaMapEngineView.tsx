@@ -2,7 +2,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, radius, shadow } from '../components/theme';
-import { ActorLayer, buildBobActorAtNode, routeNodeToPixels } from './actor_system/actorSystem';
+import {
+  ActorLayer,
+  buildBobActorAtNode,
+  deriveActorMotionState,
+  routeNodeToPixels,
+} from './actor_system/actorSystem';
 import {
   CameraViewport,
   centerCameraOnPoint,
@@ -77,20 +82,42 @@ export function ArenaMapEngineView({
     movementRuntimeRef.current = new MovementRuntime(startingActor.position, updateMovementSystem);
   }
   const [actorPosition, setActorPosition] = useState(startingActor.position);
+  const previousActorPositionRef = useRef(startingActor.position);
+  const [bobMotionState, setBobMotionState] = useState({
+    direction: startingActor.direction,
+    action: startingActor.action,
+  });
 
   useEffect(() => {
     movementRuntimeRef.current?.reset(startingActor.position, sensorSamples);
+    previousActorPositionRef.current = startingActor.position;
     setActorPosition(startingActor.position);
+    setBobMotionState({
+      direction: startingActor.direction,
+      action: 'idle',
+    });
     setProcessingStatus('waiting');
   }, [mapData, startingActor.position, startingNodeId]);
 
   useEffect(() => {
     const movementUpdate = movementRuntimeRef.current?.process(sensorSamples, constraintMapInput);
     if (movementUpdate) {
+      const nextPosition = movementUpdate.position;
+      setBobMotionState(
+        deriveActorMotionState(startingActor, {
+          x: nextPosition.x - previousActorPositionRef.current.x,
+          y: nextPosition.y - previousActorPositionRef.current.y,
+        }),
+      );
+      previousActorPositionRef.current = nextPosition;
       setActorPosition(movementUpdate.position);
       setProcessingStatus('processed');
       return;
     }
+    setBobMotionState((currentMotionState) => ({
+      direction: currentMotionState.direction,
+      action: 'idle',
+    }));
     setProcessingStatus(sensorSamples.length > 0 ? 'ignored' : 'waiting');
   }, [constraintMapInput, sensorSamples]);
 
@@ -99,9 +126,11 @@ export function ArenaMapEngineView({
       {
         ...startingActor,
         position: actorPosition,
+        direction: bobMotionState.direction,
+        action: bobMotionState.action,
       },
     ],
-    [actorPosition, startingActor],
+    [actorPosition, bobMotionState.action, bobMotionState.direction, startingActor],
   );
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
   const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);
@@ -180,7 +209,12 @@ export function ArenaMapEngineView({
 
   function handleResetNavigation() {
     movementRuntimeRef.current?.reset(startingActor.position, sensorSamples);
+    previousActorPositionRef.current = startingActor.position;
     setActorPosition(startingActor.position);
+    setBobMotionState({
+      direction: startingActor.direction,
+      action: 'idle',
+    });
     setProcessingStatus('reset');
   }
 

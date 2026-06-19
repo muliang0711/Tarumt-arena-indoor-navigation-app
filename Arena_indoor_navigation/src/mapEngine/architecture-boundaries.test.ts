@@ -136,3 +136,14 @@ test('actor layer renders directional sprites instead of a hardcoded idle frame'
   assert.match(source, /bobRunAssets/);
   assert.match(source, /setInterval|setTimeout/);
 });
+
+test('map engine derives Bob motion state from position changes', () => {
+  const source = readFileSync(
+    join(mapEngineRoot, 'ArenaMapEngineView.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /deriveActorMotionState/);
+  assert.match(source, /previousActorPosition|lastActorPosition|previousPosition/);
+  assert.match(source, /action:\s*bobMotionState\.action|direction:\s*bobMotionState\.direction/);
+});
