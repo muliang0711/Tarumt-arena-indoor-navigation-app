@@ -1,5 +1,6 @@
 export { DestinationDebugLayer } from './DestinationDebugLayer';
 export { MovementDebugPanel } from './MovementDebugPanel';
+export { WalkableAreaDebugLayer } from './WalkableAreaDebugLayer';
 export {
   buildMovementDebugSnapshot,
   findDestinationNode,
@@ -8,3 +9,4 @@ export type {
   MovementDebugSnapshot,
   MovementProcessingStatus,
 } from './movementDebugModel';
+export { extractTemporaryWalkableAreas } from '../shared';

@@ -147,3 +147,13 @@ test('map engine derives Bob motion state from position changes', () => {
   assert.match(source, /previousActorPosition|lastActorPosition|previousPosition/);
   assert.match(source, /action:\s*bobMotionState\.action|direction:\s*bobMotionState\.direction/);
 });
+
+test('debugger public entry exposes the walkable area overlay and shared walkable helper', () => {
+  const source = readFileSync(
+    join(mapEngineRoot, 'debugger', 'index.ts'),
+    'utf8',
+  );
+
+  assert.match(source, /WalkableAreaDebugLayer/);
+  assert.match(source, /extractTemporaryWalkableAreas/);
+});

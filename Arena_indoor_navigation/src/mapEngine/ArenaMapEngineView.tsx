@@ -21,8 +21,10 @@ import {
 import {
   buildMovementDebugSnapshot,
   DestinationDebugLayer,
+  extractTemporaryWalkableAreas,
   findDestinationNode,
   MovementDebugPanel,
+  WalkableAreaDebugLayer,
   type MovementProcessingStatus,
 } from './debugger';
 import { extractMovementConstraintMapInput } from './mapEngineController';
@@ -70,6 +72,10 @@ export function ArenaMapEngineView({
   const destinationNode = useMemo(
     () => findDestinationNode(mapData.movement.routeGraph, destinationNodeId),
     [destinationNodeId, mapData.movement.routeGraph],
+  );
+  const walkableAreas = useMemo(
+    () => extractTemporaryWalkableAreas(mapData.visualLayers, mapData.coordinateSystem),
+    [mapData.coordinateSystem, mapData.visualLayers],
   );
   const [processingStatus, setProcessingStatus] =
     useState<MovementProcessingStatus>('waiting');
@@ -236,6 +242,11 @@ export function ArenaMapEngineView({
           mapData={mapData}
           renderOverlay={(layout) => (
             <>
+              <WalkableAreaDebugLayer
+                areas={walkableAreas}
+                bounds={layout.bounds}
+                coordinateSystem={mapData.coordinateSystem}
+              />
               <DestinationDebugLayer
                 destination={destinationNode}
                 bounds={layout.bounds}
