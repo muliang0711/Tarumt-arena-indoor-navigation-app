@@ -111,3 +111,16 @@ Owns viewport/camera behavior.
 - `cameranSystem.ts`: subsystem barrel export.
 
 Do not put map tile rendering, Bob creation, actor rendering, movement, or sensor logic in this folder.
+
+## Temporary navigation debugger
+
+`debugger/` contains removable testing UI and pure formatting helpers. It shows
+the current sensor batch, movement runtime state, Node 4 as a visual-only
+destination, and a reset control that returns Bob to Node 1.
+
+Camera mode is an explicit user choice. Gestures never change `following` or
+`free-look`; only the camera-mode button does. In free-look, Bob continues to
+receive sensor-driven movement while the camera remains independent.
+
+Node 4 is not passed into the movement system. The destination marker does not
+snap Bob to a route or alter particle-filter scoring.
