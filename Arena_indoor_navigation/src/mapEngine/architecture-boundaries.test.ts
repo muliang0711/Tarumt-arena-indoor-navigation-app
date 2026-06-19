@@ -107,3 +107,20 @@ test('map engine consumes debugger modules only through the debugger public entr
 
   assert.deepEqual(violations, []);
 });
+
+test('bob actor assets expose directional idle and run frames from src/storage/bob', () => {
+  const source = readFileSync(
+    join(mapEngineRoot, 'actor_system', 'actorAssetRegistry.ts'),
+    'utf8',
+  );
+
+  assert.match(source, /src\/storage\/bob|storage\/bob/);
+  assert.match(source, /idle_down\.png/);
+  assert.match(source, /idle_left\.png/);
+  assert.match(source, /idle_right\.png/);
+  assert.match(source, /idle_up\.png/);
+  assert.match(source, /run_down_6\.png/);
+  assert.match(source, /run_left_6\.png/);
+  assert.match(source, /run_right_6\.png/);
+  assert.match(source, /run_up_6\.png/);
+});
