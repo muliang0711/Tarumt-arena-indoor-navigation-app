@@ -132,3 +132,11 @@ debug loop.
 Free-look drag keeps the manual camera-mode contract and commits camera state at
 gesture end, while active gestures ignore parent camera prop resync to reduce
 drag lag.
+
+Bob translation now preserves fractional pixel movement so small sensor-driven
+position changes remain visible on screen.
+
+When explicit `movement.walkableAreas` are empty, the map engine temporarily
+infers walkable one-tile polygons from floor-like visual layers such as
+`walkable_*` and `road_*`. The debugger overlay shows the same inferred area
+that the movement constraints enforce.
