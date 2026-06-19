@@ -80,3 +80,15 @@ test('gesture ownership and follow-disable wiring remain present', () => {
   assert.match(viewport, /onGestureStart\?\.\(\)/);
   assert.match(engine, /function handleGestureStart\(\)[\s\S]*setIsFollowingBob\(false\)/);
 });
+
+test('debugger public entry exposes isolated navigation controls and map layers', () => {
+  const source = readFileSync(
+    join(mapEngineRoot, 'debugger', 'index.ts'),
+    'utf8',
+  );
+
+  assert.match(source, /NavigationDebugPanel/);
+  assert.match(source, /NavigationNodeLayer/);
+  assert.match(source, /RouteDebugLayer/);
+  assert.match(source, /UnwalkableAreaDebugLayer/);
+});

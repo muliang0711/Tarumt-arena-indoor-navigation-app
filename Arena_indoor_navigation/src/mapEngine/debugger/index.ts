@@ -18,3 +18,7 @@ export type {
   UnwalkableOverlayModel,
   WorldRectangle,
 } from './unwalkableOverlayModel';
+export { NavigationDebugPanel } from './NavigationDebugPanel';
+export { NavigationNodeLayer } from './NavigationNodeLayer';
+export { RouteDebugLayer } from './RouteDebugLayer';
+export { UnwalkableAreaDebugLayer } from './UnwalkableAreaDebugLayer';
