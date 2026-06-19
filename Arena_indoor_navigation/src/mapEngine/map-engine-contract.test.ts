@@ -39,8 +39,18 @@ const rawMap = {
       scale: 0.4,
     },
     routeGraph: {
-      nodes: [{ node_id: 'node_1', position: { x: 4.8, y: 5.2 } }],
-      edges: [],
+      nodes: [
+        { node_id: 'node_1', position: { x: 4.8, y: 5.2 } },
+        { node_id: 'node_2', position: { x: 4.8, y: 4 } },
+      ],
+      edges: [{
+        edge_id: 'node_1_to_node_2',
+        from_node: 'node_1',
+        to_node: 'node_2',
+        bidirectional: 'yes',
+        weight: '1.2',
+        distance_m: 1.2,
+      }],
     },
     bounds: { x: 0, y: 0, width: 28, height: 24 },
     walkableAreas: [],
@@ -76,6 +86,18 @@ test('movement extraction produces usable meter-space constraints', () => {
 
   assert.equal(constraintInput.coordinateSystem.worldUnit, 'meter');
   assert.deepEqual(constraintInput.routeGraph.nodes[0].position, { x: 4.8, y: 5.2 });
+  assert.deepEqual(constraintInput.routeGraph.edges[0], {
+    edge_id: 'node_1_to_node_2',
+    from_node: 'node_1',
+    to_node: 'node_2',
+    bidirectional: false,
+    weight: 1.2,
+    distance_m: 1.2,
+    enabled: true,
+  });
+  assert.equal(constraintInput.routeGraph.edges[0].from_node, 'node_1');
+  assert.equal(constraintInput.routeGraph.edges[0].to_node, 'node_2');
+  assert.equal(constraintInput.routeGraph.edges[0].bidirectional, false);
   assert.equal(constraintProvider.isWalkable({ x: 0.5, y: 0.5 }), true);
   assert.equal(Number.isFinite(movementUpdate.position.x), true);
   assert.equal(Number.isFinite(movementUpdate.position.y), true);

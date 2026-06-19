@@ -7,6 +7,7 @@ import {
   type MovementRouteGraph,
   type Point,
   type Polygon,
+  type RouteEdge,
   type RouteNode,
 } from './shared';
 
@@ -201,7 +202,31 @@ function normalizeRouteGraph(value: unknown): MovementRouteGraph {
     nodes: arrayValue(routeGraph.nodes)
       .map(normalizeRouteNode)
       .filter((node): node is RouteNode => node !== null),
-    edges: arrayValue(routeGraph.edges),
+    edges: arrayValue(routeGraph.edges)
+      .map(normalizeRouteEdge)
+      .filter((edge): edge is RouteEdge => edge !== null),
+  };
+}
+
+function normalizeRouteEdge(value: unknown): RouteEdge | null {
+  const edge = objectValue(value);
+  const fromNode = optionalString(edge.from_node);
+  const toNode = optionalString(edge.to_node);
+  if (!fromNode || !toNode) {
+    return null;
+  }
+  const edgeId = optionalString(edge.edge_id);
+  const id = optionalString(edge.id);
+
+  return {
+    ...(edgeId ? { edge_id: edgeId } : {}),
+    ...(id ? { id } : {}),
+    from_node: fromNode,
+    to_node: toNode,
+    bidirectional: edge.bidirectional === true,
+    weight: finiteNumber(edge.weight) ?? undefined,
+    distance_m: finiteNumber(edge.distance_m) ?? undefined,
+    enabled: edge.enabled !== false,
   };
 }
 

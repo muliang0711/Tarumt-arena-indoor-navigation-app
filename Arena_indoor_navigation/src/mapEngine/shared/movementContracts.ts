@@ -7,9 +7,20 @@ export type RouteNode = {
   position: Point;
 };
 
+export type RouteEdge = {
+  edge_id?: string;
+  id?: string;
+  from_node: string;
+  to_node: string;
+  bidirectional?: boolean;
+  weight?: number;
+  distance_m?: number;
+  enabled?: boolean;
+};
+
 export type MovementRouteGraph = {
   nodes: RouteNode[];
-  edges: unknown[];
+  edges: RouteEdge[];
 };
 
 export type MovementConstraintMapInput = {

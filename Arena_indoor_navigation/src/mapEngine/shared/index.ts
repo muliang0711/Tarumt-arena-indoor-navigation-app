@@ -12,6 +12,7 @@ export type { MapAsset, NormalizedMapSchema, VisualLayer } from './mapContracts'
 export type {
   MovementConstraintMapInput,
   MovementRouteGraph,
+  RouteEdge,
   RouteNode,
 } from './movementContracts';
 export type {
