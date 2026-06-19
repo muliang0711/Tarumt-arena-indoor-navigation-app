@@ -6,7 +6,10 @@ import { ScreenScaffold } from '../components/ScreenScaffold';
 import { SearchBar } from '../components/SearchBar';
 import { colors, radius, shadow } from '../components/theme';
 import { ArenaMapEngineView } from '../mapEngine/map-controller';
-import { useMovementSensors } from '../sensors/useMovementSensors';
+import {
+  MovementSensorDevPanel,
+  useMovementSensors,
+} from '../sensors/useMovementSensors';
 
 const rawMapData = require('../storage/map-assets/map.json');
 
@@ -21,7 +24,7 @@ const destinations: Array<{
 ];
 
 export function MapScreen() {
-  const sensorSamples = useMovementSensors(true);
+  const sensorFeed = useMovementSensors(true);
 
   return (
     <ScreenScaffold>
@@ -36,12 +39,22 @@ export function MapScreen() {
           </View>
           <View style={styles.statusPill}>
             <View style={styles.statusDot} />
-            <Text style={styles.statusText}>Live</Text>
+            <Text style={styles.statusText}>
+              {sensorFeed.developmentControls.mode === 'mock' ? 'Mock' : 'Live'}
+            </Text>
           </View>
         </View>
 
-        <ArenaMapEngineView mapData={rawMapData} sensorSamples={sensorSamples} height={390} />
+        <ArenaMapEngineView
+          mapData={rawMapData}
+          sensorSamples={sensorFeed.samples}
+          latestKnownPedometerSteps={sensorFeed.latestKnownPedometerSteps}
+          height={390}
+          resetSignal={sensorFeed.resetSignal}
+        />
       </View>
+
+      <MovementSensorDevPanel controls={sensorFeed.developmentControls} />
 
       <View style={styles.routeSummary}>
         <View>

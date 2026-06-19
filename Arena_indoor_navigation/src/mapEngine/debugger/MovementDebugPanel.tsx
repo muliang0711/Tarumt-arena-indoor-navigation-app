@@ -34,8 +34,13 @@ export function MovementDebugPanel({
         {snapshot.counts.pedometer}
       </Text>
       <Text style={styles.line}>
-        Timestamp {display(snapshot.latestTimestamp, 0)} | steps{' '}
-        {display(snapshot.pedometerSteps, 0)}
+        Timestamp {display(snapshot.latestTimestamp, 0)} | latest steps{' '}
+        {display(snapshot.latestKnownPedometerSteps, 0)}
+      </Text>
+      <Text style={styles.line}>
+        Baseline {display(snapshot.pedometerBaselineSteps, 0)} | since reset{' '}
+        {display(snapshot.stepsSinceReset, 0)} | stepDelta{' '}
+        {display(snapshot.latestStepDelta, 0)}
       </Text>
       <Text style={styles.line}>
         Position {display(snapshot.position.x)}, {display(snapshot.position.y)} m |

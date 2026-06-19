@@ -33,6 +33,7 @@ test('summarizes live sensor kinds and movement state', () => {
       headingRadians: Math.PI / 2,
       confidence: 0.75,
       previousStepCount: 7,
+      lastStepDelta: 2,
       particleFilter: {
         particles: [],
         generation: 3,
@@ -46,6 +47,10 @@ test('summarizes live sensor kinds and movement state', () => {
     status: 'processed',
     destinationNodeId: 'node_4',
     destinationAvailable: true,
+    pedometer: {
+      latestKnownSteps: 7,
+      baselineSteps: 5,
+    },
   });
 
   assert.equal(snapshot.totalSamples, 3);
@@ -54,7 +59,10 @@ test('summarizes live sensor kinds and movement state', () => {
   assert.equal(snapshot.counts.deviceMotion, 1);
   assert.equal(snapshot.latestSampleKind, 'deviceMotion');
   assert.equal(snapshot.latestTimestamp, 300);
-  assert.equal(snapshot.pedometerSteps, 7);
+  assert.equal(snapshot.latestKnownPedometerSteps, 7);
+  assert.equal(snapshot.pedometerBaselineSteps, 5);
+  assert.equal(snapshot.stepsSinceReset, 2);
+  assert.equal(snapshot.latestStepDelta, 2);
   assert.equal(snapshot.headingDegrees, 90);
   assert.equal(snapshot.confidence, 0.75);
   assert.equal(snapshot.particleGeneration, 3);
@@ -72,13 +80,62 @@ test('reports unavailable data without inventing sensor values', () => {
     status: 'waiting',
     destinationNodeId: 'node_4',
     destinationAvailable: false,
+    pedometer: {
+      latestKnownSteps: null,
+      baselineSteps: null,
+    },
   });
 
   assert.equal(snapshot.latestSampleKind, null);
   assert.equal(snapshot.latestTimestamp, null);
-  assert.equal(snapshot.pedometerSteps, null);
+  assert.equal(snapshot.latestKnownPedometerSteps, null);
+  assert.equal(snapshot.pedometerBaselineSteps, null);
+  assert.equal(snapshot.stepsSinceReset, null);
+  assert.equal(snapshot.latestStepDelta, null);
   assert.equal(snapshot.particleGeneration, null);
   assert.equal(snapshot.destinationLabel, 'unavailable');
+});
+
+test('keeps the last known cumulative pedometer count across non-pedometer batches', () => {
+  const snapshot = buildMovementDebugSnapshot({
+    samples: [
+      {
+        id: 'motion-2',
+        kind: 'deviceMotion',
+        timestamp: 450,
+        attitude: { alpha: Math.PI, beta: 0, gamma: 0 },
+      },
+    ],
+    state: {
+      position: { x: 4.8, y: 5.2 },
+      headingRadians: Math.PI,
+      confidence: 0.8,
+      previousStepCount: 12,
+      lastStepDelta: 0,
+      particleFilter: {
+        particles: [],
+        generation: 4,
+        position: { x: 4.8, y: 5.2 },
+        headingRadians: Math.PI,
+        confidence: 0.8,
+        bestParticle: null,
+        totalWeight: 1,
+      },
+    },
+    status: 'ignored',
+    destinationNodeId: 'node_4',
+    destinationAvailable: true,
+    pedometer: {
+      latestKnownSteps: 12,
+      baselineSteps: 10,
+    },
+  });
+
+  assert.equal(snapshot.latestSampleKind, 'deviceMotion');
+  assert.equal(snapshot.latestKnownPedometerSteps, 12);
+  assert.equal(snapshot.pedometerBaselineSteps, 10);
+  assert.equal(snapshot.stepsSinceReset, 2);
+  assert.equal(snapshot.latestStepDelta, 0);
 });
 
 test('finds Node 4 without modifying the route graph', () => {

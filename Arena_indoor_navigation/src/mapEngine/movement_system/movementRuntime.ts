@@ -15,6 +15,11 @@ export type MovementUpdateFunction = (
   currentState: MovementSystemState,
 ) => MovementSystemResult;
 
+export type MovementRuntimeResetOptions = {
+  samplesToIgnore?: readonly RawSensorSample[];
+  previousStepCount?: number;
+};
+
 type ProcessingCursor = {
   latestTimestamp: number;
   keysAtLatestTimestamp: Set<string>;
@@ -107,10 +112,26 @@ export class MovementRuntime {
     return result;
   }
 
-  reset(initialPosition: WorldPosition, samplesToIgnore: readonly RawSensorSample[] = []): void {
+  reset(
+    initialPosition: WorldPosition,
+    options: MovementRuntimeResetOptions | readonly RawSensorSample[] = [],
+  ): void {
+    let samplesToIgnore: readonly RawSensorSample[];
+    let previousStepCount: number | undefined;
+
+    if (Array.isArray(options)) {
+      samplesToIgnore = options;
+      previousStepCount = latestPedometerCount(options);
+    } else {
+      const resetOptions = options as MovementRuntimeResetOptions;
+      samplesToIgnore = resetOptions.samplesToIgnore ?? [];
+      previousStepCount =
+        resetOptions.previousStepCount ?? latestPedometerCount(samplesToIgnore);
+    }
+
     this.state = this.createInitialState(
       initialPosition,
-      latestPedometerCount(samplesToIgnore),
+      previousStepCount,
     );
     this.cursor = {
       latestTimestamp: Number.NEGATIVE_INFINITY,
@@ -132,6 +153,7 @@ export class MovementRuntime {
       headingRadians: 0,
       confidence: 0.8,
       previousStepCount,
+      lastStepDelta: 0,
     };
   }
 }

@@ -3,7 +3,10 @@ export {
   updateMovementSystem,
 } from './indoorposition_engine';
 export { MovementRuntime } from './movementRuntime';
-export type { MovementUpdateFunction } from './movementRuntime';
+export type {
+  MovementRuntimeResetOptions,
+  MovementUpdateFunction,
+} from './movementRuntime';
 export type {
   MovementSystemResult,
   MovementSystemState,

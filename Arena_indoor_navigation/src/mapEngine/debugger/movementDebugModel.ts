@@ -19,7 +19,10 @@ export type MovementDebugSnapshot = {
   counts: SensorKindCounts;
   latestSampleKind: SensorKind | null;
   latestTimestamp: number | null;
-  pedometerSteps: number | null;
+  latestKnownPedometerSteps: number | null;
+  pedometerBaselineSteps: number | null;
+  stepsSinceReset: number | null;
+  latestStepDelta: number | null;
   status: MovementProcessingStatus;
   position: { x: number; y: number };
   headingDegrees: number;
@@ -28,12 +31,18 @@ export type MovementDebugSnapshot = {
   destinationLabel: string;
 };
 
+export type PedometerDebugState = {
+  latestKnownSteps: number | null;
+  baselineSteps: number | null;
+};
+
 type BuildMovementDebugSnapshotInput = {
   samples: readonly RawSensorSample[];
   state: MovementSystemState;
   status: MovementProcessingStatus;
   destinationNodeId: string;
   destinationAvailable: boolean;
+  pedometer: PedometerDebugState;
 };
 
 const EMPTY_COUNTS: SensorKindCounts = {
@@ -50,17 +59,12 @@ export function buildMovementDebugSnapshot({
   status,
   destinationNodeId,
   destinationAvailable,
+  pedometer,
 }: BuildMovementDebugSnapshotInput): MovementDebugSnapshot {
   const orderedSamples = [...samples].sort(
     (left, right) => left.timestamp - right.timestamp,
   );
   const latestSample = orderedSamples.at(-1) ?? null;
-  const latestPedometer = orderedSamples
-    .filter(
-      (sample): sample is Extract<RawSensorSample, { kind: 'pedometer' }> =>
-        sample.kind === 'pedometer',
-    )
-    .at(-1);
   const counts = samples.reduce<SensorKindCounts>(
     (result, sample) => ({
       ...result,
@@ -68,13 +72,20 @@ export function buildMovementDebugSnapshot({
     }),
     { ...EMPTY_COUNTS },
   );
+  const stepsSinceReset =
+    pedometer.latestKnownSteps !== null && pedometer.baselineSteps !== null
+      ? Math.max(0, pedometer.latestKnownSteps - pedometer.baselineSteps)
+      : null;
 
   return {
     totalSamples: samples.length,
     counts,
     latestSampleKind: latestSample?.kind ?? null,
     latestTimestamp: latestSample?.timestamp ?? null,
-    pedometerSteps: latestPedometer?.steps ?? null,
+    latestKnownPedometerSteps: pedometer.latestKnownSteps,
+    pedometerBaselineSteps: pedometer.baselineSteps,
+    stepsSinceReset,
+    latestStepDelta: state.lastStepDelta ?? null,
     status,
     position: { ...state.position },
     headingDegrees: Math.round((state.headingRadians * 180) / Math.PI),

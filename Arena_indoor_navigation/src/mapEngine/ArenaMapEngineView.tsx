@@ -39,8 +39,10 @@ import { extractMapCoordinateSystem } from './shared';
 type ArenaMapEngineViewProps = {
   mapData?: unknown;
   sensorSamples?: readonly RawSensorSample[];
+  latestKnownPedometerSteps?: number | null;
   startingNodeId?: string;
   height?: number;
+  resetSignal?: number;
 };
 
 const defaultMapData = require('../storage/map-assets/map.json');
@@ -49,8 +51,10 @@ const EMPTY_SENSOR_SAMPLES: readonly RawSensorSample[] = Object.freeze([]);
 export function ArenaMapEngineView({
   mapData: rawMapData = defaultMapData,
   sensorSamples = EMPTY_SENSOR_SAMPLES,
+  latestKnownPedometerSteps = null,
   startingNodeId = 'node_1',
   height = 390,
+  resetSignal = 0,
 }: ArenaMapEngineViewProps) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
@@ -89,21 +93,68 @@ export function ArenaMapEngineView({
   }
   const [actorPosition, setActorPosition] = useState(startingActor.position);
   const previousActorPositionRef = useRef(startingActor.position);
+  const [pedometerBaselineSteps, setPedometerBaselineSteps] = useState<number | null>(
+    latestKnownPedometerSteps,
+  );
+  const lastHandledResetSignalRef = useRef(resetSignal);
+  const latestKnownPedometerStepsRef = useRef(latestKnownPedometerSteps);
+  const sensorSamplesRef = useRef(sensorSamples);
   const [bobMotionState, setBobMotionState] = useState({
     direction: startingActor.direction,
     action: startingActor.action,
   });
 
   useEffect(() => {
-    movementRuntimeRef.current?.reset(startingActor.position, sensorSamples);
-    previousActorPositionRef.current = startingActor.position;
-    setActorPosition(startingActor.position);
-    setBobMotionState({
-      direction: startingActor.direction,
-      action: 'idle',
-    });
-    setProcessingStatus('waiting');
-  }, [mapData, startingActor.position, startingNodeId]);
+    latestKnownPedometerStepsRef.current = latestKnownPedometerSteps;
+  }, [latestKnownPedometerSteps]);
+
+  useEffect(() => {
+    sensorSamplesRef.current = sensorSamples;
+  }, [sensorSamples]);
+
+  const applyNavigationReset = useCallback(
+    (
+      status: MovementProcessingStatus,
+      resetSamples: readonly RawSensorSample[],
+      baselineSteps: number | null,
+    ) => {
+      movementRuntimeRef.current?.reset(startingActor.position, {
+        samplesToIgnore: resetSamples,
+        previousStepCount: baselineSteps ?? undefined,
+      });
+      previousActorPositionRef.current = startingActor.position;
+      setActorPosition(startingActor.position);
+      setBobMotionState({
+        direction: startingActor.direction,
+        action: 'idle',
+      });
+      setPedometerBaselineSteps(baselineSteps);
+      setProcessingStatus(status);
+    },
+    [startingActor.direction, startingActor.position],
+  );
+
+  useEffect(() => {
+    applyNavigationReset(
+      'waiting',
+      sensorSamplesRef.current,
+      latestKnownPedometerStepsRef.current,
+    );
+  }, [applyNavigationReset, mapData, startingActor.position, startingNodeId]);
+
+  useEffect(() => {
+    if (pedometerBaselineSteps === null && latestKnownPedometerSteps !== null) {
+      setPedometerBaselineSteps(latestKnownPedometerSteps);
+    }
+  }, [latestKnownPedometerSteps, pedometerBaselineSteps]);
+
+  useEffect(() => {
+    if (resetSignal === lastHandledResetSignalRef.current) {
+      return;
+    }
+    lastHandledResetSignalRef.current = resetSignal;
+    applyNavigationReset('reset', sensorSamples, latestKnownPedometerSteps);
+  }, [applyNavigationReset, latestKnownPedometerSteps, resetSignal, sensorSamples]);
 
   useEffect(() => {
     const movementUpdate = movementRuntimeRef.current?.process(sensorSamples, constraintMapInput);
@@ -161,11 +212,17 @@ export function ArenaMapEngineView({
         status: processingStatus,
         destinationNodeId,
         destinationAvailable: destinationNode !== null,
+        pedometer: {
+          latestKnownSteps: latestKnownPedometerSteps,
+          baselineSteps: pedometerBaselineSteps,
+        },
       }),
     [
       actorPosition,
       destinationNode,
       destinationNodeId,
+      latestKnownPedometerSteps,
+      pedometerBaselineSteps,
       processingStatus,
       sensorSamples,
     ],
@@ -214,14 +271,7 @@ export function ArenaMapEngineView({
   }
 
   function handleResetNavigation() {
-    movementRuntimeRef.current?.reset(startingActor.position, sensorSamples);
-    previousActorPositionRef.current = startingActor.position;
-    setActorPosition(startingActor.position);
-    setBobMotionState({
-      direction: startingActor.direction,
-      action: 'idle',
-    });
-    setProcessingStatus('reset');
+    applyNavigationReset('reset', sensorSamples, latestKnownPedometerSteps);
   }
 
   function handleLayout(event: LayoutChangeEvent) {

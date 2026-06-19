@@ -25,6 +25,7 @@ export type MovementSystemState = {
   confidence?: number;
   particleFilter?: ParticleFilterSnapshot;
   previousStepCount?: number;
+  lastStepDelta?: number;
 };
 
 export type MovementSystemResult = {
@@ -38,6 +39,14 @@ export type MovementSystemResult = {
 
 function clamp01(value: number): number {
   return Math.min(1, Math.max(0, Number.isFinite(value) ? value : 0));
+}
+
+function createDeterministicRandomSource(seed: number): () => number {
+  let state = (Math.floor(seed) >>> 0) || 1;
+  return () => {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return state / 0x100000000;
+  };
 }
 
 function headingFromSamples(samples: readonly RawSensorSample[], fallbackHeadingRadians: number) {
@@ -91,13 +100,20 @@ export function updateMovementSystem(
       headingSpreadRadians: 0,
       initialConfidence: currentState.confidence ?? 0.8,
     });
+  const randomSource = createDeterministicRandomSource(
+    stepSample.timestamp + stepSample.steps * 31 + previousFilter.generation * 997,
+  );
   const nextFilter = updateParticleFilterState(previousFilter, motion, {
     particleCount: 60,
     weightFloor: 0,
+    randomSource,
     customScore: (particle) =>
       isParticlePositionValid(constraintProvider, particle.previousPosition, particle.position) ? 1 : 0,
   });
-  const candidatePosition = nextFilter.position ?? currentState.position;
+  const candidatePosition =
+    step.stepDelta === 0
+      ? currentState.position
+      : nextFilter.position ?? currentState.position;
   const canUseCandidate = constraintProvider.canMove(currentState.position, candidatePosition);
   const position = canUseCandidate ? candidatePosition : currentState.position;
   const state: MovementSystemState = {
@@ -106,6 +122,7 @@ export function updateMovementSystem(
     confidence: clamp01(canUseCandidate ? nextFilter.confidence : (currentState.confidence ?? 0.5) * 0.5),
     particleFilter: nextFilter,
     previousStepCount: stepSample.steps,
+    lastStepDelta: step.stepDelta,
   };
 
   return {

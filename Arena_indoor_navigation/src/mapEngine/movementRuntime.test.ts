@@ -178,3 +178,80 @@ test('reset uses the current pedometer count as the next movement baseline', () 
   assert.equal(receivedStates[0].previousStepCount, 8);
   assert.deepEqual(receivedStates[0].position, { x: 50, y: 60 });
 });
+
+test('reset accepts an explicit pedometer baseline when the current batch has no pedometer sample', () => {
+  const receivedStates: MovementSystemState[] = [];
+  const update: MovementUpdateFunction = (_samples, _constraints, currentState) => {
+    receivedStates.push(currentState);
+    return resultFor(currentState, receivedStates.length);
+  };
+  const runtime = new MovementRuntime({ x: 1, y: 1 }, update);
+
+  runtime.reset(
+    { x: 50, y: 60 },
+    {
+      samplesToIgnore: [
+        {
+          id: 'motion-only',
+          kind: 'deviceMotion',
+          timestamp: 100,
+          attitude: { alpha: 0, beta: 0, gamma: 0 },
+        },
+      ],
+      previousStepCount: 8,
+    },
+  );
+
+  assert.equal(
+    runtime.process([sample('next-step', 200, 9)], constraints)?.state.previousStepCount,
+    9,
+  );
+  assert.equal(receivedStates[0].previousStepCount, 8);
+  assert.deepEqual(receivedStates[0].position, { x: 50, y: 60 });
+});
+
+test('repeated zero-step batches keep the actor at exactly the same position', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  const first = runtime.process(
+    [
+      sample('step-0', 100, 0),
+      {
+        id: 'motion-0',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+  const second = runtime.process(
+    [
+      {
+        id: 'motion-1',
+        kind: 'deviceMotion',
+        timestamp: 200,
+        attitude: { alpha: Math.PI / 2, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+  const third = runtime.process(
+    [
+      {
+        id: 'motion-2',
+        kind: 'deviceMotion',
+        timestamp: 300,
+        attitude: { alpha: Math.PI, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(first);
+  assert.ok(second);
+  assert.ok(third);
+  assert.deepEqual(first.position, { x: 4.8, y: 5.2 });
+  assert.deepEqual(second.position, { x: 4.8, y: 5.2 });
+  assert.deepEqual(third.position, { x: 4.8, y: 5.2 });
+});
