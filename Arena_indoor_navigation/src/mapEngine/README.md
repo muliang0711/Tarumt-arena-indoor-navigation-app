@@ -124,3 +124,11 @@ receive sensor-driven movement while the camera remains independent.
 
 Node 4 is not passed into the movement system. The destination marker does not
 snap Bob to a route or alter particle-filter scoring.
+
+Bob rendering now uses directional idle and run sprites from `src/storage/bob`.
+Visible animation is driven by real map-position changes, not by a fake local
+debug loop.
+
+Free-look drag keeps the manual camera-mode contract and commits camera state at
+gesture end, while active gestures ignore parent camera prop resync to reduce
+drag lag.
