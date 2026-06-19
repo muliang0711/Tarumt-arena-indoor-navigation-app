@@ -124,3 +124,15 @@ test('bob actor assets expose directional idle and run frames from src/storage/b
   assert.match(source, /run_right_6\.png/);
   assert.match(source, /run_up_6\.png/);
 });
+
+test('actor layer renders directional sprites instead of a hardcoded idle frame', () => {
+  const source = readFileSync(
+    join(mapEngineRoot, 'actor_system', 'ActorLayer.tsx'),
+    'utf8',
+  );
+
+  assert.doesNotMatch(source, /bobActorAssets\.idleDown/);
+  assert.match(source, /bobIdleAssets/);
+  assert.match(source, /bobRunAssets/);
+  assert.match(source, /setInterval|setTimeout/);
+});
