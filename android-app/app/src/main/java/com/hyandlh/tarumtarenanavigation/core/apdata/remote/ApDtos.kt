@@ -1,18 +1,14 @@
 package com.hyandlh.tarumtarenanavigation.core.apdata.remote
 
-import com.google.gson.annotations.SerializedName
-
 data class ApCatalogResponse(
-    @SerializedName("version") val version: String,
-    @SerializedName("lastUpdated") val lastUpdated: Long,
-    @SerializedName("items") val items: List<ApLocationDto>
+    val version: String,
+    val items: List<ApDto>
 )
 
-data class ApLocationDto(
-    @SerializedName("bssid") val bssid: String,
-    @SerializedName("x") val x: Double,
-    @SerializedName("y") val y: Double,
-    @SerializedName("floorId") val floorId: String,
-    @SerializedName("confidence") val confidence: Double? = 1.0,
-    @SerializedName("metadata") val metadata: Map<String, String>? = emptyMap()
+data class ApDto(
+    val bssid: String,
+    val x: Double,
+    val y: Double,
+    val floorId: String,
+    val metadata: String? = null
 )

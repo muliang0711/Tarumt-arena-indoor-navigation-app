@@ -1,6 +1,7 @@
 package com.hyandlh.tarumtarenanavigation.core.observability
 
 import com.hyandlh.tarumtarenanavigation.core.common.AppLogger
+import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,9 +44,9 @@ class DiagnosticsRecorder @Inject constructor(
 
     fun recordPositionCalculated(x: Double, y: Double, confidence: Double) {
         recordEvent("PositionCalculated", mapOf(
-            "x" to String.format("%.2f", x),
-            "y" to String.format("%.2f", y),
-            "confidence" to String.format("%.2f", confidence)
+            "x" to String.format(Locale.US, "%.2f", x),
+            "y" to String.format(Locale.US, "%.2f", y),
+            "confidence" to String.format(Locale.US, "%.2f", confidence)
         ))
     }
 }

@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">TARUMT Arena Navigation</string>
+    <string name="app_name">Arena Navigation</string>
+    <string name="debug_mode">Debug Mode</string>
+    <string name="pause_scanning">Pause WiFi scanning</string>
+    <string name="resume_scanning">Resume WiFi scanning</string>
+    <string name="pausing_scanning">Pausing WiFi scanning...</string>
+    <string name="resuming_scanning">Resuming WiFi scanning...</string>
+    <string name="status_idle">Status: Idle</string>
+    <string name="status_loading_aps">Status: Loading AP positions...</string>
+    <string name="status_scanning">Status: Scanning WiFi...</string>
+    <string name="status_positioning">Status: Estimating location...</string>
+    <string name="status_paused">Status: Paused</string>
+    <string name="status_error">Status: Error - %s</string>
+    <string name="last_updated">Last updated: %s</string>
+    <string name="start_tracking">Start Tracking</string>
+    <string name="stop_tracking">Stop Tracking</string>
 </resources>

@@ -5,7 +5,7 @@ package com.hyandlh.tarumtarenanavigation.core.model
  */
 sealed class TrackingState {
     object Idle : TrackingState()
-    object RequestingPermission : TrackingState()
+    object LoadingCatalog : TrackingState()
     object Scanning : TrackingState()
     object Positioning : TrackingState()
     object StaleData : TrackingState()

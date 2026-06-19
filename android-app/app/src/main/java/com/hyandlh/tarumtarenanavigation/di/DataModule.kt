@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.hyandlh.tarumtarenanavigation.core.apdata.local.ApDao
 import com.hyandlh.tarumtarenanavigation.core.apdata.local.ApDatabase
 import com.hyandlh.tarumtarenanavigation.core.apdata.remote.ApApiService
+import com.hyandlh.tarumtarenanavigation.core.apdata.remote.MockApApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,7 +48,8 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun provideApApiService(retrofit: Retrofit): ApApiService {
-        return retrofit.create(ApApiService::class.java)
+    fun provideApApiService(mockApApiService: MockApApiService): ApApiService {
+        // Using Mock implementation for now as requested
+        return mockApApiService
     }
 }

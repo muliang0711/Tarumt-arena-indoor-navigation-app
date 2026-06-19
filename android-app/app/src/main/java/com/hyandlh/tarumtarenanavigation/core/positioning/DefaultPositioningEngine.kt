@@ -5,9 +5,9 @@ import com.hyandlh.tarumtarenanavigation.core.model.PositionEstimate
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanSnapshot
 import com.hyandlh.tarumtarenanavigation.core.observability.DiagnosticsRecorder
 import com.hyandlh.tarumtarenanavigation.core.observability.HealthHeartbeat
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,8 +21,8 @@ class DefaultPositioningEngine @Inject constructor(
     private val healthHeartbeat: HealthHeartbeat
 ) : PositioningEngine {
 
-    private val _currentPosition = MutableSharedFlow<PositionEstimate>(replay = 1)
-    override val currentPosition: SharedFlow<PositionEstimate> = _currentPosition.asSharedFlow()
+    private val _currentPosition = MutableStateFlow<PositionEstimate?>(null)
+    override val currentPosition: StateFlow<PositionEstimate?> = _currentPosition.asStateFlow()
 
     override fun calculatePosition(
         snapshot: WifiScanSnapshot,
@@ -38,7 +38,7 @@ class DefaultPositioningEngine @Inject constructor(
             diagnostics.recordEvent("PositioningFailed", mapOf("reason" to "no_matching_aps"))
         }
 
-        // 3. Solve
+        // 3. Solve (pass the snapshot timestamp)
         val rawEstimate = solver.solve(matches, snapshot.timestamp)
 
         // 4. Smooth
@@ -53,7 +53,7 @@ class DefaultPositioningEngine @Inject constructor(
         healthHeartbeat.beat("PositioningEngine")
 
         // 6. Update flow
-        _currentPosition.tryEmit(smoothedEstimate)
+        _currentPosition.value = smoothedEstimate
 
         return smoothedEstimate
     }

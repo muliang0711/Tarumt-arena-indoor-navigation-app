@@ -18,7 +18,7 @@ interface PositioningEngine {
     ): PositionEstimate
 
     /**
-     * A flow of position estimates (if the engine handles streaming/smoothing internally).
+     * A flow of position estimates. Emits null if no position is currently estimated.
      */
-    val currentPosition: Flow<PositionEstimate>
+    val currentPosition: Flow<PositionEstimate?>
 }
