@@ -5,6 +5,7 @@ import {
   type MapCoordinateSystem,
   type MapAsset,
   type NormalizedMapSchema,
+  type RouteEdge,
   type RouteNode,
   type VisualLayer,
 } from '../shared';
@@ -62,7 +63,7 @@ export function normalizeMapSchema(
       coordinateSystem,
       routeGraph: {
         nodes: normalizeRouteNodes(arrayValue(routeGraph.nodes) || []),
-        edges: arrayValue(routeGraph.edges) || [],
+        edges: normalizeRouteEdges(arrayValue(routeGraph.edges) || []),
       },
     },
   };
@@ -181,6 +182,22 @@ function normalizeRouteNodes(items: unknown[]): RouteNode[] {
   });
 }
 
+function normalizeRouteEdges(items: unknown[]): RouteEdge[] {
+  return items.map((item, index) => {
+    const edge = objectValue(item);
+    return {
+      edge_id: optionalString(edge.edge_id),
+      id: optionalString(edge.id),
+      from_node: stringValue(edge.from_node, `routeGraph.edges[${index}].from_node`),
+      to_node: stringValue(edge.to_node, `routeGraph.edges[${index}].to_node`),
+      bidirectional: edge.bidirectional === true,
+      weight: optionalFiniteNumber(edge.weight, `routeGraph.edges[${index}].weight`),
+      distance_m: optionalFiniteNumber(edge.distance_m, `routeGraph.edges[${index}].distance_m`),
+      enabled: edge.enabled !== false,
+    };
+  });
+}
+
 function objectValue(value: unknown): Record<string, unknown> {
   return value && typeof value === 'object' ? (value as Record<string, unknown>) : {};
 }
@@ -219,4 +236,8 @@ function finiteNumber(value: unknown, label: string): number {
     throw new Error(`${label} must be a finite number.`);
   }
   return number;
+}
+
+function optionalFiniteNumber(value: unknown, label: string): number | undefined {
+  return value === undefined || value === null ? undefined : finiteNumber(value, label);
 }
