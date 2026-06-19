@@ -270,14 +270,26 @@ test('preserves the latest attempted movement diagnostics across later zero-step
   const rejectionConstraints: MovementConstraintMapInput = {
     ...constraints,
     walkableAreas: [[
-      { x: 4.5, y: 5.0 },
-      { x: 5.0, y: 5.0 },
-      { x: 5.0, y: 5.4 },
-      { x: 4.5, y: 5.4 },
+      { x: 4.75, y: 5.15 },
+      { x: 4.85, y: 5.15 },
+      { x: 4.85, y: 5.25 },
+      { x: 4.75, y: 5.25 },
     ]],
   };
   const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
 
+  runtime.process(
+    [
+      sample('baseline-step-0', 50, 0),
+      {
+        id: 'baseline-motion-0',
+        kind: 'deviceMotion',
+        timestamp: 51,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    rejectionConstraints,
+  );
   const attempted = runtime.process(
     [
       sample('step-1', 100, 1),
@@ -312,4 +324,195 @@ test('preserves the latest attempted movement diagnostics across later zero-step
     attempted.state.latestMovementAttempt,
   );
   assert.equal(laterZeroStep.state.lastStepDelta, 0);
+});
+
+test('first cumulative pedometer reading establishes the baseline with zero movement', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  const first = runtime.process(
+    [
+      sample('step-16', 100, 16),
+      {
+        id: 'motion-16',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(first);
+  assert.equal(first.state.previousStepCount, 16);
+  assert.equal(first.state.lastStepDelta, 0);
+  assert.deepEqual(first.position, { x: 4.8, y: 5.2 });
+  assert.equal(first.state.latestMovementAttempt, undefined);
+});
+
+test('next cumulative pedometer increment after baseline produces one-step movement', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.process(
+    [
+      sample('step-16', 100, 16),
+      {
+        id: 'motion-16',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+  const next = runtime.process(
+    [
+      sample('step-17', 200, 17),
+      {
+        id: 'motion-17',
+        kind: 'deviceMotion',
+        timestamp: 201,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(next);
+  assert.equal(next.state.previousStepCount, 17);
+  assert.equal(next.state.lastStepDelta, 1);
+});
+
+test('reset baseline at 28 makes a repeated 28-step reading produce zero movement', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.reset({ x: 4.8, y: 5.2 }, {
+    samplesToIgnore: [sample('reset-step-28', 100, 28)],
+    previousStepCount: 28,
+  });
+
+  const repeated = runtime.process(
+    [
+      sample('repeat-step-28', 200, 28),
+      {
+        id: 'motion-repeat-28',
+        kind: 'deviceMotion',
+        timestamp: 201,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(repeated);
+  assert.equal(repeated.state.previousStepCount, 28);
+  assert.equal(repeated.state.lastStepDelta, 0);
+  assert.deepEqual(repeated.position, { x: 4.8, y: 5.2 });
+});
+
+test('reset baseline at 28 makes the next 29-step reading produce one-step movement', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.reset({ x: 4.8, y: 5.2 }, {
+    samplesToIgnore: [sample('reset-step-28', 100, 28)],
+    previousStepCount: 28,
+  });
+
+  const next = runtime.process(
+    [
+      sample('step-29', 200, 29),
+      {
+        id: 'motion-29',
+        kind: 'deviceMotion',
+        timestamp: 201,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(next);
+  assert.equal(next.state.previousStepCount, 29);
+  assert.equal(next.state.lastStepDelta, 1);
+});
+
+test('pedometer counter rollback re-establishes the baseline without movement', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.process(
+    [
+      sample('step-20', 100, 20),
+      {
+        id: 'motion-20',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+  const rollback = runtime.process(
+    [
+      sample('step-3', 200, 3),
+      {
+        id: 'motion-3',
+        kind: 'deviceMotion',
+        timestamp: 201,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(rollback);
+  assert.equal(rollback.state.previousStepCount, 3);
+  assert.equal(rollback.state.lastStepDelta, 0);
+  assert.deepEqual(rollback.position, { x: 4.8, y: 5.2 });
+  assert.equal(rollback.state.latestMovementAttempt, undefined);
+});
+
+test('reset clears the previous rejected movement-attempt diagnostics', () => {
+  const rejectionConstraints: MovementConstraintMapInput = {
+    ...constraints,
+    walkableAreas: [[
+      { x: 4.75, y: 5.15 },
+      { x: 4.85, y: 5.15 },
+      { x: 4.85, y: 5.25 },
+      { x: 4.75, y: 5.25 },
+    ]],
+  };
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.process(
+    [
+      sample('baseline-step-0', 50, 0),
+      {
+        id: 'baseline-motion-0',
+        kind: 'deviceMotion',
+        timestamp: 51,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    rejectionConstraints,
+  );
+  const rejected = runtime.process(
+    [
+      sample('step-1', 100, 1),
+      {
+        id: 'motion-1',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    rejectionConstraints,
+  );
+  assert.ok(rejected);
+  assert.ok(rejected.state.latestMovementAttempt);
+
+  runtime.reset({ x: 4.8, y: 5.2 }, {
+    samplesToIgnore: [sample('reset-step-28', 200, 28)],
+    previousStepCount: 28,
+  });
+
+  assert.equal(runtime.getState().latestMovementAttempt, undefined);
 });

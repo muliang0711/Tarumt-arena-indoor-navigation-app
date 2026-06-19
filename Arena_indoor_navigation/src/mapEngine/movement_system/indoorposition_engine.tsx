@@ -13,6 +13,7 @@ import {
 } from './constraints';
 import { createHeadingEstimateFromRadians } from './estimate/headingEstimate';
 import { createMotionEstimate } from './estimate/motionEstimate';
+import type { StepEstimate } from './estimate/stepEstimate';
 import { createStepEstimateFromCount } from './estimate/stepEstimate';
 import { normalizeSensorSample } from './preprocessing/normalizeSensorSample';
 import type { DeviceMotionSample, PedometerStepSample } from './sensor/sensorTypes';
@@ -73,16 +74,94 @@ function headingFromSamples(samples: readonly RawSensorSample[], fallbackHeading
   return createHeadingEstimateFromRadians(samples[samples.length - 1]?.timestamp ?? 0, fallbackHeadingRadians, 0.5, 'unknown');
 }
 
-function stepFromSamples(samples: readonly RawSensorSample[], previousStepCount = 0): PedometerStepSample {
+function latestPedometerSample(
+  samples: readonly RawSensorSample[],
+): PedometerStepSample | undefined {
   const matchingSamples = samples.filter((sample): sample is PedometerStepSample => sample.kind === 'pedometer');
-  const pedometer = matchingSamples[matchingSamples.length - 1];
-  return (
-    pedometer ?? {
-      kind: 'pedometer',
-      timestamp: samples[samples.length - 1]?.timestamp ?? 0,
-      steps: previousStepCount,
-    }
+  return matchingSamples[matchingSamples.length - 1];
+}
+
+function createBaselineStepEstimate(
+  timestamp: number,
+  steps: number,
+  cadence?: number,
+): StepEstimate {
+  const baselineEstimate = createStepEstimateFromCount(
+    timestamp,
+    steps,
+    steps,
+    1,
+    cadence,
+    'pedometer',
   );
+
+  return {
+    ...baselineEstimate,
+    stepDelta: 0,
+  };
+}
+
+function resolveStepEstimate(
+  samples: readonly RawSensorSample[],
+  previousStepCount: number | undefined,
+): {
+  step: StepEstimate;
+  nextPreviousStepCount: number | undefined;
+  clearsLatestMovementAttempt: boolean;
+} {
+  const pedometer = latestPedometerSample(samples);
+  const fallbackTimestamp = samples[samples.length - 1]?.timestamp ?? 0;
+
+  if (!pedometer) {
+    if (previousStepCount === undefined) {
+      return {
+        step: createStepEstimateFromCount(
+          fallbackTimestamp,
+          0,
+          0,
+          samples.length > 0 ? 1 : 0,
+          undefined,
+          'unknown',
+        ),
+        nextPreviousStepCount: undefined,
+        clearsLatestMovementAttempt: false,
+      };
+    }
+
+    return {
+      step: createStepEstimateFromCount(
+        fallbackTimestamp,
+        previousStepCount,
+        previousStepCount,
+        samples.length > 0 ? 1 : 0,
+        undefined,
+        'unknown',
+      ),
+      nextPreviousStepCount: previousStepCount,
+      clearsLatestMovementAttempt: false,
+    };
+  }
+
+  if (previousStepCount === undefined || pedometer.steps < previousStepCount) {
+    return {
+      step: createBaselineStepEstimate(pedometer.timestamp, pedometer.steps, pedometer.cadence),
+      nextPreviousStepCount: pedometer.steps,
+      clearsLatestMovementAttempt: true,
+    };
+  }
+
+  return {
+    step: createStepEstimateFromCount(
+      pedometer.timestamp,
+      pedometer.steps,
+      previousStepCount,
+      samples.length > 0 ? 1 : 0,
+      pedometer.cadence,
+      'pedometer',
+    ),
+    nextPreviousStepCount: pedometer.steps,
+    clearsLatestMovementAttempt: false,
+  };
 }
 
 export function updateMovementSystem(
@@ -95,15 +174,11 @@ export function updateMovementSystem(
 ): MovementSystemResult {
   const normalizedSamples = sensorSamples.map(normalizeSensorSample);
   const constraintProvider = createMovementConstraintProvider(constraintMapInput);
-  const stepSample = stepFromSamples(normalizedSamples, currentState.previousStepCount);
-  const step = createStepEstimateFromCount(
-    stepSample.timestamp,
-    stepSample.steps,
+  const resolvedStep = resolveStepEstimate(
+    normalizedSamples,
     currentState.previousStepCount,
-    sensorSamples.length > 0 ? 1 : 0,
-    stepSample.cadence,
-    stepSample.kind === 'pedometer' ? 'pedometer' : 'unknown',
   );
+  const step = resolvedStep.step;
   const heading = headingFromSamples(normalizedSamples, currentState.headingRadians);
   const motion = createMotionEstimate(step, heading);
   const previousFilter =
@@ -115,7 +190,7 @@ export function updateMovementSystem(
       initialConfidence: currentState.confidence ?? 0.8,
     });
   const randomSource = createDeterministicRandomSource(
-    stepSample.timestamp + stepSample.steps * 31 + previousFilter.generation * 997,
+    step.timestamp + step.steps * 31 + previousFilter.generation * 997,
   );
   const nextFilter = updateParticleFilterState(previousFilter, motion, {
     particleCount: 60,
@@ -139,7 +214,7 @@ export function updateMovementSystem(
     headingRadians: nextFilter.headingRadians ?? heading.radians,
     confidence: clamp01(canUseCandidate ? nextFilter.confidence : (currentState.confidence ?? 0.5) * 0.5),
     particleFilter: nextFilter,
-    previousStepCount: stepSample.steps,
+    previousStepCount: resolvedStep.nextPreviousStepCount,
     lastStepDelta: step.stepDelta,
     latestMovementAttempt:
       movementAnalysis !== undefined
@@ -156,7 +231,9 @@ export function updateMovementSystem(
             crossedBlockedArea: movementAnalysis.crossedBlockedArea,
             rejectionReasons: [...movementAnalysis.rejectionReasons],
           }
-        : currentState.latestMovementAttempt,
+        : resolvedStep.clearsLatestMovementAttempt
+          ? undefined
+          : currentState.latestMovementAttempt,
   };
 
   return {
