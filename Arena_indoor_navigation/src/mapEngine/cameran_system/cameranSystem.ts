@@ -10,3 +10,8 @@ export {
   zoomCamera,
 } from './cameraModel';
 export type { CameraState, Point, ViewportSize } from './cameraModel';
+export {
+  isFollowingBob,
+  toggleCameraFollowMode,
+} from './cameraFollowMode';
+export type { CameraFollowMode } from './cameraFollowMode';
