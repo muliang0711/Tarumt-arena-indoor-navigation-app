@@ -1,14 +1,19 @@
 import type { MapCoordinateSystem, MovementRouteGraph, WorldPosition } from '../shared';
 import { worldMetersToPixels } from '../shared';
 
+export type ActorDirection = 'down' | 'left' | 'right' | 'up';
+export type ActorAction = 'idle' | 'run';
+
 export type Actor = {
   id: string;
   name: string;
   nodeId: string;
   position: WorldPosition;
-  direction: 'down' | 'left' | 'right' | 'up';
-  action: 'idle' | 'run';
+  direction: ActorDirection;
+  action: ActorAction;
 };
+
+const MOVEMENT_EPSILON = 0.001;
 
 type RouteGraphMap = {
   movement: {
@@ -40,5 +45,30 @@ export function routeNodeToPixels(
   return {
     x: Math.round(point.x),
     y: Math.round(point.y),
+  };
+}
+
+export function deriveActorMotionState(
+  actor: Pick<Actor, 'direction'>,
+  delta: WorldPosition,
+): Pick<Actor, 'direction' | 'action'> {
+  const magnitude = Math.hypot(delta.x, delta.y);
+  if (magnitude < MOVEMENT_EPSILON) {
+    return {
+      direction: actor.direction,
+      action: 'idle',
+    };
+  }
+
+  if (Math.abs(delta.x) > Math.abs(delta.y)) {
+    return {
+      direction: delta.x >= 0 ? 'right' : 'left',
+      action: 'run',
+    };
+  }
+
+  return {
+    direction: delta.y >= 0 ? 'down' : 'up',
+    action: 'run',
   };
 }
