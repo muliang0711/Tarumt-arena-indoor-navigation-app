@@ -20,11 +20,22 @@ import {
 } from './cameran_system/cameranSystem';
 import {
   buildMovementDebugSnapshot,
-  DestinationDebugLayer,
+  buildUnwalkableOverlayModel,
+  calculateNavigationRoute,
+  clearNavigationRoute,
+  createNavigationDebugState,
   extractTemporaryWalkableAreas,
   findDestinationNode,
+  getSelectableDestinations,
   MovementDebugPanel,
+  NavigationDebugPanel,
+  NavigationNodeLayer,
+  RouteDebugLayer,
+  selectNavigationDestination,
+  toggleUnwalkableOverlay,
+  UnwalkableAreaDebugLayer,
   WalkableAreaDebugLayer,
+  type NavigationDestinationId,
   type MovementProcessingStatus,
 } from './debugger';
 import { extractMovementConstraintMapInput } from './mapEngineController';
@@ -72,10 +83,21 @@ export function ArenaMapEngineView({
     () => buildBobActorAtNode(mapData, startingNodeId),
     [mapData, startingNodeId],
   );
-  const destinationNodeId = 'node_4';
+  const [navigationState, setNavigationState] = useState(() =>
+    createNavigationDebugState(startingActor.nodeId, mapData.movement.routeGraph),
+  );
+  const destinationNodeId = navigationState.selectedDestinationId;
+  const originNode = useMemo(
+    () => findDestinationNode(mapData.movement.routeGraph, navigationState.originNodeId),
+    [mapData.movement.routeGraph, navigationState.originNodeId],
+  );
   const destinationNode = useMemo(
     () => findDestinationNode(mapData.movement.routeGraph, destinationNodeId),
     [destinationNodeId, mapData.movement.routeGraph],
+  );
+  const selectableDestinations = useMemo(
+    () => getSelectableDestinations(mapData.movement.routeGraph),
+    [mapData.movement.routeGraph],
   );
   const walkableAreas = useMemo(
     () => extractTemporaryWalkableAreas(mapData.visualLayers, mapData.coordinateSystem),
@@ -143,6 +165,12 @@ export function ArenaMapEngineView({
   }, [applyNavigationReset, mapData, startingActor.position, startingNodeId]);
 
   useEffect(() => {
+    setNavigationState(
+      createNavigationDebugState(startingActor.nodeId, mapData.movement.routeGraph),
+    );
+  }, [mapData.movement.routeGraph, startingActor.nodeId]);
+
+  useEffect(() => {
     if (pedometerBaselineSteps === null && latestKnownPedometerSteps !== null) {
       setPedometerBaselineSteps(latestKnownPedometerSteps);
     }
@@ -190,6 +218,16 @@ export function ArenaMapEngineView({
     [actorPosition, bobMotionState.action, bobMotionState.direction, startingActor],
   );
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
+  const unwalkableOverlay = useMemo(
+    () =>
+      buildUnwalkableOverlayModel(constraintMapInput, {
+        x: bounds.x / mapData.coordinateSystem.pixelsPerMeter,
+        y: bounds.y / mapData.coordinateSystem.pixelsPerMeter,
+        width: bounds.width / mapData.coordinateSystem.pixelsPerMeter,
+        height: bounds.height / mapData.coordinateSystem.pixelsPerMeter,
+      }),
+    [bounds, constraintMapInput, mapData.coordinateSystem.pixelsPerMeter],
+  );
   const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);
   const bobPoint = useMemo(
     () => routeNodeToPixels(actors[0], mapData.coordinateSystem),
@@ -274,6 +312,30 @@ export function ArenaMapEngineView({
     applyNavigationReset('reset', sensorSamples, latestKnownPedometerSteps);
   }
 
+  function handleSelectDestination(destination: NavigationDestinationId) {
+    setNavigationState((currentState) =>
+      selectNavigationDestination(
+        currentState,
+        destination,
+        mapData.movement.routeGraph,
+      ),
+    );
+  }
+
+  function handleCalculateRoute() {
+    setNavigationState((currentState) =>
+      calculateNavigationRoute(currentState, mapData.movement.routeGraph),
+    );
+  }
+
+  function handleClearRoute() {
+    setNavigationState(clearNavigationRoute);
+  }
+
+  function handleToggleUnwalkable() {
+    setNavigationState(toggleUnwalkableOverlay);
+  }
+
   function handleLayout(event: LayoutChangeEvent) {
     setViewportWidth(event.nativeEvent.layout.width);
   }
@@ -297,7 +359,21 @@ export function ArenaMapEngineView({
                 bounds={layout.bounds}
                 coordinateSystem={mapData.coordinateSystem}
               />
-              <DestinationDebugLayer
+              {navigationState.showUnwalkableOverlay ? (
+                <UnwalkableAreaDebugLayer
+                  model={unwalkableOverlay}
+                  bounds={layout.bounds}
+                  coordinateSystem={mapData.coordinateSystem}
+                />
+              ) : null}
+              <RouteDebugLayer
+                route={navigationState.highlightedPath}
+                routeGraph={mapData.movement.routeGraph}
+                bounds={layout.bounds}
+                coordinateSystem={mapData.coordinateSystem}
+              />
+              <NavigationNodeLayer
+                origin={originNode}
                 destination={destinationNode}
                 bounds={layout.bounds}
                 coordinateSystem={mapData.coordinateSystem}
@@ -328,6 +404,14 @@ export function ArenaMapEngineView({
           </Text>
         </Pressable>
       </View>
+      <NavigationDebugPanel
+        state={navigationState}
+        destinations={selectableDestinations}
+        onSelectDestination={handleSelectDestination}
+        onCalculateRoute={handleCalculateRoute}
+        onClearRoute={handleClearRoute}
+        onToggleUnwalkable={handleToggleUnwalkable}
+      />
       <MovementDebugPanel
         snapshot={debugSnapshot}
         onReset={handleResetNavigation}

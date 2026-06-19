@@ -125,6 +125,26 @@ receive sensor-driven movement while the camera remains independent.
 Node 4 is not passed into the movement system. The destination marker does not
 snap Bob to a route or alter particle-filter scoring.
 
+## Navigation debugger
+
+The removable debugger now exposes Nodes 2, 3, and 4 as selectable
+destinations. Its route origin comes from Bob's actor `nodeId`, so the initial
+origin is Node 1 because Bob is actually spawned there. Selecting a destination
+does not change Bob's position. `Calculate route` runs Dijkstra over the
+normalized route graph, and the resulting graph edges are rendered as a blue
+recommended center path. Changing the destination replaces an existing
+highlight; `Clear route` removes it.
+
+The Node 1-to-Node 4 route is `node_1 -> node_2 -> node_4`. Node 2 is the
+L-shaped turn. This route is guidance only: Bob remains controlled by sensor
+movement and may move anywhere allowed by the movement constraints.
+
+`Show blocked` renders a red development overlay from the exact
+`MovementConstraintMapInput` used by collision checking. It includes normalized
+blocked polygons and walls, plus tile-center samples classified by the same
+constraint provider to show areas outside walkable geometry. The route remains
+a center path while walkable polygons represent the full legal movement area.
+
 Bob rendering now uses directional idle and run sprites from `src/storage/bob`.
 Visible animation is driven by real map-position changes, not by a fake local
 debug loop.
