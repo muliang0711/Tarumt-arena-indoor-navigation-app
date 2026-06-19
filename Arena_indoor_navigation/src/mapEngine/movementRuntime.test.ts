@@ -160,3 +160,21 @@ test('reset discards prior filter state and samples already present at the reset
   assert.deepEqual(receivedStates[1].position, { x: 50, y: 60 });
   assert.equal(receivedStates[1].particleFilter, undefined);
 });
+
+test('reset uses the current pedometer count as the next movement baseline', () => {
+  const receivedStates: MovementSystemState[] = [];
+  const update: MovementUpdateFunction = (_samples, _constraints, currentState) => {
+    receivedStates.push(currentState);
+    return resultFor(currentState, receivedStates.length);
+  };
+  const runtime = new MovementRuntime({ x: 1, y: 1 }, update);
+
+  runtime.reset({ x: 50, y: 60 }, [sample('reset-step', 100, 8)]);
+
+  assert.equal(
+    runtime.process([sample('next-step', 200, 9)], constraints)?.state.previousStepCount,
+    9,
+  );
+  assert.equal(receivedStates[0].previousStepCount, 8);
+  assert.deepEqual(receivedStates[0].position, { x: 50, y: 60 });
+});

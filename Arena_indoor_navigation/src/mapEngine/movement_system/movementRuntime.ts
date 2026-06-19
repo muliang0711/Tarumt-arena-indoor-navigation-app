@@ -20,6 +20,20 @@ type ProcessingCursor = {
   keysAtLatestTimestamp: Set<string>;
 };
 
+function latestPedometerCount(
+  samples: readonly RawSensorSample[],
+): number | undefined {
+  return samples
+    .filter(
+      (
+        sample,
+      ): sample is Extract<RawSensorSample, { kind: 'pedometer' }> =>
+        sample.kind === 'pedometer' && Number.isFinite(sample.steps),
+    )
+    .sort((left, right) => left.timestamp - right.timestamp)
+    .at(-1)?.steps;
+}
+
 function sampleKey(sample: RawSensorSample): string {
   return sample.id ?? `${sample.kind}:${sample.timestamp}`;
 }
@@ -94,7 +108,10 @@ export class MovementRuntime {
   }
 
   reset(initialPosition: WorldPosition, samplesToIgnore: readonly RawSensorSample[] = []): void {
-    this.state = this.createInitialState(initialPosition);
+    this.state = this.createInitialState(
+      initialPosition,
+      latestPedometerCount(samplesToIgnore),
+    );
     this.cursor = {
       latestTimestamp: Number.NEGATIVE_INFINITY,
       keysAtLatestTimestamp: new Set(),
@@ -106,11 +123,15 @@ export class MovementRuntime {
     return this.state;
   }
 
-  private createInitialState(position: WorldPosition): MovementSystemState {
+  private createInitialState(
+    position: WorldPosition,
+    previousStepCount?: number,
+  ): MovementSystemState {
     return {
       position: { ...position },
       headingRadians: 0,
       confidence: 0.8,
+      previousStepCount,
     };
   }
 }
