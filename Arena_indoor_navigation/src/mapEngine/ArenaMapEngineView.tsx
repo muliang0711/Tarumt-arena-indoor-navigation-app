@@ -10,6 +10,20 @@ import {
   createInitialCameraState,
   zoomCamera,
 } from './cameran_system/cameranSystem';
+import {
+  buildUnwalkableOverlayModel,
+  calculateNavigationRoute,
+  clearNavigationRoute,
+  createNavigationDebugState,
+  getSelectableDestinations,
+  NavigationDebugPanel,
+  NavigationNodeLayer,
+  RouteDebugLayer,
+  selectNavigationDestination,
+  toggleUnwalkableOverlay,
+  UnwalkableAreaDebugLayer,
+  type NavigationDestinationId,
+} from './debugger';
 import { extractMovementConstraintMapInput } from './mapEngineController';
 import { ArenaMapView, getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRenderingSystem';
 import {
@@ -50,6 +64,31 @@ export function ArenaMapEngineView({
     () => buildBobActorAtNode(mapData, startingNodeId),
     [mapData, startingNodeId],
   );
+  const [navigationState, setNavigationState] = useState(() =>
+    createNavigationDebugState(startingActor.nodeId, mapData.movement.routeGraph),
+  );
+  const originNode = useMemo(
+    () =>
+      mapData.movement.routeGraph.nodes.find(
+        (node) =>
+          node.node_id === navigationState.originNodeId ||
+          node.id === navigationState.originNodeId,
+      ) ?? null,
+    [mapData.movement.routeGraph, navigationState.originNodeId],
+  );
+  const destinationNode = useMemo(
+    () =>
+      mapData.movement.routeGraph.nodes.find(
+        (node) =>
+          node.node_id === navigationState.selectedDestinationId ||
+          node.id === navigationState.selectedDestinationId,
+      ) ?? null,
+    [mapData.movement.routeGraph, navigationState.selectedDestinationId],
+  );
+  const selectableDestinations = useMemo(
+    () => getSelectableDestinations(mapData.movement.routeGraph),
+    [mapData.movement.routeGraph],
+  );
   const constraintMapInput = useMemo(
     () => extractMovementConstraintMapInput(rawMapData, coordinateSystem),
     [coordinateSystem, rawMapData],
@@ -64,6 +103,12 @@ export function ArenaMapEngineView({
     movementRuntimeRef.current?.reset(startingActor.position, sensorSamples);
     setActorPosition(startingActor.position);
   }, [mapData, startingActor.position, startingNodeId]);
+
+  useEffect(() => {
+    setNavigationState(
+      createNavigationDebugState(startingActor.nodeId, mapData.movement.routeGraph),
+    );
+  }, [mapData.movement.routeGraph, startingActor.nodeId]);
 
   useEffect(() => {
     const movementUpdate = movementRuntimeRef.current?.process(sensorSamples, constraintMapInput);
@@ -82,6 +127,16 @@ export function ArenaMapEngineView({
     [actorPosition, startingActor],
   );
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
+  const unwalkableOverlay = useMemo(
+    () =>
+      buildUnwalkableOverlayModel(constraintMapInput, {
+        x: bounds.x / mapData.coordinateSystem.pixelsPerMeter,
+        y: bounds.y / mapData.coordinateSystem.pixelsPerMeter,
+        width: bounds.width / mapData.coordinateSystem.pixelsPerMeter,
+        height: bounds.height / mapData.coordinateSystem.pixelsPerMeter,
+      }),
+    [bounds, constraintMapInput, mapData.coordinateSystem.pixelsPerMeter],
+  );
   const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);
   const bobPoint = useMemo(
     () => routeNodeToPixels(actors[0], mapData.coordinateSystem),
@@ -128,6 +183,30 @@ export function ArenaMapEngineView({
     });
   }
 
+  function handleSelectDestination(destination: NavigationDestinationId) {
+    setNavigationState((currentState) =>
+      selectNavigationDestination(
+        currentState,
+        destination,
+        mapData.movement.routeGraph,
+      ),
+    );
+  }
+
+  function handleCalculateRoute() {
+    setNavigationState((currentState) =>
+      calculateNavigationRoute(currentState, mapData.movement.routeGraph),
+    );
+  }
+
+  function handleClearRoute() {
+    setNavigationState(clearNavigationRoute);
+  }
+
+  function handleToggleUnwalkable() {
+    setNavigationState(toggleUnwalkableOverlay);
+  }
+
   function handleLayout(event: LayoutChangeEvent) {
     setViewportWidth(event.nativeEvent.layout.width);
   }
@@ -146,11 +225,32 @@ export function ArenaMapEngineView({
         <ArenaMapView
           mapData={mapData}
           renderOverlay={(layout) => (
-            <ActorLayer
-              actors={actors}
-              layout={layout}
-              coordinateSystem={mapData.coordinateSystem}
-            />
+            <>
+              {navigationState.showUnwalkableOverlay ? (
+                <UnwalkableAreaDebugLayer
+                  model={unwalkableOverlay}
+                  bounds={layout.bounds}
+                  coordinateSystem={mapData.coordinateSystem}
+                />
+              ) : null}
+              <RouteDebugLayer
+                route={navigationState.highlightedPath}
+                routeGraph={mapData.movement.routeGraph}
+                bounds={layout.bounds}
+                coordinateSystem={mapData.coordinateSystem}
+              />
+              <NavigationNodeLayer
+                origin={originNode}
+                destination={destinationNode}
+                bounds={layout.bounds}
+                coordinateSystem={mapData.coordinateSystem}
+              />
+              <ActorLayer
+                actors={actors}
+                layout={layout}
+                coordinateSystem={mapData.coordinateSystem}
+              />
+            </>
           )}
         />
       </CameraViewport>
@@ -171,6 +271,14 @@ export function ArenaMapEngineView({
           </Text>
         </Pressable>
       </View>
+      <NavigationDebugPanel
+        state={navigationState}
+        destinations={selectableDestinations}
+        onSelectDestination={handleSelectDestination}
+        onCalculateRoute={handleCalculateRoute}
+        onClearRoute={handleClearRoute}
+        onToggleUnwalkable={handleToggleUnwalkable}
+      />
     </View>
   );
 }

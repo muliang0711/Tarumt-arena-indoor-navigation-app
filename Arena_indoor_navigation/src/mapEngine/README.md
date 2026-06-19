@@ -111,3 +111,17 @@ Owns viewport/camera behavior.
 - `cameranSystem.ts`: subsystem barrel export.
 
 Do not put map tile rendering, Bob creation, actor rendering, movement, or sensor logic in this folder.
+
+## Navigation debugger
+
+The debugger derives its route origin from Bob's actor `nodeId`, offers Nodes
+2-4 as destinations, and calculates routes over the normalized route graph.
+Selecting or calculating a route never changes Bob's sensor-derived position.
+
+The recommended route is rendered as a blue graph-edge center path. Node 1 to
+Node 4 uses `node_1 -> node_2 -> node_4`, with Node 2 as the L-shaped turn.
+Changing destination replaces the current route and `Clear route` removes it.
+
+The red unwalkable overlay receives the same `MovementConstraintMapInput` used
+by movement collision checks. It renders blocked polygons, walls, and practical
+outside-walkable tile samples without weakening movement constraints.
