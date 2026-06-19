@@ -21,9 +21,9 @@ test('recognizes temporary floor assets as walkable', () => {
 test('extracts one-tile walkable polygons from floor-like visual layers', () => {
   const polygons = extractTemporaryWalkableAreas(
     [
-      { id: 'floor-a', assetId: 'walkable_road_clean', x: 1, y: 1, z: 0 },
-      { id: 'floor-b', assetId: 'road_2', x: 2, y: 1, z: 1 },
-      { id: 'wall', assetId: 'wall_up', x: 4, y: 4, z: 2 },
+      { assetId: 'walkable_road_clean', x: 1, y: 1 },
+      { assetId: 'road_2', x: 2, y: 1 },
+      { assetId: 'wall_up', x: 4, y: 4 },
     ],
     coordinateSystem,
   );
