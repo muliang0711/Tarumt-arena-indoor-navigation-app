@@ -4,12 +4,22 @@ import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-nati
 import { colors, radius, shadow } from '../components/theme';
 import { ActorLayer, buildBobActorAtNode, routeNodeToPixels } from './actor_system/actorSystem';
 import {
-  CameraState,
   CameraViewport,
   centerCameraOnPoint,
   createInitialCameraState,
+  isFollowingBob,
+  toggleCameraFollowMode,
   zoomCamera,
+  type CameraFollowMode,
+  type CameraState,
 } from './cameran_system/cameranSystem';
+import {
+  buildMovementDebugSnapshot,
+  DestinationDebugLayer,
+  findDestinationNode,
+  MovementDebugPanel,
+  type MovementProcessingStatus,
+} from './debugger';
 import { extractMovementConstraintMapInput } from './mapEngineController';
 import { ArenaMapView, getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRenderingSystem';
 import {
@@ -37,7 +47,8 @@ export function ArenaMapEngineView({
 }: ArenaMapEngineViewProps) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
-  const [isFollowingBob, setIsFollowingBob] = useState(true);
+  const [cameraMode, setCameraMode] = useState<CameraFollowMode>('following');
+  const followsBob = isFollowingBob(cameraMode);
   const coordinateSystem = useMemo(
     () => extractMapCoordinateSystem(rawMapData),
     [rawMapData],
@@ -50,6 +61,13 @@ export function ArenaMapEngineView({
     () => buildBobActorAtNode(mapData, startingNodeId),
     [mapData, startingNodeId],
   );
+  const destinationNodeId = 'node_4';
+  const destinationNode = useMemo(
+    () => findDestinationNode(mapData.movement.routeGraph, destinationNodeId),
+    [destinationNodeId, mapData.movement.routeGraph],
+  );
+  const [processingStatus, setProcessingStatus] =
+    useState<MovementProcessingStatus>('waiting');
   const constraintMapInput = useMemo(
     () => extractMovementConstraintMapInput(rawMapData, coordinateSystem),
     [coordinateSystem, rawMapData],
@@ -63,13 +81,17 @@ export function ArenaMapEngineView({
   useEffect(() => {
     movementRuntimeRef.current?.reset(startingActor.position, sensorSamples);
     setActorPosition(startingActor.position);
+    setProcessingStatus('waiting');
   }, [mapData, startingActor.position, startingNodeId]);
 
   useEffect(() => {
     const movementUpdate = movementRuntimeRef.current?.process(sensorSamples, constraintMapInput);
     if (movementUpdate) {
       setActorPosition(movementUpdate.position);
+      setProcessingStatus('processed');
+      return;
     }
+    setProcessingStatus(sensorSamples.length > 0 ? 'ignored' : 'waiting');
   }, [constraintMapInput, sensorSamples]);
 
   const actors = useMemo(
@@ -92,19 +114,47 @@ export function ArenaMapEngineView({
     (nextCamera: CameraState) => centerCameraOnPoint(nextCamera, bobPoint, viewportSize),
     [bobPoint, viewportSize],
   );
+  const debugSnapshot = useMemo(
+    () =>
+      buildMovementDebugSnapshot({
+        samples: sensorSamples,
+        state: movementRuntimeRef.current?.getState() ?? {
+          position: actorPosition,
+          headingRadians: 0,
+          confidence: 0.8,
+        },
+        status: processingStatus,
+        destinationNodeId,
+        destinationAvailable: destinationNode !== null,
+      }),
+    [
+      actorPosition,
+      destinationNode,
+      destinationNodeId,
+      processingStatus,
+      sensorSamples,
+    ],
+  );
 
   useEffect(() => {
     if (viewportWidth > 0) {
-      const fittedCamera = createInitialCameraState(bounds, viewportSize);
-      setCamera(isFollowingBob ? applyFollowTarget(fittedCamera) : fittedCamera);
+      setCamera(createInitialCameraState(bounds, viewportSize));
     }
-  }, [applyFollowTarget, bounds, viewportSize, viewportWidth]);
+  }, [bounds, viewportSize, viewportWidth]);
 
-  const renderedCamera = camera ?? (isFollowingBob ? applyFollowTarget(initialCamera) : initialCamera);
+  useEffect(() => {
+    if (!followsBob || viewportWidth <= 0) {
+      return;
+    }
+    setCamera((currentCamera) => applyFollowTarget(currentCamera ?? initialCamera));
+  }, [
+    applyFollowTarget,
+    followsBob,
+    initialCamera,
+    viewportWidth,
+  ]);
 
-  function handleGestureStart() {
-    setIsFollowingBob(false);
-  }
+  const renderedCamera = camera ?? (followsBob ? applyFollowTarget(initialCamera) : initialCamera);
 
   function handleCameraChange(nextCamera: CameraState) {
     setCamera(nextCamera);
@@ -114,18 +164,24 @@ export function ArenaMapEngineView({
     const focalPoint = { x: viewportSize.width / 2, y: viewportSize.height / 2 };
     setCamera((currentCamera) => {
       const zoomedCamera = zoomCamera(currentCamera ?? renderedCamera, factor, undefined, undefined, focalPoint);
-      return isFollowingBob ? applyFollowTarget(zoomedCamera) : zoomedCamera;
+      return followsBob ? applyFollowTarget(zoomedCamera) : zoomedCamera;
     });
   }
 
   function handleToggleFollowBob() {
-    setIsFollowingBob((currentValue) => {
-      const nextValue = !currentValue;
-      if (nextValue) {
+    setCameraMode((currentMode) => {
+      const nextMode = toggleCameraFollowMode(currentMode);
+      if (isFollowingBob(nextMode)) {
         setCamera((currentCamera) => applyFollowTarget(currentCamera ?? renderedCamera));
       }
-      return nextValue;
+      return nextMode;
     });
+  }
+
+  function handleResetNavigation() {
+    movementRuntimeRef.current?.reset(startingActor.position, sensorSamples);
+    setActorPosition(startingActor.position);
+    setProcessingStatus('reset');
   }
 
   function handleLayout(event: LayoutChangeEvent) {
@@ -140,17 +196,23 @@ export function ArenaMapEngineView({
         contentHeight={bounds.height}
         height={height}
         onLayout={handleLayout}
-        onGestureStart={handleGestureStart}
         onCameraChange={handleCameraChange}
       >
         <ArenaMapView
           mapData={mapData}
           renderOverlay={(layout) => (
-            <ActorLayer
-              actors={actors}
-              layout={layout}
-              coordinateSystem={mapData.coordinateSystem}
-            />
+            <>
+              <DestinationDebugLayer
+                destination={destinationNode}
+                bounds={layout.bounds}
+                coordinateSystem={mapData.coordinateSystem}
+              />
+              <ActorLayer
+                actors={actors}
+                layout={layout}
+                coordinateSystem={mapData.coordinateSystem}
+              />
+            </>
           )}
         />
       </CameraViewport>
@@ -163,14 +225,18 @@ export function ArenaMapEngineView({
           <Text style={styles.controlButtonText}>-</Text>
         </Pressable>
         <Pressable
-          style={[styles.followButton, isFollowingBob && styles.followButtonActive]}
+          style={[styles.followButton, followsBob && styles.followButtonActive]}
           onPress={handleToggleFollowBob}
         >
-          <Text style={[styles.followButtonText, isFollowingBob && styles.followButtonTextActive]}>
-            {isFollowingBob ? 'Following Bob' : 'Free look'}
+          <Text style={[styles.followButtonText, followsBob && styles.followButtonTextActive]}>
+            {followsBob ? 'Following Bob' : 'Free look'}
           </Text>
         </Pressable>
       </View>
+      <MovementDebugPanel
+        snapshot={debugSnapshot}
+        onReset={handleResetNavigation}
+      />
     </View>
   );
 }
