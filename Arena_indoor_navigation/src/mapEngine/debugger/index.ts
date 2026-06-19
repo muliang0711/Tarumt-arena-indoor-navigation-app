@@ -25,3 +25,8 @@ export type {
   NavigationDestinationId,
   NavigationRouteStatus,
 } from './navigationDebugModel';
+export { buildUnwalkableOverlayModel } from './unwalkableOverlayModel';
+export type {
+  UnwalkableOverlayModel,
+  WorldRectangle,
+} from './unwalkableOverlayModel';
