@@ -43,8 +43,8 @@ export function routeNodeToPixels(
 ) {
   const point = worldMetersToPixels(actor.position, coordinateSystem);
   return {
-    x: Math.round(point.x),
-    y: Math.round(point.y),
+    x: Number(point.x.toFixed(4)),
+    y: Number(point.y.toFixed(4)),
   };
 }
 
