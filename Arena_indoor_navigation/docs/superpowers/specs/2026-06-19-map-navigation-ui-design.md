@@ -18,9 +18,9 @@ Expected default-map paths are:
 
 - Node 1 → Node 2: `node_1`, `node_2`
 - Node 1 → Node 3: `node_1`, `node_2`, `node_3`
-- Node 1 → Node 4: `node_1`, `node_2`, `node_3`, `node_4`
+- Node 1 → Node 4: `node_1`, `node_2`, `node_4`
 
-Node 1 → Node 4 therefore contains the vertical Node 1-to-Node 2 segment followed by horizontal corridor segments. The lower-cost route through Node 3 wins over the equal-distance direct Node 2-to-Node 4 edge by deterministic edge order.
+Node 1 → Node 4 therefore contains the vertical Node 1-to-Node 2 segment followed by the horizontal Node 2-to-Node 4 corridor edge. Node 2 is the L-shaped turn. The direct Node 2-to-Node 4 edge is preferred over the equal-weight multi-edge alternative through Node 3 because it uses fewer graph edges.
 
 Destination selection does not move Bob. If no route is displayed, selection only changes the selected marker. If a route is displayed, changing destination recalculates and replaces it. Calculation failures produce an explicit no-route state.
 
