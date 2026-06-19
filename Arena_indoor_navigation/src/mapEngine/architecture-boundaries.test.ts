@@ -71,15 +71,15 @@ test('MapScreen imports only page-safe map-engine and sensor APIs', () => {
   assert.deepEqual(sensorImports, ['../sensors/useMovementSensors']);
 });
 
-test('gestures update the camera without owning follow mode', () => {
+test('camera viewport keeps gesture updates local and commits camera state after interaction', () => {
   const viewport = readFileSync(join(mapEngineRoot, 'cameran_system', 'CameraViewport.tsx'), 'utf8');
-  const engine = readFileSync(join(mapEngineRoot, 'ArenaMapEngineView.tsx'), 'utf8');
 
   assert.match(viewport, /Gesture\.Pan\(\)/);
   assert.match(viewport, /Gesture\.Pinch\(\)/);
-  assert.doesNotMatch(engine, /setIsFollowingBob/);
-  assert.doesNotMatch(engine, /onGestureStart=/);
-  assert.match(engine, /toggleCameraFollowMode/);
+  assert.match(viewport, /shouldSyncCameraFromProps/);
+  assert.match(viewport, /isGestureActive/);
+  assert.doesNotMatch(viewport, /onGestureStart/);
+  assert.match(viewport, /onFinalize\(commitCamera\)/);
 });
 
 test('debugger exposes removable UI through one public entry', () => {

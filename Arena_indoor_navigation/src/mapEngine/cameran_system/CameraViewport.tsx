@@ -4,6 +4,10 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
 import { radius } from '../../components/theme';
 import { CAMERA_MAX_ZOOM, CAMERA_MIN_ZOOM, CameraState } from './cameraModel';
+import {
+  shouldSyncCameraFromProps,
+  type CameraInteractionState,
+} from './cameraViewportInteraction';
 
 type CameraViewportProps = {
   camera: CameraState;
@@ -12,7 +16,6 @@ type CameraViewportProps = {
   height: number;
   onLayout?: (event: LayoutChangeEvent) => void;
   onCameraChange?: (camera: CameraState) => void;
-  onGestureStart?: () => void;
   children: ReactNode;
 };
 
@@ -23,13 +26,15 @@ export function CameraViewport({
   height,
   onLayout,
   onCameraChange,
-  onGestureStart,
   children,
 }: CameraViewportProps) {
   const translateX = useRef(new Animated.Value(camera.offsetX)).current;
   const translateY = useRef(new Animated.Value(camera.offsetY)).current;
   const scale = useRef(new Animated.Value(clampZoom(camera.scale))).current;
   const cameraRef = useRef(camera);
+  const interactionState = useRef<CameraInteractionState>({
+    isGestureActive: false,
+  });
   const panStart = useRef({ x: camera.offsetX, y: camera.offsetY });
   const pinchStart = useRef({
     x: camera.offsetX,
@@ -38,6 +43,9 @@ export function CameraViewport({
   });
 
   useEffect(() => {
+    if (!shouldSyncCameraFromProps(interactionState.current)) {
+      return;
+    }
     const nextCamera = {
       ...camera,
       scale: clampZoom(camera.scale),
@@ -57,6 +65,7 @@ export function CameraViewport({
     }
 
     function commitCamera() {
+      interactionState.current.isGestureActive = false;
       onCameraChange?.(cameraRef.current);
     }
 
@@ -65,7 +74,7 @@ export function CameraViewport({
       .minPointers(1)
       .maxPointers(1)
       .onBegin(() => {
-        onGestureStart?.();
+        interactionState.current.isGestureActive = true;
         panStart.current = {
           x: cameraRef.current.offsetX,
           y: cameraRef.current.offsetY,
@@ -73,7 +82,7 @@ export function CameraViewport({
       })
       .onUpdate((event) => {
         updateCamera({
-          ...cameraRef.current,
+          scale: cameraRef.current.scale,
           offsetX: panStart.current.x + event.translationX,
           offsetY: panStart.current.y + event.translationY,
         });
@@ -83,7 +92,7 @@ export function CameraViewport({
     const pinchGesture = Gesture.Pinch()
       .runOnJS(true)
       .onBegin(() => {
-        onGestureStart?.();
+        interactionState.current.isGestureActive = true;
         pinchStart.current = {
           x: cameraRef.current.offsetX,
           y: cameraRef.current.offsetY,
@@ -106,7 +115,7 @@ export function CameraViewport({
       .onFinalize(commitCamera);
 
     return Gesture.Simultaneous(panGesture, pinchGesture);
-  }, [onCameraChange, onGestureStart, scale, translateX, translateY]);
+  }, [onCameraChange, scale, translateX, translateY]);
 
   return (
     <GestureDetector gesture={gestures}>
