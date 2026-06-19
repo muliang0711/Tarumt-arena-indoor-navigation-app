@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
 import type { RawSensorSample } from '../mapEngine/shared';
-import { expoMovementSensorAdapter } from './expoMovementSensorAdapter';
+import {
+  createExpoMovementSensorAdapter,
+} from './expoMovementSensorAdapter';
 import { MovementSensorCollector } from './movementSensorCollector';
 export { MovementSensorDevPanel } from './debugger/MovementSensorDevPanel';
 import { MockMovementSensorAdapter } from './mock/mockMovementSensorAdapter';
@@ -14,6 +16,7 @@ import type {
   MockMovementSensorState,
 } from './mock/mockSensorTypes';
 import { findLatestPedometerStepCount } from './pedometerUtils';
+import type { PedometerDiagnosticState } from './realPedometerMonitor';
 
 export const EMPTY_SENSOR_SAMPLES: readonly RawSensorSample[] = Object.freeze([]);
 
@@ -23,6 +26,10 @@ export type MovementSensorDevControls = {
   enabled: boolean;
   mode: MovementSensorMode;
   setMode(mode: MovementSensorMode): void;
+  realPedometer: {
+    diagnostic: PedometerDiagnosticState;
+    retry(): Promise<void>;
+  };
   scenarios: ReturnType<typeof getMockMovementSensorScenarios>;
   scenarioId: MockMovementSensorScenarioId;
   setScenario(scenarioId: MockMovementSensorScenarioId): void;
@@ -69,9 +76,21 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
   const [mockAdapter] = useState(
     () => new MockMovementSensorAdapter({ scenarioId: 'straight-walk' }),
   );
+  const [realAdapter] = useState(() => createExpoMovementSensorAdapter());
+  const [realPedometerDiagnostic, setRealPedometerDiagnostic] =
+    useState<PedometerDiagnosticState>(realAdapter.realPedometerMonitor.getState());
   const activeCollectorRef = useRef<MovementSensorCollector | null>(null);
 
   useEffect(() => mockAdapter.subscribeState(setMockState), [mockAdapter]);
+  useEffect(
+    () => realAdapter.realPedometerMonitor.subscribeState((state) => {
+      setRealPedometerDiagnostic(state);
+      if (state.rawCumulativeSteps !== null) {
+        setLatestKnownPedometerSteps(state.rawCumulativeSteps);
+      }
+    }),
+    [realAdapter],
+  );
 
   useEffect(() => {
     if (!enabled) {
@@ -85,7 +104,7 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
     const selectedAdapter =
       isDevelopmentBuild && mode === 'mock'
         ? mockAdapter
-        : expoMovementSensorAdapter;
+        : realAdapter;
     const collector = new MovementSensorCollector(
       selectedAdapter,
       (batch) => {
@@ -110,7 +129,7 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
         mockAdapter.stop();
       }
     };
-  }, [enabled, mockAdapter, mode]);
+  }, [enabled, mockAdapter, mode, realAdapter]);
 
   function bumpResetSignal() {
     setResetSignal((currentSignal) => currentSignal + 1);
@@ -172,6 +191,10 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
     activeCollectorRef.current?.flush();
   }
 
+  async function retryRealPedometer() {
+    await realAdapter.retryPedometerSubscription();
+  }
+
   return {
     samples: sensorSamples,
     latestKnownPedometerSteps,
@@ -180,6 +203,10 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
       enabled: isDevelopmentBuild,
       mode,
       setMode,
+      realPedometer: {
+        diagnostic: realPedometerDiagnostic,
+        retry: retryRealPedometer,
+      },
       scenarios: availableMockScenarios,
       scenarioId,
       setScenario,

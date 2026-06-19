@@ -12,6 +12,7 @@ import {
 
 import type { RawSensorSample } from '../mapEngine/shared';
 import type { MovementSensorAdapter, SensorSubscription } from './movementSensorCollector';
+import { RealPedometerMonitor } from './realPedometerMonitor';
 
 const UPDATE_INTERVAL_MS = 100;
 type SensorKind = RawSensorSample['kind'];
@@ -63,35 +64,29 @@ async function subscribeDeviceSensor<TMeasurement>(
 }
 
 async function subscribePedometer(
+  monitor: RealPedometerMonitor,
   onSample: (sample: RawSensorSample) => void,
-): Promise<SensorSubscription | null> {
-  try {
-    if (!(await Pedometer.isAvailableAsync())) {
-      return null;
-    }
-
-    const existingPermission = await Pedometer.getPermissionsAsync();
-    const permission = existingPermission.granted
-      ? existingPermission
-      : await Pedometer.requestPermissionsAsync();
-    if (!permission.granted) {
-      return null;
-    }
-
-    return Pedometer.watchStepCount(({ steps }) => {
-      onSample({
-        ...nextSampleIdentity('pedometer'),
-        kind: 'pedometer',
-        steps,
-      });
-    });
-  } catch {
-    return null;
-  }
+): Promise<SensorSubscription> {
+  return monitor.start(onSample);
 }
 
-export const expoMovementSensorAdapter: MovementSensorAdapter = {
-  async subscribe(onSample) {
+export type ExpoMovementSensorAdapter = MovementSensorAdapter & {
+  readonly realPedometerMonitor: RealPedometerMonitor;
+  retryPedometerSubscription(): Promise<void>;
+};
+
+export function createExpoMovementSensorAdapter(): ExpoMovementSensorAdapter {
+  const realPedometerMonitor = new RealPedometerMonitor({
+    pedometer: Pedometer,
+    now: () => Date.now(),
+  });
+
+  return {
+    realPedometerMonitor,
+    async retryPedometerSubscription() {
+      await realPedometerMonitor.retry();
+    },
+    async subscribe(onSample) {
     const subscriptions = [
       await subscribeDeviceSensor<AccelerometerMeasurement>(
         Accelerometer,
@@ -142,11 +137,14 @@ export const expoMovementSensorAdapter: MovementSensorAdapter = {
         }),
         onSample,
       ),
-      await subscribePedometer(onSample),
+      await subscribePedometer(realPedometerMonitor, onSample),
     ];
 
     return subscriptions.filter(
       (subscription): subscription is SensorSubscription => subscription !== null,
     );
-  },
-};
+    },
+  };
+}
+
+export const expoMovementSensorAdapter = createExpoMovementSensorAdapter();

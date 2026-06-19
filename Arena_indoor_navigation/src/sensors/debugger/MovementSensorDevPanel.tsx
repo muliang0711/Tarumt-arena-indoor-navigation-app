@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, radius, shadow } from '../../components/theme';
@@ -18,9 +19,29 @@ function buttonTextForPlaybackState(playbackState: MovementSensorDevControls['pl
   }
 }
 
+function displayTimestamp(value: number | null): string {
+  return value === null ? 'unavailable' : new Date(value).toLocaleTimeString();
+}
+
+function displayElapsedMs(lastEventTimestamp: number | null, nowMs: number): string {
+  if (lastEventTimestamp === null) {
+    return 'unavailable';
+  }
+
+  const elapsedSeconds = Math.max(0, Math.round((nowMs - lastEventTimestamp) / 1000));
+  return `${elapsedSeconds}s`;
+}
+
 export function MovementSensorDevPanel({
   controls,
 }: MovementSensorDevPanelProps) {
+  const [nowMs, setNowMs] = useState(() => Date.now());
+
+  useEffect(() => {
+    const handle = setInterval(() => setNowMs(Date.now()), 1000);
+    return () => clearInterval(handle);
+  }, []);
+
   if (!controls.enabled) {
     return null;
   }
@@ -98,7 +119,53 @@ export function MovementSensorDevPanel({
           </View>
         </>
       ) : (
-        <Text style={styles.meta}>Collector is bound to the Expo sensor adapter.</Text>
+        <>
+          <Text style={styles.meta}>Collector is bound to the Expo sensor adapter.</Text>
+          <Text style={styles.meta}>
+            Availability {controls.realPedometer.diagnostic.availability} · permission{' '}
+            {controls.realPedometer.diagnostic.permissionStatus} · canAskAgain{' '}
+            {controls.realPedometer.diagnostic.canAskAgain === null
+              ? 'unknown'
+              : String(controls.realPedometer.diagnostic.canAskAgain)}
+          </Text>
+          <Text style={styles.meta}>
+            Status {controls.realPedometer.diagnostic.status} · subscription started{' '}
+            {controls.realPedometer.diagnostic.subscriptionStarted ? 'yes' : 'no'}
+          </Text>
+          <Text style={styles.meta}>
+            Raw cumulative steps{' '}
+            {controls.realPedometer.diagnostic.rawCumulativeSteps ?? 'unavailable'}
+          </Text>
+          <Text style={styles.meta}>
+            Last event {displayTimestamp(controls.realPedometer.diagnostic.lastEventTimestamp)} ·
+            age {displayElapsedMs(controls.realPedometer.diagnostic.lastEventTimestamp, nowMs)}
+          </Text>
+          <Text style={styles.meta}>
+            Last attempt {displayTimestamp(controls.realPedometer.diagnostic.lastSubscriptionAttemptAt)}
+          </Text>
+          {controls.realPedometer.diagnostic.recentErrors.length > 0 ? (
+            <View style={styles.errorPanel}>
+              <Text style={styles.errorTitle}>Pedometer errors</Text>
+              {controls.realPedometer.diagnostic.recentErrors
+                .slice()
+                .reverse()
+                .map((error, index) => (
+                  <Text key={`${error.timestamp}-${index}`} style={styles.errorLine}>
+                    {error.stage} · {displayTimestamp(error.timestamp)} · {error.message}
+                  </Text>
+                ))}
+            </View>
+          ) : null}
+          {(controls.realPedometer.diagnostic.status !== 'subscribed' ||
+            controls.realPedometer.diagnostic.permissionStatus !== 'granted' ||
+            controls.realPedometer.diagnostic.recentErrors.length > 0) ? (
+            <View style={styles.controlsRow}>
+              <Pressable style={styles.controlButton} onPress={() => void controls.realPedometer.retry()}>
+                <Text style={styles.controlButtonText}>Request permission / Retry subscription</Text>
+              </Pressable>
+            </View>
+          ) : null}
+        </>
       )}
     </View>
   );
@@ -200,5 +267,21 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontSize: 11,
     fontWeight: '900',
+  },
+  errorPanel: {
+    padding: 10,
+    borderRadius: radius.md,
+    backgroundColor: colors.orangeSoft,
+    gap: 4,
+  },
+  errorTitle: {
+    color: colors.orange,
+    fontSize: 11,
+    fontWeight: '900',
+  },
+  errorLine: {
+    color: colors.text,
+    fontSize: 10,
+    fontWeight: '700',
   },
 });
