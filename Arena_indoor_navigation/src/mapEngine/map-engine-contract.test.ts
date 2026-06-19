@@ -89,3 +89,15 @@ test('movement extraction produces usable meter-space constraints', () => {
   assert.equal(Number.isFinite(movementUpdate.position.y), true);
   assert.equal(constraintProvider.isWalkable(movementUpdate.position), true);
 });
+
+test('movement extraction infers walkable areas from floor layers when explicit walkable areas are empty', () => {
+  const constraintInput = extractMovementConstraintMapInput(rawMap);
+
+  assert.equal(constraintInput.walkableAreas.length, 1);
+  assert.deepEqual(constraintInput.walkableAreas[0], [
+    { x: 0.4, y: 0.4 },
+    { x: 0.8, y: 0.4 },
+    { x: 0.8, y: 0.8 },
+    { x: 0.4, y: 0.8 },
+  ]);
+});

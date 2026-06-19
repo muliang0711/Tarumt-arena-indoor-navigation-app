@@ -1,5 +1,6 @@
 import {
   extractMapCoordinateSystem,
+  extractTemporaryWalkableAreas,
   tilesToWorldMeters,
   type LineSegment,
   type MapCoordinateSystem,
@@ -172,6 +173,16 @@ function extractBlockedAreasFromAssets(
   });
 }
 
+function visualLayersFromRawMap(rawMapData: unknown): unknown[] {
+  const source = objectValue(rawMapData);
+  const layers = objectValue(source.layers);
+  const display = objectValue(source.display);
+
+  return arrayValue(objectValue(layers).visual).length > 0
+    ? arrayValue(objectValue(layers).visual)
+    : arrayValue(display.visualLayers);
+}
+
 export function extractMovementConstraintMapInput(
   rawMapData: unknown,
   validatedCoordinateSystem?: MapCoordinateSystem,
@@ -180,6 +191,21 @@ export function extractMovementConstraintMapInput(
   const coordinateSystem = validatedCoordinateSystem ?? extractMapCoordinateSystem(rawMapData);
   const boundsPolygon = polygonFromBounds(movement.bounds);
   const walkableAreas = normalizePolygons(movement.walkableAreas, 'movement.walkableAreas');
+  const inferredWalkableAreas = extractTemporaryWalkableAreas(
+    visualLayersFromRawMap(rawMapData)
+      .map((item, index) => {
+        const layer = objectValue(item);
+        return {
+          id: optionalString(layer.id) ?? `visual_${index}`,
+          assetId: optionalString(layer.assetId) ?? '',
+          x: finiteNumber(layer.x) ?? 0,
+          y: finiteNumber(layer.y) ?? 0,
+          z: finiteNumber(layer.z) ?? index,
+        };
+      })
+      .filter((layer) => layer.assetId.length > 0),
+    coordinateSystem,
+  );
   const explicitBlockedAreas = normalizePolygons(movement.blockedAreas, 'movement.blockedAreas');
   const assetBlockedAreas = extractBlockedAreasFromAssets(rawMapData, coordinateSystem);
   const routeGraph = normalizeRouteGraph(movement.routeGraph);
@@ -187,7 +213,14 @@ export function extractMovementConstraintMapInput(
   return {
     coordinateSystem,
     routeGraph,
-    walkableAreas: walkableAreas.length > 0 ? walkableAreas : boundsPolygon ? [boundsPolygon] : [],
+    walkableAreas:
+      walkableAreas.length > 0
+        ? walkableAreas
+        : inferredWalkableAreas.length > 0
+          ? inferredWalkableAreas
+          : boundsPolygon
+            ? [boundsPolygon]
+            : [],
     blockedAreas: [...explicitBlockedAreas, ...assetBlockedAreas],
     walls: normalizeLineSegments(movement.walls, 'movement.walls'),
     doors: normalizePolygons(movement.doors, 'movement.doors'),
