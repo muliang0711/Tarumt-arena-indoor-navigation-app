@@ -11,7 +11,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class DiagnosticsRecorder @Inject constructor(
-    private val logger: AppLogger
+    private val logger: AppLogger,
+    private val logStore: InMemoryLogStore
 ) {
     private val TAG = "Diagnostics"
     private var currentSessionId: String = UUID.randomUUID().toString()
@@ -23,30 +24,43 @@ class DiagnosticsRecorder @Inject constructor(
 
     fun recordEvent(event: String, metadata: Map<String, String> = emptyMap()) {
         val metaString = metadata.entries.joinToString(", ") { "${it.key}=${it.value}" }
-        logger.i(TAG, "[Session: $currentSessionId] Event: $event | Metadata: {$metaString}")
+        val message = "[Session: $currentSessionId] Event: $event | Metadata: {$metaString}"
+        logger.i(TAG, message)
+        logStore.addLog(event, LogEntry.LogLevel.INFO)
     }
 
     fun recordError(error: String, throwable: Throwable? = null, metadata: Map<String, String> = emptyMap()) {
         val metaString = metadata.entries.joinToString(", ") { "${it.key}=${it.value}" }
-        logger.e(TAG, "[Session: $currentSessionId] Error: $error | Metadata: {$metaString}", throwable)
+        val message = "[Session: $currentSessionId] Error: $error | Metadata: {$metaString}"
+        logger.e(TAG, message, throwable)
+        logStore.addLog("ERROR: $error", LogEntry.LogLevel.ERROR)
+    }
+
+    fun recordCatalogUpdate(status: String) {
+        val msg = "Updating the AP catalog: $status"
+        logger.i(TAG, msg)
+        logStore.addLog(msg)
     }
 
     fun recordScanRequest(timestamp: Long) {
-        recordEvent("ScanRequested", mapOf("timestamp" to timestamp.toString()))
+        val msg = "Initiating wifi scan"
+        logger.i(TAG, msg)
+        logStore.addLog(msg)
     }
 
     fun recordScanResult(timestamp: Long, count: Int) {
-        recordEvent("ScanResultReceived", mapOf(
-            "timestamp" to timestamp.toString(),
-            "count" to count.toString()
-        ))
+        val msg = "Wifi scan complete. Results obtained from OS: $count APs"
+        logger.i(TAG, msg)
+        logStore.addLog(msg)
     }
 
     fun recordPositionCalculated(x: Double, y: Double, confidence: Double) {
-        recordEvent("PositionCalculated", mapOf(
-            "x" to String.format(Locale.US, "%.2f", x),
-            "y" to String.format(Locale.US, "%.2f", y),
-            "confidence" to String.format(Locale.US, "%.2f", confidence)
-        ))
+        val msg = "Calculating your current location: (${String.format(Locale.US, "%.2f", x)}, ${String.format(Locale.US, "%.2f", y)})"
+        logger.i(TAG, msg)
+        logStore.addLog(msg)
+    }
+    
+    fun recordMessage(message: String) {
+        logStore.addLog(message)
     }
 }
