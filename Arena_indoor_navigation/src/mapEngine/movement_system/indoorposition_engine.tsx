@@ -8,6 +8,7 @@ import type {
 import {
   createMovementConstraintProvider,
   isParticlePositionValid,
+  type MovementConstraintAnalysis,
   type MovementConstraintProvider,
 } from './constraints';
 import { createHeadingEstimateFromRadians } from './estimate/headingEstimate';
@@ -26,6 +27,19 @@ export type MovementSystemState = {
   particleFilter?: ParticleFilterSnapshot;
   previousStepCount?: number;
   lastStepDelta?: number;
+  latestMovementAttempt?: {
+    currentPosition: WorldPosition;
+    candidatePosition: WorldPosition;
+    finalAcceptedPosition: WorldPosition;
+    headingRadians: number;
+    distanceMeters: number;
+    canMove: boolean;
+    insideWalkableArea: boolean;
+    insideBlockedArea: boolean;
+    crossedWall: boolean;
+    crossedBlockedArea: boolean;
+    rejectionReasons: readonly string[];
+  };
 };
 
 export type MovementSystemResult = {
@@ -114,7 +128,11 @@ export function updateMovementSystem(
     step.stepDelta === 0
       ? currentState.position
       : nextFilter.position ?? currentState.position;
-  const canUseCandidate = constraintProvider.canMove(currentState.position, candidatePosition);
+  const movementAnalysis: MovementConstraintAnalysis | undefined =
+    step.stepDelta > 0
+      ? constraintProvider.analyzeMove(currentState.position, candidatePosition)
+      : undefined;
+  const canUseCandidate = movementAnalysis?.canMove ?? constraintProvider.canMove(currentState.position, candidatePosition);
   const position = canUseCandidate ? candidatePosition : currentState.position;
   const state: MovementSystemState = {
     position,
@@ -123,6 +141,22 @@ export function updateMovementSystem(
     particleFilter: nextFilter,
     previousStepCount: stepSample.steps,
     lastStepDelta: step.stepDelta,
+    latestMovementAttempt:
+      movementAnalysis !== undefined
+        ? {
+            currentPosition: { ...movementAnalysis.currentPosition },
+            candidatePosition: { ...movementAnalysis.candidatePosition },
+            finalAcceptedPosition: { ...position },
+            headingRadians: motion.heading.radians,
+            distanceMeters: motion.displacement.distanceMeters,
+            canMove: movementAnalysis.canMove,
+            insideWalkableArea: movementAnalysis.insideWalkableArea,
+            insideBlockedArea: movementAnalysis.insideBlockedArea,
+            crossedWall: movementAnalysis.crossedWall,
+            crossedBlockedArea: movementAnalysis.crossedBlockedArea,
+            rejectionReasons: [...movementAnalysis.rejectionReasons],
+          }
+        : currentState.latestMovementAttempt,
   };
 
   return {

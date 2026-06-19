@@ -11,7 +11,11 @@ export type {
   MovementSystemResult,
   MovementSystemState,
 } from './indoorposition_engine';
-export type { MovementConstraintProvider } from './constraints';
+export type {
+  MovementConstraintAnalysis,
+  MovementConstraintProvider,
+  MovementConstraintRejectionReason,
+} from './constraints';
 export type {
   MovementConstraintMapInput,
   RawSensorSample,

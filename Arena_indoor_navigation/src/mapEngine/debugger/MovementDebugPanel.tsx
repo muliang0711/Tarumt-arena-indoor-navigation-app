@@ -50,6 +50,34 @@ export function MovementDebugPanel({
         Confidence {display(snapshot.confidence)} | generation{' '}
         {display(snapshot.particleGeneration, 0)}
       </Text>
+      {snapshot.latestMovementAttempt ? (
+        <>
+          <Text style={styles.line}>
+            Attempt from {display(snapshot.latestMovementAttempt.currentPosition.x)},{' '}
+            {display(snapshot.latestMovementAttempt.currentPosition.y)} to{' '}
+            {display(snapshot.latestMovementAttempt.candidatePosition.x)},{' '}
+            {display(snapshot.latestMovementAttempt.candidatePosition.y)}
+          </Text>
+          <Text style={styles.line}>
+            Attempt heading {display((snapshot.latestMovementAttempt.headingRadians * 180) / Math.PI, 0)} deg |
+            distance {display(snapshot.latestMovementAttempt.distanceMeters)} m | canMove{' '}
+            {snapshot.latestMovementAttempt.canMove ? 'yes' : 'no'}
+          </Text>
+          <Text style={styles.line}>
+            walkable {snapshot.latestMovementAttempt.insideWalkableArea ? 'yes' : 'no'} |
+            blocked {snapshot.latestMovementAttempt.insideBlockedArea ? 'yes' : 'no'} |
+            crossed wall {snapshot.latestMovementAttempt.crossedWall ? 'yes' : 'no'} |
+            crossed blocked {snapshot.latestMovementAttempt.crossedBlockedArea ? 'yes' : 'no'}
+          </Text>
+          <Text style={styles.line}>
+            Final {display(snapshot.latestMovementAttempt.finalAcceptedPosition.x)},{' '}
+            {display(snapshot.latestMovementAttempt.finalAcceptedPosition.y)} | reason{' '}
+            {snapshot.latestMovementAttempt.rejectionReasons.length > 0
+              ? snapshot.latestMovementAttempt.rejectionReasons.join(', ')
+              : 'accepted'}
+          </Text>
+        </>
+      ) : null}
       <View style={styles.footer}>
         <Text style={styles.destination}>Destination {snapshot.destinationLabel}</Text>
         <Pressable style={styles.resetButton} onPress={onReset}>

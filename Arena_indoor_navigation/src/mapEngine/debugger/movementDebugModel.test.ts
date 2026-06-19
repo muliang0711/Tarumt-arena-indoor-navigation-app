@@ -34,6 +34,19 @@ test('summarizes live sensor kinds and movement state', () => {
       confidence: 0.75,
       previousStepCount: 7,
       lastStepDelta: 2,
+      latestMovementAttempt: {
+        currentPosition: { x: 4.8, y: 5.2 },
+        candidatePosition: { x: 5.5, y: 5.2 },
+        finalAcceptedPosition: { x: 4.8, y: 5.2 },
+        headingRadians: Math.PI / 2,
+        distanceMeters: 0.7,
+        canMove: false,
+        insideWalkableArea: false,
+        insideBlockedArea: false,
+        crossedWall: false,
+        crossedBlockedArea: false,
+        rejectionReasons: ['outside-walkable-area'],
+      },
       particleFilter: {
         particles: [],
         generation: 3,
@@ -67,6 +80,8 @@ test('summarizes live sensor kinds and movement state', () => {
   assert.equal(snapshot.confidence, 0.75);
   assert.equal(snapshot.particleGeneration, 3);
   assert.equal(snapshot.destinationLabel, 'Node 4');
+  assert.equal(snapshot.latestMovementAttempt?.canMove, false);
+  assert.deepEqual(snapshot.latestMovementAttempt?.rejectionReasons, ['outside-walkable-area']);
 });
 
 test('reports unavailable data without inventing sensor values', () => {

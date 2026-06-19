@@ -28,6 +28,7 @@ export type MovementDebugSnapshot = {
   headingDegrees: number;
   confidence: number | null;
   particleGeneration: number | null;
+  latestMovementAttempt: MovementSystemState['latestMovementAttempt'] | null;
   destinationLabel: string;
 };
 
@@ -91,6 +92,7 @@ export function buildMovementDebugSnapshot({
     headingDegrees: Math.round((state.headingRadians * 180) / Math.PI),
     confidence: state.confidence ?? null,
     particleGeneration: state.particleFilter?.generation ?? null,
+    latestMovementAttempt: state.latestMovementAttempt ?? null,
     destinationLabel: destinationAvailable
       ? destinationNodeId.replace(/^node_/, 'Node ')
       : 'unavailable',

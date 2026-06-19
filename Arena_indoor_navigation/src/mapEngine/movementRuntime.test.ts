@@ -60,6 +60,16 @@ function resultFor(
     confidence: state.confidence ?? 0,
     constraintProvider: {
       canMove: () => true,
+      analyzeMove: (from, to) => ({
+        currentPosition: from,
+        candidatePosition: to,
+        canMove: true,
+        insideWalkableArea: true,
+        insideBlockedArea: false,
+        crossedWall: false,
+        crossedBlockedArea: false,
+        rejectionReasons: [],
+      }),
       isWalkable: () => true,
       distanceToWall: () => Infinity,
     },
@@ -254,4 +264,52 @@ test('repeated zero-step batches keep the actor at exactly the same position', (
   assert.deepEqual(first.position, { x: 4.8, y: 5.2 });
   assert.deepEqual(second.position, { x: 4.8, y: 5.2 });
   assert.deepEqual(third.position, { x: 4.8, y: 5.2 });
+});
+
+test('preserves the latest attempted movement diagnostics across later zero-step batches', () => {
+  const rejectionConstraints: MovementConstraintMapInput = {
+    ...constraints,
+    walkableAreas: [[
+      { x: 4.5, y: 5.0 },
+      { x: 5.0, y: 5.0 },
+      { x: 5.0, y: 5.4 },
+      { x: 4.5, y: 5.4 },
+    ]],
+  };
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  const attempted = runtime.process(
+    [
+      sample('step-1', 100, 1),
+      {
+        id: 'motion-1',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    rejectionConstraints,
+  );
+  const laterZeroStep = runtime.process(
+    [
+      {
+        id: 'motion-2',
+        kind: 'deviceMotion',
+        timestamp: 200,
+        attitude: { alpha: Math.PI / 2, beta: 0, gamma: 0 },
+      },
+    ],
+    rejectionConstraints,
+  );
+
+  assert.ok(attempted);
+  assert.ok(laterZeroStep);
+  assert.equal(attempted.state.lastStepDelta, 1);
+  assert.ok(attempted.state.latestMovementAttempt);
+  assert.equal(attempted.state.latestMovementAttempt?.canMove, false);
+  assert.deepEqual(
+    laterZeroStep.state.latestMovementAttempt,
+    attempted.state.latestMovementAttempt,
+  );
+  assert.equal(laterZeroStep.state.lastStepDelta, 0);
 });
