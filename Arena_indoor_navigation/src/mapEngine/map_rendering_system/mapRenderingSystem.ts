@@ -13,3 +13,4 @@ export type {
   VisualLayer,
 } from './mapRendererModel';
 export type { MapRenderLayout } from './ArenaMapView';
+export type { MapCoordinateSystem } from '../shared';

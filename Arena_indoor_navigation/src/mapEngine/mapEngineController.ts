@@ -1,5 +1,14 @@
-import type { LineSegment, Point, Polygon } from './mapGeometry';
-import type { MovementConstraintMapInput } from './movement_system/constraints';
+import {
+  extractMapCoordinateSystem,
+  tilesToWorldMeters,
+  type LineSegment,
+  type MapCoordinateSystem,
+  type MovementConstraintMapInput,
+  type MovementRouteGraph,
+  type Point,
+  type Polygon,
+  type RouteNode,
+} from './shared';
 
 type RawObject = Record<string, unknown>;
 
@@ -32,17 +41,27 @@ function normalizePoint(value: unknown): Point | null {
   return { x, y };
 }
 
-function normalizePolygon(value: unknown): Polygon | null {
-  const points = arrayValue(value).map(normalizePoint).filter((point): point is Point => point !== null);
-  return points.length >= 3 ? points : null;
+function normalizePolygon(value: unknown, label: string): Polygon | null {
+  const rawPoints = arrayValue(value);
+  if (rawPoints.length === 0) {
+    return null;
+  }
+  const points = rawPoints.map((point, index) => requiredPoint(point, `${label}[${index}]`));
+  if (points.length < 3) {
+    throw new Error(`${label} must contain at least three points.`);
+  }
+  return points;
 }
 
-function normalizePolygons(value: unknown): Polygon[] {
-  return arrayValue(value).map(normalizePolygon).filter((polygon): polygon is Polygon => polygon !== null);
+function normalizePolygons(value: unknown, label: string): Polygon[] {
+  return arrayValue(value)
+    .map((polygon, index) => normalizePolygon(polygon, `${label}[${index}]`))
+    .filter((polygon): polygon is Polygon => polygon !== null);
 }
 
-function normalizeLineSegment(value: unknown): LineSegment | null {
-  const points = arrayValue(value).map(normalizePoint).filter((point): point is Point => point !== null);
+function normalizeLineSegment(value: unknown, label: string): LineSegment | null {
+  const rawPoints = arrayValue(value);
+  const points = rawPoints.map((point, index) => requiredPoint(point, `${label}[${index}]`));
   if (points.length >= 2) {
     return { from: points[0], to: points[1] };
   }
@@ -50,14 +69,25 @@ function normalizeLineSegment(value: unknown): LineSegment | null {
   const source = objectValue(value);
   const from = normalizePoint(source.from);
   const to = normalizePoint(source.to);
-  return from && to ? { from, to } : null;
+  if (from && to) {
+    return { from, to };
+  }
+  if (value !== undefined && value !== null) {
+    throw new Error(`${label} must contain finite from and to points.`);
+  }
+  return null;
 }
 
-function normalizeLineSegments(value: unknown): LineSegment[] {
-  return arrayValue(value).map(normalizeLineSegment).filter((segment): segment is LineSegment => segment !== null);
+function normalizeLineSegments(value: unknown, label: string): LineSegment[] {
+  return arrayValue(value)
+    .map((segment, index) => normalizeLineSegment(segment, `${label}[${index}]`))
+    .filter((segment): segment is LineSegment => segment !== null);
 }
 
 function polygonFromBounds(value: unknown): Polygon | null {
+  if (value === undefined || value === null) {
+    return null;
+  }
   const bounds = objectValue(value);
   const x = finiteNumber(bounds.x);
   const y = finiteNumber(bounds.y);
@@ -65,7 +95,7 @@ function polygonFromBounds(value: unknown): Polygon | null {
   const height = finiteNumber(bounds.height);
 
   if (x === null || y === null || width === null || height === null || width <= 0 || height <= 0) {
-    return null;
+    throw new Error('movement.bounds must contain finite x, y, width and height values with positive size.');
   }
 
   return [
@@ -76,41 +106,31 @@ function polygonFromBounds(value: unknown): Polygon | null {
   ];
 }
 
-function tilesPerMeter(rawMapData: unknown): number {
-  const source = objectValue(rawMapData);
-  const movement = objectValue(source.movement);
-  const coordinateSystem = objectValue(movement.coordinateSystem);
-  const explicitTilesPerMeter = finiteNumber(coordinateSystem.tilesPerMeter);
-
-  if (explicitTilesPerMeter !== null && explicitTilesPerMeter > 0) {
-    return explicitTilesPerMeter;
-  }
-
-  const map = objectValue(source.map);
-  const tileSize = finiteNumber(map.tileSize);
-  const pixelsPerMeter = finiteNumber(coordinateSystem.pixelsPerMeter);
-  if (tileSize !== null && tileSize > 0 && pixelsPerMeter !== null && pixelsPerMeter > 0) {
-    return pixelsPerMeter / tileSize;
-  }
-
-  return 1;
-}
-
-function polygonFromTileRect(x: number, y: number, width: number, height: number, tileScale: number): Polygon {
+function polygonFromTileRect(
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  coordinateSystem: MapCoordinateSystem,
+): Polygon {
+  const topLeft = tilesToWorldMeters({ x, y }, coordinateSystem);
+  const bottomRight = tilesToWorldMeters({ x: x + width, y: y + height }, coordinateSystem);
   return [
-    { x: x / tileScale, y: y / tileScale },
-    { x: (x + width) / tileScale, y: y / tileScale },
-    { x: (x + width) / tileScale, y: (y + height) / tileScale },
-    { x: x / tileScale, y: (y + height) / tileScale },
+    topLeft,
+    { x: bottomRight.x, y: topLeft.y },
+    bottomRight,
+    { x: topLeft.x, y: bottomRight.y },
   ];
 }
 
-function extractBlockedAreasFromAssets(rawMapData: unknown): Polygon[] {
+function extractBlockedAreasFromAssets(
+  rawMapData: unknown,
+  coordinateSystem: MapCoordinateSystem,
+): Polygon[] {
   const source = objectValue(rawMapData);
   const assets = objectValue(source.assets);
   const layers = objectValue(source.layers);
   const display = objectValue(source.display);
-  const tileScale = tilesPerMeter(rawMapData);
   const assetManifest = new Map(
     arrayValue(assets.items).map((item) => {
       const asset = objectValue(item);
@@ -140,28 +160,71 @@ function extractBlockedAreasFromAssets(rawMapData: unknown): Polygon[] {
     if (blockedOffsets.length > 0) {
       return blockedOffsets.flatMap((offset) => {
         const point = normalizePoint(offset);
-        return point ? [polygonFromTileRect(layerX + point.x, layerY + point.y, 1, 1, tileScale)] : [];
+        return point
+          ? [polygonFromTileRect(layerX + point.x, layerY + point.y, 1, 1, coordinateSystem)]
+          : [];
       });
     }
 
     const widthTiles = finiteNumber(asset.widthTiles) ?? 1;
     const heightTiles = finiteNumber(asset.heightTiles) ?? 1;
-    return [polygonFromTileRect(layerX, layerY, widthTiles, heightTiles, tileScale)];
+    return [polygonFromTileRect(layerX, layerY, widthTiles, heightTiles, coordinateSystem)];
   });
 }
 
-export function extractMovementConstraintMapInput(rawMapData: unknown): MovementConstraintMapInput {
+export function extractMovementConstraintMapInput(
+  rawMapData: unknown,
+  validatedCoordinateSystem?: MapCoordinateSystem,
+): MovementConstraintMapInput {
   const movement = objectValue(objectValue(rawMapData).movement);
+  const coordinateSystem = validatedCoordinateSystem ?? extractMapCoordinateSystem(rawMapData);
   const boundsPolygon = polygonFromBounds(movement.bounds);
-  const walkableAreas = normalizePolygons(movement.walkableAreas);
-  const explicitBlockedAreas = normalizePolygons(movement.blockedAreas);
-  const assetBlockedAreas = extractBlockedAreasFromAssets(rawMapData);
+  const walkableAreas = normalizePolygons(movement.walkableAreas, 'movement.walkableAreas');
+  const explicitBlockedAreas = normalizePolygons(movement.blockedAreas, 'movement.blockedAreas');
+  const assetBlockedAreas = extractBlockedAreasFromAssets(rawMapData, coordinateSystem);
+  const routeGraph = normalizeRouteGraph(movement.routeGraph);
 
   return {
+    coordinateSystem,
+    routeGraph,
     walkableAreas: walkableAreas.length > 0 ? walkableAreas : boundsPolygon ? [boundsPolygon] : [],
     blockedAreas: [...explicitBlockedAreas, ...assetBlockedAreas],
-    walls: normalizeLineSegments(movement.walls),
-    doors: normalizePolygons(movement.doors),
-    corridors: normalizePolygons(movement.corridors),
+    walls: normalizeLineSegments(movement.walls, 'movement.walls'),
+    doors: normalizePolygons(movement.doors, 'movement.doors'),
+    corridors: normalizePolygons(movement.corridors, 'movement.corridors'),
   };
+}
+
+function normalizeRouteGraph(value: unknown): MovementRouteGraph {
+  const routeGraph = objectValue(value);
+  return {
+    nodes: arrayValue(routeGraph.nodes)
+      .map(normalizeRouteNode)
+      .filter((node): node is RouteNode => node !== null),
+    edges: arrayValue(routeGraph.edges),
+  };
+}
+
+function normalizeRouteNode(value: unknown, index: number): RouteNode | null {
+  const node = objectValue(value);
+  const position = normalizePoint(node.position);
+  if (!position) {
+    if (node.position === undefined || node.position === null) {
+      return null;
+    }
+    throw new Error(`movement.routeGraph.nodes[${index}].position must contain finite x and y coordinates.`);
+  }
+  return {
+    node_id: optionalString(node.node_id) ?? undefined,
+    id: optionalString(node.id) ?? undefined,
+    position,
+  };
+}
+
+function requiredPoint(value: unknown, label: string): Point {
+  const point = normalizePoint(value);
+  if (!point) {
+    throw new Error(`${label} must contain finite x and y coordinates.`);
+  }
+  return point;
 }

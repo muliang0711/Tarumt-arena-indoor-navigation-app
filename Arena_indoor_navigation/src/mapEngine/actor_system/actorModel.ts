@@ -1,27 +1,18 @@
+import type { MapCoordinateSystem, MovementRouteGraph, WorldPosition } from '../shared';
+import { worldMetersToPixels } from '../shared';
+
 export type Actor = {
   id: string;
   name: string;
   nodeId: string;
-  position: {
-    x: number;
-    y: number;
-  };
+  position: WorldPosition;
   direction: 'down' | 'left' | 'right' | 'up';
   action: 'idle' | 'run';
 };
 
 type RouteGraphMap = {
   movement: {
-    routeGraph: {
-      nodes: {
-        node_id?: string;
-        id?: string;
-        position: {
-          x: number;
-          y: number;
-        };
-      }[];
-    };
+    routeGraph: MovementRouteGraph;
   };
 };
 
@@ -41,9 +32,13 @@ export function buildBobActorAtNode(mapData: RouteGraphMap, nodeId = 'node_1'): 
   };
 }
 
-export function routeNodeToPixels(actor: Pick<Actor, 'position'>, pixelsPerMeter: number) {
+export function routeNodeToPixels(
+  actor: Pick<Actor, 'position'>,
+  coordinateSystem: MapCoordinateSystem,
+) {
+  const point = worldMetersToPixels(actor.position, coordinateSystem);
   return {
-    x: Math.round(actor.position.x * pixelsPerMeter),
-    y: Math.round(actor.position.y * pixelsPerMeter),
+    x: Math.round(point.x),
+    y: Math.round(point.y),
   };
 }

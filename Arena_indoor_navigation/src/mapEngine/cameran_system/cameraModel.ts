@@ -1,6 +1,6 @@
-import { Bounds, Point } from '../mapGeometry';
+import type { Bounds, Point } from '../shared';
 
-export type { Point } from '../mapGeometry';
+export type { Point } from '../shared';
 
 export type ViewportSize = {
   width: number;

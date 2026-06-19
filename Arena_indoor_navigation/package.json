@@ -9,7 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/mapEngine/movementRuntime.test.ts src/sensors/movementSensorCollector.test.ts"
+    "test": "tsx --test \"src/**/*.test.ts\""
   },
   "dependencies": {
     "@expo/vector-icons": "15.0.3",

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import type { RawSensorSample } from '../mapEngine/map-controller';
+import type { RawSensorSample } from '../mapEngine/shared';
 import {
   MovementSensorCollector,
   type IntervalScheduler,

@@ -1,16 +1,22 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import type { ParticleFilterSnapshot } from './movement_system/algorithms/particleTypes';
-import type { MovementConstraintMapInput } from './movement_system/constraints';
-import type {
+import {
+  MovementRuntime,
+  type MovementConstraintMapInput,
   MovementSystemResult,
   MovementSystemState,
-} from './movement_system/indoorposition_engine';
-import type { RawSensorSample } from './movement_system/sensor/sensorTypes';
-import { MovementRuntime, type MovementUpdateFunction } from './movementRuntime';
+  type MovementUpdateFunction,
+  type RawSensorSample,
+} from './movement_system';
+import { extractMapCoordinateSystem } from './shared';
 
 const constraints: MovementConstraintMapInput = {
+  coordinateSystem: extractMapCoordinateSystem({
+    map: { tileSize: 16 },
+    movement: { coordinateSystem: { unit: 'meter', pixelsPerMeter: 40, tilesPerMeter: 2.5 } },
+  }),
+  routeGraph: { nodes: [], edges: [] },
   walkableAreas: [],
   blockedAreas: [],
   walls: [],
@@ -39,7 +45,7 @@ function resultFor(
     confidence: 0.9,
     bestParticle: null,
     totalWeight: 1,
-  } satisfies ParticleFilterSnapshot;
+  } satisfies MovementSystemResult['particleFilter'];
   const state: MovementSystemState = {
     position: { x: generation, y: generation },
     headingRadians: 0,

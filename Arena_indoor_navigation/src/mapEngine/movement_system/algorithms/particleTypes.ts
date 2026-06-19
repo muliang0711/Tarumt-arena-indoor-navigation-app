@@ -1,9 +1,7 @@
 import type { MotionEstimate } from '../estimate/motionEstimate';
+import type { WorldPosition } from '../../shared';
 
-export interface WorldPosition {
-  readonly x: number;
-  readonly y: number;
-}
+export type { WorldPosition } from '../../shared';
 
 export interface ParticleMotionSnapshot {
   readonly previousPosition: WorldPosition;

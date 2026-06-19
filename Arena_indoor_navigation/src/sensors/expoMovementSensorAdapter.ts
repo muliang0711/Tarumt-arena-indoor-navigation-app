@@ -10,7 +10,7 @@ import {
   type MagnetometerMeasurement,
 } from 'expo-sensors';
 
-import type { RawSensorSample } from '../mapEngine/map-controller';
+import type { RawSensorSample } from '../mapEngine/shared';
 import type { MovementSensorAdapter, SensorSubscription } from './movementSensorCollector';
 
 const UPDATE_INTERVAL_MS = 100;

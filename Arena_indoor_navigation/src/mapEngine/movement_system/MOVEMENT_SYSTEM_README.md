@@ -4,6 +4,12 @@
 
 This system is not designed for game-style keyboard movement. It is designed for indoor positioning, where phone sensors are collected, cleaned, estimated, corrected by positioning algorithms, constrained by map rules, and finally used to update the user actor position.
 
+## Official public API
+
+`movement_system/index.ts` is the only supported import path for files outside this subsystem. It exports the movement runtime, update function, constraint-provider factory, required state/result types, and neutral shared input contracts. Algorithms, estimates, preprocessing, constraint implementations, particle types, and sensor compatibility files remain private.
+
+Movement depends on `../shared` for geometry, sensor samples, world positions, coordinate metadata, route data, and movement constraint input. It does not import actor, camera, or rendering code.
+
 No real movement logic, sensor logic, collision logic, rendering logic, or positioning algorithms have been implemented yet.
 
 ## Folder Tree
@@ -190,6 +196,10 @@ renderer/
 `indoorposition_engine.ts` orchestrates the full pipeline and produces the final estimated position that can be applied to the user actor.
 
 `ArenaMapEngineView` owns the persistent `MovementSystemState` through `MovementRuntime`. Each accepted batch receives the exact state returned by the previous batch, including particle-filter generation and pedometer step count. Empty, duplicate, invalid, and older batches are ignored. The runtime resets only when the map or starting route node changes.
+
+## Coordinate invariant
+
+All movement-system geometry is world-space meters. Route nodes, constraints, motion estimates, particle positions, and final positions must never be converted to pixels inside this subsystem. Meter-to-pixel conversion belongs to actor rendering and camera targeting.
 
 ## Boundary With `collision/`
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import type { RawSensorSample } from '../mapEngine/map-controller';
+import type { RawSensorSample } from '../mapEngine/shared';
 import { expoMovementSensorAdapter } from './expoMovementSensorAdapter';
 import { MovementSensorCollector } from './movementSensorCollector';
 

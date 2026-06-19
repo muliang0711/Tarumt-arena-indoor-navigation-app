@@ -1,12 +1,6 @@
-import type { LineSegment, Point, Polygon } from '../../mapGeometry';
+import type { Point } from '../../shared';
 
-export type MovementConstraintMapInput = {
-  walkableAreas: Polygon[];
-  blockedAreas?: Polygon[];
-  walls: LineSegment[];
-  doors?: Polygon[];
-  corridors?: Polygon[];
-};
+export type { MovementConstraintMapInput } from '../../shared';
 
 export interface MovementConstraintProvider {
   isWalkable(point: Point): boolean;

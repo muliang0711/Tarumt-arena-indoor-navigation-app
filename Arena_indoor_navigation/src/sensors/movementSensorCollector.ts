@@ -1,4 +1,4 @@
-import type { RawSensorSample } from '../mapEngine/map-controller';
+import type { RawSensorSample } from '../mapEngine/shared';
 
 export type SensorSubscription = {
   remove(): void;

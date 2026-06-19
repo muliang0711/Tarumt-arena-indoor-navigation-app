@@ -4,7 +4,7 @@
 
 ## `map-controller.ts`
 
-Public export surface for the map engine. Screens should import map engine UI from here instead of reaching into subsystem folders.
+Page-safe export surface for the map engine. It exposes `ArenaMapEngineView` and its input types. Screens must not use this facade to reach low-level rendering or movement helpers.
 
 ## `ArenaMapEngineView.tsx`
 
@@ -29,6 +29,46 @@ Expo phone sensors
 
 Empty batches, duplicate sample IDs, invalid timestamps, and samples older than the last processed timestamp do not trigger movement updates. A map or starting-node change clears the particle filter and step history, restores the actor to the selected route node, and marks the batch present at the reset boundary as already consumed.
 
+## Shared contracts and coordinates
+
+`shared/` is the neutral dependency root for map-engine contracts. It imports no React, React Native, Expo, or subsystem code. Actor, camera, rendering, movement, sensor adapters, and the orchestrator may depend on it.
+
+The authoritative `MapCoordinateSystem` validates:
+
+- world unit is `meter`;
+- origin is `top-left`;
+- `pixelsPerMeter`, tile size, `tilesPerMeter`, and `metersPerTile` are finite and positive;
+- `pixelsPerMeter = tileSizePixels × tilesPerMeter`;
+- `metersPerTile = 1 / tilesPerMeter`.
+
+Backward-compatible defaults are listed in `coordinateSystem.fallbacks`; unsupported units and contradictory metadata throw errors.
+
+Logical values remain in meters:
+
+- route nodes;
+- movement positions and particle positions;
+- walkable and blocked polygons;
+- walls, doors, and corridors;
+- actor positions.
+
+Pixel conversion occurs only for actor rendering and camera targeting through `worldMetersToPixels`. Visual-layer tile placement uses `tilesToPixels`. Visual bounds offsets are applied only by rendering and camera code.
+
+## Intentional dual map projections
+
+Rendering and movement intentionally extract different projections from the same raw map. `ArenaMapEngineView` validates coordinate metadata once and passes the same `MapCoordinateSystem` object into both extractors.
+
+```text
+map.json
+   -> shared coordinate validation
+   -> MapCoordinateSystem
+      -> render projection
+         -> visual layers/assets/bounds converted to pixels for display
+      -> movement projection
+         -> route graph and constraints retained in meters
+```
+
+The extractors must remain separate. Rendering does not own movement constraints, and movement does not depend on rendering models.
+
 ## `map_rendering_system/`
 
 Owns static map rendering only.
@@ -52,7 +92,15 @@ Movement can later update actor positions, but it should not render actors direc
 
 ## `movement_system/`
 
-Owns movement estimation and future path updates. It should output positions or actor state updates; actor rendering remains in `actor_system`.
+Owns movement estimation and persistent movement updates. `movement_system/index.ts` is its official external API. Files outside the subsystem must not import its internal algorithms, constraints, estimates, preprocessing, sensors, or engine file directly.
+
+The public API includes:
+
+- `MovementRuntime`;
+- `updateMovementSystem`;
+- `createMovementConstraintProvider`;
+- movement state/result and constraint-provider types;
+- shared movement input, sensor batch, and world-position contracts.
 
 ## `cameran_system/`
 

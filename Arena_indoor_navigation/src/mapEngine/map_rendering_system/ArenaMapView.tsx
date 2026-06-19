@@ -2,6 +2,7 @@ import { ReactNode, useMemo } from 'react';
 import { Image, StyleSheet, View } from 'react-native';
 
 import { mapAssetRegistry } from './mapAssetRegistry';
+import { tilesToPixels } from '../shared';
 import {
   Bounds,
   getVisualBounds,
@@ -30,6 +31,7 @@ export function ArenaMapView({ mapData, renderOverlay }: ArenaMapViewProps) {
         if (!asset || !source) {
           return null;
         }
+        const placement = tilesToPixels(layer, scene.mapData.coordinateSystem);
         return (
           <Image
             key={layer.id}
@@ -38,8 +40,8 @@ export function ArenaMapView({ mapData, renderOverlay }: ArenaMapViewProps) {
             style={[
               styles.mapAsset,
               {
-                left: layer.x * scene.mapData.tileSize - scene.bounds.x,
-                top: layer.y * scene.mapData.tileSize - scene.bounds.y,
+                left: placement.x - scene.bounds.x,
+                top: placement.y - scene.bounds.y,
                 width: asset.widthPixels,
                 height: asset.heightPixels,
               },

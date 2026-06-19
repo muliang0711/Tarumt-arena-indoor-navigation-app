@@ -1,19 +1,23 @@
 import { updateParticleFilterState, createParticleFilterState } from './algorithms/particleFilter';
-import type { ParticleFilterSnapshot, WorldPosition } from './algorithms/particleTypes';
+import type { ParticleFilterSnapshot } from './algorithms/particleTypes';
+import type {
+  MovementConstraintMapInput,
+  RawSensorSample,
+  WorldPosition,
+} from '../shared';
 import {
   createMovementConstraintProvider,
   isParticlePositionValid,
-  type MovementConstraintMapInput,
   type MovementConstraintProvider,
 } from './constraints';
 import { createHeadingEstimateFromRadians } from './estimate/headingEstimate';
 import { createMotionEstimate } from './estimate/motionEstimate';
 import { createStepEstimateFromCount } from './estimate/stepEstimate';
 import { normalizeSensorSample } from './preprocessing/normalizeSensorSample';
-import type { DeviceMotionSample, PedometerStepSample, RawSensorSample } from './sensor/sensorTypes';
+import type { DeviceMotionSample, PedometerStepSample } from './sensor/sensorTypes';
 
 export { createMovementConstraintProvider };
-export type { MovementConstraintMapInput, MovementConstraintProvider };
+export type { MovementConstraintMapInput, MovementConstraintProvider, RawSensorSample, WorldPosition };
 
 export type MovementSystemState = {
   position: WorldPosition;

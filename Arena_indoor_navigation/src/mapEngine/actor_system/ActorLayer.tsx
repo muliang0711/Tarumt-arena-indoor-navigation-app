@@ -1,6 +1,6 @@
 import { Image, StyleSheet } from 'react-native';
 
-import { Bounds } from '../mapGeometry';
+import type { Bounds, MapCoordinateSystem } from '../shared';
 import { bobActorAssets } from './actorAssetRegistry';
 import { Actor, routeNodeToPixels } from './actorModel';
 
@@ -11,16 +11,16 @@ type ActorLayerLayout = {
 type ActorLayerProps = {
   actors: Actor[];
   layout: ActorLayerLayout;
-  pixelsPerMeter: number;
+  coordinateSystem: MapCoordinateSystem;
 };
 
 const BOB_SIZE = 32;
 
-export function ActorLayer({ actors, layout, pixelsPerMeter }: ActorLayerProps) {
+export function ActorLayer({ actors, layout, coordinateSystem }: ActorLayerProps) {
   return (
     <>
       {actors.map((actor) => {
-        const point = routeNodeToPixels(actor, pixelsPerMeter);
+        const point = routeNodeToPixels(actor, coordinateSystem);
         return (
           <Image
             key={actor.id}

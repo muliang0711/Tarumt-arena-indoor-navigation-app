@@ -1,4 +1,4 @@
-import type { LineSegment, Point, Polygon } from '../../mapGeometry';
+import type { LineSegment, Point, Polygon } from '../../shared';
 import type { MovementConstraintMapInput, MovementConstraintProvider } from './movementConstraintTypes';
 
 const EPSILON = 0.000001;

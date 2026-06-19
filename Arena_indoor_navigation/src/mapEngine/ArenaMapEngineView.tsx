@@ -11,10 +11,13 @@ import {
   zoomCamera,
 } from './cameran_system/cameranSystem';
 import { extractMovementConstraintMapInput } from './mapEngineController';
-import { MovementRuntime } from './movementRuntime';
 import { ArenaMapView, getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRenderingSystem';
-import { updateMovementSystem } from './movement_system/indoorposition_engine';
-import type { RawSensorSample } from './movement_system/sensor/sensorTypes';
+import {
+  MovementRuntime,
+  updateMovementSystem,
+  type RawSensorSample,
+} from './movement_system';
+import { extractMapCoordinateSystem } from './shared';
 
 type ArenaMapEngineViewProps = {
   mapData?: unknown;
@@ -35,12 +38,22 @@ export function ArenaMapEngineView({
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
   const [isFollowingBob, setIsFollowingBob] = useState(true);
-  const mapData = useMemo(() => normalizeMapSchema(rawMapData), [rawMapData]);
+  const coordinateSystem = useMemo(
+    () => extractMapCoordinateSystem(rawMapData),
+    [rawMapData],
+  );
+  const mapData = useMemo(
+    () => normalizeMapSchema(rawMapData, coordinateSystem),
+    [coordinateSystem, rawMapData],
+  );
   const startingActor = useMemo(
     () => buildBobActorAtNode(mapData, startingNodeId),
     [mapData, startingNodeId],
   );
-  const constraintMapInput = useMemo(() => extractMovementConstraintMapInput(rawMapData), [rawMapData]);
+  const constraintMapInput = useMemo(
+    () => extractMovementConstraintMapInput(rawMapData, coordinateSystem),
+    [coordinateSystem, rawMapData],
+  );
   const movementRuntimeRef = useRef<MovementRuntime | null>(null);
   if (movementRuntimeRef.current === null) {
     movementRuntimeRef.current = new MovementRuntime(startingActor.position, updateMovementSystem);
@@ -71,8 +84,8 @@ export function ArenaMapEngineView({
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
   const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);
   const bobPoint = useMemo(
-    () => routeNodeToPixels(actors[0], mapData.movement.coordinateSystem.pixelsPerMeter),
-    [actors, mapData.movement.coordinateSystem.pixelsPerMeter],
+    () => routeNodeToPixels(actors[0], mapData.coordinateSystem),
+    [actors, mapData.coordinateSystem],
   );
   const initialCamera = useMemo(() => createInitialCameraState(bounds, viewportSize), [bounds, viewportSize]);
   const applyFollowTarget = useCallback(
@@ -136,7 +149,7 @@ export function ArenaMapEngineView({
             <ActorLayer
               actors={actors}
               layout={layout}
-              pixelsPerMeter={mapData.movement.coordinateSystem.pixelsPerMeter}
+              coordinateSystem={mapData.coordinateSystem}
             />
           )}
         />
