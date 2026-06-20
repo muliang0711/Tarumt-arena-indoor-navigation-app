@@ -18,7 +18,9 @@ import com.hyandlh.tarumtarenanavigation.core.model.TrackingState
 import com.hyandlh.tarumtarenanavigation.databinding.ActivityMainBinding
 import com.hyandlh.tarumtarenanavigation.feature.tracking.LogPanelDialogFragment
 import com.hyandlh.tarumtarenanavigation.feature.tracking.TrackingViewModel
+import com.hyandlh.tarumtarenanavigation.feature.tracking.TransitionState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -140,19 +142,21 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
+                // Single source of truth for the Pause/Resume button to prevent conflicting labels
                 launch {
-                    viewModel.isPaused.collect { isPaused ->
-                        updatePauseResumeButton(isPaused)
-                    }
-                }
-
-                launch {
-                    viewModel.isPausingOrResuming.collect { transitioning ->
-                        binding.pauseResumeButton.isEnabled = !transitioning
-                        if (transitioning) {
-                            val textRes = if (viewModel.isPaused.value) R.string.resuming_scanning else R.string.pausing_scanning
-                            binding.pauseResumeButton.setText(textRes)
+                    combine(viewModel.isPaused, viewModel.transitionState) { isPaused, transition ->
+                        isPaused to transition
+                    }.collect { (isPaused, transition) ->
+                        binding.pauseResumeButton.isEnabled = transition == TransitionState.NONE
+                        
+                        val textRes = when (transition) {
+                            TransitionState.PAUSING -> R.string.pausing_scanning
+                            TransitionState.RESUMING -> R.string.resuming_scanning
+                            TransitionState.NONE -> {
+                                if (isPaused) R.string.resume_scanning else R.string.pause_scanning
+                            }
                         }
+                        binding.pauseResumeButton.setText(textRes)
                     }
                 }
             }
@@ -192,13 +196,6 @@ class MainActivity : AppCompatActivity() {
                 binding.pauseResumeButton.visibility = View.VISIBLE
             }
             else -> {}
-        }
-    }
-
-    private fun updatePauseResumeButton(isPaused: Boolean) {
-        if (!viewModel.isPausingOrResuming.value) {
-            val textRes = if (isPaused) R.string.resume_scanning else R.string.pause_scanning
-            binding.pauseResumeButton.setText(textRes)
         }
     }
 

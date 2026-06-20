@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hyandlh.tarumtarenanavigation.R
 import com.hyandlh.tarumtarenanavigation.databinding.DialogLogPanelBinding
 import kotlinx.coroutines.launch
@@ -26,7 +27,6 @@ class LogPanelDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Make it look like a floating panel
         setStyle(STYLE_NORMAL, R.style.Theme_TARUMTArenaNavigation)
     }
 
@@ -52,9 +52,8 @@ class LogPanelDialogFragment : DialogFragment() {
 
     private fun setupRecyclerViews() {
         binding.logRecyclerView.apply {
-            layoutManager = LinearLayoutManager(context).apply {
-                stackFromEnd = true // Keep newest logs at the bottom
-            }
+            // Standard top-down layout manager
+            layoutManager = LinearLayoutManager(context)
             adapter = logAdapter
         }
 
@@ -69,9 +68,11 @@ class LogPanelDialogFragment : DialogFragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.logs.collect { logs ->
+                        val wasAtBottom = isAtBottom()
                         logAdapter.submitList(logs) {
-                            // Auto-scroll to bottom when new logs arrive
-                            if (logs.isNotEmpty()) {
+                            // If the user has manually scrolled up to read, do NOT move the view.
+                            // Only auto-scroll to the bottom if they were already there.
+                            if (wasAtBottom && logs.isNotEmpty()) {
                                 binding.logRecyclerView.scrollToPosition(logs.size - 1)
                             }
                         }
@@ -85,6 +86,14 @@ class LogPanelDialogFragment : DialogFragment() {
                 }
             }
         }
+    }
+
+    /**
+     * Detects if the user is currently at the bottom of the log list.
+     */
+    private fun isAtBottom(): Boolean {
+        // canScrollVertically(1) returns false if the view cannot be scrolled down further.
+        return !binding.logRecyclerView.canScrollVertically(1)
     }
 
     override fun onStart() {

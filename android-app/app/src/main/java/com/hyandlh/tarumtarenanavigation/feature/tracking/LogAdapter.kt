@@ -11,6 +11,13 @@ import com.hyandlh.tarumtarenanavigation.databinding.ItemLogBinding
 
 class LogAdapter : ListAdapter<LogEntry, LogAdapter.LogViewHolder>(LogDiffCallback()) {
 
+    init {
+        // Essential for preventing layout shifts when items are removed from the top
+        setHasStableIds(true)
+    }
+
+    override fun getItemId(position: Int): Long = getItem(position).id
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LogViewHolder {
         val binding = ItemLogBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return LogViewHolder(binding)
@@ -35,7 +42,8 @@ class LogAdapter : ListAdapter<LogEntry, LogAdapter.LogViewHolder>(LogDiffCallba
 
     private class LogDiffCallback : DiffUtil.ItemCallback<LogEntry>() {
         override fun areItemsTheSame(oldItem: LogEntry, newItem: LogEntry): Boolean =
-            oldItem.timestamp == newItem.timestamp && oldItem.message == newItem.message
-        override fun areContentsTheSame(oldItem: LogEntry, newItem: LogEntry): Boolean = oldItem == newItem
+            oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: LogEntry, newItem: LogEntry): Boolean = 
+            oldItem == newItem
     }
 }
