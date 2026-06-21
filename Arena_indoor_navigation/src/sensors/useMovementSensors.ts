@@ -146,6 +146,7 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
         capacity: 128,
         batchIntervalMs: 250,
         onDiagnostic: setCollectorDiagnostic,
+        flushFirstSampleImmediately: selectedAdapter === realAdapter,
       },
     );
     activeCollectorRef.current = collector;

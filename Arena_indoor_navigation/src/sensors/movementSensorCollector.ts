@@ -33,6 +33,7 @@ export type MovementSensorCollectorOptions = {
   scheduler?: IntervalScheduler;
   now?: () => number;
   onDiagnostic?: (diagnostic: MovementSensorCollectorDiagnostic) => void;
+  flushFirstSampleImmediately?: boolean;
 };
 
 const defaultScheduler: IntervalScheduler = {
@@ -53,6 +54,7 @@ export class MovementSensorCollector {
   private readonly scheduler: IntervalScheduler;
   private readonly now: () => number;
   private readonly onDiagnostic?: (diagnostic: MovementSensorCollectorDiagnostic) => void;
+  private readonly flushFirstSampleImmediately: boolean;
   private pendingSamples: RawSensorSample[] = [];
   private subscriptions: readonly SensorSubscription[] = [];
   private intervalHandle: unknown;
@@ -77,6 +79,8 @@ export class MovementSensorCollector {
     this.scheduler = options.scheduler ?? defaultScheduler;
     this.now = options.now ?? (() => Date.now());
     this.onDiagnostic = options.onDiagnostic;
+    this.flushFirstSampleImmediately =
+      options.flushFirstSampleImmediately ?? false;
   }
 
   async start(): Promise<void> {
@@ -167,7 +171,7 @@ export class MovementSensorCollector {
       });
     }
     this.pendingSamples = [...this.pendingSamples, sample].slice(-this.capacity);
-    if (!this.hasEmittedBatch) {
+    if (this.flushFirstSampleImmediately && !this.hasEmittedBatch) {
       this.flush();
     }
   }

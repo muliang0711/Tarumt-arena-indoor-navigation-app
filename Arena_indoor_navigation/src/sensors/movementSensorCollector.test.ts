@@ -67,9 +67,8 @@ test('creates subscriptions once, removes them on cleanup, and bounds pending sa
   assert.equal(collector.getBufferedSampleCount(), 3);
 
   scheduler.tick();
-  assert.equal(batches.length, 2);
-  assert.deepEqual(batches[0].map((item) => item.id), ['step-1']);
-  assert.deepEqual(batches[1].map((item) => item.id), ['step-3', 'step-4', 'step-5']);
+  assert.equal(batches.length, 1);
+  assert.deepEqual(batches[0].map((item) => item.id), ['step-3', 'step-4', 'step-5']);
   assert.equal(collector.getBufferedSampleCount(), 0);
 
   collector.stop();
@@ -114,7 +113,11 @@ test('emits the first valid sample immediately and batches later samples on the 
   const collector = new MovementSensorCollector(
     adapter,
     (batch) => batches.push(batch),
-    { batchIntervalMs: 250, scheduler },
+    {
+      batchIntervalMs: 250,
+      scheduler,
+      flushFirstSampleImmediately: true,
+    },
   );
 
   await collector.start();
@@ -147,6 +150,7 @@ test('reports collector startup and first-delivery timestamps', async () => {
     {
       now: () => now,
       onDiagnostic: (diagnostic) => diagnostics.push(diagnostic),
+      flushFirstSampleImmediately: true,
     },
   );
 
