@@ -7,6 +7,8 @@ import {
   buildBobActorAtNode,
   deriveActorMotionState,
   routeNodeToPixels,
+  shouldContinueActorSmoothing,
+  stepActorRenderPosition,
 } from './actor_system/actorSystem';
 import {
   CameraViewport,
@@ -59,6 +61,7 @@ type ArenaMapEngineViewProps = {
 
 const defaultMapData = require('../storage/map-assets/map.json');
 const EMPTY_SENSOR_SAMPLES: readonly RawSensorSample[] = Object.freeze([]);
+const ACTOR_RENDER_SPEED_METERS_PER_SECOND = 2.8;
 
 export function ArenaMapEngineView({
   mapData: rawMapData = defaultMapData,
@@ -115,7 +118,12 @@ export function ArenaMapEngineView({
     movementRuntimeRef.current = new MovementRuntime(startingActor.position, updateMovementSystem);
   }
   const [actorPosition, setActorPosition] = useState(startingActor.position);
-  const previousActorPositionRef = useRef(startingActor.position);
+  const [displayActorPosition, setDisplayActorPosition] = useState(startingActor.position);
+  const displayActorPositionRef = useRef(startingActor.position);
+  const logicalActorPositionRef = useRef(startingActor.position);
+  const previousPositionRef = useRef(startingActor.position);
+  const smoothingFrameRef = useRef<number | null>(null);
+  const smoothingTimestampRef = useRef<number | null>(null);
   const [pedometerBaselineSteps, setPedometerBaselineSteps] = useState<number | null>(
     latestKnownPedometerSteps,
   );
@@ -136,18 +144,38 @@ export function ArenaMapEngineView({
     sensorSamplesRef.current = sensorSamples;
   }, [sensorSamples]);
 
+  useEffect(() => {
+    logicalActorPositionRef.current = actorPosition;
+  }, [actorPosition]);
+
+  useEffect(() => {
+    displayActorPositionRef.current = displayActorPosition;
+  }, [displayActorPosition]);
+
+  const stopActorSmoothing = useCallback(() => {
+    if (smoothingFrameRef.current !== null) {
+      cancelAnimationFrame(smoothingFrameRef.current);
+      smoothingFrameRef.current = null;
+    }
+    smoothingTimestampRef.current = null;
+  }, []);
+
   const applyNavigationReset = useCallback(
     (
       status: MovementProcessingStatus,
       resetSamples: readonly RawSensorSample[],
       baselineSteps: number | null,
     ) => {
+      stopActorSmoothing();
       movementRuntimeRef.current?.reset(startingActor.position, {
         samplesToIgnore: resetSamples,
         previousStepCount: baselineSteps ?? undefined,
       });
-      previousActorPositionRef.current = startingActor.position;
+      logicalActorPositionRef.current = startingActor.position;
+      displayActorPositionRef.current = startingActor.position;
+      previousPositionRef.current = startingActor.position;
       setActorPosition(startingActor.position);
+      setDisplayActorPosition(startingActor.position);
       setBobMotionState({
         direction: startingActor.direction,
         action: 'idle',
@@ -155,7 +183,7 @@ export function ArenaMapEngineView({
       setPedometerBaselineSteps(baselineSteps);
       setProcessingStatus(status);
     },
-    [startingActor.direction, startingActor.position],
+    [startingActor.direction, startingActor.position, stopActorSmoothing],
   );
 
   useEffect(() => {
@@ -189,35 +217,91 @@ export function ArenaMapEngineView({
   useEffect(() => {
     const movementUpdate = movementRuntimeRef.current?.process(sensorSamples, constraintMapInput);
     if (movementUpdate) {
-      const nextPosition = movementUpdate.position;
-      setBobMotionState(
-        deriveActorMotionState(startingActor, {
-          x: nextPosition.x - previousActorPositionRef.current.x,
-          y: nextPosition.y - previousActorPositionRef.current.y,
-        }),
-      );
-      previousActorPositionRef.current = nextPosition;
       setActorPosition(movementUpdate.position);
       setProcessingStatus('processed');
       return;
     }
-    setBobMotionState((currentMotionState) => ({
-      direction: currentMotionState.direction,
-      action: 'idle',
-    }));
     setProcessingStatus(sensorSamples.length > 0 ? 'ignored' : 'waiting');
   }, [constraintMapInput, sensorSamples]);
+
+  useEffect(() => {
+    if (!shouldContinueActorSmoothing(displayActorPositionRef.current, actorPosition)) {
+      if (
+        displayActorPositionRef.current.x !== actorPosition.x ||
+        displayActorPositionRef.current.y !== actorPosition.y
+      ) {
+        displayActorPositionRef.current = actorPosition;
+        previousPositionRef.current = actorPosition;
+        setDisplayActorPosition(actorPosition);
+      }
+      setBobMotionState((currentMotionState) => ({
+        direction: currentMotionState.direction,
+        action: 'idle',
+      }));
+      stopActorSmoothing();
+      return;
+    }
+
+    if (smoothingFrameRef.current !== null) {
+      return;
+    }
+
+    const stepFrame = (timestamp: number) => {
+      const previousTimestamp = smoothingTimestampRef.current ?? timestamp;
+      smoothingTimestampRef.current = timestamp;
+      const elapsedMs = Math.max(16, timestamp - previousTimestamp);
+      const maxDistanceMeters =
+        (ACTOR_RENDER_SPEED_METERS_PER_SECOND * elapsedMs) / 1000;
+      const currentDisplayPosition = displayActorPositionRef.current;
+      const targetPosition = logicalActorPositionRef.current;
+      const nextDisplayPosition = stepActorRenderPosition(
+        currentDisplayPosition,
+        targetPosition,
+        maxDistanceMeters,
+      );
+      const renderDelta = {
+        x: nextDisplayPosition.x - currentDisplayPosition.x,
+        y: nextDisplayPosition.y - currentDisplayPosition.y,
+      };
+
+      displayActorPositionRef.current = nextDisplayPosition;
+      previousPositionRef.current = nextDisplayPosition;
+      setDisplayActorPosition(nextDisplayPosition);
+      setBobMotionState((currentMotionState) =>
+        deriveActorMotionState(currentMotionState, renderDelta),
+      );
+
+      if (shouldContinueActorSmoothing(nextDisplayPosition, targetPosition)) {
+        smoothingFrameRef.current = requestAnimationFrame(stepFrame);
+        return;
+      }
+
+      stopActorSmoothing();
+      displayActorPositionRef.current = targetPosition;
+      previousPositionRef.current = targetPosition;
+      setDisplayActorPosition(targetPosition);
+      setBobMotionState((currentMotionState) => ({
+        direction: currentMotionState.direction,
+        action: 'idle',
+      }));
+    };
+
+    smoothingFrameRef.current = requestAnimationFrame(stepFrame);
+    return stopActorSmoothing;
+  }, [actorPosition, stopActorSmoothing]);
+
+  useEffect(() => stopActorSmoothing, [stopActorSmoothing]);
 
   const actors = useMemo(
     () => [
       {
         ...startingActor,
-        position: actorPosition,
+        position: displayActorPosition,
         direction: bobMotionState.direction,
         action: bobMotionState.action,
       },
     ],
-    [actorPosition, bobMotionState.action, bobMotionState.direction, startingActor],
+    [bobMotionState.action, bobMotionState.direction, displayActorPosition, startingActor],
   );
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
   const unwalkableOverlay = useMemo(
