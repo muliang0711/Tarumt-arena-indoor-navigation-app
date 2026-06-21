@@ -1,20 +1,28 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
 
+import { MapInstructionOverlay } from '../components/navigation/MapInstructionOverlay';
 import { colors, radius, shadow } from '../components/theme';
 import {
   ActorLayer,
+  appendActorMovementTargets,
   buildBobActorAtNode,
+  consumeActorMovementTarget,
+  createActorMovementQueue,
   deriveActorMotionState,
   routeNodeToPixels,
+  shortestHeadingDelta,
   shouldContinueActorSmoothing,
   stepActorRenderPosition,
+  stepHeadingToward,
+  type ActorDirection,
+  type ActorMovementTarget,
 } from './actor_system/actorSystem';
 import {
   CameraViewport,
   centerCameraOnPoint,
-  createInitialCameraState,
   isFollowingBob,
+  setCameraZoom,
   toggleCameraFollowMode,
   zoomCamera,
   type CameraFollowMode,
@@ -41,14 +49,54 @@ import {
   type NavigationDestinationId,
   type MovementProcessingStatus,
 } from './debugger';
+import {
+  buildNavigationGuidance,
+  buildRoutePolyline,
+} from './navigation_guidance';
 import { extractMovementConstraintMapInput } from './mapEngineController';
-import { ArenaMapView, getVisualBounds, normalizeMapSchema } from './map_rendering_system/mapRenderingSystem';
+import {
+  ArenaMapView,
+  getVisualBounds,
+  normalizeMapSchema,
+} from './map_rendering_system/mapRenderingSystem';
 import {
   MovementRuntime,
   updateMovementSystem,
   type RawSensorSample,
 } from './movement_system';
 import { extractMapCoordinateSystem } from './shared';
+
+export type ArenaMapNavigationSnapshot = {
+  destinationLabel: string;
+  remainingDistanceMeters: number;
+  estimatedTimeSeconds: number;
+  estimatedSteps: number;
+  nextStep: string;
+  hasRoute: boolean;
+};
+
+export type ArenaMapDeveloperToolsSnapshot = {
+  debugSnapshot: Parameters<typeof MovementDebugPanel>[0]['snapshot'];
+  navigationState: Parameters<typeof NavigationDebugPanel>[0]['state'];
+  selectableDestinations: readonly {
+    nodeId: NavigationDestinationId;
+    available: boolean;
+  }[];
+  onSelectDestination: (destination: NavigationDestinationId) => void;
+  onCalculateRoute: () => void;
+  onClearRoute: () => void;
+  onToggleUnwalkable: () => void;
+  onResetNavigation: () => void;
+};
+
+export type ArenaMapViewportControlsSnapshot = {
+  floorLabel: string;
+  followsBob: boolean;
+  onZoomIn: () => void;
+  onZoomOut: () => void;
+  onToggleFollowBob: () => void;
+  onRecenter: () => void;
+};
 
 type ArenaMapEngineViewProps = {
   mapData?: unknown;
@@ -57,11 +105,59 @@ type ArenaMapEngineViewProps = {
   startingNodeId?: string;
   height?: number;
   resetSignal?: number;
+  onNavigationStateChange?: (snapshot: ArenaMapNavigationSnapshot) => void;
+  onDeveloperToolsStateChange?: (snapshot: ArenaMapDeveloperToolsSnapshot | null) => void;
+  onViewportControlsStateChange?: (snapshot: ArenaMapViewportControlsSnapshot | null) => void;
 };
 
 const defaultMapData = require('../storage/map-assets/map.json');
 const EMPTY_SENSOR_SAMPLES: readonly RawSensorSample[] = Object.freeze([]);
 const ACTOR_RENDER_SPEED_METERS_PER_SECOND = 2.8;
+const HEADING_RENDER_SPEED_RADIANS_PER_SECOND = Math.PI * 4;
+const DEFAULT_STEP_LENGTH_METERS = 0.7;
+const FOLLOW_VISIBLE_HEIGHT_METERS = 9.5;
+const FOLLOW_VISIBLE_WIDTH_METERS = 8;
+const FREE_LOOK_VISIBLE_HEIGHT_METERS = 13;
+const FREE_LOOK_VISIBLE_WIDTH_METERS = 11;
+
+function directionToHeadingRadians(direction: ActorDirection): number {
+  switch (direction) {
+    case 'up':
+      return -Math.PI / 2;
+    case 'down':
+      return Math.PI / 2;
+    case 'left':
+      return Math.PI;
+    default:
+      return 0;
+  }
+}
+
+function destinationLabelFor(nodeId: string): string {
+  return nodeId.replace(/^node_/, 'Node ');
+}
+
+function createNavigationViewportCamera(
+  point: { x: number; y: number },
+  viewport: { width: number; height: number },
+  pixelsPerMeter: number,
+  visibleWidthMeters: number,
+  visibleHeightMeters: number,
+): CameraState {
+  const widthScale = viewport.width / Math.max(1, visibleWidthMeters * pixelsPerMeter);
+  const heightScale = viewport.height / Math.max(1, visibleHeightMeters * pixelsPerMeter);
+  const scale = Math.max(0.9, Math.min(4, Math.max(widthScale, heightScale)));
+
+  return centerCameraOnPoint(
+    {
+      scale,
+      offsetX: 0,
+      offsetY: 0,
+    },
+    point,
+    viewport,
+  );
+}
 
 export function ArenaMapEngineView({
   mapData: rawMapData = defaultMapData,
@@ -70,6 +166,9 @@ export function ArenaMapEngineView({
   startingNodeId = 'node_1',
   height = 390,
   resetSignal = 0,
+  onNavigationStateChange,
+  onDeveloperToolsStateChange,
+  onViewportControlsStateChange,
 }: ArenaMapEngineViewProps) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
@@ -119,11 +218,22 @@ export function ArenaMapEngineView({
   }
   const [actorPosition, setActorPosition] = useState(startingActor.position);
   const [displayActorPosition, setDisplayActorPosition] = useState(startingActor.position);
+  const [renderTargetPosition, setRenderTargetPosition] = useState(startingActor.position);
   const displayActorPositionRef = useRef(startingActor.position);
   const logicalActorPositionRef = useRef(startingActor.position);
   const previousPositionRef = useRef(startingActor.position);
   const smoothingFrameRef = useRef<number | null>(null);
   const smoothingTimestampRef = useRef<number | null>(null);
+  const movementQueueRef = useRef(createActorMovementQueue());
+  const activeMovementTargetRef = useRef<ActorMovementTarget | null>(null);
+  const activeMovementSpeedRef = useRef(ACTOR_RENDER_SPEED_METERS_PER_SECOND);
+  const lastPedometerEventTimestampRef = useRef<number | null>(null);
+  const [latestAcceptedStepPositionCount, setLatestAcceptedStepPositionCount] =
+    useState(0);
+  const [displayHeadingRadians, setDisplayHeadingRadians] = useState(0);
+  const displayHeadingRef = useRef(0);
+  const headingFrameRef = useRef<number | null>(null);
+  const headingTimestampRef = useRef<number | null>(null);
   const [pedometerBaselineSteps, setPedometerBaselineSteps] = useState<number | null>(
     latestKnownPedometerSteps,
   );
@@ -160,6 +270,35 @@ export function ArenaMapEngineView({
     smoothingTimestampRef.current = null;
   }, []);
 
+  const stopHeadingSmoothing = useCallback(() => {
+    if (headingFrameRef.current !== null) {
+      cancelAnimationFrame(headingFrameRef.current);
+      headingFrameRef.current = null;
+    }
+    headingTimestampRef.current = null;
+  }, []);
+
+  const activateNextMovementTarget = useCallback(() => {
+    const consumed = consumeActorMovementTarget(movementQueueRef.current);
+    movementQueueRef.current = consumed.queue;
+    activeMovementTargetRef.current = consumed.target;
+    if (!consumed.target) {
+      return false;
+    }
+
+    const currentPosition = displayActorPositionRef.current;
+    const distanceMeters = Math.hypot(
+      consumed.target.position.x - currentPosition.x,
+      consumed.target.position.y - currentPosition.y,
+    );
+    activeMovementSpeedRef.current =
+      distanceMeters > 0
+        ? distanceMeters / Math.max(0.001, consumed.target.durationMs / 1000)
+        : ACTOR_RENDER_SPEED_METERS_PER_SECOND;
+    setRenderTargetPosition(consumed.target.position);
+    return true;
+  }, []);
+
   const applyNavigationReset = useCallback(
     (
       status: MovementProcessingStatus,
@@ -167,6 +306,7 @@ export function ArenaMapEngineView({
       baselineSteps: number | null,
     ) => {
       stopActorSmoothing();
+      stopHeadingSmoothing();
       movementRuntimeRef.current?.reset(startingActor.position, {
         samplesToIgnore: resetSamples,
         previousStepCount: baselineSteps ?? undefined,
@@ -174,8 +314,16 @@ export function ArenaMapEngineView({
       logicalActorPositionRef.current = startingActor.position;
       displayActorPositionRef.current = startingActor.position;
       previousPositionRef.current = startingActor.position;
+      movementQueueRef.current = createActorMovementQueue();
+      activeMovementTargetRef.current = null;
+      activeMovementSpeedRef.current = ACTOR_RENDER_SPEED_METERS_PER_SECOND;
+      lastPedometerEventTimestampRef.current = null;
+      displayHeadingRef.current = 0;
       setActorPosition(startingActor.position);
       setDisplayActorPosition(startingActor.position);
+      setRenderTargetPosition(startingActor.position);
+      setDisplayHeadingRadians(0);
+      setLatestAcceptedStepPositionCount(0);
       setBobMotionState({
         direction: startingActor.direction,
         action: 'idle',
@@ -183,7 +331,12 @@ export function ArenaMapEngineView({
       setPedometerBaselineSteps(baselineSteps);
       setProcessingStatus(status);
     },
-    [startingActor.direction, startingActor.position, stopActorSmoothing],
+    [
+      startingActor.direction,
+      startingActor.position,
+      stopActorSmoothing,
+      stopHeadingSmoothing,
+    ],
   );
 
   useEffect(() => {
@@ -217,22 +370,80 @@ export function ArenaMapEngineView({
   useEffect(() => {
     const movementUpdate = movementRuntimeRef.current?.process(sensorSamples, constraintMapInput);
     if (movementUpdate) {
-      setActorPosition(movementUpdate.position);
+      logicalActorPositionRef.current = movementUpdate.position;
+      // A heading-only batch keeps the same logical position object. Copy it so
+      // React still re-renders the live heading update.
+      setActorPosition({ ...movementUpdate.position });
+      setLatestAcceptedStepPositionCount(
+        movementUpdate.acceptedStepPositions.length,
+      );
+
+      const latestPedometer = sensorSamples
+        .filter(
+          (
+            sample,
+          ): sample is Extract<RawSensorSample, { kind: 'pedometer' }> =>
+            sample.kind === 'pedometer',
+        )
+        .sort((left, right) => left.timestamp - right.timestamp)
+        .at(-1);
+      const previousEventTimestamp = lastPedometerEventTimestampRef.current;
+      const eventIntervalMs =
+        latestPedometer && previousEventTimestamp !== null
+          ? latestPedometer.timestamp - previousEventTimestamp
+          : null;
+      if (latestPedometer) {
+        lastPedometerEventTimestampRef.current = latestPedometer.timestamp;
+      }
+
+      movementQueueRef.current = appendActorMovementTargets(
+        movementQueueRef.current,
+        movementUpdate.acceptedStepPositions,
+        {
+          cadenceStepsPerMinute: latestPedometer?.cadence ?? null,
+          eventIntervalMs,
+        },
+      );
+      if (
+        activeMovementTargetRef.current === null &&
+        movementQueueRef.current.targets.length > 0
+      ) {
+        activateNextMovementTarget();
+      }
       setProcessingStatus('processed');
       return;
     }
     setProcessingStatus(sensorSamples.length > 0 ? 'ignored' : 'waiting');
-  }, [constraintMapInput, sensorSamples]);
+  }, [activateNextMovementTarget, constraintMapInput, sensorSamples]);
 
   useEffect(() => {
-    if (!shouldContinueActorSmoothing(displayActorPositionRef.current, actorPosition)) {
+    if (navigationState.routeStatus !== 'idle') {
+      return;
+    }
+    setNavigationState((currentState) =>
+      calculateNavigationRoute(currentState, mapData.movement.routeGraph),
+    );
+  }, [mapData.movement.routeGraph, navigationState.routeStatus]);
+
+  useEffect(() => {
+    if (
+      !shouldContinueActorSmoothing(
+        displayActorPositionRef.current,
+        renderTargetPosition,
+      )
+    ) {
       if (
-        displayActorPositionRef.current.x !== actorPosition.x ||
-        displayActorPositionRef.current.y !== actorPosition.y
+        displayActorPositionRef.current.x !== renderTargetPosition.x ||
+        displayActorPositionRef.current.y !== renderTargetPosition.y
       ) {
-        displayActorPositionRef.current = actorPosition;
-        previousPositionRef.current = actorPosition;
-        setDisplayActorPosition(actorPosition);
+        displayActorPositionRef.current = renderTargetPosition;
+        previousPositionRef.current = renderTargetPosition;
+        setDisplayActorPosition(renderTargetPosition);
+      }
+      activeMovementTargetRef.current = null;
+      if (activateNextMovementTarget()) {
+        stopActorSmoothing();
+        return;
       }
       setBobMotionState((currentMotionState) => ({
         direction: currentMotionState.direction,
@@ -251,9 +462,9 @@ export function ArenaMapEngineView({
       smoothingTimestampRef.current = timestamp;
       const elapsedMs = Math.max(16, timestamp - previousTimestamp);
       const maxDistanceMeters =
-        (ACTOR_RENDER_SPEED_METERS_PER_SECOND * elapsedMs) / 1000;
+        (activeMovementSpeedRef.current * elapsedMs) / 1000;
       const currentDisplayPosition = displayActorPositionRef.current;
-      const targetPosition = logicalActorPositionRef.current;
+      const targetPosition = renderTargetPosition;
       const nextDisplayPosition = stepActorRenderPosition(
         currentDisplayPosition,
         targetPosition,
@@ -280,6 +491,10 @@ export function ArenaMapEngineView({
       displayActorPositionRef.current = targetPosition;
       previousPositionRef.current = targetPosition;
       setDisplayActorPosition(targetPosition);
+      activeMovementTargetRef.current = null;
+      if (activateNextMovementTarget()) {
+        return;
+      }
       setBobMotionState((currentMotionState) => ({
         direction: currentMotionState.direction,
         action: 'idle',
@@ -288,9 +503,94 @@ export function ArenaMapEngineView({
 
     smoothingFrameRef.current = requestAnimationFrame(stepFrame);
     return stopActorSmoothing;
-  }, [actorPosition, stopActorSmoothing]);
+  }, [
+    activateNextMovementTarget,
+    renderTargetPosition,
+    stopActorSmoothing,
+  ]);
 
   useEffect(() => stopActorSmoothing, [stopActorSmoothing]);
+
+  const movementState = movementRuntimeRef.current?.getState() ?? {
+    position: actorPosition,
+    headingRadians: 0,
+    headingConfidence: 0,
+    confidence: 0.8,
+  };
+  useEffect(() => {
+    const targetHeading = movementState.headingRadians;
+    if (
+      Math.abs(shortestHeadingDelta(displayHeadingRef.current, targetHeading)) <
+      0.001
+    ) {
+      displayHeadingRef.current = targetHeading;
+      setDisplayHeadingRadians(targetHeading);
+      stopHeadingSmoothing();
+      return;
+    }
+    if (headingFrameRef.current !== null) {
+      return;
+    }
+
+    const stepFrame = (timestamp: number) => {
+      const previousTimestamp = headingTimestampRef.current ?? timestamp;
+      headingTimestampRef.current = timestamp;
+      const elapsedMs = Math.max(16, timestamp - previousTimestamp);
+      const maximumDelta =
+        (HEADING_RENDER_SPEED_RADIANS_PER_SECOND * elapsedMs) / 1000;
+      const nextHeading = stepHeadingToward(
+        displayHeadingRef.current,
+        targetHeading,
+        maximumDelta,
+      );
+      displayHeadingRef.current = nextHeading;
+      setDisplayHeadingRadians(nextHeading);
+
+      if (Math.abs(shortestHeadingDelta(nextHeading, targetHeading)) >= 0.001) {
+        headingFrameRef.current = requestAnimationFrame(stepFrame);
+        return;
+      }
+
+      stopHeadingSmoothing();
+      displayHeadingRef.current = targetHeading;
+      setDisplayHeadingRadians(targetHeading);
+    };
+
+    headingFrameRef.current = requestAnimationFrame(stepFrame);
+    return stopHeadingSmoothing;
+  }, [movementState.headingRadians, stopHeadingSmoothing]);
+
+  useEffect(() => stopHeadingSmoothing, [stopHeadingSmoothing]);
+
+  const headingConfidence = movementState.headingConfidence ?? 0;
+  const positionConfidence = movementState.confidence ?? 0;
+  const routePolyline = useMemo(
+    () => buildRoutePolyline(navigationState.highlightedPath, mapData.movement.routeGraph),
+    [mapData.movement.routeGraph, navigationState.highlightedPath],
+  );
+  const headingRadians =
+    headingConfidence >= 0.35
+      ? displayHeadingRadians
+      : directionToHeadingRadians(bobMotionState.direction);
+  const guidance = useMemo(
+    () =>
+      buildNavigationGuidance(
+        {
+          positionMeters: actorPosition,
+          headingRadians,
+          headingConfidence,
+          positionConfidence,
+        },
+        routePolyline,
+      ),
+    [
+      actorPosition,
+      headingConfidence,
+      headingRadians,
+      positionConfidence,
+      routePolyline,
+    ],
+  );
 
   const actors = useMemo(
     () => [
@@ -299,9 +599,18 @@ export function ArenaMapEngineView({
         position: displayActorPosition,
         direction: bobMotionState.direction,
         action: bobMotionState.action,
+        label: 'You',
+        headingRadians,
+        isUser: true,
       },
     ],
-    [bobMotionState.action, bobMotionState.direction, displayActorPosition, startingActor],
+    [
+      bobMotionState.action,
+      bobMotionState.direction,
+      displayActorPosition,
+      headingRadians,
+      startingActor,
+    ],
   );
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
   const unwalkableOverlay = useMemo(
@@ -314,25 +623,48 @@ export function ArenaMapEngineView({
       }),
     [bounds, constraintMapInput, mapData.coordinateSystem.pixelsPerMeter],
   );
-  const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);
+  const viewportSize = useMemo(
+    () => ({ width: Math.max(1, viewportWidth), height }),
+    [height, viewportWidth],
+  );
   const bobPoint = useMemo(
     () => routeNodeToPixels(actors[0], mapData.coordinateSystem),
     [actors, mapData.coordinateSystem],
   );
-  const initialCamera = useMemo(() => createInitialCameraState(bounds, viewportSize), [bounds, viewportSize]);
+  const followBaseCamera = useMemo(
+    () =>
+      createNavigationViewportCamera(
+        bobPoint,
+        viewportSize,
+        mapData.coordinateSystem.pixelsPerMeter,
+        FOLLOW_VISIBLE_WIDTH_METERS,
+        FOLLOW_VISIBLE_HEIGHT_METERS,
+      ),
+    [bobPoint, mapData.coordinateSystem.pixelsPerMeter, viewportSize],
+  );
+  const freeLookBaseCamera = useMemo(
+    () =>
+      createNavigationViewportCamera(
+        bobPoint,
+        viewportSize,
+        mapData.coordinateSystem.pixelsPerMeter,
+        FREE_LOOK_VISIBLE_WIDTH_METERS,
+        FREE_LOOK_VISIBLE_HEIGHT_METERS,
+      ),
+    [bobPoint, mapData.coordinateSystem.pixelsPerMeter, viewportSize],
+  );
   const applyFollowTarget = useCallback(
-    (nextCamera: CameraState) => centerCameraOnPoint(nextCamera, bobPoint, viewportSize),
-    [bobPoint, viewportSize],
+    (nextCamera: CameraState) => {
+      const cameraWithFollowScale = setCameraZoom(nextCamera, followBaseCamera.scale);
+      return centerCameraOnPoint(cameraWithFollowScale, bobPoint, viewportSize);
+    },
+    [bobPoint, followBaseCamera.scale, viewportSize],
   );
   const debugSnapshot = useMemo(
     () =>
       buildMovementDebugSnapshot({
         samples: sensorSamples,
-        state: movementRuntimeRef.current?.getState() ?? {
-          position: actorPosition,
-          headingRadians: 0,
-          confidence: 0.8,
-        },
+        state: movementState,
         status: processingStatus,
         destinationNodeId,
         destinationAvailable: destinationNode !== null,
@@ -340,17 +672,60 @@ export function ArenaMapEngineView({
           latestKnownSteps: latestKnownPedometerSteps,
           baselineSteps: pedometerBaselineSteps,
         },
+        acceptedStepPositionCount: latestAcceptedStepPositionCount,
       }),
     [
-      actorPosition,
       destinationNode,
       destinationNodeId,
       latestKnownPedometerSteps,
+      latestAcceptedStepPositionCount,
+      movementState,
       pedometerBaselineSteps,
       processingStatus,
       sensorSamples,
     ],
   );
+
+  const navigationSnapshot = useMemo<ArenaMapNavigationSnapshot>(
+    () => ({
+      destinationLabel: destinationNode
+        ? destinationLabelFor(destinationNode.node_id ?? destinationNode.id ?? destinationNodeId)
+        : destinationLabelFor(destinationNodeId),
+      remainingDistanceMeters: guidance?.remainingDistanceMeters ?? 0,
+      estimatedTimeSeconds: guidance?.estimatedTimeSeconds ?? 0,
+      estimatedSteps: Math.max(
+        0,
+        Math.round((guidance?.remainingDistanceMeters ?? 0) / DEFAULT_STEP_LENGTH_METERS),
+      ),
+      nextStep: guidance?.cue.message ?? 'Route unavailable',
+      hasRoute: guidance !== null,
+    }),
+    [destinationNode, destinationNodeId, guidance],
+  );
+
+  useEffect(() => {
+    onNavigationStateChange?.(navigationSnapshot);
+  }, [navigationSnapshot, onNavigationStateChange]);
+
+  useEffect(() => {
+    onDeveloperToolsStateChange?.({
+      debugSnapshot,
+      navigationState,
+      selectableDestinations,
+      onSelectDestination: handleSelectDestination,
+      onCalculateRoute: handleCalculateRoute,
+      onClearRoute: handleClearRoute,
+      onToggleUnwalkable: handleToggleUnwalkable,
+      onResetNavigation: handleResetNavigation,
+    });
+
+    return () => onDeveloperToolsStateChange?.(null);
+  }, [
+    debugSnapshot,
+    navigationState,
+    onDeveloperToolsStateChange,
+    selectableDestinations,
+  ]);
 
   useEffect(() => {
     if (sensorSamples.length === 0 || debugSnapshot.latestTimestamp === null) {
@@ -370,23 +745,18 @@ export function ArenaMapEngineView({
 
   useEffect(() => {
     if (viewportWidth > 0) {
-      setCamera(createInitialCameraState(bounds, viewportSize));
+      setCamera(followsBob ? followBaseCamera : freeLookBaseCamera);
     }
-  }, [bounds, viewportSize, viewportWidth]);
+  }, [followBaseCamera, followsBob, freeLookBaseCamera, viewportSize, viewportWidth]);
 
   useEffect(() => {
     if (!followsBob || viewportWidth <= 0) {
       return;
     }
-    setCamera((currentCamera) => applyFollowTarget(currentCamera ?? initialCamera));
-  }, [
-    applyFollowTarget,
-    followsBob,
-    initialCamera,
-    viewportWidth,
-  ]);
+    setCamera((currentCamera) => applyFollowTarget(currentCamera ?? followBaseCamera));
+  }, [applyFollowTarget, followBaseCamera, followsBob, viewportWidth]);
 
-  const renderedCamera = camera ?? (followsBob ? applyFollowTarget(initialCamera) : initialCamera);
+  const renderedCamera = camera ?? (followsBob ? applyFollowTarget(followBaseCamera) : freeLookBaseCamera);
 
   function handleCameraChange(nextCamera: CameraState) {
     setCamera(nextCamera);
@@ -395,7 +765,13 @@ export function ArenaMapEngineView({
   function handleZoomButton(factor: number) {
     const focalPoint = { x: viewportSize.width / 2, y: viewportSize.height / 2 };
     setCamera((currentCamera) => {
-      const zoomedCamera = zoomCamera(currentCamera ?? renderedCamera, factor, undefined, undefined, focalPoint);
+      const zoomedCamera = zoomCamera(
+        currentCamera ?? renderedCamera,
+        factor,
+        undefined,
+        undefined,
+        focalPoint,
+      );
       return followsBob ? applyFollowTarget(zoomedCamera) : zoomedCamera;
     });
   }
@@ -408,6 +784,11 @@ export function ArenaMapEngineView({
       }
       return nextMode;
     });
+  }
+
+  function handleRecenter() {
+    setCameraMode('following');
+    setCamera((currentCamera) => applyFollowTarget(currentCamera ?? renderedCamera));
   }
 
   function handleResetNavigation() {
@@ -441,6 +822,19 @@ export function ArenaMapEngineView({
   function handleLayout(event: LayoutChangeEvent) {
     setViewportWidth(event.nativeEvent.layout.width);
   }
+
+  useEffect(() => {
+    onViewportControlsStateChange?.({
+      floorLabel: 'Floor 1',
+      followsBob,
+      onZoomIn: () => handleZoomButton(1.2),
+      onZoomOut: () => handleZoomButton(1 / 1.2),
+      onToggleFollowBob: handleToggleFollowBob,
+      onRecenter: handleRecenter,
+    });
+
+    return () => onViewportControlsStateChange?.(null);
+  }, [followsBob, onViewportControlsStateChange]);
 
   return (
     <View style={styles.engine}>
@@ -490,34 +884,13 @@ export function ArenaMapEngineView({
         />
       </CameraViewport>
 
-      <View style={styles.cameraControls}>
-        <Pressable style={styles.controlButton} onPress={() => handleZoomButton(1.2)}>
-          <Text style={styles.controlButtonText}>+</Text>
-        </Pressable>
-        <Pressable style={styles.controlButton} onPress={() => handleZoomButton(1 / 1.2)}>
-          <Text style={styles.controlButtonText}>-</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.followButton, followsBob && styles.followButtonActive]}
-          onPress={handleToggleFollowBob}
-        >
-          <Text style={[styles.followButtonText, followsBob && styles.followButtonTextActive]}>
-            {followsBob ? 'Following Bob' : 'Free look'}
-          </Text>
-        </Pressable>
+      <View style={styles.instructionOverlay}>
+        <MapInstructionOverlay cue={guidance?.cue ?? null} nextCue={guidance?.nextCue ?? null} />
       </View>
-      <NavigationDebugPanel
-        state={navigationState}
-        destinations={selectableDestinations}
-        onSelectDestination={handleSelectDestination}
-        onCalculateRoute={handleCalculateRoute}
-        onClearRoute={handleClearRoute}
-        onToggleUnwalkable={handleToggleUnwalkable}
-      />
-      <MovementDebugPanel
-        snapshot={debugSnapshot}
-        onReset={handleResetNavigation}
-      />
+
+      <Pressable style={styles.recenterButton} onPress={handleRecenter}>
+        <Text style={styles.recenterText}>Re-center</Text>
+      </Pressable>
     </View>
   );
 }
@@ -526,47 +899,27 @@ const styles = StyleSheet.create({
   engine: {
     position: 'relative',
   },
-  cameraControls: {
+  instructionOverlay: {
     position: 'absolute',
-    right: 10,
-    top: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+    top: 16,
+    left: 14,
+    width: '54%',
   },
-  controlButton: {
-    width: 34,
-    height: 34,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
-    ...shadow,
-  },
-  controlButtonText: {
-    color: colors.text,
-    fontSize: 20,
-    fontWeight: '900',
-    lineHeight: 22,
-  },
-  followButton: {
-    minHeight: 34,
-    paddingHorizontal: 12,
+  recenterButton: {
+    position: 'absolute',
+    right: 14,
+    bottom: 20,
+    minHeight: 46,
+    paddingHorizontal: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
+    borderRadius: radius.md,
+    backgroundColor: 'rgba(255,255,255,0.96)',
     ...shadow,
   },
-  followButtonActive: {
-    backgroundColor: colors.green,
-  },
-  followButtonText: {
+  recenterText: {
     color: colors.text,
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: '900',
-  },
-  followButtonTextActive: {
-    color: '#ffffff',
   },
 });

@@ -6,6 +6,7 @@ import type { MovementSensorDevControls } from '../useMovementSensors';
 
 type MovementSensorDevPanelProps = {
   controls: MovementSensorDevControls;
+  embedded?: boolean;
 };
 
 function buttonTextForPlaybackState(playbackState: MovementSensorDevControls['playbackState']): string {
@@ -34,6 +35,7 @@ function displayElapsedMs(lastEventTimestamp: number | null, nowMs: number): str
 
 export function MovementSensorDevPanel({
   controls,
+  embedded = false,
 }: MovementSensorDevPanelProps) {
   const [nowMs, setNowMs] = useState(() => Date.now());
 
@@ -47,7 +49,7 @@ export function MovementSensorDevPanel({
   }
 
   return (
-    <View style={styles.panel}>
+    <View style={[styles.panel, embedded && styles.panelEmbedded]}>
       <Text style={styles.title}>Sensor source debugger</Text>
       <View style={styles.modeRow}>
         {(['real', 'mock'] as const).map((mode) => (
@@ -122,6 +124,21 @@ export function MovementSensorDevPanel({
         <>
           <Text style={styles.meta}>Collector is bound to the Expo sensor adapter.</Text>
           <Text style={styles.meta}>
+            Pipeline {controls.realSensors.collector.status} · first sample{' '}
+            {displayTimestamp(controls.realSensors.collector.firstSampleAt)} · first batch{' '}
+            {displayTimestamp(controls.realSensors.collector.firstBatchAt)}
+          </Text>
+          {Object.entries(controls.realSensors.adapter.sensors).map(
+            ([kind, diagnostic]) => (
+              <Text key={kind} style={styles.meta}>
+                {kind} · {diagnostic.status} · ready{' '}
+                {displayTimestamp(diagnostic.subscriptionReadyAt)} · first sample{' '}
+                {displayTimestamp(diagnostic.firstSampleAt)}
+                {diagnostic.errorMessage ? ` · ${diagnostic.errorMessage}` : ''}
+              </Text>
+            ),
+          )}
+          <Text style={styles.meta}>
             Availability {controls.realPedometer.diagnostic.availability} · permission{' '}
             {controls.realPedometer.diagnostic.permissionStatus} · canAskAgain{' '}
             {controls.realPedometer.diagnostic.canAskAgain === null
@@ -179,6 +196,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     backgroundColor: colors.surface,
     ...shadow,
+  },
+  panelEmbedded: {
+    marginTop: 0,
   },
   title: {
     color: colors.text,

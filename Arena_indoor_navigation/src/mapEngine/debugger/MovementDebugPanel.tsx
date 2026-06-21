@@ -6,6 +6,7 @@ import type { MovementDebugSnapshot } from './movementDebugModel';
 type MovementDebugPanelProps = {
   snapshot: MovementDebugSnapshot;
   onReset: () => void;
+  embedded?: boolean;
 };
 
 function display(value: number | string | null, digits = 2): string {
@@ -18,9 +19,10 @@ function display(value: number | string | null, digits = 2): string {
 export function MovementDebugPanel({
   snapshot,
   onReset,
+  embedded = false,
 }: MovementDebugPanelProps) {
   return (
-    <View style={styles.panel}>
+    <View style={[styles.panel, embedded && styles.panelEmbedded]}>
       <View style={styles.header}>
         <Text style={styles.title}>Movement debugger</Text>
         <Text style={styles.status}>{snapshot.status}</Text>
@@ -111,6 +113,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     backgroundColor: colors.surface,
     ...shadow,
+  },
+  panelEmbedded: {
+    marginTop: 0,
   },
   header: {
     flexDirection: 'row',

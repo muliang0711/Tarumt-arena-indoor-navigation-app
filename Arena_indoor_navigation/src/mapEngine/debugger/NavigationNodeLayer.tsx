@@ -21,89 +21,64 @@ function markerPosition(
 ) {
   const point = worldMetersToPixels(node.position, coordinateSystem);
   return {
-    left: point.x - bounds.x - 14,
-    top: point.y - bounds.y - 14,
+    left: point.x - bounds.x - 17,
+    top: point.y - bounds.y - 17,
   };
 }
 
 export function NavigationNodeLayer({
-  origin,
+  origin: _origin,
   destination,
   bounds,
   coordinateSystem,
 }: NavigationNodeLayerProps) {
-  return (
-    <>
-      {origin ? (
-        <View
-          pointerEvents="none"
-          style={[
-            styles.marker,
-            styles.startMarker,
-            markerPosition(origin, bounds, coordinateSystem),
-          ]}
-        >
-          <Text style={styles.markerText}>S</Text>
-          <Text style={[styles.caption, styles.startCaption]}>
-            START · NODE {labelFor(origin)}
-          </Text>
-        </View>
-      ) : null}
-      {destination ? (
-        <View
-          pointerEvents="none"
-          style={[
-            styles.marker,
-            styles.destinationMarker,
-            markerPosition(destination, bounds, coordinateSystem),
-          ]}
-        >
-          <Text style={styles.markerText}>{labelFor(destination)}</Text>
-          <Text style={[styles.caption, styles.destinationCaption]}>DESTINATION</Text>
-        </View>
-      ) : null}
-    </>
-  );
+  return destination ? (
+    <View
+      pointerEvents="none"
+      style={[
+        styles.marker,
+        styles.destinationMarker,
+        markerPosition(destination, bounds, coordinateSystem),
+      ]}
+    >
+      <Text style={styles.markerText}>{labelFor(destination)}</Text>
+      <Text style={[styles.caption, styles.destinationCaption]}>DESTINATION</Text>
+    </View>
+  ) : null;
 }
 
 const styles = StyleSheet.create({
   marker: {
     position: 'absolute',
     zIndex: 19,
-    width: 28,
-    height: 28,
+    width: 34,
+    height: 34,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 14,
+    borderRadius: 17,
     borderWidth: 3,
     borderColor: '#ffffff',
-  },
-  startMarker: {
-    backgroundColor: '#2f7d4b',
   },
   destinationMarker: {
     backgroundColor: '#f06419',
   },
   markerText: {
     color: '#ffffff',
-    fontSize: 11,
+    fontSize: 14,
     fontWeight: '900',
   },
   caption: {
     position: 'absolute',
-    top: 30,
-    width: 104,
-    paddingHorizontal: 5,
-    paddingVertical: 3,
+    top: 36,
+    width: 118,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     overflow: 'hidden',
-    borderRadius: 5,
+    borderRadius: 999,
     color: '#ffffff',
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: '900',
     textAlign: 'center',
-  },
-  startCaption: {
-    backgroundColor: 'rgba(30, 88, 51, 0.92)',
   },
   destinationCaption: {
     backgroundColor: 'rgba(182, 67, 10, 0.92)',

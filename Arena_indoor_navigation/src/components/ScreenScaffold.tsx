@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
     paddingHorizontal: 20,
     paddingTop: 14,
-    paddingBottom: 18,
+    paddingBottom: 120,
   },
 });

@@ -11,6 +11,9 @@ export type Actor = {
   position: WorldPosition;
   direction: ActorDirection;
   action: ActorAction;
+  label?: string;
+  headingRadians?: number | null;
+  isUser?: boolean;
 };
 
 const MOVEMENT_EPSILON = 0.001;

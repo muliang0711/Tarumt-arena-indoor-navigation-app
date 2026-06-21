@@ -8,4 +8,19 @@ export {
   shouldContinueActorSmoothing,
   stepActorRenderPosition,
 } from './actorRenderSmoothing';
-export type { Actor } from './actorModel';
+export {
+  normalizeHeading,
+  shortestHeadingDelta,
+  stepHeadingToward,
+} from './actorHeadingSmoothing';
+export {
+  appendActorMovementTargets,
+  consumeActorMovementTarget,
+  createActorMovementQueue,
+} from './actorMovementQueue';
+export type { Actor, ActorDirection } from './actorModel';
+export type {
+  ActorMovementQueue,
+  ActorMovementTarget,
+  ActorMovementTiming,
+} from './actorMovementQueue';
