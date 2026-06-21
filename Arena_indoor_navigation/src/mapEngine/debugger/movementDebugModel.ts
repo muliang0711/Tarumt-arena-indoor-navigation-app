@@ -28,6 +28,20 @@ export type MovementDebugSnapshot = {
   headingDegrees: number;
   confidence: number | null;
   particleGeneration: number | null;
+  latestStepDiagnostics: {
+    batchPedometerSampleCount: number;
+    batchLatestPedometerSteps: number | null;
+    batchLatestPedometerTimestamp: number | null;
+    previousStepCountBefore: number | null;
+    previousStepCountAfter: number | null;
+    computedStepDelta: number;
+    reason:
+      | 'no-pedometer-in-batch'
+      | 'baseline-established'
+      | 'same-cumulative-count'
+      | 'counter-rollback-rebaseline'
+      | 'positive-increment';
+  } | null;
   latestMovementAttempt: MovementSystemState['latestMovementAttempt'] | null;
   destinationLabel: string;
 };
@@ -92,6 +106,21 @@ export function buildMovementDebugSnapshot({
     headingDegrees: Math.round((state.headingRadians * 180) / Math.PI),
     confidence: state.confidence ?? null,
     particleGeneration: state.particleFilter?.generation ?? null,
+    latestStepDiagnostics: state.latestStepDiagnostics
+      ? {
+          batchPedometerSampleCount: state.latestStepDiagnostics.batchPedometerSampleCount,
+          batchLatestPedometerSteps:
+            state.latestStepDiagnostics.batchLatestPedometerSteps ?? null,
+          batchLatestPedometerTimestamp:
+            state.latestStepDiagnostics.batchLatestPedometerTimestamp ?? null,
+          previousStepCountBefore:
+            state.latestStepDiagnostics.previousStepCountBefore ?? null,
+          previousStepCountAfter:
+            state.latestStepDiagnostics.previousStepCountAfter ?? null,
+          computedStepDelta: state.latestStepDiagnostics.computedStepDelta,
+          reason: state.latestStepDiagnostics.reason,
+        }
+      : null,
     latestMovementAttempt: state.latestMovementAttempt ?? null,
     destinationLabel: destinationAvailable
       ? destinationNodeId.replace(/^node_/, 'Node ')

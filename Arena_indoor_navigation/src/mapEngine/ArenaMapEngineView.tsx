@@ -32,6 +32,7 @@ import {
   NavigationNodeLayer,
   RouteDebugLayer,
   selectNavigationDestination,
+  sendMovementDebugLog,
   toggleUnwalkableOverlay,
   UnwalkableAreaDebugLayer,
   WalkableAreaDebugLayer,
@@ -125,6 +126,7 @@ export function ArenaMapEngineView({
     direction: startingActor.direction,
     action: startingActor.action,
   });
+  const lastLoggedBatchSignatureRef = useRef<string | null>(null);
 
   useEffect(() => {
     latestKnownPedometerStepsRef.current = latestKnownPedometerSteps;
@@ -265,6 +267,22 @@ export function ArenaMapEngineView({
       sensorSamples,
     ],
   );
+
+  useEffect(() => {
+    if (sensorSamples.length === 0 || debugSnapshot.latestTimestamp === null) {
+      return;
+    }
+
+    const batchSignature = sensorSamples
+      .map((sample) => `${sample.id ?? sample.kind}:${sample.timestamp}`)
+      .join('|');
+    if (batchSignature.length === 0 || batchSignature === lastLoggedBatchSignatureRef.current) {
+      return;
+    }
+
+    lastLoggedBatchSignatureRef.current = batchSignature;
+    void sendMovementDebugLog(debugSnapshot, latestKnownPedometerSteps);
+  }, [debugSnapshot, latestKnownPedometerSteps, sensorSamples]);
 
   useEffect(() => {
     if (viewportWidth > 0) {

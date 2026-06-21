@@ -28,6 +28,20 @@ export type MovementSystemState = {
   particleFilter?: ParticleFilterSnapshot;
   previousStepCount?: number;
   lastStepDelta?: number;
+  latestStepDiagnostics?: {
+    batchPedometerSampleCount: number;
+    batchLatestPedometerSteps?: number;
+    batchLatestPedometerTimestamp?: number;
+    previousStepCountBefore?: number;
+    previousStepCountAfter?: number;
+    computedStepDelta: number;
+    reason:
+      | 'no-pedometer-in-batch'
+      | 'baseline-established'
+      | 'same-cumulative-count'
+      | 'counter-rollback-rebaseline'
+      | 'positive-increment';
+  };
   latestMovementAttempt?: {
     currentPosition: WorldPosition;
     candidatePosition: WorldPosition;
@@ -52,6 +66,13 @@ export type MovementSystemResult = {
   state: MovementSystemState;
 };
 
+type MovementExecutionResult = {
+  filter: ParticleFilterSnapshot;
+  position: WorldPosition;
+  confidence: number;
+  latestAttempt?: MovementSystemState['latestMovementAttempt'];
+};
+
 function clamp01(value: number): number {
   return Math.min(1, Math.max(0, Number.isFinite(value) ? value : 0));
 }
@@ -61,6 +82,98 @@ function createDeterministicRandomSource(seed: number): () => number {
   return () => {
     state = (state * 1664525 + 1013904223) >>> 0;
     return state / 0x100000000;
+  };
+}
+
+function createSingleStepEstimate(step: StepEstimate, offset: number): StepEstimate {
+  return {
+    ...step,
+    steps: Math.max(0, step.steps - step.stepDelta + offset + 1),
+    stepDelta: 1,
+  };
+}
+
+function projectPositionAlongHeading(
+  position: WorldPosition,
+  headingRadians: number,
+  distanceMeters: number,
+): WorldPosition {
+  return {
+    x: position.x + Math.cos(headingRadians) * distanceMeters,
+    y: position.y + Math.sin(headingRadians) * distanceMeters,
+  };
+}
+
+function executeMovementIncrement(
+  step: StepEstimate,
+  heading: ReturnType<typeof createHeadingEstimateFromRadians>,
+  initialFilter: ParticleFilterSnapshot,
+  initialPosition: WorldPosition,
+  currentConfidence: number,
+  constraintProvider: MovementConstraintProvider,
+  randomSource: () => number,
+): MovementExecutionResult {
+  if (step.stepDelta <= 0) {
+    return {
+      filter: initialFilter,
+      position: initialPosition,
+      confidence: clamp01(currentConfidence),
+    };
+  }
+
+  let activeFilter = initialFilter;
+  let activePosition = initialPosition;
+  let activeConfidence = currentConfidence;
+  let latestAttempt: MovementSystemState['latestMovementAttempt'] | undefined;
+
+  for (let index = 0; index < step.stepDelta; index += 1) {
+    const motion = createMotionEstimate(createSingleStepEstimate(step, index), heading);
+    const candidateFilter = updateParticleFilterState(activeFilter, motion, {
+      particleCount: 60,
+      weightFloor: 0,
+      randomSource,
+      customScore: (particle) =>
+        isParticlePositionValid(constraintProvider, particle.previousPosition, particle.position) ? 1 : 0,
+    });
+    const candidatePosition = projectPositionAlongHeading(
+      activePosition,
+      motion.heading.radians,
+      motion.displacement.distanceMeters,
+    );
+    const movementAnalysis = constraintProvider.analyzeMove(activePosition, candidatePosition);
+    const canUseCandidate = movementAnalysis.canMove;
+
+    latestAttempt = {
+      currentPosition: { ...movementAnalysis.currentPosition },
+      candidatePosition: { ...movementAnalysis.candidatePosition },
+      finalAcceptedPosition: canUseCandidate
+        ? { ...candidatePosition }
+        : { ...activePosition },
+      headingRadians: motion.heading.radians,
+      distanceMeters: motion.displacement.distanceMeters,
+      canMove: movementAnalysis.canMove,
+      insideWalkableArea: movementAnalysis.insideWalkableArea,
+      insideBlockedArea: movementAnalysis.insideBlockedArea,
+      crossedWall: movementAnalysis.crossedWall,
+      crossedBlockedArea: movementAnalysis.crossedBlockedArea,
+      rejectionReasons: [...movementAnalysis.rejectionReasons],
+    };
+
+    if (!canUseCandidate) {
+      activeConfidence = clamp01(activeConfidence * 0.5);
+      break;
+    }
+
+    activeFilter = candidateFilter;
+    activePosition = candidatePosition;
+    activeConfidence = candidateFilter.confidence;
+  }
+
+  return {
+    filter: activeFilter,
+    position: activePosition,
+    confidence: clamp01(activeConfidence),
+    latestAttempt,
   };
 }
 
@@ -108,6 +221,12 @@ function resolveStepEstimate(
   step: StepEstimate;
   nextPreviousStepCount: number | undefined;
   clearsLatestMovementAttempt: boolean;
+  reason:
+    | 'no-pedometer-in-batch'
+    | 'baseline-established'
+    | 'same-cumulative-count'
+    | 'counter-rollback-rebaseline'
+    | 'positive-increment';
 } {
   const pedometer = latestPedometerSample(samples);
   const fallbackTimestamp = samples[samples.length - 1]?.timestamp ?? 0;
@@ -125,6 +244,7 @@ function resolveStepEstimate(
         ),
         nextPreviousStepCount: undefined,
         clearsLatestMovementAttempt: false,
+        reason: 'no-pedometer-in-batch',
       };
     }
 
@@ -139,28 +259,42 @@ function resolveStepEstimate(
       ),
       nextPreviousStepCount: previousStepCount,
       clearsLatestMovementAttempt: false,
+      reason: 'no-pedometer-in-batch',
     };
   }
 
-  if (previousStepCount === undefined || pedometer.steps < previousStepCount) {
+  if (previousStepCount === undefined) {
     return {
       step: createBaselineStepEstimate(pedometer.timestamp, pedometer.steps, pedometer.cadence),
       nextPreviousStepCount: pedometer.steps,
       clearsLatestMovementAttempt: true,
+      reason: 'baseline-established',
     };
   }
 
+  if (pedometer.steps < previousStepCount) {
+    return {
+      step: createBaselineStepEstimate(pedometer.timestamp, pedometer.steps, pedometer.cadence),
+      nextPreviousStepCount: pedometer.steps,
+      clearsLatestMovementAttempt: true,
+      reason: 'counter-rollback-rebaseline',
+    };
+  }
+
+  const step = createStepEstimateFromCount(
+    pedometer.timestamp,
+    pedometer.steps,
+    previousStepCount,
+    samples.length > 0 ? 1 : 0,
+    pedometer.cadence,
+    'pedometer',
+  );
+
   return {
-    step: createStepEstimateFromCount(
-      pedometer.timestamp,
-      pedometer.steps,
-      previousStepCount,
-      samples.length > 0 ? 1 : 0,
-      pedometer.cadence,
-      'pedometer',
-    ),
+    step,
     nextPreviousStepCount: pedometer.steps,
     clearsLatestMovementAttempt: false,
+    reason: step.stepDelta > 0 ? 'positive-increment' : 'same-cumulative-count',
   };
 }
 
@@ -174,9 +308,14 @@ export function updateMovementSystem(
 ): MovementSystemResult {
   const normalizedSamples = sensorSamples.map(normalizeSensorSample);
   const constraintProvider = createMovementConstraintProvider(constraintMapInput);
+  const pedometerSamples = normalizedSamples.filter(
+    (sample): sample is PedometerStepSample => sample.kind === 'pedometer',
+  );
+  const latestBatchPedometer = pedometerSamples[pedometerSamples.length - 1];
+  const previousStepCountBefore = currentState.previousStepCount;
   const resolvedStep = resolveStepEstimate(
     normalizedSamples,
-    currentState.previousStepCount,
+    previousStepCountBefore,
   );
   const step = resolvedStep.step;
   const heading = headingFromSamples(normalizedSamples, currentState.headingRadians);
@@ -192,45 +331,36 @@ export function updateMovementSystem(
   const randomSource = createDeterministicRandomSource(
     step.timestamp + step.steps * 31 + previousFilter.generation * 997,
   );
-  const nextFilter = updateParticleFilterState(previousFilter, motion, {
-    particleCount: 60,
-    weightFloor: 0,
+  const movementExecution = executeMovementIncrement(
+    step,
+    heading,
+    previousFilter,
+    currentState.position,
+    currentState.confidence ?? 0.8,
+    constraintProvider,
     randomSource,
-    customScore: (particle) =>
-      isParticlePositionValid(constraintProvider, particle.previousPosition, particle.position) ? 1 : 0,
-  });
-  const candidatePosition =
-    step.stepDelta === 0
-      ? currentState.position
-      : nextFilter.position ?? currentState.position;
-  const movementAnalysis: MovementConstraintAnalysis | undefined =
-    step.stepDelta > 0
-      ? constraintProvider.analyzeMove(currentState.position, candidatePosition)
-      : undefined;
-  const canUseCandidate = movementAnalysis?.canMove ?? constraintProvider.canMove(currentState.position, candidatePosition);
-  const position = canUseCandidate ? candidatePosition : currentState.position;
+  );
+  const nextFilter = movementExecution.filter;
+  const position = movementExecution.position;
   const state: MovementSystemState = {
     position,
     headingRadians: nextFilter.headingRadians ?? heading.radians,
-    confidence: clamp01(canUseCandidate ? nextFilter.confidence : (currentState.confidence ?? 0.5) * 0.5),
+    confidence: movementExecution.confidence,
     particleFilter: nextFilter,
     previousStepCount: resolvedStep.nextPreviousStepCount,
     lastStepDelta: step.stepDelta,
+    latestStepDiagnostics: {
+      batchPedometerSampleCount: pedometerSamples.length,
+      batchLatestPedometerSteps: latestBatchPedometer?.steps,
+      batchLatestPedometerTimestamp: latestBatchPedometer?.timestamp,
+      previousStepCountBefore,
+      previousStepCountAfter: resolvedStep.nextPreviousStepCount,
+      computedStepDelta: step.stepDelta,
+      reason: resolvedStep.reason,
+    },
     latestMovementAttempt:
-      movementAnalysis !== undefined
-        ? {
-            currentPosition: { ...movementAnalysis.currentPosition },
-            candidatePosition: { ...movementAnalysis.candidatePosition },
-            finalAcceptedPosition: { ...position },
-            headingRadians: motion.heading.radians,
-            distanceMeters: motion.displacement.distanceMeters,
-            canMove: movementAnalysis.canMove,
-            insideWalkableArea: movementAnalysis.insideWalkableArea,
-            insideBlockedArea: movementAnalysis.insideBlockedArea,
-            crossedWall: movementAnalysis.crossedWall,
-            crossedBlockedArea: movementAnalysis.crossedBlockedArea,
-            rejectionReasons: [...movementAnalysis.rejectionReasons],
-          }
+      movementExecution.latestAttempt !== undefined
+        ? movementExecution.latestAttempt
         : resolvedStep.clearsLatestMovementAttempt
           ? undefined
           : currentState.latestMovementAttempt,

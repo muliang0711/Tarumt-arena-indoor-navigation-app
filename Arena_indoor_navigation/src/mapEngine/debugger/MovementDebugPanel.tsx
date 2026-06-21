@@ -42,6 +42,21 @@ export function MovementDebugPanel({
         {display(snapshot.stepsSinceReset, 0)} | stepDelta{' '}
         {display(snapshot.latestStepDelta, 0)}
       </Text>
+      {snapshot.latestStepDiagnostics ? (
+        <>
+          <Text style={styles.line}>
+            Batch pedometer {snapshot.latestStepDiagnostics.batchPedometerSampleCount} |
+            latest batch steps{' '}
+            {display(snapshot.latestStepDiagnostics.batchLatestPedometerSteps, 0)} | batch ts{' '}
+            {display(snapshot.latestStepDiagnostics.batchLatestPedometerTimestamp, 0)}
+          </Text>
+          <Text style={styles.line}>
+            Runtime prev {display(snapshot.latestStepDiagnostics.previousStepCountBefore, 0)} |
+            next {display(snapshot.latestStepDiagnostics.previousStepCountAfter, 0)} | reason{' '}
+            {snapshot.latestStepDiagnostics.reason}
+          </Text>
+        </>
+      ) : null}
       <Text style={styles.line}>
         Position {display(snapshot.position.x)}, {display(snapshot.position.y)} m |
         heading {display(snapshot.headingDegrees, 0)} deg

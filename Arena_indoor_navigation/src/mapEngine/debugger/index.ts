@@ -1,6 +1,7 @@
 export { DestinationDebugLayer } from './DestinationDebugLayer';
 export { MovementDebugPanel } from './MovementDebugPanel';
 export { WalkableAreaDebugLayer } from './WalkableAreaDebugLayer';
+export { sendMovementDebugLog } from './fileLogging/movementDebugFileLogger';
 export {
   buildMovementDebugSnapshot,
   findDestinationNode,
