@@ -7,12 +7,12 @@ class MockApApiService @Inject constructor() : ApApiService {
         return ApCatalogResponse(
             version = "mock-1.0",
             items = listOf(
-                ApDto(bssid = "00:11:22:33:44:01", x = 10.0, y = 10.0, floorId = "floor-2", metadata = "{\"name\": \"AP-North\"}"),
-                ApDto(bssid = "00:11:22:33:44:02", x = 50.0, y = 20.0, floorId = "floor-2", metadata = "{\"name\": \"AP-East\"}"),
-                ApDto(bssid = "00:11:22:33:44:03", x = 30.0, y = 45.0, floorId = "floor-2", metadata = "{\"name\": \"AP-Center\"}"),
-                ApDto(bssid = "00:11:22:33:44:04", x = 150.0, y = 10.0, floorId = "floor-2", metadata = "{\"name\": \"AP-Far-Right\"}"),
-                ApDto(bssid = "00:11:22:33:44:05", x = 80.0, y = -5.0, floorId = "floor-2", metadata = "{\"name\": \"AP-South\"}")
+                ApDto(bssid = "10:3f:8c:d6:19:e0", x = 51.330, y = 37.199, floorId = "floor-2"),
+                ApDto(bssid = "10:3f:8c:d6:15:e0", x = 30.723, y = 56.811, floorId = "floor-2"),
+                ApDto(bssid = "10:3f:8c:d6:00:60", x = 34.938, y = 52.644, floorId = "floor-2"),
+                ApDto(bssid = "10:3f:8c:d6:18:80", x = 50.401, y = 66.047, floorId = "floor-2"),
+                ApDto(bssid = "10:3f:8c:d6:11:a0", x = 11.192, y = 60.726, floorId = "floor-2"),
             )
-        )
+        )z1
     }
 }
