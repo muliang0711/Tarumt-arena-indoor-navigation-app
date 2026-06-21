@@ -34,6 +34,15 @@ test('summarizes live sensor kinds and movement state', () => {
       confidence: 0.75,
       previousStepCount: 7,
       lastStepDelta: 2,
+      latestStepDiagnostics: {
+        batchPedometerSampleCount: 1,
+        batchLatestPedometerSteps: 7,
+        batchLatestPedometerTimestamp: 200,
+        previousStepCountBefore: 5,
+        previousStepCountAfter: 7,
+        computedStepDelta: 2,
+        reason: 'positive-increment',
+      },
       latestMovementAttempt: {
         currentPosition: { x: 4.8, y: 5.2 },
         candidatePosition: { x: 5.5, y: 5.2 },
@@ -82,6 +91,15 @@ test('summarizes live sensor kinds and movement state', () => {
   assert.equal(snapshot.destinationLabel, 'Node 4');
   assert.equal(snapshot.latestMovementAttempt?.canMove, false);
   assert.deepEqual(snapshot.latestMovementAttempt?.rejectionReasons, ['outside-walkable-area']);
+  assert.deepEqual(snapshot.latestStepDiagnostics, {
+    batchPedometerSampleCount: 1,
+    batchLatestPedometerSteps: 7,
+    batchLatestPedometerTimestamp: 200,
+    previousStepCountBefore: 5,
+    previousStepCountAfter: 7,
+    computedStepDelta: 2,
+    reason: 'positive-increment',
+  });
 });
 
 test('reports unavailable data without inventing sensor values', () => {
@@ -109,6 +127,7 @@ test('reports unavailable data without inventing sensor values', () => {
   assert.equal(snapshot.latestStepDelta, null);
   assert.equal(snapshot.particleGeneration, null);
   assert.equal(snapshot.destinationLabel, 'unavailable');
+  assert.equal(snapshot.latestStepDiagnostics, null);
 });
 
 test('keeps the last known cumulative pedometer count across non-pedometer batches', () => {
@@ -127,6 +146,15 @@ test('keeps the last known cumulative pedometer count across non-pedometer batch
       confidence: 0.8,
       previousStepCount: 12,
       lastStepDelta: 0,
+      latestStepDiagnostics: {
+        batchPedometerSampleCount: 0,
+        batchLatestPedometerSteps: undefined,
+        batchLatestPedometerTimestamp: undefined,
+        previousStepCountBefore: 12,
+        previousStepCountAfter: 12,
+        computedStepDelta: 0,
+        reason: 'no-pedometer-in-batch',
+      },
       particleFilter: {
         particles: [],
         generation: 4,
@@ -151,6 +179,15 @@ test('keeps the last known cumulative pedometer count across non-pedometer batch
   assert.equal(snapshot.pedometerBaselineSteps, 10);
   assert.equal(snapshot.stepsSinceReset, 2);
   assert.equal(snapshot.latestStepDelta, 0);
+  assert.deepEqual(snapshot.latestStepDiagnostics, {
+    batchPedometerSampleCount: 0,
+    batchLatestPedometerSteps: null,
+    batchLatestPedometerTimestamp: null,
+    previousStepCountBefore: 12,
+    previousStepCountAfter: 12,
+    computedStepDelta: 0,
+    reason: 'no-pedometer-in-batch',
+  });
 });
 
 test('finds Node 4 without modifying the route graph', () => {

@@ -516,3 +516,191 @@ test('reset clears the previous rejected movement-attempt diagnostics', () => {
 
   assert.equal(runtime.getState().latestMovementAttempt, undefined);
 });
+
+test('records a baseline-established step diagnostic for the first cumulative pedometer reading', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  const first = runtime.process(
+    [
+      sample('step-16', 100, 16),
+      {
+        id: 'motion-16',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(first);
+  assert.deepEqual(first.state.latestStepDiagnostics, {
+    batchPedometerSampleCount: 1,
+    batchLatestPedometerSteps: 16,
+    batchLatestPedometerTimestamp: 100,
+    previousStepCountBefore: undefined,
+    previousStepCountAfter: 16,
+    computedStepDelta: 0,
+    reason: 'baseline-established',
+  });
+});
+
+test('records a same-cumulative-count diagnostic when the latest pedometer value does not change', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.process(
+    [
+      sample('step-16', 100, 16),
+      {
+        id: 'motion-16',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+  const repeated = runtime.process(
+    [
+      sample('step-16-repeat', 200, 16),
+      {
+        id: 'motion-16-repeat',
+        kind: 'deviceMotion',
+        timestamp: 201,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(repeated);
+  assert.deepEqual(repeated.state.latestStepDiagnostics, {
+    batchPedometerSampleCount: 1,
+    batchLatestPedometerSteps: 16,
+    batchLatestPedometerTimestamp: 200,
+    previousStepCountBefore: 16,
+    previousStepCountAfter: 16,
+    computedStepDelta: 0,
+    reason: 'same-cumulative-count',
+  });
+});
+
+test('records a no-pedometer-in-batch diagnostic when a processed batch contains only motion samples', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.process(
+    [
+      sample('step-16', 100, 16),
+      {
+        id: 'motion-16',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+  const motionOnly = runtime.process(
+    [
+      {
+        id: 'motion-only',
+        kind: 'deviceMotion',
+        timestamp: 300,
+        attitude: { alpha: Math.PI / 2, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(motionOnly);
+  assert.deepEqual(motionOnly.state.latestStepDiagnostics, {
+    batchPedometerSampleCount: 0,
+    batchLatestPedometerSteps: undefined,
+    batchLatestPedometerTimestamp: undefined,
+    previousStepCountBefore: 16,
+    previousStepCountAfter: 16,
+    computedStepDelta: 0,
+    reason: 'no-pedometer-in-batch',
+  });
+});
+
+test('records a positive-increment diagnostic when the batch advances cumulative steps', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.process(
+    [
+      sample('step-16', 100, 16),
+      {
+        id: 'motion-16',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+  const increment = runtime.process(
+    [
+      sample('step-17-a', 200, 17),
+      sample('step-17-b', 210, 17),
+      {
+        id: 'motion-17',
+        kind: 'deviceMotion',
+        timestamp: 211,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(increment);
+  assert.deepEqual(increment.state.latestStepDiagnostics, {
+    batchPedometerSampleCount: 2,
+    batchLatestPedometerSteps: 17,
+    batchLatestPedometerTimestamp: 210,
+    previousStepCountBefore: 16,
+    previousStepCountAfter: 17,
+    computedStepDelta: 1,
+    reason: 'positive-increment',
+  });
+});
+
+test('records a counter-rollback-rebaseline diagnostic when cumulative steps decrease', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.process(
+    [
+      sample('step-20', 100, 20),
+      {
+        id: 'motion-20',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+  const rollback = runtime.process(
+    [
+      sample('step-3', 200, 3),
+      {
+        id: 'motion-3',
+        kind: 'deviceMotion',
+        timestamp: 201,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(rollback);
+  assert.deepEqual(rollback.state.latestStepDiagnostics, {
+    batchPedometerSampleCount: 1,
+    batchLatestPedometerSteps: 3,
+    batchLatestPedometerTimestamp: 200,
+    previousStepCountBefore: 20,
+    previousStepCountAfter: 3,
+    computedStepDelta: 0,
+    reason: 'counter-rollback-rebaseline',
+  });
+});

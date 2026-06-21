@@ -28,6 +28,20 @@ export type MovementSystemState = {
   particleFilter?: ParticleFilterSnapshot;
   previousStepCount?: number;
   lastStepDelta?: number;
+  latestStepDiagnostics?: {
+    batchPedometerSampleCount: number;
+    batchLatestPedometerSteps?: number;
+    batchLatestPedometerTimestamp?: number;
+    previousStepCountBefore?: number;
+    previousStepCountAfter?: number;
+    computedStepDelta: number;
+    reason:
+      | 'no-pedometer-in-batch'
+      | 'baseline-established'
+      | 'same-cumulative-count'
+      | 'counter-rollback-rebaseline'
+      | 'positive-increment';
+  };
   latestMovementAttempt?: {
     currentPosition: WorldPosition;
     candidatePosition: WorldPosition;
@@ -108,6 +122,12 @@ function resolveStepEstimate(
   step: StepEstimate;
   nextPreviousStepCount: number | undefined;
   clearsLatestMovementAttempt: boolean;
+  reason:
+    | 'no-pedometer-in-batch'
+    | 'baseline-established'
+    | 'same-cumulative-count'
+    | 'counter-rollback-rebaseline'
+    | 'positive-increment';
 } {
   const pedometer = latestPedometerSample(samples);
   const fallbackTimestamp = samples[samples.length - 1]?.timestamp ?? 0;
@@ -125,6 +145,7 @@ function resolveStepEstimate(
         ),
         nextPreviousStepCount: undefined,
         clearsLatestMovementAttempt: false,
+        reason: 'no-pedometer-in-batch',
       };
     }
 
@@ -139,28 +160,42 @@ function resolveStepEstimate(
       ),
       nextPreviousStepCount: previousStepCount,
       clearsLatestMovementAttempt: false,
+      reason: 'no-pedometer-in-batch',
     };
   }
 
-  if (previousStepCount === undefined || pedometer.steps < previousStepCount) {
+  if (previousStepCount === undefined) {
     return {
       step: createBaselineStepEstimate(pedometer.timestamp, pedometer.steps, pedometer.cadence),
       nextPreviousStepCount: pedometer.steps,
       clearsLatestMovementAttempt: true,
+      reason: 'baseline-established',
     };
   }
 
+  if (pedometer.steps < previousStepCount) {
+    return {
+      step: createBaselineStepEstimate(pedometer.timestamp, pedometer.steps, pedometer.cadence),
+      nextPreviousStepCount: pedometer.steps,
+      clearsLatestMovementAttempt: true,
+      reason: 'counter-rollback-rebaseline',
+    };
+  }
+
+  const step = createStepEstimateFromCount(
+    pedometer.timestamp,
+    pedometer.steps,
+    previousStepCount,
+    samples.length > 0 ? 1 : 0,
+    pedometer.cadence,
+    'pedometer',
+  );
+
   return {
-    step: createStepEstimateFromCount(
-      pedometer.timestamp,
-      pedometer.steps,
-      previousStepCount,
-      samples.length > 0 ? 1 : 0,
-      pedometer.cadence,
-      'pedometer',
-    ),
+    step,
     nextPreviousStepCount: pedometer.steps,
     clearsLatestMovementAttempt: false,
+    reason: step.stepDelta > 0 ? 'positive-increment' : 'same-cumulative-count',
   };
 }
 
@@ -174,9 +209,14 @@ export function updateMovementSystem(
 ): MovementSystemResult {
   const normalizedSamples = sensorSamples.map(normalizeSensorSample);
   const constraintProvider = createMovementConstraintProvider(constraintMapInput);
+  const pedometerSamples = normalizedSamples.filter(
+    (sample): sample is PedometerStepSample => sample.kind === 'pedometer',
+  );
+  const latestBatchPedometer = pedometerSamples[pedometerSamples.length - 1];
+  const previousStepCountBefore = currentState.previousStepCount;
   const resolvedStep = resolveStepEstimate(
     normalizedSamples,
-    currentState.previousStepCount,
+    previousStepCountBefore,
   );
   const step = resolvedStep.step;
   const heading = headingFromSamples(normalizedSamples, currentState.headingRadians);
@@ -216,6 +256,15 @@ export function updateMovementSystem(
     particleFilter: nextFilter,
     previousStepCount: resolvedStep.nextPreviousStepCount,
     lastStepDelta: step.stepDelta,
+    latestStepDiagnostics: {
+      batchPedometerSampleCount: pedometerSamples.length,
+      batchLatestPedometerSteps: latestBatchPedometer?.steps,
+      batchLatestPedometerTimestamp: latestBatchPedometer?.timestamp,
+      previousStepCountBefore,
+      previousStepCountAfter: resolvedStep.nextPreviousStepCount,
+      computedStepDelta: step.stepDelta,
+      reason: resolvedStep.reason,
+    },
     latestMovementAttempt:
       movementAnalysis !== undefined
         ? {
