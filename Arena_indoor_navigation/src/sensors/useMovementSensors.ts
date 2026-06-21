@@ -3,8 +3,16 @@ import { useEffect, useRef, useState } from 'react';
 import type { RawSensorSample } from '../mapEngine/shared';
 import {
   createExpoMovementSensorAdapter,
+  type ExpoMovementSensorDiagnosticState,
 } from './expoMovementSensorAdapter';
-import { MovementSensorCollector } from './movementSensorCollector';
+import {
+  MovementSensorCollector,
+  type MovementSensorCollectorDiagnostic,
+} from './movementSensorCollector';
+import {
+  deriveMovementSensorStatus,
+  type MovementSensorStatus,
+} from './movementSensorStatus';
 export { MovementSensorDevPanel } from './debugger/MovementSensorDevPanel';
 import { MockMovementSensorAdapter } from './mock/mockMovementSensorAdapter';
 import {
@@ -30,6 +38,10 @@ export type MovementSensorDevControls = {
     diagnostic: PedometerDiagnosticState;
     retry(): Promise<void>;
   };
+  realSensors: {
+    collector: MovementSensorCollectorDiagnostic;
+    adapter: ExpoMovementSensorDiagnosticState;
+  };
   scenarios: ReturnType<typeof getMockMovementSensorScenarios>;
   scenarioId: MockMovementSensorScenarioId;
   setScenario(scenarioId: MockMovementSensorScenarioId): void;
@@ -47,6 +59,7 @@ export type UseMovementSensorsResult = {
   samples: readonly RawSensorSample[];
   latestKnownPedometerSteps: number | null;
   resetSignal: number;
+  status: MovementSensorStatus;
   developmentControls: MovementSensorDevControls;
 };
 
@@ -56,6 +69,13 @@ const isDevelopmentBuild =
     : process.env.NODE_ENV !== 'production';
 
 const availableMockScenarios = getMockMovementSensorScenarios();
+const INITIAL_COLLECTOR_DIAGNOSTIC: MovementSensorCollectorDiagnostic = {
+  status: 'idle',
+  startedAt: null,
+  subscribedAt: null,
+  firstSampleAt: null,
+  firstBatchAt: null,
+};
 
 export function useMovementSensors(enabled = true): UseMovementSensorsResult {
   const [sensorSamples, setSensorSamples] =
@@ -79,6 +99,10 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
   const [realAdapter] = useState(() => createExpoMovementSensorAdapter());
   const [realPedometerDiagnostic, setRealPedometerDiagnostic] =
     useState<PedometerDiagnosticState>(realAdapter.realPedometerMonitor.getState());
+  const [collectorDiagnostic, setCollectorDiagnostic] =
+    useState<MovementSensorCollectorDiagnostic>(INITIAL_COLLECTOR_DIAGNOSTIC);
+  const [realAdapterDiagnostic, setRealAdapterDiagnostic] =
+    useState<ExpoMovementSensorDiagnosticState>(realAdapter.getDiagnosticState());
   const activeCollectorRef = useRef<MovementSensorCollector | null>(null);
 
   useEffect(() => mockAdapter.subscribeState(setMockState), [mockAdapter]);
@@ -89,6 +113,10 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
         setLatestKnownPedometerSteps(state.rawCumulativeSteps);
       }
     }),
+    [realAdapter],
+  );
+  useEffect(
+    () => realAdapter.subscribeDiagnosticState(setRealAdapterDiagnostic),
     [realAdapter],
   );
 
@@ -114,7 +142,11 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
           setLatestKnownPedometerSteps(latestSteps);
         }
       },
-      { capacity: 128, batchIntervalMs: 250 },
+      {
+        capacity: 128,
+        batchIntervalMs: 250,
+        onDiagnostic: setCollectorDiagnostic,
+      },
     );
     activeCollectorRef.current = collector;
     setSensorSamples(EMPTY_SENSOR_SAMPLES);
@@ -195,10 +227,17 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
     await realAdapter.retryPedometerSubscription();
   }
 
+  const status = deriveMovementSensorStatus(
+    mode,
+    collectorDiagnostic,
+    realAdapterDiagnostic,
+  );
+
   return {
     samples: sensorSamples,
     latestKnownPedometerSteps,
     resetSignal,
+    status,
     developmentControls: {
       enabled: isDevelopmentBuild,
       mode,
@@ -206,6 +245,10 @@ export function useMovementSensors(enabled = true): UseMovementSensorsResult {
       realPedometer: {
         diagnostic: realPedometerDiagnostic,
         retry: retryRealPedometer,
+      },
+      realSensors: {
+        collector: collectorDiagnostic,
+        adapter: realAdapterDiagnostic,
       },
       scenarios: availableMockScenarios,
       scenarioId,
