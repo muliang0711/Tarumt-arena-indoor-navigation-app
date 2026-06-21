@@ -151,6 +151,8 @@ export class MovementRuntime {
     return {
       position: { ...position },
       headingRadians: 0,
+      headingConfidence: 0,
+      headingTimestamp: 0,
       confidence: 0.8,
       previousStepCount,
       lastStepDelta: 0,

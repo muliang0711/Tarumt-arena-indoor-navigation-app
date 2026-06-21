@@ -264,6 +264,32 @@ test('repeated zero-step batches keep the actor at exactly the same position', (
   assert.deepEqual(first.position, { x: 4.8, y: 5.2 });
   assert.deepEqual(second.position, { x: 4.8, y: 5.2 });
   assert.deepEqual(third.position, { x: 4.8, y: 5.2 });
+  assert.equal(first.headingRadians, 0);
+  assert.equal(second.headingRadians, Math.PI / 2);
+  assert.equal(third.headingRadians, Math.PI);
+  assert.equal(second.state.headingConfidence, 0.8);
+  assert.deepEqual(second.particleFilter.position, first.particleFilter.position);
+});
+
+test('heading confidence is independent from movement position confidence', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+  runtime.process([sample('baseline', 100, 0)], constraints);
+
+  const turned = runtime.process(
+    [
+      {
+        id: 'turn',
+        kind: 'deviceMotion',
+        timestamp: 200,
+        attitude: { alpha: Math.PI / 3, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(turned);
+  assert.equal(turned.state.headingConfidence, 0.8);
+  assert.equal(turned.state.confidence, 0.8);
 });
 
 test('preserves the latest attempted movement diagnostics across later zero-step batches', () => {

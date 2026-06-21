@@ -24,6 +24,8 @@ export type { MovementConstraintMapInput, MovementConstraintProvider, RawSensorS
 export type MovementSystemState = {
   position: WorldPosition;
   headingRadians: number;
+  headingConfidence?: number;
+  headingTimestamp?: number;
   confidence?: number;
   particleFilter?: ParticleFilterSnapshot;
   previousStepCount?: number;
@@ -304,6 +306,8 @@ export function updateMovementSystem(
   currentState: MovementSystemState = {
     position: { x: 0, y: 0 },
     headingRadians: 0,
+    headingConfidence: 0,
+    headingTimestamp: 0,
   },
 ): MovementSystemResult {
   const normalizedSamples = sensorSamples.map(normalizeSensorSample);
@@ -342,9 +346,21 @@ export function updateMovementSystem(
   );
   const nextFilter = movementExecution.filter;
   const position = movementExecution.position;
+  const hasFreshHeading = heading.source !== 'unknown';
+  const stateHeadingRadians = hasFreshHeading
+    ? heading.radians
+    : currentState.headingRadians;
+  const stateHeadingConfidence = hasFreshHeading
+    ? heading.confidence
+    : currentState.headingConfidence ?? 0;
+  const stateHeadingTimestamp = hasFreshHeading
+    ? heading.timestamp
+    : currentState.headingTimestamp ?? 0;
   const state: MovementSystemState = {
     position,
-    headingRadians: nextFilter.headingRadians ?? heading.radians,
+    headingRadians: stateHeadingRadians,
+    headingConfidence: stateHeadingConfidence,
+    headingTimestamp: stateHeadingTimestamp,
     confidence: movementExecution.confidence,
     particleFilter: nextFilter,
     previousStepCount: resolvedStep.nextPreviousStepCount,
