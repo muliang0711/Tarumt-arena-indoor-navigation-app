@@ -27,7 +27,9 @@ function createSnapshot(): MovementDebugSnapshot {
     status: 'processed',
     position: { x: 4.8, y: 5.9 },
     headingDegrees: 90,
+    headingConfidence: 0.8,
     confidence: 0.91,
+    acceptedStepPositionCount: 1,
     particleGeneration: 12,
     latestStepDiagnostics: {
       batchPedometerSampleCount: 1,

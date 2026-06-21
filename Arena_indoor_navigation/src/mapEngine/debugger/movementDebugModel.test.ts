@@ -31,6 +31,7 @@ test('summarizes live sensor kinds and movement state', () => {
     state: {
       position: { x: 4.8, y: 5.2 },
       headingRadians: Math.PI / 2,
+      headingConfidence: 0.8,
       confidence: 0.75,
       previousStepCount: 7,
       lastStepDelta: 2,
@@ -73,6 +74,7 @@ test('summarizes live sensor kinds and movement state', () => {
       latestKnownSteps: 7,
       baselineSteps: 5,
     },
+    acceptedStepPositionCount: 2,
   });
 
   assert.equal(snapshot.totalSamples, 3);
@@ -86,7 +88,9 @@ test('summarizes live sensor kinds and movement state', () => {
   assert.equal(snapshot.stepsSinceReset, 2);
   assert.equal(snapshot.latestStepDelta, 2);
   assert.equal(snapshot.headingDegrees, 90);
+  assert.equal(snapshot.headingConfidence, 0.8);
   assert.equal(snapshot.confidence, 0.75);
+  assert.equal(snapshot.acceptedStepPositionCount, 2);
   assert.equal(snapshot.particleGeneration, 3);
   assert.equal(snapshot.destinationLabel, 'Node 4');
   assert.equal(snapshot.latestMovementAttempt?.canMove, false);

@@ -26,7 +26,9 @@ export type MovementDebugSnapshot = {
   status: MovementProcessingStatus;
   position: { x: number; y: number };
   headingDegrees: number;
+  headingConfidence: number | null;
   confidence: number | null;
+  acceptedStepPositionCount: number;
   particleGeneration: number | null;
   latestStepDiagnostics: {
     batchPedometerSampleCount: number;
@@ -58,6 +60,7 @@ type BuildMovementDebugSnapshotInput = {
   destinationNodeId: string;
   destinationAvailable: boolean;
   pedometer: PedometerDebugState;
+  acceptedStepPositionCount?: number;
 };
 
 const EMPTY_COUNTS: SensorKindCounts = {
@@ -75,6 +78,7 @@ export function buildMovementDebugSnapshot({
   destinationNodeId,
   destinationAvailable,
   pedometer,
+  acceptedStepPositionCount = 0,
 }: BuildMovementDebugSnapshotInput): MovementDebugSnapshot {
   const orderedSamples = [...samples].sort(
     (left, right) => left.timestamp - right.timestamp,
@@ -104,7 +108,9 @@ export function buildMovementDebugSnapshot({
     status,
     position: { ...state.position },
     headingDegrees: Math.round((state.headingRadians * 180) / Math.PI),
+    headingConfidence: state.headingConfidence ?? null,
     confidence: state.confidence ?? null,
+    acceptedStepPositionCount,
     particleGeneration: state.particleFilter?.generation ?? null,
     latestStepDiagnostics: state.latestStepDiagnostics
       ? {
