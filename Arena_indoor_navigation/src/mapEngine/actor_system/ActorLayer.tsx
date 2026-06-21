@@ -18,6 +18,9 @@ type ActorLayerProps = {
 
 const BOB_SIZE = 32;
 const RUN_FRAME_MS = 110;
+const USER_RING_SIZE = 50;
+const HEADING_CONE_WIDTH = 64;
+const HEADING_CONE_HEIGHT = 50;
 
 export function ActorLayer({ actors, layout, coordinateSystem }: ActorLayerProps) {
   const [frameIndex, setFrameIndex] = useState(0);
@@ -54,34 +57,27 @@ export function ActorLayer({ actors, layout, coordinateSystem }: ActorLayerProps
                   style={[
                     styles.ring,
                     {
-                      left: point.x - layout.bounds.x - 24,
-                      top: point.y - layout.bounds.y - 24,
+                      left: point.x - layout.bounds.x - USER_RING_SIZE / 2,
+                      top: point.y - layout.bounds.y - USER_RING_SIZE / 2,
                     },
                   ]}
                 />
                 {Number.isFinite(actor.headingRadians) ? (
-                  <>
-                    <View
-                      style={[
-                        styles.headingCone,
-                        {
-                          left: point.x - layout.bounds.x - 18,
-                          top: point.y - layout.bounds.y - 42,
-                          transform: [{ rotate: `${actor.headingRadians}rad` }],
-                        },
-                      ]}
-                    />
-                    <View
-                      style={[
-                        styles.headingNeedle,
-                        {
-                          left: point.x - layout.bounds.x - 2,
-                          top: point.y - layout.bounds.y - 34,
-                          transform: [{ rotate: `${actor.headingRadians}rad` }],
-                        },
-                      ]}
-                    />
-                  </>
+                  <View
+                    style={[
+                      styles.headingCone,
+                      {
+                        left:
+                          point.x - layout.bounds.x - HEADING_CONE_WIDTH / 2,
+                        top:
+                          point.y -
+                          layout.bounds.y -
+                          HEADING_CONE_HEIGHT +
+                          6,
+                        transform: [{ rotate: `${actor.headingRadians}rad` }],
+                      },
+                    ]}
+                  />
                 ) : null}
               </>
             ) : null}
@@ -126,32 +122,25 @@ const styles = StyleSheet.create({
   ring: {
     position: 'absolute',
     zIndex: 20,
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderWidth: 3,
+    width: USER_RING_SIZE,
+    height: USER_RING_SIZE,
+    borderRadius: USER_RING_SIZE / 2,
+    borderWidth: 3.5,
     borderColor: 'rgba(255,255,255,0.92)',
-    backgroundColor: 'rgba(54, 140, 255, 0.16)',
+    backgroundColor: 'rgba(54, 140, 255, 0.2)',
   },
   headingCone: {
     position: 'absolute',
     zIndex: 18,
     width: 0,
     height: 0,
-    borderLeftWidth: 18,
-    borderRightWidth: 18,
-    borderBottomWidth: 30,
+    borderLeftWidth: HEADING_CONE_WIDTH / 2,
+    borderRightWidth: HEADING_CONE_WIDTH / 2,
+    borderBottomWidth: HEADING_CONE_HEIGHT,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderBottomColor: 'rgba(64, 156, 255, 0.28)',
-  },
-  headingNeedle: {
-    position: 'absolute',
-    zIndex: 21,
-    width: 4,
-    height: 24,
-    borderRadius: 2,
-    backgroundColor: 'rgba(38, 115, 255, 0.95)',
+    borderBottomColor: 'rgba(76, 169, 255, 0.34)',
+    opacity: 0.95,
   },
   labelPill: {
     position: 'absolute',

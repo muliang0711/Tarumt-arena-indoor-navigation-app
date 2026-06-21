@@ -1,6 +1,7 @@
 export { ActorLayer } from './ActorLayer';
 export {
   buildBobActorAtNode,
+  deriveActorDirectionFromHeading,
   deriveActorMotionState,
   routeNodeToPixels,
 } from './actorModel';

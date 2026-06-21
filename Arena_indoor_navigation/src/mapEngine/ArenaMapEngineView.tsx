@@ -9,6 +9,7 @@ import {
   buildBobActorAtNode,
   consumeActorMovementTarget,
   createActorMovementQueue,
+  deriveActorDirectionFromHeading,
   deriveActorMotionState,
   routeNodeToPixels,
   shortestHeadingDelta,
@@ -591,13 +592,17 @@ export function ArenaMapEngineView({
       routePolyline,
     ],
   );
+  const visualActorDirection =
+    headingConfidence >= 0.35
+      ? deriveActorDirectionFromHeading(headingRadians, bobMotionState.direction)
+      : bobMotionState.direction;
 
   const actors = useMemo(
     () => [
       {
         ...startingActor,
         position: displayActorPosition,
-        direction: bobMotionState.direction,
+        direction: visualActorDirection,
         action: bobMotionState.action,
         label: 'You',
         headingRadians,
@@ -606,10 +611,10 @@ export function ArenaMapEngineView({
     ],
     [
       bobMotionState.action,
-      bobMotionState.direction,
       displayActorPosition,
       headingRadians,
       startingActor,
+      visualActorDirection,
     ],
   );
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);

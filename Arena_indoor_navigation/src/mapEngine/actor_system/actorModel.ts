@@ -75,3 +75,29 @@ export function deriveActorMotionState(
     action: 'run',
   };
 }
+
+export function deriveActorDirectionFromHeading(
+  headingRadians: number,
+  fallbackDirection: ActorDirection,
+): ActorDirection {
+  if (!Number.isFinite(headingRadians)) {
+    return fallbackDirection;
+  }
+
+  const normalizedDegrees =
+    ((((headingRadians * 180) / Math.PI) % 360) + 360) % 360;
+
+  if (normalizedDegrees >= 45 && normalizedDegrees < 135) {
+    return 'down';
+  }
+
+  if (normalizedDegrees >= 135 && normalizedDegrees < 225) {
+    return 'left';
+  }
+
+  if (normalizedDegrees >= 225 && normalizedDegrees < 315) {
+    return 'up';
+  }
+
+  return 'right';
+}

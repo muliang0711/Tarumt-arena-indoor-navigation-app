@@ -3,6 +3,7 @@ import test from 'node:test';
 
 import {
   buildBobActorAtNode,
+  deriveActorDirectionFromHeading,
   deriveActorMotionState,
   type Actor,
 } from './actorModel';
@@ -66,4 +67,15 @@ test('buildBobActorAtNode starts Bob facing down and idle', () => {
 
   assert.equal(actor.direction, 'down');
   assert.equal(actor.action, 'idle');
+});
+
+test('maps heading radians to the nearest cardinal Bob sprite direction', () => {
+  assert.equal(deriveActorDirectionFromHeading(0, 'down'), 'right');
+  assert.equal(deriveActorDirectionFromHeading(Math.PI / 2, 'right'), 'down');
+  assert.equal(deriveActorDirectionFromHeading(Math.PI, 'down'), 'left');
+  assert.equal(deriveActorDirectionFromHeading((Math.PI * 3) / 2, 'left'), 'up');
+});
+
+test('keeps the fallback direction when heading is invalid', () => {
+  assert.equal(deriveActorDirectionFromHeading(Number.NaN, 'left'), 'left');
 });
