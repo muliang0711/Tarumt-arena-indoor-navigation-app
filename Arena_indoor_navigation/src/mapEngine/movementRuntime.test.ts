@@ -58,6 +58,7 @@ function resultFor(
     position: state.position,
     headingRadians: state.headingRadians,
     confidence: state.confidence ?? 0,
+    acceptedStepPositions: [],
     constraintProvider: {
       canMove: () => true,
       analyzeMove: (from, to) => ({
@@ -777,4 +778,41 @@ test('splits a multi-step pedometer increment into single-step movement attempts
   assert.ok((jumped.state.latestMovementAttempt?.currentPosition.x ?? 0) > 5.4);
   assert.ok((jumped.state.latestMovementAttempt?.candidatePosition.x ?? 0) > 6.1);
   assert.deepEqual(jumped.state.latestMovementAttempt?.finalAcceptedPosition, jumped.position);
+  assert.equal(jumped.acceptedStepPositions.length, 1);
+  assert.deepEqual(jumped.acceptedStepPositions[0], jumped.position);
+});
+
+test('returns every accepted intermediate position for a multi-step increment', () => {
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+  runtime.process(
+    [
+      sample('baseline', 50, 0),
+      {
+        id: 'baseline-heading',
+        kind: 'deviceMotion',
+        timestamp: 51,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  const moved = runtime.process(
+    [
+      sample('step-3', 100, 3),
+      {
+        id: 'heading',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    constraints,
+  );
+
+  assert.ok(moved);
+  assert.equal(moved.acceptedStepPositions.length, 3);
+  assert.ok(moved.acceptedStepPositions[0].x < moved.acceptedStepPositions[1].x);
+  assert.ok(moved.acceptedStepPositions[1].x < moved.acceptedStepPositions[2].x);
+  assert.deepEqual(moved.acceptedStepPositions[2], moved.position);
 });

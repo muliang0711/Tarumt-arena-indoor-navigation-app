@@ -63,6 +63,7 @@ export type MovementSystemResult = {
   position: WorldPosition;
   headingRadians: number;
   confidence: number;
+  acceptedStepPositions: readonly WorldPosition[];
   constraintProvider: MovementConstraintProvider;
   particleFilter: ParticleFilterSnapshot;
   state: MovementSystemState;
@@ -72,6 +73,7 @@ type MovementExecutionResult = {
   filter: ParticleFilterSnapshot;
   position: WorldPosition;
   confidence: number;
+  acceptedStepPositions: readonly WorldPosition[];
   latestAttempt?: MovementSystemState['latestMovementAttempt'];
 };
 
@@ -120,12 +122,14 @@ function executeMovementIncrement(
       filter: initialFilter,
       position: initialPosition,
       confidence: clamp01(currentConfidence),
+      acceptedStepPositions: [],
     };
   }
 
   let activeFilter = initialFilter;
   let activePosition = initialPosition;
   let activeConfidence = currentConfidence;
+  const acceptedStepPositions: WorldPosition[] = [];
   let latestAttempt: MovementSystemState['latestMovementAttempt'] | undefined;
 
   for (let index = 0; index < step.stepDelta; index += 1) {
@@ -168,6 +172,7 @@ function executeMovementIncrement(
 
     activeFilter = candidateFilter;
     activePosition = candidatePosition;
+    acceptedStepPositions.push({ ...activePosition });
     activeConfidence = candidateFilter.confidence;
   }
 
@@ -175,6 +180,7 @@ function executeMovementIncrement(
     filter: activeFilter,
     position: activePosition,
     confidence: clamp01(activeConfidence),
+    acceptedStepPositions,
     latestAttempt,
   };
 }
@@ -386,6 +392,7 @@ export function updateMovementSystem(
     position: state.position,
     headingRadians: state.headingRadians,
     confidence: state.confidence ?? 0,
+    acceptedStepPositions: movementExecution.acceptedStepPositions,
     constraintProvider,
     particleFilter: nextFilter,
     state,
