@@ -126,8 +126,8 @@ test('the real movement pipeline advances one persistent particle filter across 
 
   assert.ok(first);
   assert.ok(second);
-  assert.equal(first.particleFilter.generation, 1);
-  assert.equal(second.particleFilter.generation, 2);
+  assert.equal(first.particleFilter.generation, 0);
+  assert.equal(second.particleFilter.generation, 1);
   assert.equal(second.state.previousStepCount, 2);
 });
 
@@ -703,4 +703,52 @@ test('records a counter-rollback-rebaseline diagnostic when cumulative steps dec
     computedStepDelta: 0,
     reason: 'counter-rollback-rebaseline',
   });
+});
+
+test('splits a multi-step pedometer increment into single-step movement attempts so partial progress is preserved', () => {
+  const narrowWalkableConstraints: MovementConstraintMapInput = {
+    ...constraints,
+    walkableAreas: [[
+      { x: 4.6, y: 5.0 },
+      { x: 5.6, y: 5.0 },
+      { x: 5.6, y: 5.4 },
+      { x: 4.6, y: 5.4 },
+    ]],
+  };
+  const runtime = new MovementRuntime({ x: 4.8, y: 5.2 });
+
+  runtime.process(
+    [
+      sample('baseline-step-0', 50, 0),
+      {
+        id: 'baseline-motion-0',
+        kind: 'deviceMotion',
+        timestamp: 51,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    narrowWalkableConstraints,
+  );
+  const jumped = runtime.process(
+    [
+      sample('step-2', 100, 2),
+      {
+        id: 'motion-2',
+        kind: 'deviceMotion',
+        timestamp: 101,
+        attitude: { alpha: 0, beta: 0, gamma: 0 },
+      },
+    ],
+    narrowWalkableConstraints,
+  );
+
+  assert.ok(jumped);
+  assert.equal(jumped.state.lastStepDelta, 2);
+  assert.ok(jumped.position.x > 5.4 && jumped.position.x < 5.6);
+  assert.equal(jumped.position.y, 5.2);
+  assert.ok(jumped.state.latestMovementAttempt);
+  assert.equal(jumped.state.latestMovementAttempt?.canMove, false);
+  assert.ok((jumped.state.latestMovementAttempt?.currentPosition.x ?? 0) > 5.4);
+  assert.ok((jumped.state.latestMovementAttempt?.candidatePosition.x ?? 0) > 6.1);
+  assert.deepEqual(jumped.state.latestMovementAttempt?.finalAcceptedPosition, jumped.position);
 });

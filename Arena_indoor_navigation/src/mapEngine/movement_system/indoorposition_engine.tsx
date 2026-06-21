@@ -66,6 +66,13 @@ export type MovementSystemResult = {
   state: MovementSystemState;
 };
 
+type MovementExecutionResult = {
+  filter: ParticleFilterSnapshot;
+  position: WorldPosition;
+  confidence: number;
+  latestAttempt?: MovementSystemState['latestMovementAttempt'];
+};
+
 function clamp01(value: number): number {
   return Math.min(1, Math.max(0, Number.isFinite(value) ? value : 0));
 }
@@ -75,6 +82,98 @@ function createDeterministicRandomSource(seed: number): () => number {
   return () => {
     state = (state * 1664525 + 1013904223) >>> 0;
     return state / 0x100000000;
+  };
+}
+
+function createSingleStepEstimate(step: StepEstimate, offset: number): StepEstimate {
+  return {
+    ...step,
+    steps: Math.max(0, step.steps - step.stepDelta + offset + 1),
+    stepDelta: 1,
+  };
+}
+
+function projectPositionAlongHeading(
+  position: WorldPosition,
+  headingRadians: number,
+  distanceMeters: number,
+): WorldPosition {
+  return {
+    x: position.x + Math.cos(headingRadians) * distanceMeters,
+    y: position.y + Math.sin(headingRadians) * distanceMeters,
+  };
+}
+
+function executeMovementIncrement(
+  step: StepEstimate,
+  heading: ReturnType<typeof createHeadingEstimateFromRadians>,
+  initialFilter: ParticleFilterSnapshot,
+  initialPosition: WorldPosition,
+  currentConfidence: number,
+  constraintProvider: MovementConstraintProvider,
+  randomSource: () => number,
+): MovementExecutionResult {
+  if (step.stepDelta <= 0) {
+    return {
+      filter: initialFilter,
+      position: initialPosition,
+      confidence: clamp01(currentConfidence),
+    };
+  }
+
+  let activeFilter = initialFilter;
+  let activePosition = initialPosition;
+  let activeConfidence = currentConfidence;
+  let latestAttempt: MovementSystemState['latestMovementAttempt'] | undefined;
+
+  for (let index = 0; index < step.stepDelta; index += 1) {
+    const motion = createMotionEstimate(createSingleStepEstimate(step, index), heading);
+    const candidateFilter = updateParticleFilterState(activeFilter, motion, {
+      particleCount: 60,
+      weightFloor: 0,
+      randomSource,
+      customScore: (particle) =>
+        isParticlePositionValid(constraintProvider, particle.previousPosition, particle.position) ? 1 : 0,
+    });
+    const candidatePosition = projectPositionAlongHeading(
+      activePosition,
+      motion.heading.radians,
+      motion.displacement.distanceMeters,
+    );
+    const movementAnalysis = constraintProvider.analyzeMove(activePosition, candidatePosition);
+    const canUseCandidate = movementAnalysis.canMove;
+
+    latestAttempt = {
+      currentPosition: { ...movementAnalysis.currentPosition },
+      candidatePosition: { ...movementAnalysis.candidatePosition },
+      finalAcceptedPosition: canUseCandidate
+        ? { ...candidatePosition }
+        : { ...activePosition },
+      headingRadians: motion.heading.radians,
+      distanceMeters: motion.displacement.distanceMeters,
+      canMove: movementAnalysis.canMove,
+      insideWalkableArea: movementAnalysis.insideWalkableArea,
+      insideBlockedArea: movementAnalysis.insideBlockedArea,
+      crossedWall: movementAnalysis.crossedWall,
+      crossedBlockedArea: movementAnalysis.crossedBlockedArea,
+      rejectionReasons: [...movementAnalysis.rejectionReasons],
+    };
+
+    if (!canUseCandidate) {
+      activeConfidence = clamp01(activeConfidence * 0.5);
+      break;
+    }
+
+    activeFilter = candidateFilter;
+    activePosition = candidatePosition;
+    activeConfidence = candidateFilter.confidence;
+  }
+
+  return {
+    filter: activeFilter,
+    position: activePosition,
+    confidence: clamp01(activeConfidence),
+    latestAttempt,
   };
 }
 
@@ -232,27 +331,21 @@ export function updateMovementSystem(
   const randomSource = createDeterministicRandomSource(
     step.timestamp + step.steps * 31 + previousFilter.generation * 997,
   );
-  const nextFilter = updateParticleFilterState(previousFilter, motion, {
-    particleCount: 60,
-    weightFloor: 0,
+  const movementExecution = executeMovementIncrement(
+    step,
+    heading,
+    previousFilter,
+    currentState.position,
+    currentState.confidence ?? 0.8,
+    constraintProvider,
     randomSource,
-    customScore: (particle) =>
-      isParticlePositionValid(constraintProvider, particle.previousPosition, particle.position) ? 1 : 0,
-  });
-  const candidatePosition =
-    step.stepDelta === 0
-      ? currentState.position
-      : nextFilter.position ?? currentState.position;
-  const movementAnalysis: MovementConstraintAnalysis | undefined =
-    step.stepDelta > 0
-      ? constraintProvider.analyzeMove(currentState.position, candidatePosition)
-      : undefined;
-  const canUseCandidate = movementAnalysis?.canMove ?? constraintProvider.canMove(currentState.position, candidatePosition);
-  const position = canUseCandidate ? candidatePosition : currentState.position;
+  );
+  const nextFilter = movementExecution.filter;
+  const position = movementExecution.position;
   const state: MovementSystemState = {
     position,
     headingRadians: nextFilter.headingRadians ?? heading.radians,
-    confidence: clamp01(canUseCandidate ? nextFilter.confidence : (currentState.confidence ?? 0.5) * 0.5),
+    confidence: movementExecution.confidence,
     particleFilter: nextFilter,
     previousStepCount: resolvedStep.nextPreviousStepCount,
     lastStepDelta: step.stepDelta,
@@ -266,20 +359,8 @@ export function updateMovementSystem(
       reason: resolvedStep.reason,
     },
     latestMovementAttempt:
-      movementAnalysis !== undefined
-        ? {
-            currentPosition: { ...movementAnalysis.currentPosition },
-            candidatePosition: { ...movementAnalysis.candidatePosition },
-            finalAcceptedPosition: { ...position },
-            headingRadians: motion.heading.radians,
-            distanceMeters: motion.displacement.distanceMeters,
-            canMove: movementAnalysis.canMove,
-            insideWalkableArea: movementAnalysis.insideWalkableArea,
-            insideBlockedArea: movementAnalysis.insideBlockedArea,
-            crossedWall: movementAnalysis.crossedWall,
-            crossedBlockedArea: movementAnalysis.crossedBlockedArea,
-            rejectionReasons: [...movementAnalysis.rejectionReasons],
-          }
+      movementExecution.latestAttempt !== undefined
+        ? movementExecution.latestAttempt
         : resolvedStep.clearsLatestMovementAttempt
           ? undefined
           : currentState.latestMovementAttempt,
