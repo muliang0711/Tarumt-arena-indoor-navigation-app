@@ -80,12 +80,15 @@ test('MapScreen presents the map as a responsive full-width camera window', () =
   assert.match(source, /MapTripSummaryCard/);
   assert.match(source, /showMovementDiagnostics=\{false\}/);
   assert.match(source, /mapEngineRef/);
-  assert.match(source, /mapControlsOverlay[\s\S]*position:\s*'absolute'/);
+  assert.match(source, /screenControls[\s\S]*flexDirection:\s*'row'/);
+  assert.ok(source.indexOf('styles.screenControls') < source.indexOf('styles.mapArea'));
   assert.match(source, /mapViewport[\s\S]*borderRadius:\s*radius\.lg/);
   assert.match(source, /mapArea[\s\S]*flex:\s*1/);
   assert.match(source, /minHeight:\s*0/);
   assert.match(source, /routeOverlay[\s\S]*position:\s*'absolute'/);
   assert.doesNotMatch(source, /useWindowDimensions/);
+  assert.doesNotMatch(source, /SearchBar/);
+  assert.doesNotMatch(source, /mapControlsOverlay/);
   assert.doesNotMatch(source, /destinationList/);
   assert.doesNotMatch(engine, /cameraControls/);
   assert.doesNotMatch(engine, /<Pressable/);

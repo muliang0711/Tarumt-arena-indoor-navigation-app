@@ -12,7 +12,6 @@ import { Header } from '../components/Header';
 import { MapRouteInstructionCard } from '../components/MapRouteInstructionCard';
 import { MapTripSummaryCard } from '../components/MapTripSummaryCard';
 import { ScreenScaffold } from '../components/ScreenScaffold';
-import { SearchBar } from '../components/SearchBar';
 import { colors, radius, shadow } from '../components/theme';
 import {
   ArenaMapEngineView,
@@ -40,7 +39,52 @@ export function MapScreen() {
     <ScreenScaffold scroll={false}>
       <View style={styles.page}>
         <Header compact title="Indoor Map" subtitle="Level 2 navigation" />
-        <SearchBar compact placeholder="Search on map..." />
+
+        <View style={styles.screenControls}>
+          <View style={styles.floorControl}>
+            <Ionicons name="layers" size={17} color={colors.text} />
+            <Text style={styles.floorText}>Floor 1</Text>
+            <Ionicons name="chevron-down" size={16} color={colors.text} />
+          </View>
+
+          <View style={styles.cameraControls}>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Zoom in"
+              style={styles.zoomButton}
+              onPress={() => mapEngineRef.current?.zoomIn()}
+            >
+              <Text style={styles.zoomText}>+</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Zoom out"
+              style={styles.zoomButton}
+              onPress={() => mapEngineRef.current?.zoomOut()}
+            >
+              <Text style={styles.zoomText}>−</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={followsActor ? 'Following Bob' : 'Recenter map'}
+              style={[
+                styles.followButton,
+                followsActor && styles.followButtonActive,
+              ]}
+              onPress={() => mapEngineRef.current?.recenter()}
+            >
+              <Text
+                numberOfLines={1}
+                style={[
+                  styles.followText,
+                  followsActor && styles.followTextActive,
+                ]}
+              >
+                {followsActor ? 'Following Bob' : 'Recenter'}
+              </Text>
+            </Pressable>
+          </View>
+        </View>
 
         <View style={styles.mapArea}>
           <View style={styles.mapViewport} onLayout={handleMapLayout}>
@@ -54,50 +98,6 @@ export function MapScreen() {
               showMovementDiagnostics={false}
               onFollowStateChange={setFollowsActor}
             />
-
-            <View style={styles.mapControlsOverlay} pointerEvents="box-none">
-              <View style={styles.floorControl}>
-                <Ionicons name="layers" size={17} color={colors.text} />
-                <Text style={styles.floorText}>Floor 1</Text>
-                <Ionicons name="chevron-down" size={16} color={colors.text} />
-              </View>
-
-              <View style={styles.cameraControls}>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="Zoom in"
-                  style={styles.zoomButton}
-                  onPress={() => mapEngineRef.current?.zoomIn()}
-                >
-                  <Text style={styles.zoomText}>+</Text>
-                </Pressable>
-                <Pressable
-                  accessibilityRole="button"
-                  accessibilityLabel="Zoom out"
-                  style={styles.zoomButton}
-                  onPress={() => mapEngineRef.current?.zoomOut()}
-                >
-                  <Text style={styles.zoomText}>−</Text>
-                </Pressable>
-                <Pressable
-                  accessibilityRole="button"
-                  style={[
-                    styles.followButton,
-                    followsActor && styles.followButtonActive,
-                  ]}
-                  onPress={() => mapEngineRef.current?.recenter()}
-                >
-                  <Text
-                    style={[
-                      styles.followText,
-                      followsActor && styles.followTextActive,
-                    ]}
-                  >
-                    {followsActor ? 'Following Bob' : 'Recenter'}
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
 
             <View style={styles.routeOverlay} pointerEvents="none">
               <MapRouteInstructionCard />
@@ -133,15 +133,12 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.9)',
     ...shadow,
   },
-  mapControlsOverlay: {
-    position: 'absolute',
-    zIndex: 50,
-    top: 12,
-    left: 12,
-    right: 12,
+  screenControls: {
+    minHeight: 38,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: 8,
   },
   floorControl: {
     minHeight: 38,
@@ -180,7 +177,8 @@ const styles = StyleSheet.create({
   },
   followButton: {
     minHeight: 38,
-    paddingHorizontal: 13,
+    maxWidth: 112,
+    paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
@@ -201,7 +199,7 @@ const styles = StyleSheet.create({
   routeOverlay: {
     position: 'absolute',
     zIndex: 35,
-    top: 62,
+    top: 12,
     left: 12,
     width: '58%',
     maxWidth: 245,
