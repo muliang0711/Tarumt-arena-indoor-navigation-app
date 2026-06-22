@@ -71,6 +71,15 @@ test('MapScreen imports only page-safe map-engine and sensor APIs', () => {
   assert.deepEqual(sensorImports, ['../sensors/useMovementSensors']);
 });
 
+test('MapScreen presents the map as a responsive full-width camera window', () => {
+  const source = readFileSync(join(srcRoot, 'screens', 'MapScreen.tsx'), 'utf8');
+
+  assert.match(source, /useWindowDimensions/);
+  assert.match(source, /marginHorizontal:\s*-20/);
+  assert.match(source, /padding:\s*0/);
+  assert.match(source, /mapToolbar[\s\S]*position:\s*'absolute'/);
+});
+
 test('camera viewport keeps gesture updates local and commits camera state after interaction', () => {
   const viewport = readFileSync(join(mapEngineRoot, 'cameran_system', 'CameraViewport.tsx'), 'utf8');
 

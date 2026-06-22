@@ -11,7 +11,8 @@ import {
 import {
   CameraViewport,
   centerCameraOnPoint,
-  createInitialCameraState,
+  constrainCameraToBounds,
+  createActorCameraState,
   enterManualPan,
   isFollowingActor,
   recenterActor,
@@ -195,13 +196,31 @@ export function ArenaMapEngineView({
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
   const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);
   const bobPoint = useMemo(
-    () => routeNodeToPixels(actors[0], mapData.coordinateSystem),
-    [actors, mapData.coordinateSystem],
+    () => {
+      const absolutePoint = routeNodeToPixels(actors[0], mapData.coordinateSystem);
+      return {
+        x: absolutePoint.x - bounds.x,
+        y: absolutePoint.y - bounds.y,
+      };
+    },
+    [actors, bounds.x, bounds.y, mapData.coordinateSystem],
   );
-  const initialCamera = useMemo(() => createInitialCameraState(bounds, viewportSize), [bounds, viewportSize]);
+  const sceneBounds = useMemo(
+    () => ({ x: 0, y: 0, width: bounds.width, height: bounds.height }),
+    [bounds.height, bounds.width],
+  );
+  const initialCamera = useMemo(
+    () => createActorCameraState(sceneBounds, viewportSize, bobPoint),
+    [bobPoint, sceneBounds, viewportSize],
+  );
   const applyFollowTarget = useCallback(
-    (nextCamera: CameraState) => centerCameraOnPoint(nextCamera, bobPoint, viewportSize),
-    [bobPoint, viewportSize],
+    (nextCamera: CameraState) =>
+      constrainCameraToBounds(
+        centerCameraOnPoint(nextCamera, bobPoint, viewportSize),
+        sceneBounds,
+        viewportSize,
+      ),
+    [bobPoint, sceneBounds, viewportSize],
   );
   const debugSnapshot = useMemo(
     () =>
@@ -249,9 +268,9 @@ export function ArenaMapEngineView({
 
   useEffect(() => {
     if (viewportWidth > 0) {
-      setCamera(createInitialCameraState(bounds, viewportSize));
+      setCamera(initialCamera);
     }
-  }, [bounds, viewportSize, viewportWidth]);
+  }, [initialCamera, viewportWidth]);
 
   useEffect(() => {
     if (!followsBob || viewportWidth <= 0) {
@@ -268,7 +287,7 @@ export function ArenaMapEngineView({
   const renderedCamera = camera ?? (followsBob ? applyFollowTarget(initialCamera) : initialCamera);
 
   function handleCameraChange(nextCamera: CameraState) {
-    setCamera(nextCamera);
+    setCamera(constrainCameraToBounds(nextCamera, sceneBounds, viewportSize));
   }
 
   function handleCameraInteractionStart() {
@@ -279,7 +298,9 @@ export function ArenaMapEngineView({
     const focalPoint = { x: viewportSize.width / 2, y: viewportSize.height / 2 };
     setCamera((currentCamera) => {
       const zoomedCamera = zoomCamera(currentCamera ?? renderedCamera, factor, undefined, undefined, focalPoint);
-      return followsBob ? applyFollowTarget(zoomedCamera) : zoomedCamera;
+      return followsBob
+        ? applyFollowTarget(zoomedCamera)
+        : constrainCameraToBounds(zoomedCamera, sceneBounds, viewportSize);
     });
   }
 
@@ -302,6 +323,7 @@ export function ArenaMapEngineView({
         camera={renderedCamera}
         contentWidth={bounds.width}
         contentHeight={bounds.height}
+        viewportWidth={viewportSize.width}
         height={height}
         onLayout={handleLayout}
         onCameraChange={handleCameraChange}
@@ -362,7 +384,7 @@ const styles = StyleSheet.create({
   cameraControls: {
     position: 'absolute',
     right: 10,
-    top: 10,
+    top: 62,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,

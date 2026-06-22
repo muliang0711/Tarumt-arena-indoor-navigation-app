@@ -2,8 +2,13 @@ import { ReactNode, useEffect, useMemo, useRef } from 'react';
 import { Animated, LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 
-import { radius } from '../../components/theme';
-import { CAMERA_MAX_ZOOM, CAMERA_MIN_ZOOM, CameraState } from './cameraModel';
+import {
+  CAMERA_MAX_ZOOM,
+  CAMERA_MIN_ZOOM,
+  CameraState,
+  constrainCameraToBounds,
+  minimumCoverScale,
+} from './cameraModel';
 import {
   shouldSyncCameraFromProps,
   type CameraInteractionState,
@@ -13,6 +18,7 @@ type CameraViewportProps = {
   camera: CameraState;
   contentWidth: number;
   contentHeight: number;
+  viewportWidth: number;
   height: number;
   onLayout?: (event: LayoutChangeEvent) => void;
   onCameraChange?: (camera: CameraState) => void;
@@ -24,6 +30,7 @@ export function CameraViewport({
   camera,
   contentWidth,
   contentHeight,
+  viewportWidth,
   height,
   onLayout,
   onCameraChange,
@@ -32,7 +39,16 @@ export function CameraViewport({
 }: CameraViewportProps) {
   const translateX = useRef(new Animated.Value(camera.offsetX)).current;
   const translateY = useRef(new Animated.Value(camera.offsetY)).current;
-  const scale = useRef(new Animated.Value(clampZoom(camera.scale))).current;
+  const sceneBounds = useMemo(
+    () => ({ x: 0, y: 0, width: contentWidth, height: contentHeight }),
+    [contentHeight, contentWidth],
+  );
+  const viewportSize = useMemo(
+    () => ({ width: Math.max(1, viewportWidth), height }),
+    [height, viewportWidth],
+  );
+  const minimumScale = minimumCoverScale(sceneBounds, viewportSize);
+  const scale = useRef(new Animated.Value(clampZoom(camera.scale, minimumScale))).current;
   const cameraRef = useRef(camera);
   const interactionState = useRef<CameraInteractionState>({
     isGestureActive: false,
@@ -41,7 +57,7 @@ export function CameraViewport({
   const pinchStart = useRef({
     x: camera.offsetX,
     y: camera.offsetY,
-    scale: clampZoom(camera.scale),
+    scale: clampZoom(camera.scale, minimumScale),
   });
 
   useEffect(() => {
@@ -50,20 +66,25 @@ export function CameraViewport({
     }
     const nextCamera = {
       ...camera,
-      scale: clampZoom(camera.scale),
+      scale: clampZoom(camera.scale, minimumScale),
     };
     cameraRef.current = nextCamera;
     translateX.setValue(nextCamera.offsetX);
     translateY.setValue(nextCamera.offsetY);
     scale.setValue(nextCamera.scale);
-  }, [camera, scale, translateX, translateY]);
+  }, [camera, minimumScale, scale, translateX, translateY]);
 
   const gestures = useMemo(() => {
     function updateCamera(nextCamera: CameraState) {
-      cameraRef.current = nextCamera;
-      translateX.setValue(nextCamera.offsetX);
-      translateY.setValue(nextCamera.offsetY);
-      scale.setValue(nextCamera.scale);
+      const constrainedCamera = constrainCameraToBounds(
+        nextCamera,
+        sceneBounds,
+        viewportSize,
+      );
+      cameraRef.current = constrainedCamera;
+      translateX.setValue(constrainedCamera.offsetX);
+      translateY.setValue(constrainedCamera.offsetY);
+      scale.setValue(constrainedCamera.scale);
     }
 
     function commitCamera() {
@@ -100,11 +121,11 @@ export function CameraViewport({
         pinchStart.current = {
           x: cameraRef.current.offsetX,
           y: cameraRef.current.offsetY,
-          scale: clampZoom(cameraRef.current.scale),
+          scale: clampZoom(cameraRef.current.scale, minimumScale),
         };
       })
       .onUpdate((event) => {
-        const nextScale = clampZoom(pinchStart.current.scale * event.scale);
+        const nextScale = clampZoom(pinchStart.current.scale * event.scale, minimumScale);
         const focalX = Number.isFinite(event.focalX) ? event.focalX : 0;
         const focalY = Number.isFinite(event.focalY) ? event.focalY : 0;
         const worldX = (focalX - pinchStart.current.x) / Math.max(CAMERA_MIN_ZOOM, pinchStart.current.scale);
@@ -119,7 +140,16 @@ export function CameraViewport({
       .onFinalize(commitCamera);
 
     return Gesture.Simultaneous(panGesture, pinchGesture);
-  }, [onCameraChange, onInteractionStart, scale, translateX, translateY]);
+  }, [
+    minimumScale,
+    onCameraChange,
+    onInteractionStart,
+    scale,
+    sceneBounds,
+    translateX,
+    translateY,
+    viewportSize,
+  ]);
 
   return (
     <GestureDetector gesture={gestures}>
@@ -145,17 +175,16 @@ export function CameraViewport({
   );
 }
 
-function clampZoom(value: number) {
+function clampZoom(value: number, minimumScale = CAMERA_MIN_ZOOM) {
   if (!Number.isFinite(value)) {
-    return CAMERA_MIN_ZOOM;
+    return minimumScale;
   }
-  return Math.min(CAMERA_MAX_ZOOM, Math.max(CAMERA_MIN_ZOOM, value));
+  return Math.min(CAMERA_MAX_ZOOM, Math.max(minimumScale, value));
 }
 
 const styles = StyleSheet.create({
   viewport: {
     overflow: 'hidden',
-    borderRadius: radius.md,
     backgroundColor: '#1f2933',
   },
   stage: {

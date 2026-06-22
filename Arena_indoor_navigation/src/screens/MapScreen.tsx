@@ -1,5 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { Header } from '../components/Header';
 import { ScreenScaffold } from '../components/ScreenScaffold';
@@ -25,6 +25,8 @@ const destinations: Array<{
 
 export function MapScreen() {
   const sensorFeed = useMovementSensors(true);
+  const window = useWindowDimensions();
+  const mapViewportHeight = Math.max(480, Math.min(640, Math.round(window.height * 0.62)));
 
   return (
     <ScreenScaffold>
@@ -32,6 +34,14 @@ export function MapScreen() {
       <SearchBar placeholder="Search on map..." />
 
       <View style={styles.mapCard}>
+        <ArenaMapEngineView
+          mapData={rawMapData}
+          sensorSamples={sensorFeed.samples}
+          latestKnownPedometerSteps={sensorFeed.latestKnownPedometerSteps}
+          height={mapViewportHeight}
+          resetSignal={sensorFeed.resetSignal}
+        />
+
         <View style={styles.mapToolbar}>
           <View style={styles.floorPill}>
             <Ionicons name="layers" size={15} color={colors.orange} />
@@ -44,14 +54,6 @@ export function MapScreen() {
             </Text>
           </View>
         </View>
-
-        <ArenaMapEngineView
-          mapData={rawMapData}
-          sensorSamples={sensorFeed.samples}
-          latestKnownPedometerSteps={sensorFeed.latestKnownPedometerSteps}
-          height={390}
-          resetSignal={sensorFeed.resetSignal}
-        />
       </View>
 
       <MovementSensorDevPanel controls={sensorFeed.developmentControls} />
@@ -85,13 +87,17 @@ export function MapScreen() {
 const styles = StyleSheet.create({
   mapCard: {
     marginTop: 16,
-    padding: 14,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surface,
-    ...shadow,
+    marginHorizontal: -20,
+    padding: 0,
+    overflow: 'hidden',
+    backgroundColor: '#1f2933',
   },
   mapToolbar: {
-    marginBottom: 12,
+    position: 'absolute',
+    zIndex: 30,
+    top: 14,
+    left: 14,
+    right: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

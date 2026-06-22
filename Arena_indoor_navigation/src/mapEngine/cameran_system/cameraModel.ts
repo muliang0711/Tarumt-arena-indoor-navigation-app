@@ -15,6 +15,61 @@ export type CameraState = {
 
 export const CAMERA_MIN_ZOOM = 0.5;
 export const CAMERA_MAX_ZOOM = 4;
+export const DEFAULT_ACTOR_ZOOM = 1;
+
+export function minimumCoverScale(bounds: Bounds, viewport: ViewportSize): number {
+  return Math.max(
+    viewport.width / Math.max(1, bounds.width),
+    viewport.height / Math.max(1, bounds.height),
+  );
+}
+
+export function constrainCameraToBounds(
+  camera: CameraState,
+  bounds: Bounds,
+  viewport: ViewportSize,
+): CameraState {
+  const coverScale = minimumCoverScale(bounds, viewport);
+  const scaleWasRaised = camera.scale < coverScale;
+  const scale = clamp(camera.scale, coverScale, CAMERA_MAX_ZOOM);
+  const scaledWidth = bounds.width * scale;
+  const scaledHeight = bounds.height * scale;
+
+  if (scaleWasRaised) {
+    return {
+      scale,
+      offsetX: Math.round((viewport.width - scaledWidth) / 2),
+      offsetY: Math.round((viewport.height - scaledHeight) / 2),
+    };
+  }
+
+  return {
+    scale,
+    offsetX: Math.round(clamp(camera.offsetX, viewport.width - scaledWidth, 0)),
+    offsetY: Math.round(clamp(camera.offsetY, viewport.height - scaledHeight, 0)),
+  };
+}
+
+export function createActorCameraState(
+  bounds: Bounds,
+  viewport: ViewportSize,
+  actorPoint: Point,
+  preferredScale = DEFAULT_ACTOR_ZOOM,
+): CameraState {
+  return constrainCameraToBounds(
+    centerCameraOnPoint(
+      {
+        scale: Math.max(preferredScale, minimumCoverScale(bounds, viewport)),
+        offsetX: 0,
+        offsetY: 0,
+      },
+      actorPoint,
+      viewport,
+    ),
+    bounds,
+    viewport,
+  );
+}
 
 export function createInitialCameraState(bounds: Bounds, viewport: ViewportSize, padding = 0): CameraState {
   return fitCameraToBounds(bounds, viewport, padding);
