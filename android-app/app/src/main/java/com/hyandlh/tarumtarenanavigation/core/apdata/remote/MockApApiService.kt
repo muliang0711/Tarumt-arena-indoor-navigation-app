@@ -12,6 +12,7 @@ class MockApApiService @Inject constructor() : ApApiService {
                 ApDto(bssid = "10:3f:8c:d6:00:60", x = 34.938, y = 52.644, floorId = "floor-2"),
                 ApDto(bssid = "10:3f:8c:d6:18:80", x = 50.401, y = 66.047, floorId = "floor-2"),
                 ApDto(bssid = "10:3f:8c:d6:11:a0", x = 11.192, y = 60.726, floorId = "floor-2"),
+                ApDto(bssid = "10:3f:8c:d6:ff:a0", x = 48.708, y = 56.188, floorId = "floor-2"),
             )
         )z1
     }
