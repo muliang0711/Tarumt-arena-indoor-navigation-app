@@ -74,6 +74,10 @@ test('MapScreen imports only page-safe map-engine and sensor APIs', () => {
 test('MapScreen presents the map as a responsive full-width camera window', () => {
   const source = readFileSync(join(srcRoot, 'screens', 'MapScreen.tsx'), 'utf8');
   const engine = readFileSync(join(mapEngineRoot, 'ArenaMapEngineView.tsx'), 'utf8');
+  const routeCard = readFileSync(
+    join(srcRoot, 'components', 'MapRouteInstructionCard.tsx'),
+    'utf8',
+  );
 
   assert.match(source, /ScreenScaffold\s+scroll=\{false\}/);
   assert.match(source, /MapRouteInstructionCard/);
@@ -86,6 +90,10 @@ test('MapScreen presents the map as a responsive full-width camera window', () =
   assert.match(source, /mapArea[\s\S]*flex:\s*1/);
   assert.match(source, /minHeight:\s*0/);
   assert.match(source, /routeOverlay[\s\S]*position:\s*'absolute'/);
+  assert.match(source, /styles\.routeOverlay[\s\S]*pointerEvents="box-none"/);
+  assert.match(routeCard, /useState\(true\)/);
+  assert.match(routeCard, /Collapse route instruction/);
+  assert.match(routeCard, /Expand route instruction/);
   assert.doesNotMatch(source, /useWindowDimensions/);
   assert.doesNotMatch(source, /SearchBar/);
   assert.doesNotMatch(source, /mapControlsOverlay/);

@@ -99,7 +99,7 @@ export function MapScreen() {
               onFollowStateChange={setFollowsActor}
             />
 
-            <View style={styles.routeOverlay} pointerEvents="none">
+            <View style={styles.routeOverlay} pointerEvents="box-none">
               <MapRouteInstructionCard />
             </View>
           </View>

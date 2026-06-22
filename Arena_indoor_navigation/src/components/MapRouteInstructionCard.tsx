@@ -1,9 +1,32 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { radius, shadow } from './theme';
 
 export function MapRouteInstructionCard() {
+  const [expanded, setExpanded] = useState(true);
+
+  if (!expanded) {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Expand route instruction"
+        hitSlop={8}
+        style={({ pressed }) => [
+          styles.compactButton,
+          pressed && styles.buttonPressed,
+        ]}
+        onPress={() => setExpanded(true)}
+      >
+        <Ionicons name="navigate" size={24} color="#ffffff" />
+        <View style={styles.expandBadge}>
+          <Ionicons name="expand-outline" size={11} color="#ffffff" />
+        </View>
+      </Pressable>
+    );
+  }
+
   return (
     <View style={styles.card}>
       <View style={styles.directionIcon}>
@@ -22,6 +45,18 @@ export function MapRouteInstructionCard() {
           <View style={styles.dot} />
         </View>
       </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Collapse route instruction"
+        hitSlop={8}
+        style={({ pressed }) => [
+          styles.collapseButton,
+          pressed && styles.buttonPressed,
+        ]}
+        onPress={() => setExpanded(false)}
+      >
+        <Ionicons name="contract-outline" size={15} color="#ffffff" />
+      </Pressable>
     </View>
   );
 }
@@ -36,6 +71,31 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(21, 39, 57, 0.94)',
     ...shadow,
   },
+  compactButton: {
+    width: 52,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: '#1478db',
+    borderWidth: 3,
+    borderColor: 'rgba(255,255,255,0.92)',
+    ...shadow,
+  },
+  expandBadge: {
+    position: 'absolute',
+    right: 3,
+    bottom: 3,
+    width: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: '#152739',
+  },
+  buttonPressed: {
+    opacity: 0.76,
+  },
   directionIcon: {
     width: 44,
     height: 58,
@@ -46,6 +106,7 @@ const styles = StyleSheet.create({
   },
   copy: {
     flex: 1,
+    paddingRight: 16,
   },
   title: {
     color: '#ffffff',
@@ -76,5 +137,16 @@ const styles = StyleSheet.create({
   },
   dotActive: {
     backgroundColor: '#ffffff',
+  },
+  collapseButton: {
+    position: 'absolute',
+    top: 7,
+    right: 7,
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: 'rgba(255,255,255,0.13)',
   },
 });
