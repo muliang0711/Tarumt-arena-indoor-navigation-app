@@ -6,6 +6,8 @@ export type ActorAction = 'idle' | 'run';
 type BobIdleAssets = Record<ActorDirection, ImageSourcePropType>;
 type BobRunAssets = Record<ActorDirection, readonly ImageSourcePropType[]>;
 
+export const bobFacingFanAsset: ImageSourcePropType = require('../../storage/bob/facing_fan.png');
+
 export const bobIdleAssets: BobIdleAssets = {
   down: require('../../storage/bob/bob_stand/idle_down.png'),
   left: require('../../storage/bob/bob_stand/idle_left.png'),

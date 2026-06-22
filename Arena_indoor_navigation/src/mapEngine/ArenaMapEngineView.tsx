@@ -95,6 +95,7 @@ export function ArenaMapEngineView({
     movementRuntimeRef.current = new MovementRuntime(startingActor.position, updateMovementSystem);
   }
   const [actorPosition, setActorPosition] = useState(startingActor.position);
+  const [actorHeadingRadians, setActorHeadingRadians] = useState(startingActor.headingRadians);
   const previousActorPositionRef = useRef(startingActor.position);
   const [pedometerBaselineSteps, setPedometerBaselineSteps] = useState<number | null>(
     latestKnownPedometerSteps,
@@ -128,6 +129,7 @@ export function ArenaMapEngineView({
       });
       previousActorPositionRef.current = startingActor.position;
       setActorPosition(startingActor.position);
+      setActorHeadingRadians(startingActor.headingRadians);
       setBobMotionState({
         direction: startingActor.direction,
         action: 'idle',
@@ -135,7 +137,7 @@ export function ArenaMapEngineView({
       setPedometerBaselineSteps(baselineSteps);
       setProcessingStatus(status);
     },
-    [startingActor.direction, startingActor.position],
+    [startingActor.direction, startingActor.headingRadians, startingActor.position],
   );
 
   useEffect(() => {
@@ -164,6 +166,7 @@ export function ArenaMapEngineView({
     const movementUpdate = movementRuntimeRef.current?.process(sensorSamples, constraintMapInput);
     if (movementUpdate) {
       const nextPosition = movementUpdate.position;
+      setActorHeadingRadians(movementUpdate.headingRadians);
       setBobMotionState(
         deriveActorMotionState(startingActor, {
           x: nextPosition.x - previousActorPositionRef.current.x,
@@ -187,11 +190,12 @@ export function ArenaMapEngineView({
       {
         ...startingActor,
         position: actorPosition,
+        headingRadians: actorHeadingRadians,
         direction: bobMotionState.direction,
         action: bobMotionState.action,
       },
     ],
-    [actorPosition, bobMotionState.action, bobMotionState.direction, startingActor],
+    [actorHeadingRadians, actorPosition, bobMotionState.action, bobMotionState.direction, startingActor],
   );
   const bounds = useMemo(() => getVisualBounds(mapData), [mapData]);
   const viewportSize = useMemo(() => ({ width: Math.max(1, viewportWidth), height }), [height, viewportWidth]);

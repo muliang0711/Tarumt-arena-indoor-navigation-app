@@ -13,6 +13,7 @@ test('derives Bob run direction from horizontal and vertical movement deltas', (
     name: 'Bob',
     nodeId: 'node_1',
     position: { x: 0, y: 0 },
+    headingRadians: Math.PI / 2,
     direction: 'down',
     action: 'idle',
   };
@@ -41,6 +42,7 @@ test('keeps Bob idle and facing the last direction when movement is below epsilo
     name: 'Bob',
     nodeId: 'node_1',
     position: { x: 0, y: 0 },
+    headingRadians: Math.PI,
     direction: 'left',
     action: 'run',
   };

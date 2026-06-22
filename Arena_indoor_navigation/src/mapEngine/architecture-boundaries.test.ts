@@ -146,6 +146,18 @@ test('actor layer renders directional sprites instead of a hardcoded idle frame'
   assert.match(source, /setInterval|setTimeout/);
 });
 
+test('actor layer renders a rotating fan sector below the actor without SVG', () => {
+  const source = readFileSync(
+    join(mapEngineRoot, 'actor_system', 'ActorLayer.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /bobFacingFanAsset/);
+  assert.match(source, /fanRotationDegrees/);
+  assert.match(source, /headingRadians/);
+  assert.doesNotMatch(source, /react-native-svg|<Svg|<Path/);
+});
+
 test('map engine derives Bob motion state from position changes', () => {
   const source = readFileSync(
     join(mapEngineRoot, 'ArenaMapEngineView.tsx'),

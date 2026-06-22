@@ -9,6 +9,7 @@ export type Actor = {
   name: string;
   nodeId: string;
   position: WorldPosition;
+  headingRadians: number;
   direction: ActorDirection;
   action: ActorAction;
 };
@@ -32,6 +33,7 @@ export function buildBobActorAtNode(mapData: RouteGraphMap, nodeId = 'node_1'): 
     name: 'Bob',
     nodeId,
     position: { x: node.position.x, y: node.position.y },
+    headingRadians: Math.PI / 2,
     direction: 'down',
     action: 'idle',
   };
