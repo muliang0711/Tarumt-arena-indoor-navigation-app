@@ -1,11 +1,13 @@
-export type CameraFollowMode = 'following' | 'free-look';
+export type CameraMode = 'followActor' | 'manualPan';
 
-export function toggleCameraFollowMode(
-  mode: CameraFollowMode,
-): CameraFollowMode {
-  return mode === 'following' ? 'free-look' : 'following';
+export function enterManualPan(_mode: CameraMode): CameraMode {
+  return 'manualPan';
 }
 
-export function isFollowingBob(mode: CameraFollowMode): boolean {
-  return mode === 'following';
+export function recenterActor(_mode: CameraMode): CameraMode {
+  return 'followActor';
+}
+
+export function isFollowingActor(mode: CameraMode): boolean {
+  return mode === 'followActor';
 }

@@ -78,7 +78,7 @@ test('camera viewport keeps gesture updates local and commits camera state after
   assert.match(viewport, /Gesture\.Pinch\(\)/);
   assert.match(viewport, /shouldSyncCameraFromProps/);
   assert.match(viewport, /isGestureActive/);
-  assert.doesNotMatch(viewport, /onGestureStart/);
+  assert.match(viewport, /onInteractionStart/);
   assert.match(viewport, /onFinalize\(commitCamera\)/);
 });
 

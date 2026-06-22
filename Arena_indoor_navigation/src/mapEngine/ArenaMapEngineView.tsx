@@ -12,10 +12,11 @@ import {
   CameraViewport,
   centerCameraOnPoint,
   createInitialCameraState,
-  isFollowingBob,
-  toggleCameraFollowMode,
+  enterManualPan,
+  isFollowingActor,
+  recenterActor,
   zoomCamera,
-  type CameraFollowMode,
+  type CameraMode,
   type CameraState,
 } from './cameran_system/cameranSystem';
 import {
@@ -59,8 +60,8 @@ export function ArenaMapEngineView({
 }: ArenaMapEngineViewProps) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
-  const [cameraMode, setCameraMode] = useState<CameraFollowMode>('following');
-  const followsBob = isFollowingBob(cameraMode);
+  const [cameraMode, setCameraMode] = useState<CameraMode>('followActor');
+  const followsBob = isFollowingActor(cameraMode);
   const coordinateSystem = useMemo(
     () => extractMapCoordinateSystem(rawMapData),
     [rawMapData],
@@ -270,6 +271,10 @@ export function ArenaMapEngineView({
     setCamera(nextCamera);
   }
 
+  function handleCameraInteractionStart() {
+    setCameraMode(enterManualPan);
+  }
+
   function handleZoomButton(factor: number) {
     const focalPoint = { x: viewportSize.width / 2, y: viewportSize.height / 2 };
     setCamera((currentCamera) => {
@@ -278,14 +283,9 @@ export function ArenaMapEngineView({
     });
   }
 
-  function handleToggleFollowBob() {
-    setCameraMode((currentMode) => {
-      const nextMode = toggleCameraFollowMode(currentMode);
-      if (isFollowingBob(nextMode)) {
-        setCamera((currentCamera) => applyFollowTarget(currentCamera ?? renderedCamera));
-      }
-      return nextMode;
-    });
+  function handleRecenterActor() {
+    setCameraMode(recenterActor);
+    setCamera((currentCamera) => applyFollowTarget(currentCamera ?? renderedCamera));
   }
 
   function handleResetNavigation() {
@@ -305,6 +305,7 @@ export function ArenaMapEngineView({
         height={height}
         onLayout={handleLayout}
         onCameraChange={handleCameraChange}
+        onInteractionStart={handleCameraInteractionStart}
       >
         <ArenaMapView
           mapData={mapData}
@@ -339,10 +340,10 @@ export function ArenaMapEngineView({
         </Pressable>
         <Pressable
           style={[styles.followButton, followsBob && styles.followButtonActive]}
-          onPress={handleToggleFollowBob}
+          onPress={handleRecenterActor}
         >
           <Text style={[styles.followButtonText, followsBob && styles.followButtonTextActive]}>
-            {followsBob ? 'Following Bob' : 'Free look'}
+            {followsBob ? 'Following Bob' : 'Recenter'}
           </Text>
         </Pressable>
       </View>

@@ -11,7 +11,8 @@ export {
 } from './cameraModel';
 export type { CameraState, Point, ViewportSize } from './cameraModel';
 export {
-  isFollowingBob,
-  toggleCameraFollowMode,
+  enterManualPan,
+  isFollowingActor,
+  recenterActor,
 } from './cameraFollowMode';
-export type { CameraFollowMode } from './cameraFollowMode';
+export type { CameraMode } from './cameraFollowMode';
