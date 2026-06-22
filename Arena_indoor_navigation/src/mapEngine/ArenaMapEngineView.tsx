@@ -1,7 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
 
-import { colors, radius, shadow } from '../components/theme';
 import {
   ActorLayer,
   buildBobActorAtNode,
@@ -47,20 +54,34 @@ type ArenaMapEngineViewProps = {
   height?: number;
   resetSignal?: number;
   showMovementDiagnostics?: boolean;
+  onFollowStateChange?: (following: boolean) => void;
+};
+
+export type ArenaMapEngineHandle = {
+  zoomIn(): void;
+  zoomOut(): void;
+  recenter(): void;
 };
 
 const defaultMapData = require('../storage/map-assets/map.json');
 const EMPTY_SENSOR_SAMPLES: readonly RawSensorSample[] = Object.freeze([]);
 
-export function ArenaMapEngineView({
-  mapData: rawMapData = defaultMapData,
-  sensorSamples = EMPTY_SENSOR_SAMPLES,
-  latestKnownPedometerSteps = null,
-  startingNodeId = 'node_1',
-  height = 390,
-  resetSignal = 0,
-  showMovementDiagnostics = true,
-}: ArenaMapEngineViewProps) {
+export const ArenaMapEngineView = forwardRef<
+  ArenaMapEngineHandle,
+  ArenaMapEngineViewProps
+>(function ArenaMapEngineView(
+  {
+    mapData: rawMapData = defaultMapData,
+    sensorSamples = EMPTY_SENSOR_SAMPLES,
+    latestKnownPedometerSteps = null,
+    startingNodeId = 'node_1',
+    height = 390,
+    resetSignal = 0,
+    showMovementDiagnostics = true,
+    onFollowStateChange,
+  },
+  ref,
+) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
   const [cameraMode, setCameraMode] = useState<CameraMode>('followActor');
@@ -290,6 +311,10 @@ export function ArenaMapEngineView({
     viewportWidth,
   ]);
 
+  useEffect(() => {
+    onFollowStateChange?.(followsBob);
+  }, [followsBob, onFollowStateChange]);
+
   const renderedCamera = camera ?? (followsBob ? applyFollowTarget(initialCamera) : initialCamera);
 
   function handleCameraChange(nextCamera: CameraState) {
@@ -314,6 +339,15 @@ export function ArenaMapEngineView({
     setCameraMode(recenterActor);
     setCamera((currentCamera) => applyFollowTarget(currentCamera ?? renderedCamera));
   }
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      zoomIn: () => handleZoomButton(1.2),
+      zoomOut: () => handleZoomButton(1 / 1.2),
+      recenter: handleRecenterActor,
+    }),
+  );
 
   function handleResetNavigation() {
     applyNavigationReset('reset', sensorSamples, latestKnownPedometerSteps);
@@ -359,22 +393,6 @@ export function ArenaMapEngineView({
         />
       </CameraViewport>
 
-      <View style={styles.cameraControls}>
-        <Pressable style={styles.controlButton} onPress={() => handleZoomButton(1.2)}>
-          <Text style={styles.controlButtonText}>+</Text>
-        </Pressable>
-        <Pressable style={styles.controlButton} onPress={() => handleZoomButton(1 / 1.2)}>
-          <Text style={styles.controlButtonText}>-</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.followButton, followsBob && styles.followButtonActive]}
-          onPress={handleRecenterActor}
-        >
-          <Text style={[styles.followButtonText, followsBob && styles.followButtonTextActive]}>
-            {followsBob ? 'Following Bob' : 'Recenter'}
-          </Text>
-        </Pressable>
-      </View>
       {showMovementDiagnostics ? (
         <MovementDebugPanel
           snapshot={debugSnapshot}
@@ -383,54 +401,10 @@ export function ArenaMapEngineView({
       ) : null}
     </View>
   );
-}
+});
 
 const styles = StyleSheet.create({
   engine: {
     position: 'relative',
-  },
-  cameraControls: {
-    position: 'absolute',
-    zIndex: 50,
-    right: 10,
-    top: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  controlButton: {
-    width: 38,
-    height: 38,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
-    ...shadow,
-  },
-  controlButtonText: {
-    color: colors.text,
-    fontSize: 20,
-    fontWeight: '900',
-    lineHeight: 22,
-  },
-  followButton: {
-    minHeight: 38,
-    paddingHorizontal: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
-    ...shadow,
-  },
-  followButtonActive: {
-    backgroundColor: colors.green,
-  },
-  followButtonText: {
-    color: colors.text,
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  followButtonTextActive: {
-    color: '#ffffff',
   },
 });

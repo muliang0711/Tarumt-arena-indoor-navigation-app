@@ -1,5 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
+import { useRef, useState } from 'react';
+import {
+  LayoutChangeEvent,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 
 import { Header } from '../components/Header';
 import { MapRouteInstructionCard } from '../components/MapRouteInstructionCard';
@@ -7,7 +14,10 @@ import { MapTripSummaryCard } from '../components/MapTripSummaryCard';
 import { ScreenScaffold } from '../components/ScreenScaffold';
 import { SearchBar } from '../components/SearchBar';
 import { colors, radius, shadow } from '../components/theme';
-import { ArenaMapEngineView } from '../mapEngine/map-controller';
+import {
+  ArenaMapEngineView,
+  type ArenaMapEngineHandle,
+} from '../mapEngine/map-controller';
 import {
   MovementSensorDevPanel,
   useMovementSensors,
@@ -17,11 +27,14 @@ const rawMapData = require('../storage/map-assets/map.json');
 
 export function MapScreen() {
   const sensorFeed = useMovementSensors(true);
-  const window = useWindowDimensions();
-  const mapViewportHeight = Math.max(
-    235,
-    Math.min(450, Math.round(window.height - 445)),
-  );
+  const mapEngineRef = useRef<ArenaMapEngineHandle>(null);
+  const [mapViewportHeight, setMapViewportHeight] = useState(1);
+  const [followsActor, setFollowsActor] = useState(true);
+
+  function handleMapLayout(event: LayoutChangeEvent) {
+    const height = Math.max(1, Math.round(event.nativeEvent.layout.height));
+    setMapViewportHeight((current) => (current === height ? current : height));
+  }
 
   return (
     <ScreenScaffold scroll={false}>
@@ -29,24 +42,66 @@ export function MapScreen() {
         <Header compact title="Indoor Map" subtitle="Level 2 navigation" />
         <SearchBar compact placeholder="Search on map..." />
 
-        <View style={[styles.mapViewport, { height: mapViewportHeight }]}>
-          <ArenaMapEngineView
-            mapData={rawMapData}
-            sensorSamples={sensorFeed.samples}
-            latestKnownPedometerSteps={sensorFeed.latestKnownPedometerSteps}
-            height={mapViewportHeight}
-            resetSignal={sensorFeed.resetSignal}
-            showMovementDiagnostics={false}
-          />
+        <View style={styles.mapArea}>
+          <View style={styles.mapViewport} onLayout={handleMapLayout}>
+            <ArenaMapEngineView
+              ref={mapEngineRef}
+              mapData={rawMapData}
+              sensorSamples={sensorFeed.samples}
+              latestKnownPedometerSteps={sensorFeed.latestKnownPedometerSteps}
+              height={mapViewportHeight}
+              resetSignal={sensorFeed.resetSignal}
+              showMovementDiagnostics={false}
+              onFollowStateChange={setFollowsActor}
+            />
 
-          <View style={styles.floorControl}>
-            <Ionicons name="layers" size={17} color={colors.text} />
-            <Text style={styles.floorText}>Floor 1</Text>
-            <Ionicons name="chevron-down" size={16} color={colors.text} />
-          </View>
+            <View style={styles.mapControlsOverlay} pointerEvents="box-none">
+              <View style={styles.floorControl}>
+                <Ionicons name="layers" size={17} color={colors.text} />
+                <Text style={styles.floorText}>Floor 1</Text>
+                <Ionicons name="chevron-down" size={16} color={colors.text} />
+              </View>
 
-          <View style={styles.routeOverlay}>
-            <MapRouteInstructionCard />
+              <View style={styles.cameraControls}>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Zoom in"
+                  style={styles.zoomButton}
+                  onPress={() => mapEngineRef.current?.zoomIn()}
+                >
+                  <Text style={styles.zoomText}>+</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  accessibilityLabel="Zoom out"
+                  style={styles.zoomButton}
+                  onPress={() => mapEngineRef.current?.zoomOut()}
+                >
+                  <Text style={styles.zoomText}>−</Text>
+                </Pressable>
+                <Pressable
+                  accessibilityRole="button"
+                  style={[
+                    styles.followButton,
+                    followsActor && styles.followButtonActive,
+                  ]}
+                  onPress={() => mapEngineRef.current?.recenter()}
+                >
+                  <Text
+                    style={[
+                      styles.followText,
+                      followsActor && styles.followTextActive,
+                    ]}
+                  >
+                    {followsActor ? 'Following Bob' : 'Recenter'}
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+
+            <View style={styles.routeOverlay} pointerEvents="none">
+              <MapRouteInstructionCard />
+            </View>
           </View>
         </View>
 
@@ -60,9 +115,16 @@ export function MapScreen() {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
+    minHeight: 0,
     gap: 8,
+    overflow: 'hidden',
+  },
+  mapArea: {
+    flex: 1,
+    minHeight: 0,
   },
   mapViewport: {
+    flex: 1,
     position: 'relative',
     overflow: 'hidden',
     borderRadius: radius.lg,
@@ -71,11 +133,17 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.9)',
     ...shadow,
   },
-  floorControl: {
+  mapControlsOverlay: {
     position: 'absolute',
-    zIndex: 40,
+    zIndex: 50,
     top: 12,
     left: 12,
+    right: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  floorControl: {
     minHeight: 38,
     paddingHorizontal: 12,
     flexDirection: 'row',
@@ -89,6 +157,46 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 13,
     fontWeight: '900',
+  },
+  cameraControls: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+  },
+  zoomButton: {
+    width: 38,
+    height: 38,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: 'rgba(255,253,249,0.97)',
+    ...shadow,
+  },
+  zoomText: {
+    color: colors.text,
+    fontSize: 21,
+    fontWeight: '900',
+    lineHeight: 23,
+  },
+  followButton: {
+    minHeight: 38,
+    paddingHorizontal: 13,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radius.pill,
+    backgroundColor: 'rgba(255,253,249,0.97)',
+    ...shadow,
+  },
+  followButtonActive: {
+    backgroundColor: colors.green,
+  },
+  followText: {
+    color: colors.text,
+    fontSize: 11,
+    fontWeight: '900',
+  },
+  followTextActive: {
+    color: '#ffffff',
   },
   routeOverlay: {
     position: 'absolute',

@@ -4,7 +4,7 @@
 
 **Goal:** Refine the Map page into a compact iOS-style indoor navigation layout where the rounded map viewport is the primary visual focus.
 
-**Architecture:** `MapScreen` owns page composition and navigation information overlays. Existing map-engine camera and movement behavior remain unchanged; only camera-control styling and debug-panel presentation receive minor UI integration changes.
+**Architecture:** `MapScreen` owns page composition, navigation information overlays, and the visible camera controls. `ArenaMapEngineView` exposes only `zoomIn`, `zoomOut`, and `recenter` through a page-safe ref while existing camera and movement behavior remains unchanged.
 
 **Tech Stack:** React Native 0.81, Expo 54, TypeScript, Expo Vector Icons, Node test runner.
 
@@ -43,7 +43,7 @@
 - Modify: `src/mapEngine/ArenaMapEngineView.tsx`
 
 - [x] Make both developer panels collapsed by default with explicit expand controls.
-- [x] Keep zoom and follow/recenter handlers unchanged while refining their visual size and position.
+- [x] Keep zoom and follow/recenter handlers unchanged while moving their visible buttons into the MapScreen overlay layer.
 - [x] Ensure collapsed diagnostics do not create empty dark space below the map.
 - [x] Run focused tests and TypeScript typecheck.
 
