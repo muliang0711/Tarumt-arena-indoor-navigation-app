@@ -1,7 +1,9 @@
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 
 import { Header } from '../components/Header';
+import { MapRouteInstructionCard } from '../components/MapRouteInstructionCard';
+import { MapTripSummaryCard } from '../components/MapTripSummaryCard';
 import { ScreenScaffold } from '../components/ScreenScaffold';
 import { SearchBar } from '../components/SearchBar';
 import { colors, radius, shadow } from '../components/theme';
@@ -13,186 +15,87 @@ import {
 
 const rawMapData = require('../storage/map-assets/map.json');
 
-const destinations: Array<{
-  label: string;
-  icon: keyof typeof MaterialCommunityIcons.glyphMap;
-  active?: boolean;
-}> = [
-  { label: 'Entrance', icon: 'walk', active: true },
-  { label: 'Lecture Hall', icon: 'school-outline' },
-  { label: 'Lift Lobby', icon: 'elevator-passenger' },
-];
-
 export function MapScreen() {
   const sensorFeed = useMovementSensors(true);
   const window = useWindowDimensions();
-  const mapViewportHeight = Math.max(480, Math.min(640, Math.round(window.height * 0.62)));
+  const mapViewportHeight = Math.max(
+    235,
+    Math.min(450, Math.round(window.height - 445)),
+  );
 
   return (
-    <ScreenScaffold>
-      <Header title="Indoor Map" subtitle="Level 2 navigation" />
-      <SearchBar placeholder="Search on map..." />
+    <ScreenScaffold scroll={false}>
+      <View style={styles.page}>
+        <Header compact title="Indoor Map" subtitle="Level 2 navigation" />
+        <SearchBar compact placeholder="Search on map..." />
 
-      <View style={styles.mapCard}>
-        <ArenaMapEngineView
-          mapData={rawMapData}
-          sensorSamples={sensorFeed.samples}
-          latestKnownPedometerSteps={sensorFeed.latestKnownPedometerSteps}
-          height={mapViewportHeight}
-          resetSignal={sensorFeed.resetSignal}
-        />
+        <View style={[styles.mapViewport, { height: mapViewportHeight }]}>
+          <ArenaMapEngineView
+            mapData={rawMapData}
+            sensorSamples={sensorFeed.samples}
+            latestKnownPedometerSteps={sensorFeed.latestKnownPedometerSteps}
+            height={mapViewportHeight}
+            resetSignal={sensorFeed.resetSignal}
+            showMovementDiagnostics={false}
+          />
 
-        <View style={styles.mapToolbar}>
-          <View style={styles.floorPill}>
-            <Ionicons name="layers" size={15} color={colors.orange} />
-            <Text style={styles.floorText}>Level 2</Text>
+          <View style={styles.floorControl}>
+            <Ionicons name="layers" size={17} color={colors.text} />
+            <Text style={styles.floorText}>Floor 1</Text>
+            <Ionicons name="chevron-down" size={16} color={colors.text} />
           </View>
-          <View style={styles.statusPill}>
-            <View style={styles.statusDot} />
-            <Text style={styles.statusText}>
-              {sensorFeed.developmentControls.mode === 'mock' ? 'Mock' : 'Live'}
-            </Text>
+
+          <View style={styles.routeOverlay}>
+            <MapRouteInstructionCard />
           </View>
         </View>
-      </View>
 
-      <MovementSensorDevPanel controls={sensorFeed.developmentControls} />
-
-      <View style={styles.routeSummary}>
-        <View>
-          <Text style={styles.summaryLabel}>Actor render</Text>
-          <Text style={styles.summaryTitle}>Bob is rendered by actor system</Text>
-        </View>
-        <View style={styles.distanceBadge}>
-          <Text style={styles.distanceText}>Node 1</Text>
-        </View>
-      </View>
-
-      <View style={styles.destinationList}>
-        {destinations.map((item) => (
-          <View key={item.label} style={[styles.destination, item.active && styles.destinationActive]}>
-            <MaterialCommunityIcons
-              name={item.icon}
-              size={22}
-              color={item.active ? colors.orange : colors.green}
-            />
-            <Text style={[styles.destinationText, item.active && styles.destinationTextActive]}>{item.label}</Text>
-          </View>
-        ))}
+        <MapTripSummaryCard />
+        <MovementSensorDevPanel controls={sensorFeed.developmentControls} />
       </View>
     </ScreenScaffold>
   );
 }
 
 const styles = StyleSheet.create({
-  mapCard: {
-    marginTop: 16,
-    marginHorizontal: -20,
-    padding: 0,
+  page: {
+    flex: 1,
+    gap: 8,
+  },
+  mapViewport: {
+    position: 'relative',
     overflow: 'hidden',
-    backgroundColor: '#1f2933',
-  },
-  mapToolbar: {
-    position: 'absolute',
-    zIndex: 30,
-    top: 14,
-    left: 14,
-    right: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  floorPill: {
-    minHeight: 34,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 7,
-    borderRadius: radius.pill,
-    backgroundColor: colors.orangeSoft,
-  },
-  floorText: {
-    color: colors.orange,
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  statusPill: {
-    minHeight: 34,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 7,
-    borderRadius: radius.pill,
-    backgroundColor: colors.greenSoft,
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: radius.pill,
-    backgroundColor: colors.green,
-  },
-  statusText: {
-    color: colors.green,
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  routeSummary: {
-    minHeight: 74,
-    marginTop: 16,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
+    borderRadius: radius.lg,
+    backgroundColor: '#ede5d8',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.9)',
     ...shadow,
   },
-  summaryLabel: {
-    color: colors.textMuted,
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  summaryTitle: {
-    marginTop: 4,
-    color: colors.text,
-    fontSize: 15,
-    fontWeight: '900',
-  },
-  distanceBadge: {
+  floorControl: {
+    position: 'absolute',
+    zIndex: 40,
+    top: 12,
+    left: 12,
     minHeight: 38,
-    paddingHorizontal: 13,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 7,
     borderRadius: radius.pill,
-    backgroundColor: colors.orange,
+    backgroundColor: 'rgba(255,253,249,0.96)',
+    ...shadow,
   },
-  distanceText: {
-    color: '#ffffff',
+  floorText: {
+    color: colors.text,
     fontSize: 13,
     fontWeight: '900',
   },
-  destinationList: {
-    marginTop: 16,
-    gap: 10,
-  },
-  destination: {
-    minHeight: 56,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 12,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-  },
-  destinationActive: {
-    backgroundColor: colors.orangeSoft,
-  },
-  destinationText: {
-    color: colors.text,
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  destinationTextActive: {
-    color: colors.orange,
+  routeOverlay: {
+    position: 'absolute',
+    zIndex: 35,
+    top: 62,
+    left: 12,
+    width: '58%',
+    maxWidth: 245,
   },
 });

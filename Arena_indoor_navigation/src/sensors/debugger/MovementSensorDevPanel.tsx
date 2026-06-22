@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -36,6 +37,7 @@ export function MovementSensorDevPanel({
   controls,
 }: MovementSensorDevPanelProps) {
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const handle = setInterval(() => setNowMs(Date.now()), 1000);
@@ -46,9 +48,34 @@ export function MovementSensorDevPanel({
     return null;
   }
 
+  if (!expanded) {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        style={styles.collapsed}
+        onPress={() => setExpanded(true)}
+      >
+        <Ionicons name="code-slash" size={17} color={colors.textMuted} />
+        <Text style={styles.collapsedTitle}>Developer tools</Text>
+        <View style={styles.collapsedSpacer} />
+        <Text style={styles.sourceLabel}>
+          {controls.mode === 'real' ? 'Live sensors' : 'Mock sensors'}
+        </Text>
+        <Ionicons name="chevron-down" size={17} color={colors.textMuted} />
+      </Pressable>
+    );
+  }
+
   return (
     <View style={styles.panel}>
-      <Text style={styles.title}>Sensor source debugger</Text>
+      <Pressable
+        accessibilityRole="button"
+        style={styles.panelHeader}
+        onPress={() => setExpanded(false)}
+      >
+        <Text style={styles.title}>Developer tools</Text>
+        <Ionicons name="chevron-up" size={18} color={colors.textMuted} />
+      </Pressable>
       <View style={styles.modeRow}>
         {(['real', 'mock'] as const).map((mode) => (
           <Pressable
@@ -172,8 +199,31 @@ export function MovementSensorDevPanel({
 }
 
 const styles = StyleSheet.create({
+  collapsed: {
+    minHeight: 42,
+    paddingHorizontal: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
+    ...shadow,
+  },
+  collapsedTitle: {
+    color: colors.textMuted,
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  collapsedSpacer: {
+    flex: 1,
+  },
+  sourceLabel: {
+    color: colors.green,
+    fontSize: 10,
+    fontWeight: '800',
+  },
   panel: {
-    marginTop: 16,
+    maxHeight: 290,
     padding: 14,
     gap: 10,
     borderRadius: radius.md,
@@ -184,6 +234,12 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: 13,
     fontWeight: '900',
+  },
+  panelHeader: {
+    minHeight: 26,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   meta: {
     color: colors.textMuted,

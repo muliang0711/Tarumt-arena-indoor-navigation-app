@@ -74,10 +74,29 @@ test('MapScreen imports only page-safe map-engine and sensor APIs', () => {
 test('MapScreen presents the map as a responsive full-width camera window', () => {
   const source = readFileSync(join(srcRoot, 'screens', 'MapScreen.tsx'), 'utf8');
 
-  assert.match(source, /useWindowDimensions/);
-  assert.match(source, /marginHorizontal:\s*-20/);
-  assert.match(source, /padding:\s*0/);
-  assert.match(source, /mapToolbar[\s\S]*position:\s*'absolute'/);
+  assert.match(source, /ScreenScaffold\s+scroll=\{false\}/);
+  assert.match(source, /MapRouteInstructionCard/);
+  assert.match(source, /MapTripSummaryCard/);
+  assert.match(source, /showMovementDiagnostics=\{false\}/);
+  assert.match(source, /mapViewport[\s\S]*borderRadius:\s*radius\.lg/);
+  assert.match(source, /routeOverlay[\s\S]*position:\s*'absolute'/);
+  assert.doesNotMatch(source, /destinationList/);
+});
+
+test('map developer tools are collapsed by default', () => {
+  const sensorPanel = readFileSync(
+    join(srcRoot, 'sensors', 'debugger', 'MovementSensorDevPanel.tsx'),
+    'utf8',
+  );
+  const movementPanel = readFileSync(
+    join(mapEngineRoot, 'debugger', 'MovementDebugPanel.tsx'),
+    'utf8',
+  );
+
+  assert.match(sensorPanel, /useState\(false\)/);
+  assert.match(sensorPanel, /Developer tools/);
+  assert.match(movementPanel, /useState\(false\)/);
+  assert.match(movementPanel, /Movement diagnostics/);
 });
 
 test('camera viewport keeps gesture updates local and commits camera state after interaction', () => {

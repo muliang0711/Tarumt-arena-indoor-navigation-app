@@ -46,6 +46,7 @@ type ArenaMapEngineViewProps = {
   startingNodeId?: string;
   height?: number;
   resetSignal?: number;
+  showMovementDiagnostics?: boolean;
 };
 
 const defaultMapData = require('../storage/map-assets/map.json');
@@ -58,6 +59,7 @@ export function ArenaMapEngineView({
   startingNodeId = 'node_1',
   height = 390,
   resetSignal = 0,
+  showMovementDiagnostics = true,
 }: ArenaMapEngineViewProps) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
@@ -373,10 +375,12 @@ export function ArenaMapEngineView({
           </Text>
         </Pressable>
       </View>
-      <MovementDebugPanel
-        snapshot={debugSnapshot}
-        onReset={handleResetNavigation}
-      />
+      {showMovementDiagnostics ? (
+        <MovementDebugPanel
+          snapshot={debugSnapshot}
+          onReset={handleResetNavigation}
+        />
+      ) : null}
     </View>
   );
 }
@@ -387,15 +391,16 @@ const styles = StyleSheet.create({
   },
   cameraControls: {
     position: 'absolute',
+    zIndex: 50,
     right: 10,
-    top: 62,
+    top: 12,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
   controlButton: {
-    width: 34,
-    height: 34,
+    width: 38,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
@@ -409,8 +414,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   followButton: {
-    minHeight: 34,
-    paddingHorizontal: 12,
+    minHeight: 38,
+    paddingHorizontal: 14,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,

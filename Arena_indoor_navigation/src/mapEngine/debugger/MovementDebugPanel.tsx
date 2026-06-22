@@ -1,3 +1,5 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, radius, shadow } from '../../components/theme';
@@ -19,12 +21,31 @@ export function MovementDebugPanel({
   snapshot,
   onReset,
 }: MovementDebugPanelProps) {
+  const [expanded, setExpanded] = useState(false);
+
+  if (!expanded) {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        style={styles.collapsed}
+        onPress={() => setExpanded(true)}
+      >
+        <Ionicons name="pulse" size={15} color={colors.textMuted} />
+        <Text style={styles.collapsedText}>Movement diagnostics</Text>
+        <Text style={styles.collapsedStatus}>{snapshot.status}</Text>
+      </Pressable>
+    );
+  }
+
   return (
     <View style={styles.panel}>
-      <View style={styles.header}>
+      <Pressable style={styles.header} onPress={() => setExpanded(false)}>
         <Text style={styles.title}>Movement debugger</Text>
-        <Text style={styles.status}>{snapshot.status}</Text>
-      </View>
+        <View style={styles.headerEnd}>
+          <Text style={styles.status}>{snapshot.status}</Text>
+          <Ionicons name="chevron-down" size={16} color={colors.textMuted} />
+        </View>
+      </Pressable>
       <Text style={styles.line}>
         Samples {snapshot.totalSamples} | latest {snapshot.latestSampleKind ?? 'none'}
       </Text>
@@ -104,8 +125,38 @@ export function MovementDebugPanel({
 }
 
 const styles = StyleSheet.create({
+  collapsed: {
+    position: 'absolute',
+    zIndex: 45,
+    left: 12,
+    bottom: 12,
+    minHeight: 32,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 7,
+    borderRadius: radius.pill,
+    backgroundColor: 'rgba(255,253,249,0.94)',
+    ...shadow,
+  },
+  collapsedText: {
+    color: colors.textMuted,
+    fontSize: 9,
+    fontWeight: '800',
+  },
+  collapsedStatus: {
+    color: colors.green,
+    fontSize: 9,
+    fontWeight: '900',
+    textTransform: 'uppercase',
+  },
   panel: {
-    marginTop: 10,
+    position: 'absolute',
+    zIndex: 60,
+    left: 12,
+    right: 12,
+    bottom: 12,
+    maxHeight: 270,
     padding: 12,
     gap: 3,
     borderRadius: radius.md,
@@ -116,6 +167,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  headerEnd: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
   },
   title: {
     color: colors.text,
