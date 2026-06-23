@@ -57,6 +57,7 @@ export function predictParticles(
   const motionHeadingRadians = motion.heading.radians;
   const motionDistanceMeters = Math.max(0, motion.displacement.distanceMeters);
   const motionConfidence = clamp01(motion.confidence);
+  const allowPositionNoise = motionDistanceMeters > 0;
 
   return particles.map((particle, index) => {
     const headingJitter = centeredNoise(randomSource) * headingNoiseRadians;
@@ -69,8 +70,12 @@ export function predictParticles(
     const predictedHeadingRadians = normalizeAngle(blendedHeading + headingJitter);
     const predictedDistanceMeters = Math.max(0, motionDistanceMeters + distanceJitter);
     const predictedPosition = translate(particle.position, predictedHeadingRadians, predictedDistanceMeters);
-    const positionOffsetX = centeredNoise(randomSource) * positionNoiseMeters;
-    const positionOffsetY = centeredNoise(randomSource) * positionNoiseMeters;
+    const positionOffsetX = allowPositionNoise
+      ? centeredNoise(randomSource) * positionNoiseMeters
+      : 0;
+    const positionOffsetY = allowPositionNoise
+      ? centeredNoise(randomSource) * positionNoiseMeters
+      : 0;
 
     return {
       ...particle,

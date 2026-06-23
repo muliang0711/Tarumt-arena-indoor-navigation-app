@@ -1,5 +1,10 @@
 import type { LineSegment, Point, Polygon } from '../../shared';
-import type { MovementConstraintMapInput, MovementConstraintProvider } from './movementConstraintTypes';
+import type {
+  MovementConstraintAnalysis,
+  MovementConstraintMapInput,
+  MovementConstraintProvider,
+  MovementConstraintRejectionReason,
+} from './movementConstraintTypes';
 
 const EPSILON = 0.000001;
 
@@ -118,6 +123,44 @@ export function createMovementConstraintProvider(input: MovementConstraintMapInp
   }
 
   function canMove(from: Point, to: Point): boolean {
+    const analysis = analyzeMove(from, to);
+    return analysis.canMove;
+  }
+
+  function analyzeMove(from: Point, to: Point): MovementConstraintAnalysis {
+    const insideWalkableArea = walkableAreas.length === 0 || walkableAreas.some((area) => pointInPolygon(to, area));
+    const insideBlockedArea = blockedAreas.some((area) => pointInPolygon(to, area));
+    const movement = { from, to };
+    const crossedWall = walls.some((wall) => segmentsIntersect(movement, wall));
+    const crossedBlockedArea = blockedAreas.some((area) => movementCrossesPolygon(movement, area));
+    const rejectionReasons: MovementConstraintRejectionReason[] = [];
+
+    if (!insideWalkableArea) {
+      rejectionReasons.push('outside-walkable-area');
+    }
+    if (insideBlockedArea) {
+      rejectionReasons.push('inside-blocked-area');
+    }
+    if (crossedWall) {
+      rejectionReasons.push('crossed-wall');
+    }
+    if (crossedBlockedArea) {
+      rejectionReasons.push('crossed-blocked-area');
+    }
+
+    return {
+      currentPosition: from,
+      candidatePosition: to,
+      canMove: rejectionReasons.length === 0 && isWalkable(from),
+      insideWalkableArea,
+      insideBlockedArea,
+      crossedWall,
+      crossedBlockedArea,
+      rejectionReasons,
+    };
+  }
+
+  function legacyCanMove(from: Point, to: Point): boolean {
     if (!isWalkable(from) || !isWalkable(to)) {
       return false;
     }
@@ -138,7 +181,11 @@ export function createMovementConstraintProvider(input: MovementConstraintMapInp
 
   return {
     isWalkable,
-    canMove,
+    canMove(from, to) {
+      const analysis = analyzeMove(from, to);
+      return analysis.canMove;
+    },
+    analyzeMove,
     distanceToWall,
   };
 }

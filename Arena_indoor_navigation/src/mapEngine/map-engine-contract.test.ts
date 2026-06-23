@@ -65,6 +65,13 @@ test('map, actor, movement and camera contracts compose in their intended units'
   const bounds = getVisualBounds(parsed);
   const bob = buildBobActorAtNode(parsed, 'node_1');
   const bobPixels = routeNodeToPixels(bob, parsed.coordinateSystem);
+  const microMovePixels = routeNodeToPixels(
+    {
+      ...bob,
+      position: { x: 4.81, y: 5.21 },
+    },
+    parsed.coordinateSystem,
+  );
   const initialCamera = createInitialCameraState(bounds, { width: 360, height: 390 });
   const followedCamera = centerCameraOnPoint(initialCamera, bobPixels, { width: 360, height: 390 });
   const zoomedCamera = zoomCamera(followedCamera, 1.2);
@@ -72,6 +79,7 @@ test('map, actor, movement and camera contracts compose in their intended units'
   assert.deepEqual(orderedIds, ['floor', 'wall']);
   assert.deepEqual(bob.position, { x: 4.8, y: 5.2 });
   assert.deepEqual(bobPixels, { x: 192, y: 208 });
+  assert.deepEqual(microMovePixels, { x: 192.4, y: 208.4 });
   assert.equal(setCameraZoom(zoomedCamera, 2).scale, 2);
   assert.equal(panCamera(zoomedCamera, { x: 12, y: -8 }).offsetX, zoomedCamera.offsetX + 12);
 });
@@ -102,4 +110,16 @@ test('movement extraction produces usable meter-space constraints', () => {
   assert.equal(Number.isFinite(movementUpdate.position.x), true);
   assert.equal(Number.isFinite(movementUpdate.position.y), true);
   assert.equal(constraintProvider.isWalkable(movementUpdate.position), true);
+});
+
+test('movement extraction infers walkable areas from floor layers when explicit walkable areas are empty', () => {
+  const constraintInput = extractMovementConstraintMapInput(rawMap);
+
+  assert.equal(constraintInput.walkableAreas.length, 1);
+  assert.deepEqual(constraintInput.walkableAreas[0], [
+    { x: 0.4, y: 0.4 },
+    { x: 0.8, y: 0.4 },
+    { x: 0.8, y: 0.8 },
+    { x: 0.4, y: 0.8 },
+  ]);
 });

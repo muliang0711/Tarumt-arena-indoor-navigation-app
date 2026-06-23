@@ -1,14 +1,22 @@
 import type { MapCoordinateSystem, MovementRouteGraph, WorldPosition } from '../shared';
 import { worldMetersToPixels } from '../shared';
 
+export type ActorDirection = 'down' | 'left' | 'right' | 'up';
+export type ActorAction = 'idle' | 'run';
+
 export type Actor = {
   id: string;
   name: string;
   nodeId: string;
   position: WorldPosition;
-  direction: 'down' | 'left' | 'right' | 'up';
-  action: 'idle' | 'run';
+  headingRadians: number;
+  direction: ActorDirection;
+  action: ActorAction;
+  label?: string;
+  isUser?: boolean;
 };
+
+const MOVEMENT_EPSILON = 0.001;
 
 type RouteGraphMap = {
   movement: {
@@ -27,6 +35,7 @@ export function buildBobActorAtNode(mapData: RouteGraphMap, nodeId = 'node_1'): 
     name: 'Bob',
     nodeId,
     position: { x: node.position.x, y: node.position.y },
+    headingRadians: Math.PI / 2,
     direction: 'down',
     action: 'idle',
   };
@@ -38,7 +47,58 @@ export function routeNodeToPixels(
 ) {
   const point = worldMetersToPixels(actor.position, coordinateSystem);
   return {
-    x: Math.round(point.x),
-    y: Math.round(point.y),
+    x: Number(point.x.toFixed(4)),
+    y: Number(point.y.toFixed(4)),
   };
+}
+
+export function deriveActorMotionState(
+  actor: Pick<Actor, 'direction'>,
+  delta: WorldPosition,
+): Pick<Actor, 'direction' | 'action'> {
+  const magnitude = Math.hypot(delta.x, delta.y);
+  if (magnitude < MOVEMENT_EPSILON) {
+    return {
+      direction: actor.direction,
+      action: 'idle',
+    };
+  }
+
+  if (Math.abs(delta.x) > Math.abs(delta.y)) {
+    return {
+      direction: delta.x >= 0 ? 'right' : 'left',
+      action: 'run',
+    };
+  }
+
+  return {
+    direction: delta.y >= 0 ? 'down' : 'up',
+    action: 'run',
+  };
+}
+
+export function deriveActorDirectionFromHeading(
+  headingRadians: number,
+  fallbackDirection: ActorDirection,
+): ActorDirection {
+  if (!Number.isFinite(headingRadians)) {
+    return fallbackDirection;
+  }
+
+  const normalizedDegrees =
+    ((((headingRadians * 180) / Math.PI) % 360) + 360) % 360;
+
+  if (normalizedDegrees >= 45 && normalizedDegrees < 135) {
+    return 'down';
+  }
+
+  if (normalizedDegrees >= 135 && normalizedDegrees < 225) {
+    return 'left';
+  }
+
+  if (normalizedDegrees >= 225 && normalizedDegrees < 315) {
+    return 'up';
+  }
+
+  return 'right';
 }

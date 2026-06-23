@@ -5,11 +5,12 @@ import { colors, radius, shadow } from './theme';
 
 type SearchBarProps = {
   placeholder: string;
+  compact?: boolean;
 };
 
-export function SearchBar({ placeholder }: SearchBarProps) {
+export function SearchBar({ placeholder, compact = false }: SearchBarProps) {
   return (
-    <View style={styles.search}>
+    <View style={[styles.search, compact && styles.searchCompact]}>
       <Ionicons name="search" size={20} color={colors.textMuted} />
       <Text style={styles.placeholder}>{placeholder}</Text>
       <Pressable accessibilityRole="button" style={styles.filterButton}>
@@ -29,6 +30,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     gap: 10,
     ...shadow,
+  },
+  searchCompact: {
+    minHeight: 46,
+    paddingHorizontal: 14,
+    borderRadius: 18,
   },
   placeholder: {
     flex: 1,

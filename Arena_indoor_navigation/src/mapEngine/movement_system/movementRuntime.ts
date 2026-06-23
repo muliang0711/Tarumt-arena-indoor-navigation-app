@@ -15,10 +15,29 @@ export type MovementUpdateFunction = (
   currentState: MovementSystemState,
 ) => MovementSystemResult;
 
+export type MovementRuntimeResetOptions = {
+  samplesToIgnore?: readonly RawSensorSample[];
+  previousStepCount?: number;
+};
+
 type ProcessingCursor = {
   latestTimestamp: number;
   keysAtLatestTimestamp: Set<string>;
 };
+
+function latestPedometerCount(
+  samples: readonly RawSensorSample[],
+): number | undefined {
+  return samples
+    .filter(
+      (
+        sample,
+      ): sample is Extract<RawSensorSample, { kind: 'pedometer' }> =>
+        sample.kind === 'pedometer' && Number.isFinite(sample.steps),
+    )
+    .sort((left, right) => left.timestamp - right.timestamp)
+    .at(-1)?.steps;
+}
 
 function sampleKey(sample: RawSensorSample): string {
   return sample.id ?? `${sample.kind}:${sample.timestamp}`;
@@ -93,8 +112,27 @@ export class MovementRuntime {
     return result;
   }
 
-  reset(initialPosition: WorldPosition, samplesToIgnore: readonly RawSensorSample[] = []): void {
-    this.state = this.createInitialState(initialPosition);
+  reset(
+    initialPosition: WorldPosition,
+    options: MovementRuntimeResetOptions | readonly RawSensorSample[] = [],
+  ): void {
+    let samplesToIgnore: readonly RawSensorSample[];
+    let previousStepCount: number | undefined;
+
+    if (Array.isArray(options)) {
+      samplesToIgnore = options;
+      previousStepCount = latestPedometerCount(options);
+    } else {
+      const resetOptions = options as MovementRuntimeResetOptions;
+      samplesToIgnore = resetOptions.samplesToIgnore ?? [];
+      previousStepCount =
+        resetOptions.previousStepCount ?? latestPedometerCount(samplesToIgnore);
+    }
+
+    this.state = this.createInitialState(
+      initialPosition,
+      previousStepCount,
+    );
     this.cursor = {
       latestTimestamp: Number.NEGATIVE_INFINITY,
       keysAtLatestTimestamp: new Set(),
@@ -106,11 +144,18 @@ export class MovementRuntime {
     return this.state;
   }
 
-  private createInitialState(position: WorldPosition): MovementSystemState {
+  private createInitialState(
+    position: WorldPosition,
+    previousStepCount?: number,
+  ): MovementSystemState {
     return {
       position: { ...position },
       headingRadians: 0,
+      headingConfidence: 0,
+      headingTimestamp: 0,
       confidence: 0.8,
+      previousStepCount,
+      lastStepDelta: 0,
     };
   }
 }

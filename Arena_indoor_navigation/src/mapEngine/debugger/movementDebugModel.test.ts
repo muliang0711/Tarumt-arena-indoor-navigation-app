@@ -1,0 +1,210 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+
+import {
+  buildMovementDebugSnapshot,
+  findDestinationNode,
+} from './movementDebugModel';
+
+test('summarizes live sensor kinds and movement state', () => {
+  const snapshot = buildMovementDebugSnapshot({
+    samples: [
+      {
+        id: 'accelerometer-1',
+        kind: 'accelerometer',
+        timestamp: 100,
+        acceleration: { x: 1, y: 2, z: 3 },
+      },
+      {
+        id: 'step-1',
+        kind: 'pedometer',
+        timestamp: 200,
+        steps: 7,
+      },
+      {
+        id: 'motion-1',
+        kind: 'deviceMotion',
+        timestamp: 300,
+        attitude: { alpha: Math.PI / 2, beta: 0, gamma: 0 },
+      },
+    ],
+    state: {
+      position: { x: 4.8, y: 5.2 },
+      headingRadians: Math.PI / 2,
+      headingConfidence: 0.8,
+      confidence: 0.75,
+      previousStepCount: 7,
+      lastStepDelta: 2,
+      latestStepDiagnostics: {
+        batchPedometerSampleCount: 1,
+        batchLatestPedometerSteps: 7,
+        batchLatestPedometerTimestamp: 200,
+        previousStepCountBefore: 5,
+        previousStepCountAfter: 7,
+        computedStepDelta: 2,
+        reason: 'positive-increment',
+      },
+      latestMovementAttempt: {
+        currentPosition: { x: 4.8, y: 5.2 },
+        candidatePosition: { x: 5.5, y: 5.2 },
+        finalAcceptedPosition: { x: 4.8, y: 5.2 },
+        headingRadians: Math.PI / 2,
+        distanceMeters: 0.7,
+        canMove: false,
+        insideWalkableArea: false,
+        insideBlockedArea: false,
+        crossedWall: false,
+        crossedBlockedArea: false,
+        rejectionReasons: ['outside-walkable-area'],
+      },
+      particleFilter: {
+        particles: [],
+        generation: 3,
+        position: { x: 4.8, y: 5.2 },
+        headingRadians: Math.PI / 2,
+        confidence: 0.75,
+        bestParticle: null,
+        totalWeight: 1,
+      },
+    },
+    status: 'processed',
+    destinationNodeId: 'node_4',
+    destinationAvailable: true,
+    pedometer: {
+      latestKnownSteps: 7,
+      baselineSteps: 5,
+    },
+    acceptedStepPositionCount: 2,
+  });
+
+  assert.equal(snapshot.totalSamples, 3);
+  assert.equal(snapshot.counts.accelerometer, 1);
+  assert.equal(snapshot.counts.pedometer, 1);
+  assert.equal(snapshot.counts.deviceMotion, 1);
+  assert.equal(snapshot.latestSampleKind, 'deviceMotion');
+  assert.equal(snapshot.latestTimestamp, 300);
+  assert.equal(snapshot.latestKnownPedometerSteps, 7);
+  assert.equal(snapshot.pedometerBaselineSteps, 5);
+  assert.equal(snapshot.stepsSinceReset, 2);
+  assert.equal(snapshot.latestStepDelta, 2);
+  assert.equal(snapshot.headingDegrees, 90);
+  assert.equal(snapshot.headingConfidence, 0.8);
+  assert.equal(snapshot.confidence, 0.75);
+  assert.equal(snapshot.acceptedStepPositionCount, 2);
+  assert.equal(snapshot.particleGeneration, 3);
+  assert.equal(snapshot.destinationLabel, 'Node 4');
+  assert.equal(snapshot.latestMovementAttempt?.canMove, false);
+  assert.deepEqual(snapshot.latestMovementAttempt?.rejectionReasons, ['outside-walkable-area']);
+  assert.deepEqual(snapshot.latestStepDiagnostics, {
+    batchPedometerSampleCount: 1,
+    batchLatestPedometerSteps: 7,
+    batchLatestPedometerTimestamp: 200,
+    previousStepCountBefore: 5,
+    previousStepCountAfter: 7,
+    computedStepDelta: 2,
+    reason: 'positive-increment',
+  });
+});
+
+test('reports unavailable data without inventing sensor values', () => {
+  const snapshot = buildMovementDebugSnapshot({
+    samples: [],
+    state: {
+      position: { x: 0, y: 0 },
+      headingRadians: 0,
+      confidence: 0.8,
+    },
+    status: 'waiting',
+    destinationNodeId: 'node_4',
+    destinationAvailable: false,
+    pedometer: {
+      latestKnownSteps: null,
+      baselineSteps: null,
+    },
+  });
+
+  assert.equal(snapshot.latestSampleKind, null);
+  assert.equal(snapshot.latestTimestamp, null);
+  assert.equal(snapshot.latestKnownPedometerSteps, null);
+  assert.equal(snapshot.pedometerBaselineSteps, null);
+  assert.equal(snapshot.stepsSinceReset, null);
+  assert.equal(snapshot.latestStepDelta, null);
+  assert.equal(snapshot.particleGeneration, null);
+  assert.equal(snapshot.destinationLabel, 'unavailable');
+  assert.equal(snapshot.latestStepDiagnostics, null);
+});
+
+test('keeps the last known cumulative pedometer count across non-pedometer batches', () => {
+  const snapshot = buildMovementDebugSnapshot({
+    samples: [
+      {
+        id: 'motion-2',
+        kind: 'deviceMotion',
+        timestamp: 450,
+        attitude: { alpha: Math.PI, beta: 0, gamma: 0 },
+      },
+    ],
+    state: {
+      position: { x: 4.8, y: 5.2 },
+      headingRadians: Math.PI,
+      confidence: 0.8,
+      previousStepCount: 12,
+      lastStepDelta: 0,
+      latestStepDiagnostics: {
+        batchPedometerSampleCount: 0,
+        batchLatestPedometerSteps: undefined,
+        batchLatestPedometerTimestamp: undefined,
+        previousStepCountBefore: 12,
+        previousStepCountAfter: 12,
+        computedStepDelta: 0,
+        reason: 'no-pedometer-in-batch',
+      },
+      particleFilter: {
+        particles: [],
+        generation: 4,
+        position: { x: 4.8, y: 5.2 },
+        headingRadians: Math.PI,
+        confidence: 0.8,
+        bestParticle: null,
+        totalWeight: 1,
+      },
+    },
+    status: 'ignored',
+    destinationNodeId: 'node_4',
+    destinationAvailable: true,
+    pedometer: {
+      latestKnownSteps: 12,
+      baselineSteps: 10,
+    },
+  });
+
+  assert.equal(snapshot.latestSampleKind, 'deviceMotion');
+  assert.equal(snapshot.latestKnownPedometerSteps, 12);
+  assert.equal(snapshot.pedometerBaselineSteps, 10);
+  assert.equal(snapshot.stepsSinceReset, 2);
+  assert.equal(snapshot.latestStepDelta, 0);
+  assert.deepEqual(snapshot.latestStepDiagnostics, {
+    batchPedometerSampleCount: 0,
+    batchLatestPedometerSteps: null,
+    batchLatestPedometerTimestamp: null,
+    previousStepCountBefore: 12,
+    previousStepCountAfter: 12,
+    computedStepDelta: 0,
+    reason: 'no-pedometer-in-batch',
+  });
+});
+
+test('finds Node 4 without modifying the route graph', () => {
+  const routeGraph = {
+    nodes: [
+      { node_id: 'node_1', position: { x: 4.8, y: 5.2 } },
+      { node_id: 'node_4', position: { x: 10.4, y: 4 } },
+    ],
+    edges: [{ from_node: 'node_1', to_node: 'node_4' }],
+  };
+  const before = structuredClone(routeGraph);
+
+  assert.deepEqual(findDestinationNode(routeGraph, 'node_4'), routeGraph.nodes[1]);
+  assert.deepEqual(routeGraph, before);
+  assert.equal(findDestinationNode(routeGraph, 'missing'), null);
+});

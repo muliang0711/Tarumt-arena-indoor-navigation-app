@@ -1,2 +1,7 @@
 export { createMovementConstraintProvider, isParticlePositionValid } from './movementConstraintProvider';
-export type { MovementConstraintMapInput, MovementConstraintProvider } from './movementConstraintTypes';
+export type {
+  MovementConstraintAnalysis,
+  MovementConstraintMapInput,
+  MovementConstraintProvider,
+  MovementConstraintRejectionReason,
+} from './movementConstraintTypes';

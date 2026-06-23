@@ -2,6 +2,7 @@ node_modules/
 dist/
 build/
 *.log
+debug-logs/
 
 # Keep the project-specific architecture audit under version control even
 # though the parent workspace ignores generic docs/ directories.

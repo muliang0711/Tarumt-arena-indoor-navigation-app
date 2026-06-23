@@ -18,6 +18,7 @@ type NavigationDebugPanelProps = {
   onCalculateRoute: () => void;
   onClearRoute: () => void;
   onToggleUnwalkable: () => void;
+  embedded?: boolean;
 };
 
 function nodeLabel(nodeId: string): string {
@@ -31,6 +32,7 @@ export function NavigationDebugPanel({
   onCalculateRoute,
   onClearRoute,
   onToggleUnwalkable,
+  embedded = false,
 }: NavigationDebugPanelProps) {
   const routeLabel =
     state.routeStatus === 'ready' && state.highlightedPath
@@ -40,7 +42,7 @@ export function NavigationDebugPanel({
         : 'Route not calculated';
 
   return (
-    <View style={styles.panel}>
+    <View style={[styles.panel, embedded && styles.panelEmbedded]}>
       <View style={styles.header}>
         <View>
           <Text style={styles.eyebrow}>NAVIGATION LAB</Text>
@@ -133,6 +135,9 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     backgroundColor: colors.surface,
     ...shadow,
+  },
+  panelEmbedded: {
+    marginTop: 0,
   },
   header: {
     flexDirection: 'row',

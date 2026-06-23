@@ -29,3 +29,7 @@ export type {
   SensorVector3,
   TimestampedSensorSample,
 } from './sensorContracts';
+export {
+  extractTemporaryWalkableAreas,
+  isTemporaryWalkableAssetId,
+} from './walkableAreaModel';
