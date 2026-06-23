@@ -3,8 +3,13 @@ import { Image, StyleSheet, Text, View } from 'react-native';
 
 import { colors, radius, shadow } from '../../components/theme';
 import type { Bounds, MapCoordinateSystem } from '../shared';
-import { bobIdleAssets, bobRunAssets } from './actorAssetRegistry';
+import {
+  bobFacingFanAsset,
+  bobIdleAssets,
+  bobRunAssets,
+} from './actorAssetRegistry';
 import { Actor, routeNodeToPixels } from './actorModel';
+import { fanRotationDegrees } from './facingFanModel';
 
 type ActorLayerLayout = {
   bounds: Bounds;
@@ -17,10 +22,9 @@ type ActorLayerProps = {
 };
 
 const BOB_SIZE = 32;
+const FACING_FAN_SIZE = 128;
 const RUN_FRAME_MS = 110;
 const USER_RING_SIZE = 50;
-const HEADING_CONE_WIDTH = 64;
-const HEADING_CONE_HEIGHT = 50;
 
 export function ActorLayer({ actors, layout, coordinateSystem }: ActorLayerProps) {
   const [frameIndex, setFrameIndex] = useState(0);
@@ -53,6 +57,32 @@ export function ActorLayer({ actors, layout, coordinateSystem }: ActorLayerProps
           <View key={actor.id} pointerEvents="none">
             {actor.isUser ? (
               <>
+                {Number.isFinite(actor.headingRadians) ? (
+                  <Image
+                    source={bobFacingFanAsset}
+                    resizeMode="contain"
+                    style={[
+                      styles.facingFan,
+                      {
+                        left:
+                          point.x -
+                          layout.bounds.x -
+                          FACING_FAN_SIZE / 2,
+                        top:
+                          point.y -
+                          layout.bounds.y -
+                          FACING_FAN_SIZE / 2,
+                        width: FACING_FAN_SIZE,
+                        height: FACING_FAN_SIZE,
+                        transform: [
+                          {
+                            rotate: `${fanRotationDegrees(actor.headingRadians)}deg`,
+                          },
+                        ],
+                      },
+                    ]}
+                  />
+                ) : null}
                 <View
                   style={[
                     styles.ring,
@@ -62,23 +92,6 @@ export function ActorLayer({ actors, layout, coordinateSystem }: ActorLayerProps
                     },
                   ]}
                 />
-                {Number.isFinite(actor.headingRadians) ? (
-                  <View
-                    style={[
-                      styles.headingCone,
-                      {
-                        left:
-                          point.x - layout.bounds.x - HEADING_CONE_WIDTH / 2,
-                        top:
-                          point.y -
-                          layout.bounds.y -
-                          HEADING_CONE_HEIGHT +
-                          6,
-                        transform: [{ rotate: `${actor.headingRadians}rad` }],
-                      },
-                    ]}
-                  />
-                ) : null}
               </>
             ) : null}
             <Image
@@ -115,6 +128,10 @@ export function ActorLayer({ actors, layout, coordinateSystem }: ActorLayerProps
 }
 
 const styles = StyleSheet.create({
+  facingFan: {
+    position: 'absolute',
+    zIndex: 18,
+  },
   actor: {
     position: 'absolute',
     zIndex: 24,
@@ -128,19 +145,6 @@ const styles = StyleSheet.create({
     borderWidth: 3.5,
     borderColor: 'rgba(255,255,255,0.92)',
     backgroundColor: 'rgba(54, 140, 255, 0.2)',
-  },
-  headingCone: {
-    position: 'absolute',
-    zIndex: 18,
-    width: 0,
-    height: 0,
-    borderLeftWidth: HEADING_CONE_WIDTH / 2,
-    borderRightWidth: HEADING_CONE_WIDTH / 2,
-    borderBottomWidth: HEADING_CONE_HEIGHT,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderBottomColor: 'rgba(76, 169, 255, 0.34)',
-    opacity: 0.95,
   },
   labelPill: {
     position: 'absolute',

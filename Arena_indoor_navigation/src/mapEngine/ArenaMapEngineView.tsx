@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'react-native';
-
-import { MapInstructionOverlay } from '../components/navigation/MapInstructionOverlay';
-import { colors, radius, shadow } from '../components/theme';
+import { LayoutChangeEvent, StyleSheet, View } from 'react-native';
 import {
   ActorLayer,
   appendActorMovementTargets,
@@ -22,11 +19,13 @@ import {
 import {
   CameraViewport,
   centerCameraOnPoint,
-  isFollowingBob,
+  constrainCameraToBounds,
+  enterManualPan,
+  isFollowingActor,
+  recenterActor,
   setCameraZoom,
-  toggleCameraFollowMode,
   zoomCamera,
-  type CameraFollowMode,
+  type CameraMode,
   type CameraState,
 } from './cameran_system/cameranSystem';
 import {
@@ -53,6 +52,7 @@ import {
 import {
   buildNavigationGuidance,
   buildRoutePolyline,
+  type NavigationCue,
 } from './navigation_guidance';
 import { extractMovementConstraintMapInput } from './mapEngineController';
 import {
@@ -73,6 +73,8 @@ export type ArenaMapNavigationSnapshot = {
   estimatedTimeSeconds: number;
   estimatedSteps: number;
   nextStep: string;
+  cue: NavigationCue | null;
+  nextCue: NavigationCue | null;
   hasRoute: boolean;
 };
 
@@ -173,8 +175,14 @@ export function ArenaMapEngineView({
 }: ArenaMapEngineViewProps) {
   const [viewportWidth, setViewportWidth] = useState(0);
   const [camera, setCamera] = useState<CameraState | null>(null);
-  const [cameraMode, setCameraMode] = useState<CameraFollowMode>('following');
-  const followsBob = isFollowingBob(cameraMode);
+  const [cameraMode, setCameraMode] = useState<CameraMode>('followActor');
+  const viewportControlHandlersRef = useRef({
+    zoomIn: () => {},
+    zoomOut: () => {},
+    toggleFollow: () => {},
+    recenter: () => {},
+  });
+  const followsBob = isFollowingActor(cameraMode);
   const coordinateSystem = useMemo(
     () => extractMapCoordinateSystem(rawMapData),
     [rawMapData],
@@ -633,8 +641,18 @@ export function ArenaMapEngineView({
     [height, viewportWidth],
   );
   const bobPoint = useMemo(
-    () => routeNodeToPixels(actors[0], mapData.coordinateSystem),
-    [actors, mapData.coordinateSystem],
+    () => {
+      const absolutePoint = routeNodeToPixels(actors[0], mapData.coordinateSystem);
+      return {
+        x: absolutePoint.x - bounds.x,
+        y: absolutePoint.y - bounds.y,
+      };
+    },
+    [actors, bounds.x, bounds.y, mapData.coordinateSystem],
+  );
+  const sceneBounds = useMemo(
+    () => ({ x: 0, y: 0, width: bounds.width, height: bounds.height }),
+    [bounds.height, bounds.width],
   );
   const followBaseCamera = useMemo(
     () =>
@@ -661,9 +679,13 @@ export function ArenaMapEngineView({
   const applyFollowTarget = useCallback(
     (nextCamera: CameraState) => {
       const cameraWithFollowScale = setCameraZoom(nextCamera, followBaseCamera.scale);
-      return centerCameraOnPoint(cameraWithFollowScale, bobPoint, viewportSize);
+      return constrainCameraToBounds(
+        centerCameraOnPoint(cameraWithFollowScale, bobPoint, viewportSize),
+        sceneBounds,
+        viewportSize,
+      );
     },
-    [bobPoint, followBaseCamera.scale, viewportSize],
+    [bobPoint, followBaseCamera.scale, sceneBounds, viewportSize],
   );
   const debugSnapshot = useMemo(
     () =>
@@ -703,6 +725,8 @@ export function ArenaMapEngineView({
         Math.round((guidance?.remainingDistanceMeters ?? 0) / DEFAULT_STEP_LENGTH_METERS),
       ),
       nextStep: guidance?.cue.message ?? 'Route unavailable',
+      cue: guidance?.cue ?? null,
+      nextCue: guidance?.nextCue ?? null,
       hasRoute: guidance !== null,
     }),
     [destinationNode, destinationNodeId, guidance],
@@ -750,9 +774,9 @@ export function ArenaMapEngineView({
 
   useEffect(() => {
     if (viewportWidth > 0) {
-      setCamera(followsBob ? followBaseCamera : freeLookBaseCamera);
+      setCamera((currentCamera) => currentCamera ?? followBaseCamera);
     }
-  }, [followBaseCamera, followsBob, freeLookBaseCamera, viewportSize, viewportWidth]);
+  }, [followBaseCamera, viewportWidth]);
 
   useEffect(() => {
     if (!followsBob || viewportWidth <= 0) {
@@ -761,10 +785,18 @@ export function ArenaMapEngineView({
     setCamera((currentCamera) => applyFollowTarget(currentCamera ?? followBaseCamera));
   }, [applyFollowTarget, followBaseCamera, followsBob, viewportWidth]);
 
-  const renderedCamera = camera ?? (followsBob ? applyFollowTarget(followBaseCamera) : freeLookBaseCamera);
+  const renderedCamera =
+    camera ??
+    (followsBob
+      ? applyFollowTarget(followBaseCamera)
+      : constrainCameraToBounds(freeLookBaseCamera, sceneBounds, viewportSize));
 
   function handleCameraChange(nextCamera: CameraState) {
-    setCamera(nextCamera);
+    setCamera(constrainCameraToBounds(nextCamera, sceneBounds, viewportSize));
+  }
+
+  function handleCameraInteractionStart() {
+    setCameraMode(enterManualPan);
   }
 
   function handleZoomButton(factor: number) {
@@ -777,22 +809,22 @@ export function ArenaMapEngineView({
         undefined,
         focalPoint,
       );
-      return followsBob ? applyFollowTarget(zoomedCamera) : zoomedCamera;
+      return followsBob
+        ? applyFollowTarget(zoomedCamera)
+        : constrainCameraToBounds(zoomedCamera, sceneBounds, viewportSize);
     });
   }
 
   function handleToggleFollowBob() {
-    setCameraMode((currentMode) => {
-      const nextMode = toggleCameraFollowMode(currentMode);
-      if (isFollowingBob(nextMode)) {
-        setCamera((currentCamera) => applyFollowTarget(currentCamera ?? renderedCamera));
-      }
-      return nextMode;
-    });
+    if (followsBob) {
+      setCameraMode(enterManualPan);
+      return;
+    }
+    handleRecenter();
   }
 
   function handleRecenter() {
-    setCameraMode('following');
+    setCameraMode(recenterActor);
     setCamera((currentCamera) => applyFollowTarget(currentCamera ?? renderedCamera));
   }
 
@@ -828,14 +860,22 @@ export function ArenaMapEngineView({
     setViewportWidth(event.nativeEvent.layout.width);
   }
 
+  viewportControlHandlersRef.current = {
+    zoomIn: () => handleZoomButton(1.2),
+    zoomOut: () => handleZoomButton(1 / 1.2),
+    toggleFollow: handleToggleFollowBob,
+    recenter: handleRecenter,
+  };
+
   useEffect(() => {
     onViewportControlsStateChange?.({
       floorLabel: 'Floor 1',
       followsBob,
-      onZoomIn: () => handleZoomButton(1.2),
-      onZoomOut: () => handleZoomButton(1 / 1.2),
-      onToggleFollowBob: handleToggleFollowBob,
-      onRecenter: handleRecenter,
+      onZoomIn: () => viewportControlHandlersRef.current.zoomIn(),
+      onZoomOut: () => viewportControlHandlersRef.current.zoomOut(),
+      onToggleFollowBob: () =>
+        viewportControlHandlersRef.current.toggleFollow(),
+      onRecenter: () => viewportControlHandlersRef.current.recenter(),
     });
 
     return () => onViewportControlsStateChange?.(null);
@@ -847,9 +887,11 @@ export function ArenaMapEngineView({
         camera={renderedCamera}
         contentWidth={bounds.width}
         contentHeight={bounds.height}
+        viewportWidth={viewportSize.width}
         height={height}
         onLayout={handleLayout}
         onCameraChange={handleCameraChange}
+        onInteractionStart={handleCameraInteractionStart}
       >
         <ArenaMapView
           mapData={mapData}
@@ -888,14 +930,6 @@ export function ArenaMapEngineView({
           )}
         />
       </CameraViewport>
-
-      <View style={styles.instructionOverlay}>
-        <MapInstructionOverlay cue={guidance?.cue ?? null} nextCue={guidance?.nextCue ?? null} />
-      </View>
-
-      <Pressable style={styles.recenterButton} onPress={handleRecenter}>
-        <Text style={styles.recenterText}>Re-center</Text>
-      </Pressable>
     </View>
   );
 }
@@ -903,28 +937,5 @@ export function ArenaMapEngineView({
 const styles = StyleSheet.create({
   engine: {
     position: 'relative',
-  },
-  instructionOverlay: {
-    position: 'absolute',
-    top: 16,
-    left: 14,
-    width: '54%',
-  },
-  recenterButton: {
-    position: 'absolute',
-    right: 14,
-    bottom: 20,
-    minHeight: 46,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.md,
-    backgroundColor: 'rgba(255,255,255,0.96)',
-    ...shadow,
-  },
-  recenterText: {
-    color: colors.text,
-    fontSize: 15,
-    fontWeight: '900',
   },
 });

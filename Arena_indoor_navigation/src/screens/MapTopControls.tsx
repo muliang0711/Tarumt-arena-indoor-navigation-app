@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { colors, radius, shadow } from '../components/theme';
@@ -5,7 +6,6 @@ import { colors, radius, shadow } from '../components/theme';
 type MapTopControlsProps = {
   floorLabel: string;
   followsBob: boolean;
-  sensorStatus: 'starting' | 'receiving' | 'unavailable' | 'error';
   onZoomIn: () => void;
   onZoomOut: () => void;
   onToggleFollowBob: () => void;
@@ -14,7 +14,6 @@ type MapTopControlsProps = {
 export function MapTopControls({
   floorLabel,
   followsBob,
-  sensorStatus,
   onZoomIn,
   onZoomOut,
   onToggleFollowBob,
@@ -22,43 +21,35 @@ export function MapTopControls({
   return (
     <View style={styles.topControls}>
       <View style={styles.floorPill}>
+        <Ionicons name="layers" size={17} color={colors.text} />
         <Text style={styles.floorText}>{floorLabel}</Text>
+        <Ionicons name="chevron-down" size={16} color={colors.text} />
       </View>
       <View style={styles.topControlsRight}>
-        <View
-          style={[
-            styles.sensorPill,
-            sensorStatus === 'receiving' && styles.sensorPillLive,
-            sensorStatus === 'error' && styles.sensorPillError,
-          ]}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Zoom in"
+          style={styles.controlButton}
+          onPress={onZoomIn}
         >
-          <Text
-            style={[
-              styles.sensorText,
-              sensorStatus === 'receiving' && styles.sensorTextLive,
-            ]}
-          >
-            {sensorStatus === 'starting'
-              ? 'Sensors starting'
-              : sensorStatus === 'receiving'
-                ? 'Sensors live'
-                : sensorStatus === 'error'
-                  ? 'Sensor error'
-                  : 'Sensors unavailable'}
-          </Text>
-        </View>
-        <Pressable style={styles.controlButton} onPress={onZoomIn}>
           <Text style={styles.controlButtonText}>+</Text>
         </Pressable>
-        <Pressable style={styles.controlButton} onPress={onZoomOut}>
-          <Text style={styles.controlButtonText}>-</Text>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Zoom out"
+          style={styles.controlButton}
+          onPress={onZoomOut}
+        >
+          <Text style={styles.controlButtonText}>−</Text>
         </Pressable>
         <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={followsBob ? 'Following Bob' : 'Recenter map'}
           style={[styles.followButton, followsBob && styles.followButtonActive]}
           onPress={onToggleFollowBob}
         >
           <Text style={[styles.followButtonText, followsBob && styles.followButtonTextActive]}>
-            {followsBob ? 'Following Bob' : 'Free look'}
+            {followsBob ? 'Following Bob' : 'Recenter'}
           </Text>
         </Pressable>
       </View>
@@ -75,53 +66,32 @@ const styles = StyleSheet.create({
   topControlsRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: 7,
   },
   floorPill: {
-    minWidth: 104,
-    minHeight: 42,
-    paddingHorizontal: 14,
+    minHeight: 38,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 7,
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
     ...shadow,
   },
   floorText: {
     color: colors.text,
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '900',
   },
   controlButton: {
-    width: 40,
-    height: 40,
+    width: 38,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.pill,
     backgroundColor: colors.surface,
     ...shadow,
-  },
-  sensorPill: {
-    minHeight: 40,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radius.pill,
-    backgroundColor: colors.orangeSoft,
-  },
-  sensorPillLive: {
-    backgroundColor: colors.greenSoft,
-  },
-  sensorPillError: {
-    backgroundColor: colors.orangeSoft,
-  },
-  sensorText: {
-    color: colors.orange,
-    fontSize: 10,
-    fontWeight: '900',
-  },
-  sensorTextLive: {
-    color: colors.green,
   },
   controlButtonText: {
     color: colors.text,
@@ -130,7 +100,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   followButton: {
-    minHeight: 40,
+    minHeight: 38,
+    maxWidth: 112,
     paddingHorizontal: 12,
     alignItems: 'center',
     justifyContent: 'center',

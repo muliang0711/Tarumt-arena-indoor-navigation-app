@@ -71,6 +71,50 @@ test('MapScreen imports only page-safe map-engine and sensor APIs', () => {
   assert.deepEqual(sensorImports, ['../sensors/useMovementSensors']);
 });
 
+test('MapScreen presents the map as a responsive full-width camera window', () => {
+  const source = readFileSync(join(srcRoot, 'screens', 'MapScreen.tsx'), 'utf8');
+  const engine = readFileSync(join(mapEngineRoot, 'ArenaMapEngineView.tsx'), 'utf8');
+  const routeCard = readFileSync(
+    join(srcRoot, 'components', 'MapRouteInstructionCard.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /ScreenScaffold\s+scroll=\{false\}/);
+  assert.match(source, /MapRouteInstructionCard/);
+  assert.match(source, /MapTripSummaryCard/);
+  assert.match(source, /MapTopControls/);
+  assert.match(source, /onViewportControlsStateChange=\{setViewportControls\}/);
+  assert.ok(source.indexOf('styles.screenControls') < source.indexOf('styles.mapArea'));
+  assert.match(source, /mapViewport[\s\S]*borderRadius:\s*radius\.lg/);
+  assert.match(source, /mapArea[\s\S]*flex:\s*1/);
+  assert.match(source, /minHeight:\s*0/);
+  assert.match(source, /routeOverlay[\s\S]*position:\s*'absolute'/);
+  assert.match(source, /styles\.routeOverlay[\s\S]*pointerEvents="box-none"/);
+  assert.match(routeCard, /useState\(true\)/);
+  assert.match(routeCard, /Collapse route instruction/);
+  assert.match(routeCard, /Expand route instruction/);
+  assert.doesNotMatch(source, /useWindowDimensions/);
+  assert.doesNotMatch(source, /SearchBar/);
+  assert.doesNotMatch(source, /mapControlsOverlay/);
+  assert.doesNotMatch(source, /destinationList/);
+  assert.doesNotMatch(engine, /cameraControls/);
+  assert.doesNotMatch(engine, /<Pressable/);
+});
+
+test('map developer tools are collapsed by default', () => {
+  const mapScreen = readFileSync(
+    join(srcRoot, 'screens', 'MapScreen.tsx'),
+    'utf8',
+  );
+  const developerToolsPanel = readFileSync(
+    join(srcRoot, 'components', 'navigation', 'DeveloperToolsPanel.tsx'),
+    'utf8',
+  );
+
+  assert.match(mapScreen, /developerToolsExpanded,\s*setDeveloperToolsExpanded\]\s*=\s*useState\(false\)/);
+  assert.match(developerToolsPanel, /Developer tools/);
+});
+
 test('camera viewport keeps gesture updates local and commits camera state after interaction', () => {
   const viewport = readFileSync(join(mapEngineRoot, 'cameran_system', 'CameraViewport.tsx'), 'utf8');
 
@@ -78,7 +122,7 @@ test('camera viewport keeps gesture updates local and commits camera state after
   assert.match(viewport, /Gesture\.Pinch\(\)/);
   assert.match(viewport, /shouldSyncCameraFromProps/);
   assert.match(viewport, /isGestureActive/);
-  assert.doesNotMatch(viewport, /onGestureStart/);
+  assert.match(viewport, /onInteractionStart/);
   assert.match(viewport, /onFinalize\(commitCamera\)/);
 });
 
@@ -135,6 +179,18 @@ test('actor layer renders directional sprites instead of a hardcoded idle frame'
   assert.match(source, /bobIdleAssets/);
   assert.match(source, /bobRunAssets/);
   assert.match(source, /setInterval|setTimeout/);
+});
+
+test('actor layer renders a rotating fan sector below the actor without SVG', () => {
+  const source = readFileSync(
+    join(mapEngineRoot, 'actor_system', 'ActorLayer.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /bobFacingFanAsset/);
+  assert.match(source, /fanRotationDegrees/);
+  assert.match(source, /headingRadians/);
+  assert.doesNotMatch(source, /react-native-svg|<Svg|<Path/);
 });
 
 test('map engine derives Bob motion state from position changes', () => {
