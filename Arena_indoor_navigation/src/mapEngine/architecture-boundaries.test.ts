@@ -101,7 +101,7 @@ test('MapScreen presents the map as a responsive full-width camera window', () =
   assert.doesNotMatch(engine, /<Pressable/);
 });
 
-test('MapScreen enables scrolling only while developer tools are expanded', () => {
+test('MapScreen uses a bounded page until developer tools require scrolling', () => {
   const source = readFileSync(join(srcRoot, 'screens', 'MapScreen.tsx'), 'utf8');
   const scaffold = readFileSync(
     join(srcRoot, 'components', 'ScreenScaffold.tsx'),
@@ -110,8 +110,8 @@ test('MapScreen enables scrolling only while developer tools are expanded', () =
 
   assert.match(source, /scrollEnabled=\{developerToolsExpanded\}/);
   assert.match(source, /developerToolsExpanded\s*&&\s*styles\.mapAreaExpanded/);
-  assert.match(scaffold, /scrollEnabled\?:\s*boolean/);
-  assert.match(scaffold, /scrollEnabled=\{scrollEnabled\}/);
+  assert.match(scaffold, /!scrollEnabled\s*&&\s*styles\.contentBounded/);
+  assert.match(scaffold, /contentBounded[\s\S]*flex:\s*1/);
 });
 
 test('map developer tools are collapsed by default', () => {

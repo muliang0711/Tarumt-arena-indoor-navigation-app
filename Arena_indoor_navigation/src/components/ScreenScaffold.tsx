@@ -25,6 +25,7 @@ export function ScreenScaffold({
       scrollEnabled={scrollEnabled}
       contentContainerStyle={[
         styles.content,
+        !scrollEnabled && styles.contentBounded,
         bottomPadding !== undefined && { paddingBottom: bottomPadding },
       ]}
       showsVerticalScrollIndicator={false}
@@ -48,5 +49,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingTop: 14,
     paddingBottom: 120,
+  },
+  contentBounded: {
+    flex: 1,
   },
 });
