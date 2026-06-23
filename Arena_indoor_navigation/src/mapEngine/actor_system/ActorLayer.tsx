@@ -9,7 +9,7 @@ import {
   bobRunAssets,
 } from './actorAssetRegistry';
 import { Actor, routeNodeToPixels } from './actorModel';
-import { fanRotationDegrees } from './facingFanModel';
+import { deriveActorVisualFacing } from './facingFanModel';
 
 type ActorLayerLayout = {
   bounds: Bounds;
@@ -48,10 +48,16 @@ export function ActorLayer({ actors, layout, coordinateSystem }: ActorLayerProps
     <>
       {actors.map((actor) => {
         const point = routeNodeToPixels(actor, coordinateSystem);
+        const visualFacing = deriveActorVisualFacing(
+          actor.headingRadians,
+          actor.direction,
+        );
         const source =
           actor.action === 'run'
-            ? bobRunAssets[actor.direction][frameIndex % bobRunAssets[actor.direction].length]
-            : bobIdleAssets[actor.direction];
+            ? bobRunAssets[visualFacing.direction][
+                frameIndex % bobRunAssets[visualFacing.direction].length
+              ]
+            : bobIdleAssets[visualFacing.direction];
 
         return (
           <View key={actor.id} pointerEvents="none">
@@ -76,7 +82,7 @@ export function ActorLayer({ actors, layout, coordinateSystem }: ActorLayerProps
                         height: FACING_FAN_SIZE,
                         transform: [
                           {
-                            rotate: `${fanRotationDegrees(actor.headingRadians)}deg`,
+                            rotate: `${visualFacing.fanRotationDegrees}deg`,
                           },
                         ],
                       },

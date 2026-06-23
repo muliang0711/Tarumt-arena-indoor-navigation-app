@@ -44,8 +44,17 @@ export function MapScreen() {
   }
 
   return (
-    <ScreenScaffold scroll={false}>
-      <View style={styles.page}>
+    <ScreenScaffold
+      scroll
+      scrollEnabled={developerToolsExpanded}
+      bottomPadding={developerToolsExpanded ? 120 : 8}
+    >
+      <View
+        style={[
+          styles.page,
+          developerToolsExpanded && styles.pageExpanded,
+        ]}
+      >
         <Header compact title="Indoor Map" subtitle="Level 2 navigation" />
 
         <View style={styles.screenControls}>
@@ -60,7 +69,12 @@ export function MapScreen() {
           ) : null}
         </View>
 
-        <View style={styles.mapArea}>
+        <View
+          style={[
+            styles.mapArea,
+            developerToolsExpanded && styles.mapAreaExpanded,
+          ]}
+        >
           <View style={styles.mapViewport} onLayout={handleMapLayout}>
             <ArenaMapEngineView
               mapData={rawMapData}
@@ -108,12 +122,21 @@ const styles = StyleSheet.create({
     gap: 8,
     overflow: 'hidden',
   },
+  pageExpanded: {
+    flex: 0,
+    overflow: 'visible',
+  },
   screenControls: {
     minHeight: 38,
   },
   mapArea: {
     flex: 1,
     minHeight: 0,
+  },
+  mapAreaExpanded: {
+    flex: 0,
+    height: 320,
+    minHeight: 320,
   },
   mapViewport: {
     flex: 1,

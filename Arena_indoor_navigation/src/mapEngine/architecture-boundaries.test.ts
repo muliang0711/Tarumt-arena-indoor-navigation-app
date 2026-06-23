@@ -79,7 +79,7 @@ test('MapScreen presents the map as a responsive full-width camera window', () =
     'utf8',
   );
 
-  assert.match(source, /ScreenScaffold\s+scroll=\{false\}/);
+  assert.match(source, /ScreenScaffold[\s\S]*scrollEnabled=\{developerToolsExpanded\}/);
   assert.match(source, /MapRouteInstructionCard/);
   assert.match(source, /MapTripSummaryCard/);
   assert.match(source, /MapTopControls/);
@@ -99,6 +99,19 @@ test('MapScreen presents the map as a responsive full-width camera window', () =
   assert.doesNotMatch(source, /destinationList/);
   assert.doesNotMatch(engine, /cameraControls/);
   assert.doesNotMatch(engine, /<Pressable/);
+});
+
+test('MapScreen enables scrolling only while developer tools are expanded', () => {
+  const source = readFileSync(join(srcRoot, 'screens', 'MapScreen.tsx'), 'utf8');
+  const scaffold = readFileSync(
+    join(srcRoot, 'components', 'ScreenScaffold.tsx'),
+    'utf8',
+  );
+
+  assert.match(source, /scrollEnabled=\{developerToolsExpanded\}/);
+  assert.match(source, /developerToolsExpanded\s*&&\s*styles\.mapAreaExpanded/);
+  assert.match(scaffold, /scrollEnabled\?:\s*boolean/);
+  assert.match(scaffold, /scrollEnabled=\{scrollEnabled\}/);
 });
 
 test('map developer tools are collapsed by default', () => {

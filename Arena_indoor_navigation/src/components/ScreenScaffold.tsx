@@ -6,15 +6,29 @@ import { colors } from './theme';
 type ScreenScaffoldProps = {
   children: ReactNode;
   scroll?: boolean;
+  scrollEnabled?: boolean;
+  bottomPadding?: number;
 };
 
-export function ScreenScaffold({ children, scroll = true }: ScreenScaffoldProps) {
+export function ScreenScaffold({
+  children,
+  scroll = true,
+  scrollEnabled = true,
+  bottomPadding,
+}: ScreenScaffoldProps) {
   if (!scroll) {
     return <View style={styles.container}>{children}</View>;
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      scrollEnabled={scrollEnabled}
+      contentContainerStyle={[
+        styles.content,
+        bottomPadding !== undefined && { paddingBottom: bottomPadding },
+      ]}
+      showsVerticalScrollIndicator={false}
+    >
       {children}
     </ScrollView>
   );
