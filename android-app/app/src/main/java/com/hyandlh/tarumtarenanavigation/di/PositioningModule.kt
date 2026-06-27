@@ -1,6 +1,6 @@
 package com.hyandlh.tarumtarenanavigation.di
 
-import com.hyandlh.tarumtarenanavigation.core.positioning.DefaultPositioningEngine
+import com.hyandlh.tarumtarenanavigation.core.positioning.KnnWifiPositioningEngine
 import com.hyandlh.tarumtarenanavigation.core.positioning.MovingAverageSmoother
 import com.hyandlh.tarumtarenanavigation.core.positioning.PositionSmoother
 import com.hyandlh.tarumtarenanavigation.core.positioning.PositioningEngine
@@ -17,7 +17,7 @@ abstract class PositioningModule {
     @Binds
     @Singleton
     abstract fun bindPositioningEngine(
-        engine: DefaultPositioningEngine
+        engine: KnnWifiPositioningEngine
     ): PositioningEngine
 
     @Binds
