@@ -24,6 +24,15 @@ class DefaultPositioningEngine @Inject constructor(
     private val _currentPosition = MutableStateFlow<PositionEstimate?>(null)
     override val currentPosition: StateFlow<PositionEstimate?> = _currentPosition.asStateFlow()
 
+    /**
+     * (this is only used for KnnWifiPositioningEngine and is irrelevant here)
+     * (had to override this here as this member is defined in the interface)
+     * (this variable will not be used in this class)
+     * A flow of calculated distances to each node in the catalog based on the latest scan.
+     * The key is the nodeId, and the value is the calculated distance (e.g., Euclidean).
+     */
+    override val nodeDistances: StateFlow<Map<String, Double>>? = null
+
     override fun calculatePosition(
         snapshot: WifiScanSnapshot,
         catalog: AccessPointCatalog

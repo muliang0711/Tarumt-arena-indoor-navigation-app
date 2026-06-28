@@ -37,6 +37,7 @@ class TrackingViewModel @Inject constructor(
     val currentPosition: StateFlow<PositionEstimate?> = trackingController.currentPosition
     val isPaused: StateFlow<Boolean> = trackingController.isPaused
     val latestSnapshot: StateFlow<WifiScanSnapshot?> = trackingController.latestSnapshot
+    val nodeDistances: StateFlow<Map<String, Double>>? = trackingController.nodeDistances
     val logs: StateFlow<List<LogEntry>> = logStore.logs
 
     val apLocations: StateFlow<List<AccessPointLocation>> = repository.getCatalogFlow()
@@ -49,8 +50,8 @@ class TrackingViewModel @Inject constructor(
 
     val fingerprints: StateFlow<List<FingerprintEntry>> = repository.getCatalogFlow()
         .map { it?.fingerprints ?: emptyList() }
-//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+
 
     private val _isDebugMode = MutableStateFlow(false)
     val isDebugMode: StateFlow<Boolean> = _isDebugMode.asStateFlow()
@@ -58,7 +59,6 @@ class TrackingViewModel @Inject constructor(
     private val _transitionState = MutableStateFlow(TransitionState.NONE)
     val transitionState: StateFlow<TransitionState> = _transitionState.asStateFlow()
 
-    // Encapsulated button state logic
     val pauseResumeButtonState: StateFlow<PauseResumeButtonState> = combine(
         trackingState,
         isPaused,

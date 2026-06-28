@@ -27,7 +27,7 @@ import javax.inject.Singleton
 class TrackingController @Inject constructor(
     private val wifiScanner: WifiScanSource,
     private val positioningEngine: PositioningEngine,
-    private val repository: PositioningDataRepository, // Inject interface
+    private val repository: PositioningDataRepository,
     private val diagnostics: DiagnosticsRecorder
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
@@ -73,7 +73,6 @@ class TrackingController @Inject constructor(
             diagnostics.recordCatalogUpdate("Complete")
             _state.value = TrackingState.Scanning
             
-            // Observe catalog and scan results together
             combine(
                 repository.getCatalogFlow(),
                 wifiScanner.scanResults.onEach { snapshot ->
@@ -142,4 +141,5 @@ class TrackingController @Inject constructor(
     }
 
     val currentPosition: StateFlow<PositionEstimate?> = positioningEngine.currentPosition as StateFlow<PositionEstimate?>
+    val nodeDistances: StateFlow<Map<String, Double>>? = positioningEngine.nodeDistances
 }
