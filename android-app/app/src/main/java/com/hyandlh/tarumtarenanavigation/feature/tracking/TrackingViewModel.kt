@@ -2,6 +2,7 @@ package com.hyandlh.tarumtarenanavigation.feature.tracking
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.hyandlh.tarumtarenanavigation.R
 import com.hyandlh.tarumtarenanavigation.core.apdata.repository.AccessPointCatalogRepository
 import com.hyandlh.tarumtarenanavigation.core.model.AccessPointLocation
 import com.hyandlh.tarumtarenanavigation.core.model.PositionEstimate
@@ -18,6 +19,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+enum class TransitionState { NONE, PAUSING, RESUMING }
 
 @HiltViewModel
 class TrackingViewModel @Inject constructor(
@@ -39,8 +42,8 @@ class TrackingViewModel @Inject constructor(
     private val _isDebugMode = MutableStateFlow(false)
     val isDebugMode: StateFlow<Boolean> = _isDebugMode.asStateFlow()
 
-    private val _isPausingOrResuming = MutableStateFlow(false)
-    val isPausingOrResuming: StateFlow<Boolean> = _isPausingOrResuming.asStateFlow()
+    private val _transitionState = MutableStateFlow(TransitionState.NONE)
+    val transitionState: StateFlow<TransitionState> = _transitionState.asStateFlow()
 
     fun toggleTracking() {
         if (trackingState.value is TrackingState.Idle || trackingState.value is TrackingState.Error) {
@@ -52,13 +55,15 @@ class TrackingViewModel @Inject constructor(
 
     fun togglePauseResume() {
         viewModelScope.launch {
-            _isPausingOrResuming.value = true
             if (isPaused.value) {
+                _transitionState.value = TransitionState.RESUMING
                 trackingController.resumeScanning()
+                _transitionState.value = TransitionState.NONE
             } else {
+                _transitionState.value = TransitionState.PAUSING
                 trackingController.pauseScanning()
+                _transitionState.value = TransitionState.NONE
             }
-            _isPausingOrResuming.value = false
         }
     }
 

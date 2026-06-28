@@ -6,10 +6,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.atomic.AtomicLong
 import javax.inject.Inject
 import javax.inject.Singleton
 
 data class LogEntry(
+    val id: Long,
     val timestamp: Long,
     val message: String,
     val level: LogLevel
@@ -24,10 +26,11 @@ class InMemoryLogStore @Inject constructor() {
     private val _logs = MutableStateFlow<List<LogEntry>>(emptyList())
     val logs: StateFlow<List<LogEntry>> = _logs.asStateFlow()
 
-    private val maxLogs = 200
+    private val maxLogs = 1000
+    private val idGenerator = AtomicLong(0)
 
     fun addLog(message: String, level: LogEntry.LogLevel = LogEntry.LogLevel.INFO) {
-        val newEntry = LogEntry(System.currentTimeMillis(), message, level)
+        val newEntry = LogEntry(idGenerator.incrementAndGet(), System.currentTimeMillis(), message, level)
         val currentList = _logs.value.toMutableList()
         currentList.add(newEntry)
         if (currentList.size > maxLogs) {
