@@ -7,6 +7,10 @@ import com.hyandlh.tarumtarenanavigation.core.apdata.local.ApDao
 import com.hyandlh.tarumtarenanavigation.core.apdata.local.ApDatabase
 import com.hyandlh.tarumtarenanavigation.core.apdata.remote.ApApiService
 import com.hyandlh.tarumtarenanavigation.core.apdata.remote.MockApApiService
+import com.hyandlh.tarumtarenanavigation.core.apdata.repository.AccessPointCatalogRepository
+import com.hyandlh.tarumtarenanavigation.core.apdata.repository.PositioningDataRepository
+import com.hyandlh.tarumtarenanavigation.core.positioning.FingerprintRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,38 +22,45 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataModule {
+abstract class DataModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun provideGson(): Gson = Gson()
+    abstract fun bindPositioningDataRepository(
+        fingerprintRepository: FingerprintRepository
+    ): PositioningDataRepository
 
-    @Provides
-    @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): ApDatabase {
-        return Room.databaseBuilder(
-            context,
-            ApDatabase::class.java,
-            "arena_navigation_db"
-        ).build()
-    }
+    companion object {
+        @Provides
+        @Singleton
+        fun provideGson(): Gson = Gson()
 
-    @Provides
-    fun provideApDao(database: ApDatabase): ApDao = database.apDao()
+        @Provides
+        @Singleton
+        fun provideDatabase(@ApplicationContext context: Context): ApDatabase {
+            return Room.databaseBuilder(
+                context,
+                ApDatabase::class.java,
+                "arena_navigation_db"
+            ).build()
+        }
 
-    @Provides
-    @Singleton
-    fun provideRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("https://api.example.com/") // Placeholder
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
+        @Provides
+        fun provideApDao(database: ApDatabase): ApDao = database.apDao()
 
-    @Provides
-    @Singleton
-    fun provideApApiService(mockApApiService: MockApApiService): ApApiService {
-        // Using Mock implementation for now as requested
-        return mockApApiService
+        @Provides
+        @Singleton
+        fun provideRetrofit(): Retrofit {
+            return Retrofit.Builder()
+                .baseUrl("https://api.example.com/") // Placeholder
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+
+        @Provides
+        @Singleton
+        fun provideApApiService(mockApApiService: MockApApiService): ApApiService {
+            return mockApApiService
+        }
     }
 }

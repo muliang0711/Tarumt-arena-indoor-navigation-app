@@ -6,8 +6,6 @@ import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.Matrix
 import android.graphics.Paint
-import android.graphics.PointF
-import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -17,6 +15,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.hyandlh.tarumtarenanavigation.core.common.CoordinateConverter
 import com.hyandlh.tarumtarenanavigation.core.model.AccessPointLocation
+import com.hyandlh.tarumtarenanavigation.core.model.Node
 import com.hyandlh.tarumtarenanavigation.core.model.PositionEstimate
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanReading
 import kotlin.math.pow
@@ -42,7 +41,12 @@ class MapView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
-    private val apLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    private val nodePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#4CAF50") // Green
+        style = Paint.Style.FILL
+    }
+
+    private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.BLACK
         textSize = 30f
         textAlign = Paint.Align.CENTER
@@ -63,11 +67,13 @@ class MapView @JvmOverloads constructor(
 
     private var userPosition: PositionEstimate? = null
     private var apLocations: List<AccessPointLocation> = emptyList()
+    private var nodes: List<Node> = emptyList()
     private var latestReadings: Map<String, WifiScanReading> = emptyMap()
     private var isDebugMode: Boolean = false
     private var coordinateConverter: CoordinateConverter? = null
 
     var onApClickListener: ((AccessPointLocation, WifiScanReading?) -> Unit)? = null
+    var onNodeClickListener: ((Node) -> Unit)? = null
 
     private val scaleGestureDetector = ScaleGestureDetector(context, object : ScaleGestureDetector.SimpleOnScaleGestureListener() {
         override fun onScale(detector: ScaleGestureDetector): Boolean {
@@ -112,6 +118,11 @@ class MapView @JvmOverloads constructor(
         invalidate()
     }
 
+    fun setNodes(nodes: List<Node>) {
+        this.nodes = nodes
+        invalidate()
+    }
+
     fun setLatestReadings(readings: List<WifiScanReading>) {
         this.latestReadings = readings.associateBy { it.bssid }
         invalidate()
@@ -138,12 +149,23 @@ class MapView @JvmOverloads constructor(
         val imageX = pts[0]
         val imageY = pts[1]
 
-        // Find closest AP
+        // Check nodes first if KNN is being used (indicated by nodes being non-empty)
+        if (nodes.isNotEmpty()) {
+            for (node in nodes) {
+                val (nodePxX, nodePxY) = converter.toPixels(node.x, node.y)
+                val dist = sqrt((imageX - nodePxX).pow(2) + (imageY - nodePxY).pow(2))
+                if (dist < 40f) {
+                    onNodeClickListener?.invoke(node)
+                    return
+                }
+            }
+        }
+
+        // Fallback to APs
         for (ap in apLocations) {
             val (apPxX, apPxY) = converter.toPixels(ap.x, ap.y)
             val dist = sqrt((imageX - apPxX).pow(2) + (imageY - apPxY).pow(2))
             
-            // If within 40 pixels radius of the AP dot
             if (dist < 40f) {
                 onApClickListener?.invoke(ap, latestReadings[ap.bssid])
                 break
@@ -170,14 +192,21 @@ class MapView @JvmOverloads constructor(
             
             val converter = coordinateConverter
             if (converter != null) {
-                // Draw APs if in debug mode
+                // Draw debug info
                 if (isDebugMode) {
+                    // Draw Nodes
+                    for (node in nodes) {
+                        val (pxX, pxY) = converter.toPixels(node.x, node.y)
+                        canvas.drawCircle(pxX, pxY, 15f, nodePaint)
+                        canvas.drawText(node.nodeId.take(8), pxX, pxY - 20f, labelPaint)
+                    }
+
+                    // Draw APs (if applicable)
                     for (ap in apLocations) {
                         val (pxX, pxY) = converter.toPixels(ap.x, ap.y)
                         canvas.drawCircle(pxX, pxY, 15f, apPaint)
-                        canvas.drawText(ap.bssid.takeLast(5), pxX, pxY - 20f, apLabelPaint)
+                        canvas.drawText(ap.bssid.takeLast(5), pxX, pxY - 20f, labelPaint)
                         
-                        // Draw distance circle based on RSSI if available
                         latestReadings[ap.bssid]?.let { reading ->
                             val distanceM = estimateDistance(reading.rssi)
                             val (pxXEdge, _) = converter.toPixels(ap.x + distanceM, ap.y)
@@ -205,6 +234,7 @@ class MapView @JvmOverloads constructor(
     }
 
     /**
+     * (Used for Multilateration positioning)
      * Simple Log-Distance Path Loss model for distance estimation.
      * dist = 10 ^ ((MeasuredPower - RSSI) / (10 * N))
      */

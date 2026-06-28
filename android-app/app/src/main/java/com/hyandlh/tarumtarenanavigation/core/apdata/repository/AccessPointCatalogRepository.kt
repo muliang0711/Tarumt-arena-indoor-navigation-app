@@ -16,16 +16,16 @@ class AccessPointCatalogRepository @Inject constructor(
     private val apDao: ApDao,
     private val apApiService: ApApiService,
     private val gson: Gson
-) {
+) : PositioningDataRepository {
     /**
      * Observe the cached catalog.
      */
-    fun getCatalogFlow(): Flow<AccessPointCatalog?> {
+    override fun getCatalogFlow(): Flow<AccessPointCatalog?> {
         return apDao.getAllLocations().map { entities ->
             if (entities.isEmpty()) return@map null
             
             AccessPointCatalog(
-                version = "local", // Versioning logic can be improved
+                version = "local",
                 locations = entities.associate { it.bssid to it.toDomain(gson) },
                 lastUpdated = System.currentTimeMillis()
             )
@@ -35,7 +35,7 @@ class AccessPointCatalogRepository @Inject constructor(
     /**
      * Refresh the catalog from the remote source.
      */
-    suspend fun refreshCatalog(): AppResult<Unit> {
+    override suspend fun refreshCatalog(): AppResult<Unit> {
         return try {
             val response = apApiService.getLatestCatalog()
             val entities = response.items.map { it.toEntity(gson) }

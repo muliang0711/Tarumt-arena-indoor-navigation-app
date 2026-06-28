@@ -17,6 +17,7 @@ import com.hyandlh.tarumtarenanavigation.core.common.CoordinateConverter
 import com.hyandlh.tarumtarenanavigation.core.model.TrackingState
 import com.hyandlh.tarumtarenanavigation.databinding.ActivityMainBinding
 import com.hyandlh.tarumtarenanavigation.feature.tracking.LogPanelDialogFragment
+import com.hyandlh.tarumtarenanavigation.feature.tracking.NodeDetailsDialogFragment
 import com.hyandlh.tarumtarenanavigation.feature.tracking.TrackingViewModel
 import com.hyandlh.tarumtarenanavigation.feature.tracking.TransitionState
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,6 +88,11 @@ class MainActivity : AppCompatActivity() {
                 .show()
         }
 
+        binding.mapView.onNodeClickListener = { node ->
+            NodeDetailsDialogFragment.newInstance(node.nodeId)
+                .show(supportFragmentManager, NodeDetailsDialogFragment.TAG)
+        }
+
         binding.toggleTrackingButton.setOnClickListener {
             if (hasPermissions()) {
                 viewModel.toggleTracking()
@@ -133,6 +139,12 @@ class MainActivity : AppCompatActivity() {
                         binding.mapView.setApLocations(locations)
                     }
                 }
+
+                launch {
+                    viewModel.nodes.collect { nodes ->
+                        binding.mapView.setNodes(nodes)
+                    }
+                }
                 
                 launch {
                     viewModel.latestSnapshot.collect { snapshot ->
@@ -142,7 +154,6 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
 
-                // Single source of truth for the Pause/Resume button to prevent conflicting labels
                 launch {
                     combine(viewModel.isPaused, viewModel.transitionState) { isPaused, transition ->
                         isPaused to transition

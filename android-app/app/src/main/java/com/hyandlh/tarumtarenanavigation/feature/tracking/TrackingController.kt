@@ -1,6 +1,6 @@
 package com.hyandlh.tarumtarenanavigation.feature.tracking
 
-import com.hyandlh.tarumtarenanavigation.core.apdata.repository.AccessPointCatalogRepository
+import com.hyandlh.tarumtarenanavigation.core.apdata.repository.PositioningDataRepository
 import com.hyandlh.tarumtarenanavigation.core.common.AppResult
 import com.hyandlh.tarumtarenanavigation.core.model.PositionEstimate
 import com.hyandlh.tarumtarenanavigation.core.model.TrackingState
@@ -27,7 +27,7 @@ import javax.inject.Singleton
 class TrackingController @Inject constructor(
     private val wifiScanner: WifiScanSource,
     private val positioningEngine: PositioningEngine,
-    private val repository: AccessPointCatalogRepository,
+    private val repository: PositioningDataRepository, // Inject interface
     private val diagnostics: DiagnosticsRecorder
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
