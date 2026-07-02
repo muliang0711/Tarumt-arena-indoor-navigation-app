@@ -102,13 +102,17 @@ class AndroidWifiScanner @Inject constructor(
         try {
             val results = wifiManager.scanResults
             val now = System.currentTimeMillis()
-            
-            diagnostics.recordScanResult(now, results.size)
+
+            // `diagnostics.recordScanResult` is already done in TrackingController.startTracking().
+            //diagnostics.recordScanResult(now, results.size)
             healthHeartbeat.beat("WifiScanner")
 
             val snapshot = WifiScanSnapshot(
                 timestamp = now,
-                readings = results.map { result ->
+                readings = results.filter { result ->
+                    result.SSID == "TARUMT_ARENA"
+                    }
+                    .map { result ->
                     WifiScanReading(
                         bssid = result.BSSID,
                         rssi = result.level,
