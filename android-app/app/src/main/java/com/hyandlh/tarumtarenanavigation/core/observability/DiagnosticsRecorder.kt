@@ -59,6 +59,19 @@ class DiagnosticsRecorder @Inject constructor(
         logger.i(TAG, msg)
         logStore.addLog(msg)
     }
+
+    fun recordRemotePositioning(success: Boolean, latencyMs: Long, error: String? = null) {
+        val status = if (success) "SUCCESS" else "FAILED"
+        val errorPart = if (error != null) " | Error: $error" else ""
+        val msg = "Remote Positioning: $status | Latency: ${latencyMs}ms$errorPart"
+        if (success) {
+            logger.i(TAG, msg)
+            logStore.addLog(msg, LogEntry.LogLevel.INFO)
+        } else {
+            logger.e(TAG, msg)
+            logStore.addLog(msg, LogEntry.LogLevel.ERROR)
+        }
+    }
     
     fun recordMessage(message: String) {
         logStore.addLog(message)

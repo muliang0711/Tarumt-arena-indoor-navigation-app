@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 @Singleton
 class DefaultPositioningEngine @Inject constructor(
@@ -24,16 +26,10 @@ class DefaultPositioningEngine @Inject constructor(
     private val _currentPosition = MutableStateFlow<PositionEstimate?>(null)
     override val currentPosition: StateFlow<PositionEstimate?> = _currentPosition.asStateFlow()
 
-    /**
-     * (this is only used for KnnWifiPositioningEngine and is irrelevant here)
-     * (had to override this here as this member is defined in the interface)
-     * (this variable will not be used in this class)
-     * A flow of calculated distances to each node in the catalog based on the latest scan.
-     * The key is the nodeId, and the value is the calculated distance (e.g., Euclidean).
-     */
-    override val nodeDistances: StateFlow<Map<String, Double>>? = null
+    private val _nodeDistances = MutableStateFlow<Map<String, Double>>(emptyMap())
+    override val nodeDistances: StateFlow<Map<String, Double>> = _nodeDistances.asStateFlow()
 
-    override fun calculatePosition(
+    override suspend fun calculatePosition(
         snapshot: WifiScanSnapshot,
         catalog: AccessPointCatalog
     ): PositionEstimate {
@@ -61,9 +57,21 @@ class DefaultPositioningEngine @Inject constructor(
         )
         healthHeartbeat.beat("PositioningEngine")
 
-        // 6. Update flow
+        // 6. Update flows
         _currentPosition.value = smoothedEstimate
+        updateNodeDistances(smoothedEstimate, catalog)
 
         return smoothedEstimate
+    }
+
+    private fun updateNodeDistances(estimate: PositionEstimate, catalog: AccessPointCatalog) {
+        val distances = catalog.nodes.mapValues { (_, node) ->
+            if (node.floorId == estimate.floorId) {
+                sqrt((node.x - estimate.x).pow(2) + (node.y - estimate.y).pow(2))
+            } else {
+                Double.MAX_VALUE
+            }
+        }
+        _nodeDistances.value = distances
     }
 }

@@ -109,8 +109,9 @@ class AndroidWifiScanner @Inject constructor(
 
             val snapshot = WifiScanSnapshot(
                 timestamp = now,
-                readings = results.filter { result ->
-                    result.SSID == "TARUMT_ARENA"
+                readings = results
+                    .filter { result ->
+                        result.SSID == "TARUMT_ARENA"
                     }
                     .map { result ->
                     WifiScanReading(

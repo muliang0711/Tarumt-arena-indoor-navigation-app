@@ -1,0 +1,46 @@
+[
+  {
+    "timestamp": 1782355999274,
+    "location_id": "elev-west",
+    "scan_id": 1,
+    "AP_list": [
+      {
+        "bssid": "10:3f:8c:d6:dc:e0",
+        "rssi": -82,
+        "channel": 5180
+      },
+      {
+        "bssid": "10:3f:8c:d6:ae:60",
+        "rssi": -84,
+        "channel": 5180
+      },
+      {
+        "bssid": "10:3f:8c:d6:11:60",
+        "rssi": -67,
+        "channel": 5220
+      }
+    ]
+  },
+  {
+    "timestamp": 1782356007432,
+    "location_id": "elev-west",
+    "scan_id": 2,
+    "AP_list": [
+      {
+        "bssid": "10:3f:8c:d6:dc:e0",
+        "rssi": -82,
+        "channel": 5180
+      },
+      {
+        "bssid": "10:3f:8c:d6:e7:40",
+        "rssi": -90,
+        "channel": 5540
+      },
+      {
+        "bssid": "10:3f:8c:d6:ae:60",
+        "rssi": -84,
+        "channel": 5180
+      }
+    ]
+  }
+]

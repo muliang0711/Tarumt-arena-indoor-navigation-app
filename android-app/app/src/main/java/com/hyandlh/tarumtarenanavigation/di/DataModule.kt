@@ -10,6 +10,7 @@ import com.hyandlh.tarumtarenanavigation.core.apdata.remote.MockApApiService
 import com.hyandlh.tarumtarenanavigation.core.apdata.repository.AccessPointCatalogRepository
 import com.hyandlh.tarumtarenanavigation.core.apdata.repository.PositioningDataRepository
 import com.hyandlh.tarumtarenanavigation.core.positioning.FingerprintRepository
+import com.hyandlh.tarumtarenanavigation.core.positioning.remote.PositioningApiService
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -52,7 +53,7 @@ abstract class DataModule {
         @Singleton
         fun provideRetrofit(): Retrofit {
             return Retrofit.Builder()
-                .baseUrl("https://api.example.com/") // Placeholder
+                .baseUrl("http://localhost:8080/") // Default base URL
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
         }
@@ -61,6 +62,12 @@ abstract class DataModule {
         @Singleton
         fun provideApApiService(mockApApiService: MockApApiService): ApApiService {
             return mockApApiService
+        }
+
+        @Provides
+        @Singleton
+        fun providePositioningApiService(retrofit: Retrofit): PositioningApiService {
+            return retrofit.create(PositioningApiService::class.java)
         }
     }
 }

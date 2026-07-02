@@ -13,7 +13,7 @@ interface PositioningEngine {
     /**
      * Processes a new Wi-Fi scan snapshot and produces a position estimate.
      */
-    fun calculatePosition(
+    suspend fun calculatePosition(
         snapshot: WifiScanSnapshot,
         catalog: AccessPointCatalog
     ): PositionEstimate
