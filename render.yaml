@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: knn-positioning-api-server
-    runtime: python
-    rootDir: api-server 
-    buildCommand: pip install -r requirements.txt
-    startCommand: python main.py
