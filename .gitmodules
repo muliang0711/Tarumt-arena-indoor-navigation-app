@@ -1,0 +1,3 @@
+[submodule "knn-api-server"]
+	path = knn-api-server
+	url = https://github.com/Cookiecodess/uni_rssi_knn_api_server.git

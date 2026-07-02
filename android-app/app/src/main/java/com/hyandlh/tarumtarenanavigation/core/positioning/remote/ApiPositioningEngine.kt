@@ -21,7 +21,7 @@ class ApiPositioningEngine @Inject constructor(
     private val healthHeartbeat: HealthHeartbeat
 ) : PositioningEngine {
 
-    private var baseUrl: String = "http://10.0.2.2:8080" // Use 10.0.2.2 for localhost on emulator
+    private var baseUrl: String = "https://uni-rssi-knn-api-server.onrender.com" // NOTE: Use 10.0.2.2 for localhost on emulator
 
     fun setBaseUrl(url: String) {
         baseUrl = url.removeSuffix("/")
