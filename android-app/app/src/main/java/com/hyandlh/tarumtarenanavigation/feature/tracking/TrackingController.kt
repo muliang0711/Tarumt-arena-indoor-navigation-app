@@ -44,7 +44,7 @@ class TrackingController @Inject constructor(
     private val _latestSnapshot = MutableStateFlow<WifiScanSnapshot?>(null)
     val latestSnapshot: StateFlow<WifiScanSnapshot?> = _latestSnapshot.asStateFlow()
 
-    private var scanIntervalMs: Long = 5000L
+    private var scanIntervalMs: Long = 6000L
 
     fun setScanInterval(intervalMs: Long) {
         scanIntervalMs = intervalMs
@@ -120,7 +120,7 @@ class TrackingController @Inject constructor(
         scanLoopJob = scope.launch {
             while (true) {
                 if (!_isPaused.value) {
-                    diagnostics.recordScanRequest(System.currentTimeMillis())
+//                    diagnostics.recordScanRequest(System.currentTimeMillis())
                     wifiScanner.requestScan()
                     startCountdown()
                 }
