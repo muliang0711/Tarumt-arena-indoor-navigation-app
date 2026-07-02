@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.core.content.ContextCompat
+import com.hyandlh.tarumtarenanavigation.config.ScanConfig
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanReading
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanSnapshot
 import com.hyandlh.tarumtarenanavigation.core.observability.DiagnosticsRecorder
@@ -111,7 +112,7 @@ class AndroidWifiScanner @Inject constructor(
                 timestamp = now,
                 readings = results
                     .filter { result ->
-                        result.SSID == "TARUMT_ARENA"
+                        result.SSID == ScanConfig.FILTER_SSID
                     }
                     .map { result ->
                     WifiScanReading(
