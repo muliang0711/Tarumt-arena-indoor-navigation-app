@@ -1,7 +1,6 @@
 package com.hyandlh.tarumtarenanavigation.core.wifi
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -10,7 +9,7 @@ import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.core.content.ContextCompat
-import com.hyandlh.tarumtarenanavigation.config.ScanConfig
+import com.hyandlh.tarumtarenanavigation.config.GlobalConfig
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanReading
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanSnapshot
 import com.hyandlh.tarumtarenanavigation.core.observability.DiagnosticsRecorder
@@ -18,16 +17,12 @@ import com.hyandlh.tarumtarenanavigation.core.observability.HealthHeartbeat
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -145,7 +140,7 @@ class AndroidWifiScanner @Inject constructor(
                 timestamp = now,
                 readings = results
                     .filter { result ->
-                        result.SSID == ScanConfig.FILTER_SSID
+                        result.SSID == GlobalConfig.FILTER_SSID
                     }
                     .map { result ->
                     WifiScanReading(

@@ -1,5 +1,6 @@
 package com.hyandlh.tarumtarenanavigation.core.positioning.remote
 
+import com.hyandlh.tarumtarenanavigation.config.GlobalConfig
 import com.hyandlh.tarumtarenanavigation.core.model.AccessPointCatalog
 import com.hyandlh.tarumtarenanavigation.core.model.PositionEstimate
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanSnapshot
@@ -21,7 +22,7 @@ class ApiPositioningEngine @Inject constructor(
     private val healthHeartbeat: HealthHeartbeat
 ) : PositioningEngine {
 
-    private var baseUrl: String = "https://uni-rssi-knn-api-server.onrender.com" // NOTE: Use 10.0.2.2 for localhost on emulator
+    private var baseUrl: String = GlobalConfig.KNN_API_BASE_URL // NOTE: Use 10.0.2.2 for localhost on emulator
 
     fun setBaseUrl(url: String) {
         baseUrl = url.removeSuffix("/")
@@ -38,7 +39,7 @@ class ApiPositioningEngine @Inject constructor(
         catalog: AccessPointCatalog
     ): PositionEstimate {
         return try {
-            val apiUrl = "$baseUrl/calcPosition"
+            val apiUrl = "$baseUrl/${GlobalConfig.KNN_API_ENDPOINT_CALCPOSITION}"
             diagnostics.recordEvent("[KnnApiServer] Making API call to $apiUrl")
             val response = apiService.calculatePosition(apiUrl, snapshot)
 

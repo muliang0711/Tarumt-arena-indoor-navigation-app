@@ -3,33 +3,57 @@ package com.hyandlh.tarumtarenanavigation.core.positioning
 import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.hyandlh.tarumtarenanavigation.config.GlobalConfig
 import com.hyandlh.tarumtarenanavigation.core.apdata.repository.PositioningDataRepository
 import com.hyandlh.tarumtarenanavigation.core.common.AppResult
 import com.hyandlh.tarumtarenanavigation.core.model.*
+import com.hyandlh.tarumtarenanavigation.core.positioning.remote.PositioningApiService
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object CoroutineModule {
+
+    @Provides
+    @Singleton
+    fun provideApplicationScope(): CoroutineScope {
+        return CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    }
+}
 
 @Singleton
 class FingerprintRepository @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val gson: Gson
+    private val gson: Gson,
+    private val apiService: PositioningApiService,
+    private val appScope: CoroutineScope,
 ) : PositioningDataRepository {
     private val _catalog = MutableStateFlow<AccessPointCatalog?>(null)
 
     init {
-        loadData()
-        println("loaded catalog in FingerprintRepository.")
-        println("> FingerprintRepository._catalog.value:")
-        println(_catalog.value)
-        println("> FingerprintRepository._catalog.asStateFlow().value i.e. FingerprintRepository.getCatalogFlow().value:")
-        println(_catalog.asStateFlow().value)
-//        println("> FingerprintRepository._catalog.asStateFlow().map { it?.fingerprints ?: emptyList() }.value")
-//        println(_catalog.asStateFlow().map { it?.fingerprints ?: emptyList() }.value)
+        appScope.launch {
+            loadDataRemote()
+            println("loaded catalog in FingerprintRepository.")
+            println("> FingerprintRepository._catalog.value:")
+            println(_catalog.value)
+            println("> FingerprintRepository._catalog.asStateFlow().value i.e. FingerprintRepository.getCatalogFlow().value:")
+            println(_catalog.asStateFlow().value)
+    //        println("> FingerprintRepository._catalog.asStateFlow().map { it?.fingerprints ?: emptyList() }.value")
+    //        println(_catalog.asStateFlow().map { it?.fingerprints ?: emptyList() }.value)
+        }
     }
 
     override fun getCatalogFlow(): Flow<AccessPointCatalog?> {
@@ -38,11 +62,45 @@ class FingerprintRepository @Inject constructor(
     }
 
     override suspend fun refreshCatalog(): AppResult<Unit> {
-        loadData()
+        loadDataRemote()
         return AppResult.Success(Unit)
     }
 
-    private fun loadData() {
+    suspend private fun loadDataRemote() {
+        try {
+            // get node registry
+            val apiUrlNodes =
+                "${GlobalConfig.KNN_API_BASE_URL}/${GlobalConfig.KNN_API_ENDPOINT_GETNODEREGISTRY}"
+
+            val nodeRegistry = apiService.getNodeRegistry(apiUrlNodes)
+
+            // get all fingerprints
+            val apiUrlFingerprints =
+                "${GlobalConfig.KNN_API_BASE_URL}/${GlobalConfig.KNN_API_ENDPOINT_GETALLFINGERPRINTS}"
+
+            val fingerprints = apiService.getAllFingerprints(apiUrlFingerprints)
+
+            _catalog.value = AccessPointCatalog(
+                version = "fingerprint-1.0",
+                fingerprints = fingerprints,
+                nodes = nodeRegistry,
+                lastUpdated = System.currentTimeMillis()
+            )
+        } catch (e: retrofit2.HttpException) {
+            // Non-2xx HTTP responses (404, 500, etc.)
+            println("HTTP error loading remote data: ${e.code()} ${e.message()}")
+        } catch (e: java.io.IOException) {
+            // Network issues (no internet, timeout, DNS failure)
+            println("Network error loading remote data: ${e.message}")
+        } catch (e: kotlinx.serialization.SerializationException) {
+            // If JSON doesn't match your models
+            println("Serialization error: ${e.message}")
+        } catch (e: Exception) {
+            // Anything unexpected
+            println("Unexpected error loading remote data: ${e.message}")
+        }
+    }
+    private fun loadDataLocal() {
         val nodeRegistry = mapOf(
             "elev-west" to Node("elev-west", "floor-2", 55.756, 33.909, NodeType.ELEVATOR, "West Elevator"),
             "TA244-door" to Node("TA244-door", "floor-2", 45.361, 53.354, NodeType.DESTINATION, "TA/244 door"),
