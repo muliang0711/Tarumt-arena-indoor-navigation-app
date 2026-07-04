@@ -32,4 +32,6 @@ interface WifiScanSource {
      * Returns the current failure state, if any.
      */
     val failureState: Flow<WifiScanFailure?>
+
+//    suspend fun scanOnce(): List<AccessPoint>
 }

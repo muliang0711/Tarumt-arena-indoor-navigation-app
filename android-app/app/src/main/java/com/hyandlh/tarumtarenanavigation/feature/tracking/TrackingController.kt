@@ -18,7 +18,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -117,14 +120,61 @@ class TrackingController @Inject constructor(
 
     private fun startScanLoop() {
         scanLoopJob?.cancel()
+//        scanLoopJob = scope.launch {
+//            while (true) {
+//                if (!_isPaused.value) {
+////                    diagnostics.recordScanRequest(System.currentTimeMillis())
+//                    wifiScanner.requestScan()
+//                    startCountdown()
+//                }
+//                delay(scanIntervalMs)
+//            }
+//        }
         scanLoopJob = scope.launch {
-            while (true) {
-                if (!_isPaused.value) {
-//                    diagnostics.recordScanRequest(System.currentTimeMillis())
-                    wifiScanner.requestScan()
-                    startCountdown()
+            var lastSeenTimestamp: Long = 0L
+
+            while (isActive) {
+
+                if (_isPaused.value) {
+                    // tracking has been paused,
+                    // check every 200ms if it's been resumed
+                    // instead of busy-waiting
+                    delay(200)
+                    continue
                 }
-                delay(scanIntervalMs)
+
+                println("Requesting wifi scan...");
+                val result = wifiScanner.requestScan()
+
+                if (result.isFailure) {
+                    val tryAgainDuration: Long = 1000
+                    diagnostics.recordError(
+                        "Scan request failed: ${result.exceptionOrNull()?.message}. Trying again in ${tryAgainDuration/1000}s"
+                    )
+                    delay(tryAgainDuration)
+                    continue
+                }
+
+                println("Scan request succeeded. Awaiting scan results.");
+
+                // this will SUSPEND and wait for the next emission of the scanResults Flow
+                // that matches the condition in `filter`,
+                // which basically makes sure that we're getting the snapshot
+                // after the last one we've seen.
+                val snapshot = wifiScanner.scanResults
+                    .filter { it.timestamp > lastSeenTimestamp }
+                    .first()
+
+                println("Scan results obtained.");
+
+                // update last seen timestamp so that
+                // on the next iteration the above `filter` works as intended
+                lastSeenTimestamp = snapshot.timestamp
+                _latestSnapshot.value = snapshot
+
+                diagnostics.recordScanResult(snapshot.timestamp, snapshot.readings.size)
+
+//                startCountdown()
             }
         }
     }

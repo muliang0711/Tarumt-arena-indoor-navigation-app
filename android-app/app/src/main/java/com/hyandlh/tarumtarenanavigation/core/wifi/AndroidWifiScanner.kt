@@ -1,6 +1,7 @@
 package com.hyandlh.tarumtarenanavigation.core.wifi
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,13 +16,18 @@ import com.hyandlh.tarumtarenanavigation.core.model.WifiScanSnapshot
 import com.hyandlh.tarumtarenanavigation.core.observability.DiagnosticsRecorder
 import com.hyandlh.tarumtarenanavigation.core.observability.HealthHeartbeat
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -43,14 +49,25 @@ class AndroidWifiScanner @Inject constructor(
     private val _failureState = MutableStateFlow<WifiScanFailure?>(null)
     override val failureState: StateFlow<WifiScanFailure?> = _failureState.asStateFlow()
 
+    private var pendingScan: CompletableDeferred<Result<Unit>>? = null
+
     private val wifiScanReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val success = intent.getBooleanExtra(WifiManager.EXTRA_RESULTS_UPDATED, false)
             if (success) {
                 processScanResults()
+                pendingScan?.complete(Result.success(Unit))
+                pendingScan = null
             } else {
-                diagnostics.recordError("Scan result update failed", metadata = mapOf("reason" to "throttled_or_hardware_failure"))
+                diagnostics.recordError("Scan result update failed. Could be throttled or hardware failure, or simply because the latest scan is exactly the same as the last.", metadata = mapOf("reason" to "throttled_or_hardware_failure"))
                 _failureState.value = WifiScanFailure.Throttled
+
+                pendingScan?.complete(
+                    Result.failure(
+                        IllegalStateException("Scan completed without updated results")
+                    )
+                )
+                pendingScan = null
             }
         }
     }
@@ -77,14 +94,30 @@ class AndroidWifiScanner @Inject constructor(
         val timestamp = System.currentTimeMillis()
         diagnostics.recordScanRequest(timestamp)
         
+//        val success = wifiManager.startScan()
+//        return if (success) {
+//            Result.success(Unit)
+//        } else {
+//            diagnostics.recordError("Scan startScan() returned false (throttled)")
+//            _failureState.value = WifiScanFailure.Throttled
+//            Result.failure(IllegalStateException("Scan request failed (likely throttled)"))
+//        }
+        val deferred = CompletableDeferred<Result<Unit>>()
+        pendingScan = deferred
+
         val success = wifiManager.startScan()
-        return if (success) {
-            Result.success(Unit)
-        } else {
+
+        if (!success) {
             diagnostics.recordError("Scan startScan() returned false (throttled)")
             _failureState.value = WifiScanFailure.Throttled
-            Result.failure(IllegalStateException("Scan request failed (likely throttled)"))
+            pendingScan = null
+            return Result.failure(
+                IllegalStateException("Scan request failed (likely throttled)")
+            )
         }
+
+        // defer to onReceive(). this will return a Result whether or not scan was successful in onReceive().
+        return deferred.await()
     }
 
     private fun hasPermissions(): Boolean {
@@ -138,4 +171,34 @@ class AndroidWifiScanner @Inject constructor(
             _failureState.value = WifiScanFailure.Unknown(e.message ?: "Unknown error")
         }
     }
+
+//    @SuppressLint("MissingPermission")
+//    override suspend fun scanOnce(): List<AccessPoint> {
+//        val success = wifiManager.startScan()
+//        if (!success) {
+//            throw Exception("WifiManager.startScan() failed")
+//        }
+//
+//        return withTimeout(10000) {
+//            callbackFlow {
+//                val receiver = object : BroadcastReceiver() {
+//                    override fun onReceive(context: Context, intent: Intent) {
+//                        val results = wifiManager.scanResults
+//                        val filteredResults = results
+//                            .filter { it.SSID == ScanConfig.FILTER_SSID && it.level >= -90 }
+//                            .map {
+//                                AccessPoint(
+//                                    bssid = it.BSSID,
+//                                    rssi = it.level,
+//                                    channel = it.frequency // frequency to channel conversion could be added here
+//                                )
+//                            }
+//                        trySend(filteredResults)
+//                    }
+//                }
+//                context.registerReceiver(receiver, IntentFilter(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION))
+//                awaitClose { context.unregisterReceiver(receiver) }
+//            }.first()
+//        }
+//    }
 }

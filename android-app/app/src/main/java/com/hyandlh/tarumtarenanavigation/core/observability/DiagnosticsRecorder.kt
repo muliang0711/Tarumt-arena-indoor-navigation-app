@@ -55,7 +55,7 @@ class DiagnosticsRecorder @Inject constructor(
     }
 
     fun recordPositionCalculated(x: Double, y: Double, confidence: Double) {
-        val msg = "Calculating your current location: (${String.format(Locale.US, "%.2f", x)}, ${String.format(Locale.US, "%.2f", y)})"
+        val msg = "Calculating your current location: (${String.format(Locale.US, "%.2f", x)}, ${String.format(Locale.US, "%.2f", y)}) with confidence value $confidence"
         logger.i(TAG, msg)
         logStore.addLog(msg)
     }

@@ -38,22 +38,30 @@ class ApiPositioningEngine @Inject constructor(
         catalog: AccessPointCatalog
     ): PositionEstimate {
         return try {
-            val response = apiService.calculatePosition("$baseUrl/calcPosition", snapshot)
-            
-            val rawEstimate = response.estimate
-            val smoothedEstimate = smoother.smooth(rawEstimate)
+            val apiUrl = "$baseUrl/calcPosition"
+            diagnostics.recordEvent("[KnnApiServer] Making API call to $apiUrl")
+            val response = apiService.calculatePosition(apiUrl, snapshot)
 
-            _currentPosition.value = smoothedEstimate
+            diagnostics.recordEvent("[KnnApiServer] Received response from API server.")
+
+            val rawEstimate = response.estimate
+
+            diagnostics.recordEvent("[KnnApiServer] Received raw estimate from API server: (${rawEstimate.x}, ${rawEstimate.y})")
+
+//            val finalEstimate = smoother.smooth(rawEstimate)
+            val finalEstimate = rawEstimate // testing no smoothing
+
+            _currentPosition.value = finalEstimate
             _nodeDistances.value = response.nodeDistances
 
             diagnostics.recordPositionCalculated(
-                smoothedEstimate.x,
-                smoothedEstimate.y,
-                smoothedEstimate.confidence
+                finalEstimate.x,
+                finalEstimate.y,
+                finalEstimate.confidence
             )
             healthHeartbeat.beat("ApiPositioningEngine")
 
-            smoothedEstimate
+            finalEstimate
         } catch (e: Exception) {
             diagnostics.recordError("API Positioning Failed: ${e.message}")
             val fallback = PositionEstimate(0.0, 0.0, "unknown", 0.0, snapshot.timestamp)
