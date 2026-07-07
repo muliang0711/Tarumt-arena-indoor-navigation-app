@@ -88,16 +88,16 @@ class FingerprintRepository @Inject constructor(
             )
         } catch (e: retrofit2.HttpException) {
             // Non-2xx HTTP responses (404, 500, etc.)
-            println("HTTP error loading remote data: ${e.code()} ${e.message()}")
+            println("[FingerprintRepository.loadRemoteData()] HTTP error loading remote data: ${e.code()} ${e.message()}")
         } catch (e: java.io.IOException) {
             // Network issues (no internet, timeout, DNS failure)
-            println("Network error loading remote data: ${e.message}")
+            println("[FingerprintRepository.loadRemoteData()] Network error loading remote data: ${e.message}")
         } catch (e: kotlinx.serialization.SerializationException) {
             // If JSON doesn't match your models
-            println("Serialization error: ${e.message}")
+            println("[FingerprintRepository.loadRemoteData()] Serialization error: ${e.message}")
         } catch (e: Exception) {
             // Anything unexpected
-            println("Unexpected error loading remote data: ${e.message}")
+            println("[FingerprintRepository.loadRemoteData()] Unexpected error loading remote data: ${e.message}")
         }
     }
     private fun loadDataLocal() {
