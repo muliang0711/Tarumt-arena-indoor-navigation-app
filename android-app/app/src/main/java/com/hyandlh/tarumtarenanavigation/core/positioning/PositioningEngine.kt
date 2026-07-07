@@ -24,9 +24,8 @@ interface PositioningEngine {
     val currentPosition: Flow<PositionEstimate?>
 
     /**
-     * A flow of calculated distances to each node in the catalog based on the latest scan.
-     * The key is the nodeId, and the value is the calculated distance (e.g., Euclidean).
-     * (actually only used for KnnWifiPositioningEngine)
+     * A flow of calculated distances to each node based on the latest scan.
+     * Engines that cannot provide node-level distances may return null.
      */
     val nodeDistances: StateFlow<Map<String, Double>>?
 }

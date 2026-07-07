@@ -1,39 +1,135 @@
 # Architecture Design
 
-## Architectural Pattern: MVVM + Clean Architecture
-The application follows a simplified Clean Architecture pattern combined with MVVM (Model-View-ViewModel) for the UI layer.
+The app follows a pragmatic MVVM plus clean-ish layering style. The boundaries are defined less by formal modules and more by package ownership, Hilt interfaces, and reactive `Flow` contracts.
 
-### 1. Presentation Layer (UI)
-- **`MainActivity`**: The entry point. It manages the lifecycle of the UI components and observes the `TrackingViewModel`.
-- **`MapView`**: A custom View responsible for rendering the map, user position, and debug information (APs, Nodes).
-- **`TrackingViewModel`**: Orchestrates the data flow for the tracking screen. It exposes state via Kotlin `StateFlow` and handles user actions by delegating to the `TrackingController`.
+## Main Layers
 
-### 2. Controller / Use Case Layer
-- **`TrackingController`**: Acts as a central orchestrator for the positioning process. It manages the lifecycle of the tracking session (Start/Stop/Pause/Resume), coordinates between the Wi-Fi scanner and the positioning engine, and updates the system state.
+### Presentation Layer
 
-### 3. Core / Domain Layer
-- **Interfaces**: Defines the contracts for the system's core capabilities:
-    - `PositioningEngine`: Interface for calculating positions.
-    - `WifiScanSource`: Interface for hardware Wi-Fi scanning.
-    - `PositioningDataRepository`: Interface for accessing fingerprint and AP data.
-- **Domain Models**: Data classes in `com.hyandlh.tarumtarenanavigation.core.model` that represent the state of the world (e.g., `PositionEstimate`, `WifiScanSnapshot`).
+Files:
 
-### 4. Infrastructure / Data Layer
-- **`AndroidWifiScanner`**: Implementation of `WifiScanSource` using Android's `WifiManager`.
-- **`KnnWifiPositioningEngine`**: Implementation of `PositioningEngine` using the Weighted K-Nearest Neighbors algorithm.
-- **`FingerprintRepository`**: Manages the loading of Wi-Fi fingerprint data from local assets.
-- **`ApDatabase` & `ApDao`**: Room database for caching Access Point locations fetched from a remote API.
+- `MainActivity`
+- `feature.tracking.TrackingViewModel`
+- `feature.tracking.MapView`
+- `feature.tracking.NodeDetailsDialogFragment`
+- `feature.tracking.LogPanelDialogFragment`
+- UI adapters in `feature.tracking`
 
-## Data Flow (Reactive Pattern)
-The system heavily utilizes Kotlin Coroutines and Flows for a reactive data flow:
-1. **Scanning**: `AndroidWifiScanner` emits `WifiScanSnapshot` into a `SharedFlow`.
-2. **Processing**: `TrackingController` collects snapshots, combines them with the latest `AccessPointCatalog`, and calls the `PositioningEngine`.
-3. **Updating**: `PositioningEngine` updates its internal `currentPosition` `StateFlow`.
-4. **UI Update**: `TrackingViewModel` observes the position flow and emits a new state to the UI.
+Responsibilities:
 
-## Dependency Injection
-The project uses **Dagger Hilt** for dependency injection. Modules are located in the `di` package:
-- `WifiModule`: Binds the `AndroidWifiScanner`.
-- `PositioningModule`: Binds the `KnnWifiPositioningEngine` and `PositionSmoother`.
-- `DataModule`: Provides database, API services, and binds the repository.
-- `ObservabilityModule`: Provides logging and diagnostic tools.
+- Request permissions.
+- Render tracking status, pause/resume controls, debug toggle, map, node details, scan readings, and log stream.
+- Observe state exposed by `TrackingViewModel`.
+- Avoid direct Wi-Fi, repository, or positioning work.
+
+### Tracking Orchestration Layer
+
+File:
+
+- `feature.tracking.TrackingController`
+
+Responsibilities:
+
+- Own the tracking session lifecycle.
+- Refresh the positioning catalog when tracking starts.
+- Start and stop the Wi-Fi scan loop.
+- Combine catalog data and scan snapshots.
+- Call the active `PositioningEngine`.
+- Publish current state, latest scan snapshot, current position, pause state, and node distances.
+
+The controller is a singleton and uses its own `CoroutineScope(SupervisorJob() + Dispatchers.Default)` for background tracking work.
+
+### Domain and Core Contracts
+
+Files:
+
+- `core.model.*`
+- `core.wifi.WifiScanSource`
+- `core.apdata.repository.PositioningDataRepository`
+- `core.positioning.PositioningEngine`
+- `core.common.*`
+
+Responsibilities:
+
+- Define stable data structures and interfaces.
+- Keep UI code independent from scanner, data-source, and algorithm implementations.
+
+### Infrastructure Layer
+
+Files:
+
+- `core.wifi.AndroidWifiScanner`
+- `core.apdata.repository.FingerprintRepository`
+- `core.positioning.remote.ApiPositioningEngine`
+- `core.positioning.remote.PositioningApiService`
+- `core.observability.*`
+- Room and mock AP catalog classes under `core.apdata`
+
+Responsibilities:
+
+- Integrate Android Wi-Fi APIs.
+- Integrate Retrofit API calls.
+- Provide data persistence or mocks where available.
+- Record logs, events, and health checks.
+
+## Active Data Flow
+
+```text
+User taps Start
+  -> MainActivity
+  -> TrackingViewModel.toggleTracking()
+  -> TrackingController.startTracking()
+  -> FingerprintRepository.refreshCatalog()
+      -> GET {KNN_API_BASE_URL}/nodes
+      -> GET {KNN_API_BASE_URL}/fingerprints
+      -> AccessPointCatalog(fingerprints, nodes)
+  -> TrackingController.startScanLoop()
+      -> AndroidWifiScanner.requestScan()
+      -> Android WifiManager + BroadcastReceiver
+      -> WifiScanSnapshot(readings filtered to TARUMT-ARENA)
+  -> TrackingController combines catalog + snapshot
+  -> ApiPositioningEngine.calculatePosition(snapshot, catalog)
+      -> POST {KNN_API_BASE_URL}/calcPosition
+      -> PositioningResponse(estimate, nodeDistances)
+  -> TrackingViewModel exposes state
+  -> MainActivity and dialogs render updates
+```
+
+## Hilt Dependency Injection
+
+The `di` package is the source of truth for active implementations:
+
+- `WifiModule` binds `WifiScanSource` to `AndroidWifiScanner`.
+- `DataModule` binds `PositioningDataRepository` to `FingerprintRepository`, provides Room objects, Retrofit, mock AP API service, and `PositioningApiService`.
+- `PositioningModule` binds `PositioningEngine` to `ApiPositioningEngine` and `PositionSmoother` to `MovingAverageSmoother`.
+- `ObservabilityModule` binds `AppLogger` to `AndroidAppLogger`.
+- `CoroutineModule` provides the singleton application IO coroutine scope used by `FingerprintRepository`.
+
+## Active vs Alternate Paths
+
+Active:
+
+- Remote fingerprint/node catalog through `FingerprintRepository`.
+- Remote position calculation through `ApiPositioningEngine`.
+- Debug node-distance values from the remote positioning response.
+
+Alternate or currently unbound:
+
+- `KnnWifiPositioningEngine`: local weighted KNN implementation using catalog fingerprints.
+- `DefaultPositioningEngine`: local weighted-centroid/multilateration style implementation using known AP locations.
+- `AccessPointCatalogRepository`: Room-backed AP location catalog repository.
+- `MockApApiService`: mock AP-location API for the Room-backed catalog path.
+- `FakeWifiScanner`: scanner test double.
+
+When changing which algorithm or data source is active, update the Hilt module first, then update these docs.
+
+## State Ownership
+
+| State | Owner | Consumers |
+| --- | --- | --- |
+| Tracking lifecycle state | `TrackingController.state` | `TrackingViewModel`, `MainActivity` |
+| Pause/resume state | `TrackingController.isPaused`, `TrackingViewModel.transitionState` | `MainActivity` |
+| Latest scan snapshot | `TrackingController.latestSnapshot` | `MapView`, log panel, node details |
+| Current position | Active `PositioningEngine.currentPosition` exposed by `TrackingController` | `MapView`, status timestamp |
+| Catalog nodes/fingerprints/AP locations | `PositioningDataRepository.getCatalogFlow()` via `TrackingViewModel` | `MapView`, node details |
+| Logs | `InMemoryLogStore.logs` | `LogPanelDialogFragment` |

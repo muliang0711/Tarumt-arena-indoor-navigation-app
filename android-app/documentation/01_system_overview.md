@@ -1,26 +1,55 @@
-# System Overview: TARUMT Arena Navigation
+# TARUMT Arena Navigation: System Overview
 
-## Introduction
-The TARUMT Arena Navigation app is an indoor positioning and navigation system designed for the TARUMT Arena. It uses Wi-Fi RSSI (Received Signal Strength Indication) fingerprinting to estimate the user's location within the building where GPS is unreliable.
+This Android app estimates a user's indoor position inside the TARUMT Arena, where GPS is not reliable. The current runtime path uses Wi-Fi RSSI scans from the Android device, sends those scans to a remote KNN positioning service, and renders the returned coordinate on a calibrated floor plan.
 
-## Core Purpose
-- **Indoor Positioning**: Real-time estimation of user coordinates (X, Y) on a floor plan.
-- **Wi-Fi Fingerprinting**: Utilizing a pre-collected database of Wi-Fi signal strengths at known locations (Nodes).
-- **Navigation Support**: Providing the foundation for pathfinding by tracking the user's proximity to various navigation nodes.
+The app is also a diagnostics tool. Debug mode can show known nodes, AP overlays when available, current scan readings, fingerprint comparisons, and an in-app log stream.
 
-## Key Modules
-The project is organized into several functional modules within the `com.hyandlh.tarumtarenanavigation` package:
+## Runtime Summary
 
-- **`core.wifi`**: Interfaces with the Android system to perform Wi-Fi scans and stream results.
-- **`core.positioning`**: The "brain" of the app. It contains the algorithms (like WKNN) that turn raw Wi-Fi scans into coordinate estimates.
-- **`core.apdata`**: Manages the positioning data, including the Access Point catalog and fingerprint database, handling both remote fetching and local Room-based caching.
-- **`core.model`**: Defines the domain entities used across the application (PositionEstimate, Node, WifiScanSnapshot, etc.).
-- **`core.observability`**: A cross-cutting concern that handles logging, diagnostics, and system health heartbeats.
-- **`feature.tracking`**: The UI layer that coordinates the scanning process and renders the user's position on a custom map view.
+1. `MainActivity` owns the tracking screen and asks for Wi-Fi/location permissions.
+2. `TrackingViewModel` exposes `StateFlow` values to the activity and dialogs.
+3. `TrackingController` starts a tracking session, refreshes the positioning catalog, and runs the scan loop.
+4. `AndroidWifiScanner` requests Android Wi-Fi scans and emits `WifiScanSnapshot` values filtered to `GlobalConfig.FILTER_SSID`.
+5. `FingerprintRepository` refreshes node and fingerprint data from the KNN API server.
+6. `ApiPositioningEngine` posts each scan snapshot to the KNN API server and receives a `PositionEstimate` plus node-distance diagnostics.
+7. `MapView`, `NodeDetailsDialogFragment`, and `LogPanelDialogFragment` render the current estimate, debug data, and logs.
 
-## High-Level Interaction
-1. The **TrackingController** triggers the **WifiScanSource**.
-2. **AndroidWifiScanner** performs the hardware scan and emits a **WifiScanSnapshot**.
-3. The **TrackingController** passes this snapshot and the cached **AccessPointCatalog** to the **PositioningEngine**.
-4. **KnnWifiPositioningEngine** calculates a **PositionEstimate** using the WKNN algorithm.
-5. The **TrackingViewModel** observes these estimates and updates the **MapView** in the **MainActivity**.
+## Active Production Bindings
+
+These are the bindings that determine the app's current behavior:
+
+| Interface | Active implementation | Hilt module |
+| --- | --- | --- |
+| `WifiScanSource` | `AndroidWifiScanner` | `WifiModule` |
+| `PositioningDataRepository` | `FingerprintRepository` | `DataModule` |
+| `PositioningEngine` | `ApiPositioningEngine` | `PositioningModule` |
+| `PositionSmoother` | `MovingAverageSmoother` | `PositioningModule` |
+| `AppLogger` | `AndroidAppLogger` | `ObservabilityModule` |
+| `CoroutineScope` | Application IO scope | `CoroutineModule` |
+
+## Package Map
+
+| Package | Responsibility |
+| --- | --- |
+| `config` | Global constants for SSID filtering and remote KNN endpoints. |
+| `di` | Hilt bindings and providers. This is the first place to check for active implementations. |
+| `core.model` | Shared domain models: scans, fingerprints, nodes, positions, catalog, tracking state. |
+| `core.common` | Shared utility contracts such as `AppResult`, `AppError`, `AppLogger`, and `CoordinateConverter`. |
+| `core.wifi` | Wi-Fi scan abstraction, Android scanner implementation, and fake scanner for tests/prototyping. |
+| `core.apdata` | Positioning catalog data sources. The active source is the remote fingerprint repository. A Room-backed AP catalog path exists as an alternate/legacy path. |
+| `core.positioning` | Positioning contracts and local algorithm implementations. The active engine is in `core.positioning.remote`. |
+| `core.observability` | Diagnostics, in-memory logs, Logcat adapter, and heartbeat monitoring. |
+| `feature.tracking` | UI-facing tracking feature: controller, ViewModel, custom map, dialogs, and adapters. |
+
+## Important Current Facts
+
+- The app currently calculates positions through `ApiPositioningEngine`, not the local `KnnWifiPositioningEngine`.
+- `KnnWifiPositioningEngine` and `DefaultPositioningEngine` are still present as local alternatives, but Hilt does not bind them by default.
+- `FingerprintRepository` fetches `/nodes` and `/fingerprints` from `GlobalConfig.KNN_API_BASE_URL`.
+- `ApiPositioningEngine` sends scans to `/calcPosition` on the same KNN API base URL.
+- Android Wi-Fi scan results are filtered to SSID `TARUMT-ARENA` before they become domain scan readings.
+- The map coordinate system is calibrated in `CoordinateConverter`, which maps navigation coordinates to pixels in `arena_second_floor_plan`.
+
+## Documentation Maintenance Rule
+
+These documents are part of the development workflow. When code changes package ownership, Hilt bindings, data flow, API contracts, UI behavior, or diagnostics behavior, update the relevant documentation in the same change. Start with `02_architecture_design.md` when trying to understand how pieces interact.

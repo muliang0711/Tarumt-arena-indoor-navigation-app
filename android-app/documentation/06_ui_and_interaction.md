@@ -1,44 +1,172 @@
 # UI and Interaction
 
-The user interface is designed to provide a real-time visualization of the positioning process, allowing for both end-user navigation and developer debugging.
+The tracking UI is built around `MainActivity`, `TrackingViewModel`, and custom Android Views/fragments in `feature.tracking`.
 
-## 1. Main Dashboard (`MainActivity`)
-The `MainActivity` serves as the primary container for the tracking experience.
-- **Status Monitoring**: Displays the current system state (Scanning, Positioning, Paused, etc.) using a status bar and color-coded text.
-- **Control Interface**: Provides buttons to Start/Stop tracking and Pause/Resume Wi-Fi scanning.
-- **Debug Toggle**: A switch that enables/disables the "Debug Mode" on the map, revealing infrastructure details.
+## MainActivity
 
-## 2. Custom Map Engine (`MapView`)
-The `MapView` is a custom Android `View` that handles the rendering of the floor plan and positioning data using a `Canvas`.
+Responsibilities:
 
-### Rendering Layers
-1. **Background**: Renders the floor plan image (`arena_second_floor_plan.jpg`).
-2. **Infrastructure (Debug Only)**:
-    - **Nodes**: Green circles representing physical points in the fingerprint database.
-    - **Access Points**: Red circles representing known AP locations.
-    - **Signal Radius**: Dashed circles around APs representing estimated distance based on RSSI (used for Multilateration debugging).
-3. **User Position**: A blue circle representing the current `PositionEstimate`.
+- Inflate `ActivityMainBinding`.
+- Load the `arena_second_floor_plan` drawable into `MapView`.
+- Inject and pass `CoordinateConverter` to `MapView`.
+- Request required permissions:
+  - `ACCESS_FINE_LOCATION`
+  - `ACCESS_WIFI_STATE`
+  - `CHANGE_WIFI_STATE`
+- Wire buttons:
+  - Start/stop tracking.
+  - Pause/resume scanning.
+  - Toggle debug mode.
+  - Open log panel.
+- Observe ViewModel state and update UI.
 
-### Interaction & Transformation
-- **Pan & Zoom**: Supports multi-touch gestures (pinch-to-zoom) and scrolling using `ScaleGestureDetector` and `GestureDetector`.
-- **Coordinate Conversion**: Uses the `CoordinateConverter` to translate between Android pixel coordinates and the navigation coordinate system (meters).
-- **Hit Detection**: Handles single taps to identify and select APs or Nodes.
+Observed streams:
 
-## 3. Detailed Inspection
-The UI provides deep-dive tools for troubleshooting:
+- `trackingState`
+- `currentPosition`
+- `apLocations`
+- `nodes`
+- `latestSnapshot`
+- `isPaused` combined with `transitionState`
 
-### Node Details (`NodeDetailsDialogFragment`)
-When a user taps a Node in debug mode, this dialog provides:
-- **Node Metadata**: ID, Floor, Type, and Coordinates.
-- **Fingerprint Comparison (RSSI Distribution)**: A scrollable list of APs. Each item includes:
-    - **BSSID**: The unique identifier of the Access Point.
-    - **RSSI Distribution Graph**: A dotted plot showing the frequency of different RSSI values recorded at this node in the fingerprint database.
-    - **Real-time Signal Line**: A red vertical line indicating the RSSI of the AP in the *latest* Wi-Fi scan, updated in real-time.
-    - **Presence State**: APs found in the database but missing from the latest scan are grayed out to help identify signal drop-outs or changes in the environment.
-- **Real-time distance**: Calculates the live Euclidean distance between the current signal profile and the node's saved fingerprint.
+## TrackingViewModel
 
-### Log Panel (`LogPanelDialogFragment`)
-Provides a scrolling view of all system events recorded by the `DiagnosticsRecorder`. This is essential for monitoring the background cycle of "Scan -> Match -> Solve" without needing a computer attached.
+Responsibilities:
 
-## 4. Resource Calibration
-The map coordinates are calibrated based on specific anchor points defined in `CoordinateConverter.kt`. These points map physical meters in the Arena to pixel offsets in the high-resolution floor plan image.
+- Expose `TrackingController` state to the UI.
+- Map repository catalog flow into:
+  - `apLocations`
+  - `nodes`
+  - `fingerprints`
+- Expose log entries from `InMemoryLogStore`.
+- Own debug-mode toggle state.
+- Own pause/resume transition state for button feedback.
+
+The ViewModel does not calculate positions itself; it delegates to `TrackingController`.
+
+## TrackingController UI Contract
+
+The controller exposes:
+
+- `state: StateFlow<TrackingState>`
+- `isPaused: StateFlow<Boolean>`
+- `latestSnapshot: StateFlow<WifiScanSnapshot?>`
+- `currentPosition: StateFlow<PositionEstimate?>`
+- `nodeDistances: StateFlow<Map<String, Double>>?`
+
+`TrackingState` values rendered by the activity:
+
+- `Idle`
+- `LoadingCatalog`
+- `Scanning`
+- `Positioning`
+- `Error`
+- `Paused`
+
+`StaleData` exists in the model but is not currently rendered with custom UI behavior.
+
+## MapView
+
+Class:
+
+- `feature.tracking.MapView`
+
+Responsibilities:
+
+- Draw the floor plan bitmap.
+- Draw the current user position.
+- In debug mode, draw nodes and AP overlays.
+- Support pan and pinch zoom with `GestureDetector` and `ScaleGestureDetector`.
+- Detect taps on nodes/APs in debug mode.
+
+Rendering order:
+
+1. Floor plan image.
+2. Debug nodes.
+3. Debug APs and estimated AP signal radius when AP readings exist.
+4. User position.
+
+Coordinate conversion:
+
+- Uses `CoordinateConverter.toPixels(x, y)` to convert navigation coordinates into floor-plan pixels.
+- Converts tap screen coordinates back through the current image matrix before hit testing.
+
+Debug interactions:
+
+- Tapping a node opens `NodeDetailsDialogFragment`.
+- Tapping an AP opens an `AlertDialog` with BSSID, current RSSI, frequency, coordinates, floor, and metadata.
+
+## NodeDetailsDialogFragment
+
+Purpose:
+
+- Inspect one node's fingerprint profile against the latest live Wi-Fi scan.
+
+Inputs:
+
+- Node id argument.
+- `TrackingViewModel.nodes`
+- `TrackingViewModel.fingerprints`
+- `TrackingViewModel.latestSnapshot`
+
+Displayed data:
+
+- Node title and metadata.
+- RSSI distribution per BSSID from saved fingerprints.
+- Latest live RSSI marker for each BSSID when available.
+- Grayed-out state when an AP exists in fingerprints but is missing from the latest scan.
+- Euclidean distance between the averaged node fingerprint and the latest live scan.
+- Latest scan update time.
+
+Supporting classes:
+
+- `FingerprintAdapter`
+- `FingerprintComparisonItem`
+- `RssiDistributionView`
+
+## LogPanelDialogFragment
+
+Purpose:
+
+- Show the tracking diagnostics stream and the latest scan's AP readings.
+
+Displayed data:
+
+- Log entries from `InMemoryLogStore`.
+- Current AP readings from `latestSnapshot.readings`.
+
+Supporting classes:
+
+- `LogAdapter`
+- `ApStatusAdapter`
+
+Interaction details:
+
+- The log list preserves manual scroll position.
+- It auto-scrolls only when already at the bottom.
+- AP status rows can expand to show frequency, SSID, and metadata.
+
+## Coordinate Calibration
+
+Class:
+
+- `core.common.CoordinateConverter`
+
+The converter maps the navigation coordinate system to pixels on the second-floor plan. Current calibration is hardcoded:
+
+- Origin pixel maps to navigation `(0, 0)`.
+- One x calibration point defines `scaleX`.
+- One y calibration point defines `scaleY`.
+- Pixel y increases downward, while navigation y increases upward, so y conversion is inverted.
+
+If the floor plan image changes, update `CoordinateConverter` and then verify:
+
+- Node dots align with known physical locations.
+- User position appears on the correct floor-plan area.
+- Tap hit detection still matches visible nodes/APs.
+
+## UI Debug Data Availability
+
+- Nodes and fingerprints are available when `FingerprintRepository` successfully loads remote data.
+- AP locations are usually empty in the active runtime path because the active catalog is fingerprint/node based.
+- AP overlays become useful if the Room-backed AP catalog path is made active or if the remote fingerprint catalog begins populating `AccessPointCatalog.locations`.

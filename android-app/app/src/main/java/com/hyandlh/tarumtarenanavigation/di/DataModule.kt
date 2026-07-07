@@ -7,9 +7,8 @@ import com.hyandlh.tarumtarenanavigation.core.apdata.local.ApDao
 import com.hyandlh.tarumtarenanavigation.core.apdata.local.ApDatabase
 import com.hyandlh.tarumtarenanavigation.core.apdata.remote.ApApiService
 import com.hyandlh.tarumtarenanavigation.core.apdata.remote.MockApApiService
-import com.hyandlh.tarumtarenanavigation.core.apdata.repository.AccessPointCatalogRepository
+import com.hyandlh.tarumtarenanavigation.core.apdata.repository.FingerprintRepository
 import com.hyandlh.tarumtarenanavigation.core.apdata.repository.PositioningDataRepository
-import com.hyandlh.tarumtarenanavigation.core.positioning.FingerprintRepository
 import com.hyandlh.tarumtarenanavigation.core.positioning.remote.PositioningApiService
 import dagger.Binds
 import dagger.Module

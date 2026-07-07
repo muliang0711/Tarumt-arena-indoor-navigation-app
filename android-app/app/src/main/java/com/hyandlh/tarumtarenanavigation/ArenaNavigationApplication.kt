@@ -14,8 +14,8 @@ class ArenaNavigationApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         
-        // Start monitoring health of background components
-        // Heartbeats are recorded in AndroidWifiScanner and DefaultPositioningEngine
+        // Start monitoring health of background components.
+        // Heartbeats are recorded by the Wi-Fi scanner and the active positioning engine.
         healthHeartbeat.startMonitoring(intervalMs = 30000, thresholdMs = 60000)
     }
 

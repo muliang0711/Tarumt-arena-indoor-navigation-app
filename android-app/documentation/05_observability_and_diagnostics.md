@@ -1,31 +1,114 @@
 # Observability and Diagnostics
 
-The application includes a robust observability layer to monitor positioning performance, track system health, and provide real-time feedback for debugging.
+The app records diagnostics for both developer visibility and user-facing debug tools. Observability is intentionally lightweight: Logcat, an in-memory log buffer, and heartbeat checks.
 
-## 1. Diagnostics Recorder (`core.observability`)
-The `DiagnosticsRecorder` is the primary entry point for recording high-level system events.
-- **Session Tracking**: Generates a unique `UUID` for each tracking session to correlate logs.
-- **Event Logging**: Captures key lifecycle events like "SessionStarted", "PositioningFailed", and "CatalogUpdate".
-- **Structured Metadata**: Allows attaching key-value pairs to events for deeper analysis (e.g., recording why a scan failed).
+## Core Classes
 
-## 2. In-Memory Log Store
-Used to display real-time logs within the application UI (e.g., the Log Panel).
-- **`LogEntry`**: Data class representing a single log line with a timestamp, message, and level (`INFO`, `ERROR`, `WARNING`, `DEBUG`).
-- **`InMemoryLogStore`**: A singleton that holds a list of `LogEntry` objects in a `StateFlow`. It maintains a maximum buffer (1000 entries) to prevent memory issues.
+| Class | Responsibility |
+| --- | --- |
+| `DiagnosticsRecorder` | Records session events, scan events, catalog refresh messages, positioning results, remote positioning messages, and errors. |
+| `InMemoryLogStore` | Stores recent log entries in a `StateFlow` for the in-app log panel. |
+| `LogEntry` | Timestamped log message with level. |
+| `AndroidAppLogger` | Bridges `AppLogger` to Android Logcat. |
+| `HealthHeartbeat` | Tracks component heartbeats and logs warnings for stale components. |
 
-## 3. Health Monitoring
-The `HealthHeartbeat` class ensures that critical background components are still functioning.
-- **Heartbeats**: Components like `AndroidWifiScanner` and `KnnWifiPositioningEngine` call `beat()` whenever they successfully complete a task.
-- **Monitoring**: A background job periodically checks the time since the last heartbeat for each component.
-- **Alerting**: If a component misses its heartbeat for a defined threshold (e.g., 60 seconds), a warning is logged.
+## DiagnosticsRecorder
 
-## 4. Real-time Diagnostics Flow
-1. **Source**: An event occurs in the `PositioningEngine` or `WifiScanner`.
-2. **Recording**: `diagnostics.recordPositionCalculated(...)` is called.
-3. **Storage**: The event is passed to the `InMemoryLogStore`.
-4. **UI Update**: `TrackingViewModel` observes the `logStore.logs` flow.
-5. **Display**: The `LogPanelDialogFragment` displays the logs to the developer in a `RecyclerView`.
+Injected dependencies:
 
-## 5. Implementation Details
-- **`AppLogger`**: A simple abstraction over `android.util.Log` to allow for potential redirection or filtering.
-- **Integration**: Injected via Hilt into almost all core services to ensure consistent monitoring across the codebase.
+- `AppLogger`
+- `InMemoryLogStore`
+
+Behavior:
+
+- Generates a new UUID session id when `startNewSession()` is called.
+- Writes structured messages to Logcat through `AppLogger`.
+- Adds short user/developer-visible messages to `InMemoryLogStore`.
+
+Common calls:
+
+- `startNewSession()`: called when tracking starts.
+- `recordCatalogUpdate(status)`: called around repository refresh.
+- `recordScanRequest(timestamp)`: called when Android scan is requested.
+- `recordScanResult(timestamp, count)`: called when scan readings are available.
+- `recordPositionCalculated(x, y, confidence)`: called after positioning succeeds.
+- `recordError(error, throwable, metadata)`: called for scanner, catalog, or API failures.
+- `recordEvent(event, metadata)`: generic event hook, used by the remote positioning engine.
+- `recordMessage(message)`: direct message to the in-memory log store.
+
+## In-Memory Log Store
+
+Class:
+
+- `InMemoryLogStore`
+
+Behavior:
+
+- Holds `StateFlow<List<LogEntry>>`.
+- Uses incrementing IDs for stable RecyclerView item IDs.
+- Keeps at most 1000 entries.
+- Supports `clear()`, although the current UI does not expose a clear action.
+
+UI consumer:
+
+- `LogPanelDialogFragment` observes `TrackingViewModel.logs`.
+- `LogAdapter` renders level-specific colors.
+- The log panel auto-scrolls only if the user was already at the bottom.
+
+## Health Heartbeats
+
+Class:
+
+- `HealthHeartbeat`
+
+Started by:
+
+- `ArenaNavigationApplication.onCreate()`
+
+Current configuration:
+
+- Check interval: 30000 ms.
+- Unhealthy threshold: 60000 ms.
+
+Heartbeat producers:
+
+- `AndroidWifiScanner` beats `WifiScanner` after scan results are processed.
+- `ApiPositioningEngine` beats `ApiPositioningEngine` after a successful remote calculation.
+- Local alternate engines beat `PositioningEngine` if bound and used.
+
+Important caveat:
+
+- `HealthHeartbeat` logs stale-component warnings only for components that have already produced at least one heartbeat.
+
+## Diagnostic Flow During Tracking
+
+```text
+TrackingController.startTracking()
+  -> DiagnosticsRecorder.startNewSession()
+  -> recordCatalogUpdate("Fetching latest...")
+  -> repository.refreshCatalog()
+  -> recordCatalogUpdate("Complete")
+
+Scan loop
+  -> AndroidWifiScanner.requestScan()
+  -> recordScanRequest()
+  -> Android scan receiver processes result
+  -> HealthHeartbeat.beat("WifiScanner")
+  -> TrackingController records scan result count
+
+Positioning
+  -> ApiPositioningEngine records API call event
+  -> API returns estimate and node distances
+  -> recordPositionCalculated()
+  -> HealthHeartbeat.beat("ApiPositioningEngine")
+
+UI
+  -> TrackingViewModel exposes logs
+  -> LogPanelDialogFragment renders them
+```
+
+## Known Gaps
+
+- `FingerprintRepository` currently prints load failures instead of using `DiagnosticsRecorder`.
+- The remote engine has a `recordRemotePositioning()` helper available through `DiagnosticsRecorder`, but it currently uses generic events and errors.
+- Some internal diagnostic messages use `println`; replacing these with `AppLogger` or `DiagnosticsRecorder` would make diagnostics consistent.

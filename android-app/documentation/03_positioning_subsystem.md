@@ -1,40 +1,126 @@
 # Positioning Subsystem
 
-The positioning subsystem is the core of the application, responsible for transforming raw Wi-Fi signals into spatial coordinates.
+The positioning subsystem turns a `WifiScanSnapshot` into a `PositionEstimate`. The active implementation delegates this calculation to a remote KNN API server, while local algorithm implementations remain in the codebase for development, fallback, or future switching.
 
-## Core Components
+## Core Contracts and Models
 
-### 1. Wi-Fi Scanning (`core.wifi`)
-- **`WifiScanSource`**: Interface defining the stream of Wi-Fi results.
-- **`AndroidWifiScanner`**: Uses `WifiManager` to request scans and listens for results via a `BroadcastReceiver`. It converts system `ScanResult` objects into the domain `WifiScanSnapshot` model.
+- `PositioningEngine`: contract for position calculation and current-position observation.
+- `PositionEstimate`: x/y coordinate, floor id, confidence, timestamp, and optional diagnostics.
+- `WifiScanSnapshot`: timestamp plus a list of `WifiScanReading` values.
+- `AccessPointCatalog`: container for AP locations, fingerprints, nodes, and metadata.
+- `Node`: named physical point on a floor, used by fingerprint locations and debug UI.
+- `FingerprintEntry`: saved signal profile for a `locationId`.
 
-### 2. Positioning Engine (`core.positioning`)
-The system supports multiple positioning strategies via the `PositioningEngine` interface.
+## Active Engine: Remote API Positioning
 
-#### Weighted K-Nearest Neighbors (WKNN)
-Implemented in `KnnWifiPositioningEngine`, this is the primary algorithm used:
-1. **Preprocessing**: Filters out weak signals (RSSI < -90dBm).
-2. **Euclidean Distance Calculation**: Compares the current scan against the fingerprint database.
-3. **Neighbor Selection**: Finds the `K` (default 3) closest fingerprints.
-4. **Weighted Averaging**: Computes the final position by weighting neighbors based on inverse distance ($w = 1 / (d + \epsilon)$).
-5. **Confidence Estimation**: Heuristic based on the distance to the nearest neighbor.
+Class:
 
-#### Multilateration (Legacy/Alternative)
-Implemented in `DefaultPositioningEngine` using `MultilaterationSolver`:
-- Uses a Weighted Centroid approach based on the known locations of Access Points.
-- Weights are derived from RSSI using an exponential model ($10^{RSSI/10}$).
+- `core.positioning.remote.ApiPositioningEngine`
 
-### 3. Signal Processing & Smoothing
-- **`SignalPreprocessor`**: Cleans raw data by removing noise and weak signals.
-- **`PositionSmoother`**: Implemented as `MovingAverageSmoother`, it maintains a sliding window of recent estimates to reduce "jitter." It automatically resets if a floor change is detected to prevent interpolation between floors.
+Binding:
 
-## Mathematical Models
+- `PositioningModule.bindPositioningEngine()`
 
-### Euclidean Distance
-The distance between a live scan ($L$) and a fingerprint ($F$) is calculated as:
-$$d = \sqrt{\sum_{i=1}^{n} (RSSI_{L,i} - RSSI_{F,i})^2}$$
-Where $RSSI_{i}$ is the signal strength of BSSID $i$. If a BSSID is missing from one of the sets, a penalty value (-100dBm) is used.
+Flow:
 
-### Inverse Distance Weighting
-$$X_{est} = \frac{\sum w_i x_i}{\sum w_i}, \quad Y_{est} = \frac{\sum w_i y_i}{\sum w_i}$$
-Where $w_i = 1 / (dist_i + 0.1)$.
+1. `TrackingController` receives a non-empty `WifiScanSnapshot` and non-null `AccessPointCatalog`.
+2. `ApiPositioningEngine.calculatePosition()` builds the endpoint from `GlobalConfig.KNN_API_BASE_URL` and `GlobalConfig.KNN_API_ENDPOINT_CALCPOSITION`.
+3. The engine posts the full `WifiScanSnapshot` to `PositioningApiService.calculatePosition()`.
+4. The server returns `PositioningResponse`.
+5. The engine updates `currentPosition` with `response.estimate`.
+6. The engine updates `nodeDistances` with `response.nodeDistances`.
+7. Diagnostics and heartbeat events are recorded.
+
+The smoother is injected but currently not applied in `ApiPositioningEngine`; `finalEstimate` is assigned directly from the raw API estimate.
+
+## Remote API Contract Used by the App
+
+Configured in `GlobalConfig`:
+
+- Base URL: `KNN_API_BASE_URL`
+- Calculate position: `KNN_API_ENDPOINT_CALCPOSITION`
+- Get fingerprints: `KNN_API_ENDPOINT_GETALLFINGERPRINTS`
+- Get node registry: `KNN_API_ENDPOINT_GETNODEREGISTRY`
+
+Retrofit interface:
+
+- `POST @Url calculatePosition(@Body WifiScanSnapshot): PositioningResponse`
+- `GET @Url getAllFingerprints(): List<FingerprintEntry>`
+- `GET @Url getNodeRegistry(): Map<String, Node>`
+
+The use of dynamic `@Url` means Retrofit's base URL in `DataModule` is only a default placeholder; the actual runtime URLs are assembled from `GlobalConfig`.
+
+## Wi-Fi Scan Preparation
+
+Class:
+
+- `core.wifi.AndroidWifiScanner`
+
+Behavior:
+
+- Requests scans through Android `WifiManager.startScan()`.
+- Waits for `WifiManager.SCAN_RESULTS_AVAILABLE_ACTION`.
+- Emits a `WifiScanSnapshot` through a replaying `SharedFlow`.
+- Filters Android scan results to `GlobalConfig.FILTER_SSID`, currently `TARUMT-ARENA`.
+- Maps each result to `WifiScanReading` with BSSID, RSSI, timestamp, frequency, and SSID.
+- Emits `WifiScanFailure` values for missing permissions, Wi-Fi disabled, throttling, and unknown errors.
+
+## Alternate Local Engine: Weighted KNN
+
+Class:
+
+- `core.positioning.KnnWifiPositioningEngine`
+
+This engine is not the active Hilt binding, but it can calculate positions locally from `AccessPointCatalog.fingerprints` and `AccessPointCatalog.nodes`.
+
+Algorithm:
+
+1. Ignore live readings weaker than -90 dBm.
+2. Compute Euclidean RSSI distance between the live scan and every fingerprint.
+3. Group distances by fingerprint `locationId` to publish node-distance diagnostics.
+4. Take the nearest `k = 3` fingerprints.
+5. Use inverse-distance weighting, `1 / (distance + 0.1)`, over node coordinates.
+6. Pick the floor with the largest cumulative neighbor weight.
+7. Estimate confidence from the nearest neighbor distance.
+8. Apply `PositionSmoother`.
+
+Distance calculation is centralized in `DistanceUtils`. Missing BSSIDs use `PENALTY_RSSI = -100.0`.
+
+## Alternate Local Engine: Weighted Centroid
+
+Class:
+
+- `core.positioning.DefaultPositioningEngine`
+
+This path is also not the active Hilt binding. It is intended for AP-location based positioning:
+
+1. `SignalPreprocessor` removes readings weaker than -90 dBm.
+2. `APMatcher` matches scan BSSIDs to `AccessPointCatalog.locations`.
+3. `MultilaterationSolver` calculates a weighted centroid.
+4. `PositionSmoother` reduces jitter.
+5. Node distances are calculated geometrically from the estimate.
+
+`MultilaterationSolver` converts RSSI to a simple linear weight with `10^(RSSI / 10)`.
+
+## Smoothing
+
+Class:
+
+- `MovingAverageSmoother`
+
+Behavior:
+
+- Maintains the last 3 position estimates.
+- Averages x, y, and confidence.
+- Resets history when floor id changes to avoid smoothing across floors.
+
+Current caveat:
+
+- The active remote engine injects this smoother but does not currently use it.
+
+## Diagnostics Produced by Positioning
+
+- `DiagnosticsRecorder.recordPositionCalculated()` logs successful position calculations.
+- `DiagnosticsRecorder.recordEvent()` records remote API calls and failures.
+- `HealthHeartbeat.beat("ApiPositioningEngine")` marks the remote engine as healthy after successful calculations.
+- `PositioningEngine.nodeDistances` feeds the node details/debug experience when available.
