@@ -16,14 +16,13 @@ class SettingsRepository @Inject constructor(
     private val preferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE)
 
     private val _filterSsid = MutableStateFlow(
-        preferences.getString(KEY_FILTER_SSID, null)
-            ?.takeIf { it.isNotBlank() }
+        preferences.getString(KEY_FILTER_SSID, GlobalConfig.DEFAULT_FILTER_SSID)
             ?: GlobalConfig.DEFAULT_FILTER_SSID
     )
     val filterSsid: StateFlow<String> = _filterSsid.asStateFlow()
 
     fun setFilterSsid(value: String) {
-        val normalizedValue = value.trim().ifEmpty { GlobalConfig.DEFAULT_FILTER_SSID }
+        val normalizedValue = value.trim()
         preferences.edit()
             .putString(KEY_FILTER_SSID, normalizedValue)
             .apply()

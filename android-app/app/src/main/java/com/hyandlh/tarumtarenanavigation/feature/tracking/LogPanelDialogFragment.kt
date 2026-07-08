@@ -97,9 +97,14 @@ class LogPanelDialogFragment : DialogFragment() {
                     ) { snapshot, filterSsid, mode ->
                         when (mode) {
                             ApFilterMode.ALL -> snapshot?.allReadings.orEmpty()
-                            ApFilterMode.FILTERED -> snapshot?.allReadings
-                                .orEmpty()
-                                .filter { it.ssid == filterSsid }
+                            ApFilterMode.FILTERED -> {
+                                val readings = snapshot?.allReadings.orEmpty()
+                                if (filterSsid.isBlank()) {
+                                    readings
+                                } else {
+                                    readings.filter { it.ssid == filterSsid }
+                                }
+                            }
                         }
                     }.collect { readings ->
                         apStatusAdapter.submitList(readings)

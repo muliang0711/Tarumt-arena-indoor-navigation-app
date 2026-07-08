@@ -140,8 +140,12 @@ class AndroidWifiScanner @Inject constructor(
             val allReadings = results.map { result ->
                 result.toWifiScanReading()
             }
-            val filteredReadings = allReadings.filter { reading ->
-                reading.ssid == filterSsid
+            val filteredReadings = if (filterSsid.isBlank()) {
+                allReadings
+            } else {
+                allReadings.filter { reading ->
+                    reading.ssid == filterSsid
+                }
             }
 
             val snapshot = WifiScanSnapshot(

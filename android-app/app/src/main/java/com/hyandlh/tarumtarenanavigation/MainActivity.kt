@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
@@ -138,8 +139,12 @@ class MainActivity : AppCompatActivity() {
             viewModel.togglePauseResume()
         }
 
+        val initialDebugMode = binding.debugSwitch.isChecked
+        viewModel.setDebugMode(initialDebugMode)
+        binding.mapView.setDebugMode(initialDebugMode)
+
         binding.debugSwitch.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.toggleDebugMode()
+            viewModel.setDebugMode(isChecked)
             binding.mapView.setDebugMode(isChecked)
         }
 
@@ -232,9 +237,18 @@ class MainActivity : AppCompatActivity() {
 
         AlertDialog.Builder(this)
             .setTitle(R.string.no_usable_readings_title)
-            .setMessage(R.string.no_usable_readings_message)
+            .setMessage(buildNoUsableReadingsMessage())
             .setPositiveButton(android.R.string.ok, null)
             .show()
+    }
+
+    private fun buildNoUsableReadingsMessage(): String {
+        val filterSsid = viewModel.filterSsid.value
+        return if (filterSsid.isBlank()) {
+            getString(R.string.no_usable_readings_message_no_filter)
+        } else {
+            getString(R.string.no_usable_readings_message, filterSsid)
+        }
     }
 
     private fun showSettingsDialog() {
@@ -244,6 +258,8 @@ class MainActivity : AppCompatActivity() {
         val selectedIds = viewModel.checkedNodeIds.value
             .filter { it in availableIds }
             .toMutableSet()
+        val initialFilterSsid = viewModel.filterSsid.value
+        val initialSelectedIds = selectedIds.toSet()
         val groups = nodeSelectionGroups()
 
         val content = LinearLayout(this).apply {
@@ -257,12 +273,32 @@ class MainActivity : AppCompatActivity() {
         }
         content.addView(filterSsidTitle)
 
+        val filterSsidRow = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+        }
+
         val filterSsidInput = EditText(this).apply {
-            setText(viewModel.filterSsid.value)
+            layoutParams = LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f
+            )
+            setText(initialFilterSsid)
             setSingleLine(true)
             hint = getString(R.string.filter_ssid_hint)
         }
-        content.addView(filterSsidInput)
+        filterSsidRow.addView(filterSsidInput)
+
+        val clearFilterSsidButton = ImageButton(this).apply {
+            setImageResource(android.R.drawable.ic_menu_close_clear_cancel)
+            contentDescription = getString(R.string.clear_filter_ssid)
+            setBackgroundColor(ContextCompat.getColor(this@MainActivity, android.R.color.transparent))
+            setOnClickListener {
+                filterSsidInput.text?.clear()
+            }
+        }
+        filterSsidRow.addView(clearFilterSsidButton)
+        content.addView(filterSsidRow)
 
         val groupCheckBoxes = mutableMapOf<String, CheckBox>()
         val nodeCheckBoxes = mutableMapOf<String, CheckBox>()
@@ -342,11 +378,30 @@ class MainActivity : AppCompatActivity() {
             addView(content)
         }
 
-        AlertDialog.Builder(this)
+        fun hasUnsavedSettingsChanges(): Boolean {
+            return filterSsidInput.text?.toString()?.trim().orEmpty() != initialFilterSsid ||
+                selectedIds.toSet() != initialSelectedIds
+        }
+
+        val dialog = AlertDialog.Builder(this)
             .setTitle(R.string.settings)
             .setView(scrollView)
             .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(R.string.save) { _, _ ->
+            .setPositiveButton(R.string.save, null)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setOnClickListener {
+                if (hasUnsavedSettingsChanges()) {
+                    showDiscardSettingsChangesDialog {
+                        dialog.dismiss()
+                    }
+                } else {
+                    dialog.dismiss()
+                }
+            }
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 viewModel.setFilterSsid(filterSsidInput.text?.toString().orEmpty())
                 viewModel.setCheckedNodeIds(selectedIds.toSet())
                 Toast.makeText(
@@ -354,6 +409,19 @@ class MainActivity : AppCompatActivity() {
                     getString(R.string.settings_saved),
                     Toast.LENGTH_SHORT
                 ).show()
+                dialog.dismiss()
+            }
+        }
+        dialog.show()
+    }
+
+    private fun showDiscardSettingsChangesDialog(onDiscard: () -> Unit) {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.discard_settings_changes_title)
+            .setMessage(R.string.discard_settings_changes_message)
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.discard) { _, _ ->
+                onDiscard()
             }
             .show()
     }

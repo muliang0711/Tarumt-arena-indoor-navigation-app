@@ -134,6 +134,10 @@ class TrackingViewModel @Inject constructor(
         settingsRepository.setFilterSsid(value)
     }
 
+    fun setDebugMode(enabled: Boolean) {
+        _isDebugMode.value = enabled
+    }
+
     fun toggleDebugMode() {
         _isDebugMode.value = !_isDebugMode.value
     }

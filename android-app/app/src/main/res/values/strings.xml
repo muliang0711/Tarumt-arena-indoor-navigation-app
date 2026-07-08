@@ -18,8 +18,12 @@
     <string name="view_knn_diagnostics">View KNN diagnostics</string>
     <string name="settings">Settings</string>
     <string name="filter_ssid">Filter SSID</string>
-    <string name="filter_ssid_hint">SSID to use for positioning scans</string>
+    <string name="filter_ssid_hint">Blank accepts all APs</string>
+    <string name="clear_filter_ssid">Clear Filter SSID</string>
     <string name="settings_saved">Settings saved</string>
+    <string name="discard_settings_changes_title">Discard settings changes?</string>
+    <string name="discard_settings_changes_message">You have unsaved settings changes. Discard them?</string>
+    <string name="discard">Discard</string>
     <string name="all_detected_aps">All detected APs</string>
     <string name="filtered_aps">Filtered APs</string>
     <string name="select_nodes">Select Nodes</string>
@@ -30,7 +34,8 @@
     <string name="save">Save</string>
     <string name="nodes_selected_saved">%1$d nodes selected</string>
     <string name="no_usable_readings_title">No usable WiFi readings</string>
-    <string name="no_usable_readings_message">The API server could not estimate a position because this scan did not contain any readings at or above -90 dBm. Try scanning again or move closer to the registered access points.</string>
+    <string name="no_usable_readings_message">The API server could not estimate a position because this scan did not contain any readings that match the current FILTER_SSID value, "%1$s", at or above -90 dBm. Try scanning again, changing FILTER_SSID in Settings, or moving closer to the registered access points.</string>
+    <string name="no_usable_readings_message_no_filter">The API server could not estimate a position because this scan did not contain any WiFi readings at or above -90 dBm. FILTER_SSID is blank, so all APs are accepted.</string>
     <string name="run_one_off_scan">Scan once, save JSON, position</string>
     <string name="running_one_off_scan">Running one-off scan...</string>
 </resources>
