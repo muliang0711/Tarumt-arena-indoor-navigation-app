@@ -29,9 +29,45 @@ Flow:
 4. The server returns `PositioningResponse`.
 5. The engine updates `currentPosition` with `response.estimate`.
 6. The engine updates `nodeDistances` with `response.nodeDistances`.
-7. Diagnostics and heartbeat events are recorded.
+7. Diagnostics include request URL, reading count, latency, raw estimate, node-distance count, failures, and heartbeat events.
 
 The smoother is injected but currently not applied in `ApiPositioningEngine`; `finalEstimate` is assigned directly from the raw API estimate.
+
+## KNN Diagnostic Replay
+
+Class:
+
+- `core.positioning.KnnDiagnosticsAnalyzer`
+
+Models:
+
+- `core.model.KnnDiagnosticReport`
+- `core.model.KnnNeighborDiagnostic`
+- `core.model.KnnNodeDiagnostic`
+
+Purpose:
+
+- Explain how the API-style WKNN result was produced without needing the server to return a verbose trace.
+- Compare the active API estimate with a local replay using the same `WifiScanSnapshot` and `AccessPointCatalog`.
+- Rank nodes by closest fingerprint distance.
+- Show the top-k selected fingerprints, each distance, each inverse-distance weight, and each weighted contribution.
+
+Replay algorithm:
+
+1. Use only live readings with RSSI >= -90 dBm.
+2. Convert the live scan and each fingerprint to BSSID-to-RSSI maps.
+3. Calculate Euclidean distance with `DistanceUtils.PENALTY_RSSI = -100.0` for missing BSSIDs.
+4. Sort every fingerprint by distance.
+5. Select `k = 3`.
+6. Calculate `weight = 1 / (distance + 0.1)` for selected fingerprints whose nodes exist.
+7. Normalize weights to contribution percentages.
+8. Produce a local replay `PositionEstimate`.
+9. Produce node summaries with best distance, matched BSSID count, missing-from-scan count, extra-from-scan count, selected-neighbor count, and contribution percentage.
+
+Consumers:
+
+- `TrackingController` updates `knnDiagnostics` during both continuous tracking and one-off scans.
+- `KnnDiagnosticsDialogFragment` visualizes the report.
 
 ## Remote API Contract Used by the App
 
@@ -44,11 +80,13 @@ Configured in `GlobalConfig`:
 
 Retrofit interface:
 
-- `POST @Url calculatePosition(@Body WifiScanSnapshot): PositioningResponse`
+- `POST @Url calculatePosition(@Body PositioningRequest): PositioningResponse`
 - `GET @Url getAllFingerprints(): List<FingerprintEntry>`
 - `GET @Url getNodeRegistry(): Map<String, Node>`
 
 The use of dynamic `@Url` means Retrofit's base URL in `DataModule` is only a default placeholder; the actual runtime URLs are assembled from `GlobalConfig`.
+
+`PositioningRequest` is the live `WifiScanSnapshot` fields plus `checkedNodeIds`. `TrackingController` owns the checked-node state, initializes it to all loaded nodes until the user saves a custom selection, and passes it to `ApiPositioningEngine`. The API server uses that list as the active node registry for the KNN calculation.
 
 ## Wi-Fi Scan Preparation
 
@@ -61,7 +99,8 @@ Behavior:
 - Requests scans through Android `WifiManager.startScan()`.
 - Waits for `WifiManager.SCAN_RESULTS_AVAILABLE_ACTION`.
 - Emits a `WifiScanSnapshot` through a replaying `SharedFlow`.
-- Filters Android scan results to `GlobalConfig.FILTER_SSID`, currently `TARUMT-ARENA`.
+- Stores all detected AP readings in `WifiScanSnapshot.allReadings`.
+- Filters positioning readings to `SettingsRepository.filterSsid`, defaulting to `GlobalConfig.DEFAULT_FILTER_SSID`.
 - Maps each result to `WifiScanReading` with BSSID, RSSI, timestamp, frequency, and SSID.
 - Emits `WifiScanFailure` values for missing permissions, Wi-Fi disabled, throttling, and unknown errors.
 
@@ -121,6 +160,7 @@ Current caveat:
 ## Diagnostics Produced by Positioning
 
 - `DiagnosticsRecorder.recordPositionCalculated()` logs successful position calculations.
-- `DiagnosticsRecorder.recordEvent()` records remote API calls and failures.
+- `DiagnosticsRecorder.recordEvent()` records remote API calls, KNN diagnostic replay updates, one-off scan lifecycle events, and failures.
+- `DiagnosticsRecorder.recordRemotePositioning()` records remote API latency and success/failure state.
 - `HealthHeartbeat.beat("ApiPositioningEngine")` marks the remote engine as healthy after successful calculations.
 - `PositioningEngine.nodeDistances` feeds the node details/debug experience when available.

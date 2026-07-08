@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.hyandlh.tarumtarenanavigation.R
 import com.hyandlh.tarumtarenanavigation.databinding.DialogLogPanelBinding
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class LogPanelDialogFragment : DialogFragment() {
@@ -24,6 +26,7 @@ class LogPanelDialogFragment : DialogFragment() {
     
     private val logAdapter = LogAdapter()
     private val apStatusAdapter = ApStatusAdapter()
+    private val apFilterMode = MutableStateFlow(ApFilterMode.ALL)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,13 @@ class LogPanelDialogFragment : DialogFragment() {
 
         binding.closeButton.setOnClickListener {
             dismiss()
+        }
+
+        binding.apFilterModeRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+            apFilterMode.value = when (checkedId) {
+                R.id.filteredApsRadioButton -> ApFilterMode.FILTERED
+                else -> ApFilterMode.ALL
+            }
         }
     }
 
@@ -80,8 +90,19 @@ class LogPanelDialogFragment : DialogFragment() {
                 }
 
                 launch {
-                    viewModel.latestSnapshot.collect { snapshot ->
-                        apStatusAdapter.submitList(snapshot?.readings ?: emptyList())
+                    combine(
+                        viewModel.latestSnapshot,
+                        viewModel.filterSsid,
+                        apFilterMode
+                    ) { snapshot, filterSsid, mode ->
+                        when (mode) {
+                            ApFilterMode.ALL -> snapshot?.allReadings.orEmpty()
+                            ApFilterMode.FILTERED -> snapshot?.allReadings
+                                .orEmpty()
+                                .filter { it.ssid == filterSsid }
+                        }
+                    }.collect { readings ->
+                        apStatusAdapter.submitList(readings)
                     }
                 }
             }
@@ -111,5 +132,10 @@ class LogPanelDialogFragment : DialogFragment() {
 
     companion object {
         const val TAG = "LogPanelDialogFragment"
+    }
+
+    private enum class ApFilterMode {
+        ALL,
+        FILTERED
     }
 }

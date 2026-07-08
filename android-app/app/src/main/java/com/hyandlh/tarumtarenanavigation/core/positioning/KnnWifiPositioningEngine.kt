@@ -35,11 +35,13 @@ class KnnWifiPositioningEngine @Inject constructor(
 
     override suspend fun calculatePosition(
         snapshot: WifiScanSnapshot,
-        catalog: AccessPointCatalog
+        catalog: AccessPointCatalog,
+        checkedNodeIds: Set<String>
     ): PositionEstimate {
         
-        val fingerprintDb = catalog.fingerprints
-        val nodeRegistry = catalog.nodes
+        val activeCatalog = catalog.filteredByCheckedNodes(checkedNodeIds)
+        val fingerprintDb = activeCatalog.fingerprints
+        val nodeRegistry = activeCatalog.nodes
 
         // 1. Thresholding: Ignore APs with RSSI weaker than -90dBm to reduce noise
         val liveReadings = snapshot.readings.filter { it.rssi >= -90 }
@@ -130,6 +132,13 @@ class KnnWifiPositioningEngine @Inject constructor(
                 "k" to neighbors.size.toString(),
                 "nearest_dist" to String.format(Locale.US, "%.2f", bestDist)
             )
+        )
+    }
+
+    private fun AccessPointCatalog.filteredByCheckedNodes(checkedNodeIds: Set<String>): AccessPointCatalog {
+        return copy(
+            nodes = nodes.filterKeys { it in checkedNodeIds },
+            fingerprints = fingerprints.filter { it.locationId in checkedNodeIds }
         )
     }
 }

@@ -22,58 +22,115 @@ class DiagnosticsRecorder @Inject constructor(
         recordEvent("SessionStarted")
     }
 
-    fun recordEvent(event: String, metadata: Map<String, String> = emptyMap()) {
-        val metaString = metadata.entries.joinToString(", ") { "${it.key}=${it.value}" }
-        val message = "[Session: $currentSessionId] Event: $event | Metadata: {$metaString}"
-        logger.i(TAG, message)
-        logStore.addLog(event, LogEntry.LogLevel.INFO)
+    fun recordEvent(
+        event: String,
+        metadata: Map<String, String> = emptyMap(),
+        source: String = DiagnosticLogFormatter.inferCallerSource()
+    ) {
+        write(LogEntry.LogLevel.INFO, source, "Event: $event", metadata)
     }
 
-    fun recordError(error: String, throwable: Throwable? = null, metadata: Map<String, String> = emptyMap()) {
-        val metaString = metadata.entries.joinToString(", ") { "${it.key}=${it.value}" }
-        val message = "[Session: $currentSessionId] Error: $error | Metadata: {$metaString}"
-        logger.e(TAG, message, throwable)
-        logStore.addLog("ERROR: $error", LogEntry.LogLevel.ERROR)
+    fun recordError(
+        error: String,
+        throwable: Throwable? = null,
+        metadata: Map<String, String> = emptyMap(),
+        source: String = DiagnosticLogFormatter.inferCallerSource()
+    ) {
+        write(LogEntry.LogLevel.ERROR, source, "Error: $error", metadata, throwable)
     }
 
-    fun recordCatalogUpdate(status: String) {
-        val msg = "Updating the AP catalog: $status"
-        logger.i(TAG, msg)
-        logStore.addLog(msg)
+    fun recordCatalogUpdate(
+        status: String,
+        source: String = DiagnosticLogFormatter.inferCallerSource()
+    ) {
+        write(LogEntry.LogLevel.INFO, source, "Updating positioning catalog: $status")
     }
 
-    fun recordScanRequest(timestamp: Long) {
-        val msg = "Initiating wifi scan"
-        logger.i(TAG, msg)
-        logStore.addLog(msg)
+    fun recordScanRequest(
+        timestamp: Long,
+        source: String = DiagnosticLogFormatter.inferCallerSource()
+    ) {
+        write(LogEntry.LogLevel.INFO, source, "Initiating Wi-Fi scan", mapOf("requestedAt" to timestamp.toString()))
     }
 
-    fun recordScanResult(timestamp: Long, count: Int) {
-        val msg = "Wifi scan complete. Results obtained from OS: $count APs"
-        logger.i(TAG, msg)
-        logStore.addLog(msg)
+    fun recordScanResult(
+        timestamp: Long,
+        count: Int,
+        source: String = DiagnosticLogFormatter.inferCallerSource()
+    ) {
+        write(
+            LogEntry.LogLevel.INFO,
+            source,
+            "Wi-Fi scan complete",
+            mapOf("scanTimestamp" to timestamp.toString(), "readings" to count.toString())
+        )
     }
 
-    fun recordPositionCalculated(x: Double, y: Double, confidence: Double) {
-        val msg = "Calculating your current location: (${String.format(Locale.US, "%.2f", x)}, ${String.format(Locale.US, "%.2f", y)}) with confidence value $confidence"
-        logger.i(TAG, msg)
-        logStore.addLog(msg)
+    fun recordPositionCalculated(
+        x: Double,
+        y: Double,
+        confidence: Double,
+        source: String = DiagnosticLogFormatter.inferCallerSource()
+    ) {
+        write(
+            LogEntry.LogLevel.INFO,
+            source,
+            "Position calculated",
+            mapOf(
+                "x" to String.format(Locale.US, "%.2f", x),
+                "y" to String.format(Locale.US, "%.2f", y),
+                "confidence" to String.format(Locale.US, "%.4f", confidence)
+            )
+        )
     }
 
-    fun recordRemotePositioning(success: Boolean, latencyMs: Long, error: String? = null) {
+    fun recordRemotePositioning(
+        success: Boolean,
+        latencyMs: Long,
+        error: String? = null,
+        source: String = DiagnosticLogFormatter.inferCallerSource()
+    ) {
         val status = if (success) "SUCCESS" else "FAILED"
-        val errorPart = if (error != null) " | Error: $error" else ""
-        val msg = "Remote Positioning: $status | Latency: ${latencyMs}ms$errorPart"
+        val metadata = buildMap {
+            put("status", status)
+            put("latencyMs", latencyMs.toString())
+            if (error != null) put("error", error)
+        }
         if (success) {
-            logger.i(TAG, msg)
-            logStore.addLog(msg, LogEntry.LogLevel.INFO)
+            write(LogEntry.LogLevel.INFO, source, "Remote positioning completed", metadata)
         } else {
-            logger.e(TAG, msg)
-            logStore.addLog(msg, LogEntry.LogLevel.ERROR)
+            write(LogEntry.LogLevel.ERROR, source, "Remote positioning failed", metadata)
         }
     }
     
-    fun recordMessage(message: String) {
-        logStore.addLog(message)
+    fun recordMessage(
+        message: String,
+        source: String = DiagnosticLogFormatter.inferCallerSource()
+    ) {
+        write(LogEntry.LogLevel.INFO, source, message)
+    }
+
+    private fun write(
+        level: LogEntry.LogLevel,
+        source: String,
+        message: String,
+        metadata: Map<String, String> = emptyMap(),
+        throwable: Throwable? = null
+    ) {
+        val metadataText = metadata
+            .takeIf { it.isNotEmpty() }
+            ?.entries
+            ?.joinToString(prefix = " | ", separator = ", ") { "${it.key}=${it.value}" }
+            .orEmpty()
+        val sessionText = "session=$currentSessionId"
+        val rendered = DiagnosticLogFormatter.format(source, "$message | $sessionText$metadataText")
+
+        when (level) {
+            LogEntry.LogLevel.ERROR -> logger.e(TAG, rendered, throwable)
+            LogEntry.LogLevel.WARNING -> logger.w(TAG, rendered, throwable)
+            LogEntry.LogLevel.DEBUG -> logger.d(TAG, rendered)
+            LogEntry.LogLevel.INFO -> logger.i(TAG, rendered)
+        }
+        logStore.addLog(rendered, level)
     }
 }

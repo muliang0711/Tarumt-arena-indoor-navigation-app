@@ -9,10 +9,11 @@ The app is also a diagnostics tool. Debug mode can show known nodes, AP overlays
 1. `MainActivity` owns the tracking screen and asks for Wi-Fi/location permissions.
 2. `TrackingViewModel` exposes `StateFlow` values to the activity and dialogs.
 3. `TrackingController` starts a tracking session, refreshes the positioning catalog, and runs the scan loop.
-4. `AndroidWifiScanner` requests Android Wi-Fi scans and emits `WifiScanSnapshot` values filtered to `GlobalConfig.FILTER_SSID`.
+4. `AndroidWifiScanner` requests Android Wi-Fi scans and emits `WifiScanSnapshot` values containing all detected APs plus readings filtered to the saved Settings SSID.
 5. `FingerprintRepository` refreshes node and fingerprint data from the KNN API server.
 6. `ApiPositioningEngine` posts each scan snapshot to the KNN API server and receives a `PositionEstimate` plus node-distance diagnostics.
-7. `MapView`, `NodeDetailsDialogFragment`, and `LogPanelDialogFragment` render the current estimate, debug data, and logs.
+7. `KnnDiagnosticsAnalyzer` locally replays the API-style KNN math against the same scan/catalog so developers can inspect nearest fingerprints, node distances, and weighted contributions.
+8. `MapView`, `NodeDetailsDialogFragment`, `KnnDiagnosticsDialogFragment`, and `LogPanelDialogFragment` render the current estimate, debug data, and logs.
 
 ## Active Production Bindings
 
@@ -31,7 +32,8 @@ These are the bindings that determine the app's current behavior:
 
 | Package | Responsibility |
 | --- | --- |
-| `config` | Global constants for SSID filtering and remote KNN endpoints. |
+| `config` | Global defaults and remote KNN endpoint constants. |
+| `core.settings` | Saved runtime settings such as the editable Wi-Fi SSID filter. |
 | `di` | Hilt bindings and providers. This is the first place to check for active implementations. |
 | `core.model` | Shared domain models: scans, fingerprints, nodes, positions, catalog, tracking state. |
 | `core.common` | Shared utility contracts such as `AppResult`, `AppError`, `AppLogger`, and `CoordinateConverter`. |
@@ -47,6 +49,10 @@ These are the bindings that determine the app's current behavior:
 - `KnnWifiPositioningEngine` and `DefaultPositioningEngine` are still present as local alternatives, but Hilt does not bind them by default.
 - `FingerprintRepository` fetches `/nodes` and `/fingerprints` from `GlobalConfig.KNN_API_BASE_URL`.
 - `ApiPositioningEngine` sends scans to `/calcPosition` on the same KNN API base URL.
+- `KnnDiagnosticsAnalyzer` mirrors the API server's WKNN logic locally for observability; it does not replace the active remote engine.
+- The one-off scan workflow captures a single Wi-Fi scan, saves it under the app's internal `wifi-scans/` directory as JSON, runs positioning on that exact snapshot, and updates the KNN diagnostics panel.
+- `DiagnosticsRecorder` is the primary visible logging path. It writes the same formatted log line to the in-app log store and to `AndroidAppLogger`, whose Android implementation also writes to stdout/stderr.
+- Diagnostic log lines use `[timestamp] [Class.method] message | session=...` format.
 - Android Wi-Fi scan results are filtered to SSID `TARUMT-ARENA` before they become domain scan readings.
 - The map coordinate system is calibrated in `CoordinateConverter`, which maps navigation coordinates to pixels in `arena_second_floor_plan`.
 

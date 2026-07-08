@@ -36,18 +36,42 @@ class ApiPositioningEngine @Inject constructor(
 
     override suspend fun calculatePosition(
         snapshot: WifiScanSnapshot,
-        catalog: AccessPointCatalog
+        catalog: AccessPointCatalog,
+        checkedNodeIds: Set<String>
     ): PositionEstimate {
+        val startedAt = System.currentTimeMillis()
         return try {
             val apiUrl = "$baseUrl/${GlobalConfig.KNN_API_ENDPOINT_CALCPOSITION}"
-            diagnostics.recordEvent("[KnnApiServer] Making API call to $apiUrl")
-            val response = apiService.calculatePosition(apiUrl, snapshot)
+            val request = PositioningRequest.fromSnapshot(snapshot, checkedNodeIds)
+            diagnostics.recordEvent(
+                "Calling KNN positioning API",
+                metadata = mapOf(
+                    "url" to apiUrl,
+                    "readings" to snapshot.readings.size.toString(),
+                    "checkedNodes" to request.checkedNodeIds.size.toString()
+                ),
+                source = "ApiPositioningEngine.calculatePosition"
+            )
+            val response = apiService.calculatePosition(apiUrl, request)
 
-            diagnostics.recordEvent("[KnnApiServer] Received response from API server.")
+            diagnostics.recordRemotePositioning(
+                success = true,
+                latencyMs = System.currentTimeMillis() - startedAt,
+                source = "ApiPositioningEngine.calculatePosition"
+            )
 
             val rawEstimate = response.estimate
 
-            diagnostics.recordEvent("[KnnApiServer] Received raw estimate from API server: (${rawEstimate.x}, ${rawEstimate.y})")
+            diagnostics.recordEvent(
+                "Received raw estimate from KNN API",
+                metadata = mapOf(
+                    "x" to rawEstimate.x.toString(),
+                    "y" to rawEstimate.y.toString(),
+                    "confidence" to rawEstimate.confidence.toString(),
+                    "nodeDistances" to response.nodeDistances.size.toString()
+                ),
+                source = "ApiPositioningEngine.calculatePosition"
+            )
 
 //            val finalEstimate = smoother.smooth(rawEstimate)
             val finalEstimate = rawEstimate // testing no smoothing
@@ -64,7 +88,17 @@ class ApiPositioningEngine @Inject constructor(
 
             finalEstimate
         } catch (e: Exception) {
-            diagnostics.recordError("API Positioning Failed: ${e.message}")
+            diagnostics.recordRemotePositioning(
+                success = false,
+                latencyMs = System.currentTimeMillis() - startedAt,
+                error = e.message,
+                source = "ApiPositioningEngine.calculatePosition"
+            )
+            diagnostics.recordError(
+                "API positioning failed: ${e.message}",
+                e,
+                source = "ApiPositioningEngine.calculatePosition"
+            )
             val fallback = PositionEstimate(0.0, 0.0, "unknown", 0.0, snapshot.timestamp)
             _currentPosition.value = fallback
             fallback

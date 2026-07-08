@@ -16,7 +16,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class HealthHeartbeat @Inject constructor(
-    private val logger: AppLogger
+    private val logger: AppLogger,
+    private val logStore: InMemoryLogStore
 ) {
     private val TAG = "HealthHeartbeat"
     private val lastHeartbeats = mutableMapOf<String, AtomicLong>()
@@ -29,7 +30,7 @@ class HealthHeartbeat @Inject constructor(
     fun beat(componentName: String) {
         val now = System.currentTimeMillis()
         lastHeartbeats.getOrPut(componentName) { AtomicLong(now) }.set(now)
-        logger.d(TAG, "Heartbeat from $componentName at $now")
+        logger.d(TAG, DiagnosticLogFormatter.format("HealthHeartbeat.beat", "Heartbeat from $componentName at $now"))
     }
 
     /**
@@ -54,7 +55,12 @@ class HealthHeartbeat @Inject constructor(
         val now = System.currentTimeMillis()
         lastHeartbeats.forEach { (name, lastTime) ->
             if (now - lastTime.get() > thresholdMs) {
-                logger.w(TAG, "Component $name is UNHEALTHY. Last heartbeat: ${lastTime.get()}ms ago")
+                val message = DiagnosticLogFormatter.format(
+                    "HealthHeartbeat.checkHealth",
+                    "Component $name is UNHEALTHY. Last heartbeat: ${lastTime.get()}ms ago"
+                )
+                logger.w(TAG, message)
+                logStore.addLog(message, LogEntry.LogLevel.WARNING)
             }
         }
     }

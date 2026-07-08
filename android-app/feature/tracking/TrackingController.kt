@@ -72,7 +72,7 @@ class TrackingController @Inject constructor(
             ) { catalog, snapshot ->
                 if (catalog != null && snapshot.readings.isNotEmpty()) {
                     _state.value = TrackingState.Positioning
-                    positioningEngine.calculatePosition(snapshot, catalog)
+                    positioningEngine.calculatePosition(snapshot, catalog, catalog.nodes.keys)
                 } else if (catalog == null) {
                     _state.value = TrackingState.Error("AP Catalog not loaded")
                 }

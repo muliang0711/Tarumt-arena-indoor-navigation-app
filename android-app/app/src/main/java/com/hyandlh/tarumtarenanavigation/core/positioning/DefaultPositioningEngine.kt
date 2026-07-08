@@ -31,13 +31,16 @@ class DefaultPositioningEngine @Inject constructor(
 
     override suspend fun calculatePosition(
         snapshot: WifiScanSnapshot,
-        catalog: AccessPointCatalog
+        catalog: AccessPointCatalog,
+        checkedNodeIds: Set<String>
     ): PositionEstimate {
+        val activeCatalog = catalog.filteredByCheckedNodes(checkedNodeIds)
+
         // 1. Preprocess
         val cleanSnapshot = preprocessor.preprocess(snapshot)
 
         // 2. Match
-        val matches = matcher.match(cleanSnapshot, catalog)
+        val matches = matcher.match(cleanSnapshot, activeCatalog)
         
         if (matches.isEmpty()) {
             diagnostics.recordEvent("PositioningFailed", mapOf("reason" to "no_matching_aps"))
@@ -59,9 +62,16 @@ class DefaultPositioningEngine @Inject constructor(
 
         // 6. Update flows
         _currentPosition.value = smoothedEstimate
-        updateNodeDistances(smoothedEstimate, catalog)
+        updateNodeDistances(smoothedEstimate, activeCatalog)
 
         return smoothedEstimate
+    }
+
+    private fun AccessPointCatalog.filteredByCheckedNodes(checkedNodeIds: Set<String>): AccessPointCatalog {
+        return copy(
+            nodes = nodes.filterKeys { it in checkedNodeIds },
+            fingerprints = fingerprints.filter { it.locationId in checkedNodeIds }
+        )
     }
 
     private fun updateNodeDistances(estimate: PositionEstimate, catalog: AccessPointCatalog) {

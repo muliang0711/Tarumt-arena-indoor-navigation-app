@@ -16,6 +16,9 @@ Responsibilities:
 - Wire buttons:
   - Start/stop tracking.
   - Pause/resume scanning.
+  - Run a one-off scan, save JSON, and position that scan.
+  - Open node-selection dialog for checked/unchecked KNN nodes.
+  - Open KNN diagnostics.
   - Toggle debug mode.
   - Open log panel.
 - Observe ViewModel state and update UI.
@@ -27,6 +30,10 @@ Observed streams:
 - `apLocations`
 - `nodes`
 - `latestSnapshot`
+- `knnDiagnostics`
+- `lastSavedScanPath`
+- `isOneOffScanRunning`
+- `checkedNodeIds`
 - `isPaused` combined with `transitionState`
 
 ## TrackingViewModel
@@ -39,6 +46,9 @@ Responsibilities:
   - `nodes`
   - `fingerprints`
 - Expose log entries from `InMemoryLogStore`.
+- Expose KNN diagnostic replay reports and one-off scan status.
+- Expose and update checked-node selection.
+- Initialize the checked-node selection to all loaded nodes until the user saves a custom selection.
 - Own debug-mode toggle state.
 - Own pause/resume transition state for button feedback.
 
@@ -53,6 +63,10 @@ The controller exposes:
 - `latestSnapshot: StateFlow<WifiScanSnapshot?>`
 - `currentPosition: StateFlow<PositionEstimate?>`
 - `nodeDistances: StateFlow<Map<String, Double>>?`
+- `knnDiagnostics: StateFlow<KnnDiagnosticReport?>`
+- `lastSavedScanPath: StateFlow<String?>`
+- `isOneOffScanRunning: StateFlow<Boolean>`
+- `checkedNodeIds: StateFlow<Set<String>>`
 
 `TrackingState` values rendered by the activity:
 
@@ -64,6 +78,104 @@ The controller exposes:
 - `Paused`
 
 `StaleData` exists in the model but is not currently rendered with custom UI behavior.
+
+## One-Off Scan Control
+
+Button:
+
+- `oneOffScanButton`
+
+Behavior:
+
+1. Checks the same Wi-Fi/location permissions as tracking.
+2. Calls `TrackingViewModel.runOneOffScan()`.
+3. `TrackingController.runOneOffScan()` refreshes the catalog, requests one fresh scan, saves the scan JSON, computes a KNN diagnostic replay, and runs the active remote positioning engine.
+4. The button is disabled and renamed while the scan is running.
+5. The map position, latest scan, log panel, and KNN diagnostics panel update from the one-off result.
+
+The one-off flow refuses to run while continuous tracking is active; stop tracking first.
+
+## Settings Dialog
+
+Button:
+
+- `settingsButton`
+
+Purpose:
+
+- Edit the SSID used to filter Wi-Fi readings for positioning.
+- Choose which nodes are active for one-off scans and continuous tracking.
+- Make it fast to toggle nearby node clusters while still allowing individual node edits.
+
+Behavior:
+
+1. Opens an `AlertDialog` with an editable Filter SSID field and a scrollable node checkbox list.
+2. Shows group checkboxes first, then individual node checkboxes.
+3. Edits temporary SSID and node-selection values while the dialog is open.
+4. Applies both the SSID and checked-node selection only when Save is tapped.
+5. Cancel closes the dialog without applying changes.
+
+Groups:
+
+- `node-16` through `node-20` plus `node-1`.
+- `kongdi-1` through `kongdi-20` plus `node-1` and `node-2`.
+- `node-12` through `node-15` plus `node-2` and `west-of-TA246door-opp-TA254`.
+
+Group semantics:
+
+- Checking a group checks all currently loaded nodes in that group.
+- Unchecking a group unchecks all currently loaded nodes in that group.
+- A group checkbox is checked only when all of its currently loaded member nodes are checked.
+- Overlapping nodes, such as `node-1` and `node-2`, update every affected group after each toggle.
+
+The saved filter SSID is read by `AndroidWifiScanner` when processing Android scan results. `WifiScanSnapshot.readings` contains APs matching that SSID and is used for positioning; `WifiScanSnapshot.allReadings` contains every AP detected by the phone scan for diagnostics. The saved checked-node set is included in the remote `PositioningRequest.checkedNodeIds` for both one-off scans and continuous tracking. Local KNN diagnostics filter the catalog to the same checked nodes before replaying the KNN process.
+
+## Log Panel AP Toggle
+
+The Detected APs section in `LogPanelDialogFragment` has two modes:
+
+- All detected APs: displays `WifiScanSnapshot.allReadings`.
+- Filtered APs: displays only readings from `allReadings` whose SSID matches the saved filter SSID.
+
+## KNN Diagnostics Dialog
+
+Class:
+
+- `KnnDiagnosticsDialogFragment`
+
+Purpose:
+
+- Explain the current scan's KNN positioning process and make poor positioning accuracy easier to debug.
+
+Displayed summary:
+
+- Scan timestamp.
+- K value and missing-signal penalty.
+- Total/used/ignored live readings.
+- Catalog fingerprint/node counts.
+- Active API estimate.
+- Local replay estimate.
+- Floor weights.
+- Saved one-off JSON path when available.
+- Top-k nearest fingerprints with distance, normalized weight, and BSSID overlap counts.
+
+Ranked node list:
+
+- Best fingerprint distance per node.
+- Best scan id.
+- Fingerprint count at the node.
+- Matched BSSID count.
+- Fingerprint APs missing from the current scan.
+- Current-scan APs absent from the fingerprint.
+- Whether the node contributed to the selected top-k neighbor set.
+- Contribution bar based on normalized KNN weight.
+
+Supporting classes:
+
+- `KnnDiagnosticsAdapter`
+- `KnnDiagnosticReport`
+- `KnnNodeDiagnostic`
+- `KnnNeighborDiagnostic`
 
 ## MapView
 

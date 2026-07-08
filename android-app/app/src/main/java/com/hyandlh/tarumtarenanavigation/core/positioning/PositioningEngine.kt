@@ -15,7 +15,8 @@ interface PositioningEngine {
      */
     suspend fun calculatePosition(
         snapshot: WifiScanSnapshot,
-        catalog: AccessPointCatalog
+        catalog: AccessPointCatalog,
+        checkedNodeIds: Set<String>
     ): PositionEstimate
 
     /**

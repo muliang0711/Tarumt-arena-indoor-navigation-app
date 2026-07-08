@@ -1,16 +1,34 @@
 # Observability and Diagnostics
 
-The app records diagnostics for both developer visibility and user-facing debug tools. Observability is intentionally lightweight: Logcat, an in-memory log buffer, and heartbeat checks.
+The app records diagnostics for developer visibility and user-facing debug tools. Observability is intentionally lightweight: Logcat/stdout, an in-memory log buffer, KNN replay diagnostics, saved one-off scan JSON, and heartbeat checks.
 
 ## Core Classes
 
 | Class | Responsibility |
 | --- | --- |
 | `DiagnosticsRecorder` | Records session events, scan events, catalog refresh messages, positioning results, remote positioning messages, and errors. |
+| `DiagnosticLogFormatter` | Produces the canonical `[timestamp] [Class.method] message` log line. |
 | `InMemoryLogStore` | Stores recent log entries in a `StateFlow` for the in-app log panel. |
 | `LogEntry` | Timestamped log message with level. |
-| `AndroidAppLogger` | Bridges `AppLogger` to Android Logcat. |
+| `AndroidAppLogger` | Bridges `AppLogger` to Android Logcat and stdout/stderr. |
 | `HealthHeartbeat` | Tracks component heartbeats and logs warnings for stale components. |
+| `KnnDiagnosticsAnalyzer` | Replays the API-style WKNN process locally for explainability. |
+
+## Log Format
+
+The canonical visible log format is:
+
+```text
+[yyyy-MM-dd HH:mm:ss.SSS] [Class.method] message | session={uuid} | key=value
+```
+
+`DiagnosticsRecorder` writes the same rendered line to:
+
+- `InMemoryLogStore`, displayed by `LogPanelDialogFragment`.
+- `AndroidAppLogger`, which writes to Android Logcat.
+- stdout/stderr through `AndroidAppLogger`.
+
+Most recorder methods infer the origin from the call stack. Coroutine-heavy call sites can pass `source` explicitly so the origin remains readable.
 
 ## DiagnosticsRecorder
 
@@ -19,22 +37,17 @@ Injected dependencies:
 - `AppLogger`
 - `InMemoryLogStore`
 
-Behavior:
-
-- Generates a new UUID session id when `startNewSession()` is called.
-- Writes structured messages to Logcat through `AppLogger`.
-- Adds short user/developer-visible messages to `InMemoryLogStore`.
-
 Common calls:
 
-- `startNewSession()`: called when tracking starts.
-- `recordCatalogUpdate(status)`: called around repository refresh.
-- `recordScanRequest(timestamp)`: called when Android scan is requested.
-- `recordScanResult(timestamp, count)`: called when scan readings are available.
-- `recordPositionCalculated(x, y, confidence)`: called after positioning succeeds.
-- `recordError(error, throwable, metadata)`: called for scanner, catalog, or API failures.
-- `recordEvent(event, metadata)`: generic event hook, used by the remote positioning engine.
-- `recordMessage(message)`: direct message to the in-memory log store.
+- `startNewSession()`: starts a new UUID session and logs `SessionStarted`.
+- `recordCatalogUpdate(status)`: logs repository refresh progress.
+- `recordScanRequest(timestamp)`: logs Android scan requests.
+- `recordScanResult(timestamp, count)`: logs scan completion and reading count.
+- `recordPositionCalculated(x, y, confidence)`: logs successful position estimates.
+- `recordRemotePositioning(success, latencyMs, error)`: logs remote positioning latency and status.
+- `recordError(error, throwable, metadata)`: logs scanner, catalog, API, and workflow failures.
+- `recordEvent(event, metadata)`: generic structured event hook.
+- `recordMessage(message)`: direct formatted message hook.
 
 ## In-Memory Log Store
 
@@ -52,6 +65,7 @@ Behavior:
 UI consumer:
 
 - `LogPanelDialogFragment` observes `TrackingViewModel.logs`.
+- `LogAdapter` displays the stored formatted line directly; it does not prepend a second timestamp.
 - `LogAdapter` renders level-specific colors.
 - The log panel auto-scrolls only if the user was already at the bottom.
 
@@ -76,8 +90,10 @@ Heartbeat producers:
 - `ApiPositioningEngine` beats `ApiPositioningEngine` after a successful remote calculation.
 - Local alternate engines beat `PositioningEngine` if bound and used.
 
-Important caveat:
+Important behavior:
 
+- Routine heartbeat debug lines are formatted and written to Logcat/stdout.
+- Stale heartbeat warnings are also copied to `InMemoryLogStore`.
 - `HealthHeartbeat` logs stale-component warnings only for components that have already produced at least one heartbeat.
 
 ## Diagnostic Flow During Tracking
@@ -86,7 +102,7 @@ Important caveat:
 TrackingController.startTracking()
   -> DiagnosticsRecorder.startNewSession()
   -> recordCatalogUpdate("Fetching latest...")
-  -> repository.refreshCatalog()
+  -> FingerprintRepository.refreshCatalog()
   -> recordCatalogUpdate("Complete")
 
 Scan loop
@@ -97,18 +113,47 @@ Scan loop
   -> TrackingController records scan result count
 
 Positioning
+  -> TrackingController filters the catalog to checked nodes
+  -> TrackingController runs KnnDiagnosticsAnalyzer
+  -> recordEvent("KNN diagnostic trace updated")
   -> ApiPositioningEngine records API call event
   -> API returns estimate and node distances
+  -> recordRemotePositioning(success, latencyMs)
   -> recordPositionCalculated()
   -> HealthHeartbeat.beat("ApiPositioningEngine")
 
 UI
-  -> TrackingViewModel exposes logs
-  -> LogPanelDialogFragment renders them
+  -> TrackingViewModel exposes logs and KNN diagnostics
+  -> LogPanelDialogFragment renders logs
+  -> KnnDiagnosticsDialogFragment renders the KNN replay
 ```
 
-## Known Gaps
+## One-Off Scan Diagnostics
 
-- `FingerprintRepository` currently prints load failures instead of using `DiagnosticsRecorder`.
-- The remote engine has a `recordRemotePositioning()` helper available through `DiagnosticsRecorder`, but it currently uses generic events and errors.
-- Some internal diagnostic messages use `println`; replacing these with `AppLogger` or `DiagnosticsRecorder` would make diagnostics consistent.
+The one-off scan workflow logs:
+
+- Session start.
+- Catalog refresh progress and failures.
+- Scan request and scan completion.
+- Saved JSON path and reading count.
+- KNN diagnostic replay update.
+- Checked-node count included in positioning events.
+- Remote positioning latency and result.
+
+The saved scan JSON gives a stable input artifact for reproducing or comparing API behavior.
+
+## KNN Process Diagnostics
+
+`KnnDiagnosticsAnalyzer` reconstructs the KNN process locally using the active scan and the checked-node-filtered catalog:
+
+- RSSI readings used and ignored.
+- Fingerprints and nodes compared.
+- Top-k nearest fingerprints.
+- Per-neighbor distance and normalized weight.
+- Per-node best distance and BSSID overlap counts.
+- Per-node contribution percentage.
+- Local replay estimate for comparison with the API estimate.
+
+Known limitation:
+
+- The API server still returns only `estimate` and `nodeDistances`; detailed KNN process visibility is reconstructed locally in the Android app.

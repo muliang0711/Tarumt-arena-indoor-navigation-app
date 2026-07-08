@@ -29,7 +29,7 @@ class LogAdapter : ListAdapter<LogEntry, LogAdapter.LogViewHolder>(LogDiffCallba
 
     class LogViewHolder(private val binding: ItemLogBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(entry: LogEntry) {
-            binding.logText.text = "[${entry.formattedTime}] ${entry.message}"
+            binding.logText.text = entry.message
             val color = when (entry.level) {
                 LogEntry.LogLevel.ERROR -> Color.RED
                 LogEntry.LogLevel.WARNING -> Color.parseColor("#FFA500") // Orange

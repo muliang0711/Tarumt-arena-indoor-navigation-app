@@ -9,11 +9,11 @@ import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import android.os.Build
 import androidx.core.content.ContextCompat
-import com.hyandlh.tarumtarenanavigation.config.GlobalConfig
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanReading
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanSnapshot
 import com.hyandlh.tarumtarenanavigation.core.observability.DiagnosticsRecorder
 import com.hyandlh.tarumtarenanavigation.core.observability.HealthHeartbeat
+import com.hyandlh.tarumtarenanavigation.core.settings.SettingsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.BufferOverflow
@@ -30,7 +30,8 @@ import javax.inject.Singleton
 class AndroidWifiScanner @Inject constructor(
     @ApplicationContext private val context: Context,
     private val diagnostics: DiagnosticsRecorder,
-    private val healthHeartbeat: HealthHeartbeat
+    private val healthHeartbeat: HealthHeartbeat,
+    private val settingsRepository: SettingsRepository
 ) : WifiScanSource {
 
     private val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
@@ -135,26 +136,23 @@ class AndroidWifiScanner @Inject constructor(
             // `diagnostics.recordScanResult` is already done in TrackingController.startTracking().
             //diagnostics.recordScanResult(now, results.size)
             healthHeartbeat.beat("WifiScanner")
+            val filterSsid = settingsRepository.filterSsid.value
+            val allReadings = results.map { result ->
+                result.toWifiScanReading()
+            }
+            val filteredReadings = allReadings.filter { reading ->
+                reading.ssid == filterSsid
+            }
 
             val snapshot = WifiScanSnapshot(
                 timestamp = now,
-                readings = results
-                    .filter { result ->
-                        result.SSID == GlobalConfig.FILTER_SSID
-                    }
-                    .map { result ->
-                    WifiScanReading(
-                        bssid = result.BSSID,
-                        rssi = result.level,
-                        timestamp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                             System.currentTimeMillis() - (android.os.SystemClock.elapsedRealtime() - result.timestamp / 1000)
-                        } else {
-                            System.currentTimeMillis()
-                        },
-                        frequency = result.frequency,
-                        ssid = result.SSID
-                    )
-                }
+                readings = filteredReadings,
+                allReadings = allReadings,
+                metadata = mapOf(
+                    "filterSsid" to filterSsid,
+                    "allReadings" to allReadings.size.toString(),
+                    "filteredReadings" to filteredReadings.size.toString()
+                )
             )
             _scanResults.tryEmit(snapshot)
             _failureState.value = null
@@ -165,6 +163,20 @@ class AndroidWifiScanner @Inject constructor(
             diagnostics.recordError("Unknown error during scan processing", e)
             _failureState.value = WifiScanFailure.Unknown(e.message ?: "Unknown error")
         }
+    }
+
+    private fun android.net.wifi.ScanResult.toWifiScanReading(): WifiScanReading {
+        return WifiScanReading(
+            bssid = BSSID,
+            rssi = level,
+            timestamp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                System.currentTimeMillis() - (android.os.SystemClock.elapsedRealtime() - timestamp / 1000)
+            } else {
+                System.currentTimeMillis()
+            },
+            frequency = frequency,
+            ssid = SSID
+        )
     }
 
 //    @SuppressLint("MissingPermission")
@@ -180,7 +192,7 @@ class AndroidWifiScanner @Inject constructor(
 //                    override fun onReceive(context: Context, intent: Intent) {
 //                        val results = wifiManager.scanResults
 //                        val filteredResults = results
-//                            .filter { it.SSID == ScanConfig.FILTER_SSID && it.level >= -90 }
+//                            .filter { it.SSID == settingsRepository.filterSsid.value && it.level >= -90 }
 //                            .map {
 //                                AccessPoint(
 //                                    bssid = it.BSSID,

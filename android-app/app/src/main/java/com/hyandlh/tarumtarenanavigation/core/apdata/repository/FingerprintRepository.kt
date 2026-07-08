@@ -4,12 +4,14 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hyandlh.tarumtarenanavigation.config.GlobalConfig
+import com.hyandlh.tarumtarenanavigation.core.common.AppError
 import com.hyandlh.tarumtarenanavigation.core.common.AppResult
 import com.hyandlh.tarumtarenanavigation.core.model.AccessPointCatalog
 import com.hyandlh.tarumtarenanavigation.core.model.FingerprintAP
 import com.hyandlh.tarumtarenanavigation.core.model.FingerprintEntry
 import com.hyandlh.tarumtarenanavigation.core.model.Node
 import com.hyandlh.tarumtarenanavigation.core.model.NodeType
+import com.hyandlh.tarumtarenanavigation.core.observability.DiagnosticsRecorder
 import com.hyandlh.tarumtarenanavigation.core.positioning.remote.PositioningApiService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +19,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,42 +30,44 @@ class FingerprintRepository @Inject constructor(
     private val gson: Gson,
     private val apiService: PositioningApiService,
     private val appScope: CoroutineScope,
+    private val diagnostics: DiagnosticsRecorder,
 ) : PositioningDataRepository {
     private val _catalog = MutableStateFlow<AccessPointCatalog?>(null)
 
     init {
         appScope.launch {
             loadDataRemote()
-            println("loaded catalog in FingerprintRepository.")
-            println("> FingerprintRepository._catalog.value:")
-            println(_catalog.value)
-            println("> FingerprintRepository._catalog.asStateFlow().value i.e. FingerprintRepository.getCatalogFlow().value:")
-            println(_catalog.asStateFlow().value)
-    //        println("> FingerprintRepository._catalog.asStateFlow().map { it?.fingerprints ?: emptyList() }.value")
-    //        println(_catalog.asStateFlow().map { it?.fingerprints ?: emptyList() }.value)
         }
     }
 
     override fun getCatalogFlow(): Flow<AccessPointCatalog?> {
-        println("FingerprintRepository.getCatalogFlow() called")
         return _catalog.asStateFlow()
     }
 
     override suspend fun refreshCatalog(): AppResult<Unit> {
-        loadDataRemote()
-        return AppResult.Success(Unit)
+        return loadDataRemote()
     }
 
-    private suspend fun loadDataRemote() {
-        try {
+    private suspend fun loadDataRemote(): AppResult<Unit> {
+        return try {
             val apiUrlNodes =
                 "${GlobalConfig.KNN_API_BASE_URL}/${GlobalConfig.KNN_API_ENDPOINT_GETNODEREGISTRY}"
 
+            diagnostics.recordEvent(
+                "Loading node registry from KNN API",
+                metadata = mapOf("url" to apiUrlNodes),
+                source = "FingerprintRepository.loadDataRemote"
+            )
             val nodeRegistry = apiService.getNodeRegistry(apiUrlNodes)
 
             val apiUrlFingerprints =
                 "${GlobalConfig.KNN_API_BASE_URL}/${GlobalConfig.KNN_API_ENDPOINT_GETALLFINGERPRINTS}"
 
+            diagnostics.recordEvent(
+                "Loading fingerprints from KNN API",
+                metadata = mapOf("url" to apiUrlFingerprints),
+                source = "FingerprintRepository.loadDataRemote"
+            )
             val fingerprints = apiService.getAllFingerprints(apiUrlFingerprints)
 
             _catalog.value = AccessPointCatalog(
@@ -70,15 +76,35 @@ class FingerprintRepository @Inject constructor(
                 nodes = nodeRegistry,
                 lastUpdated = System.currentTimeMillis()
             )
-        } catch (e: retrofit2.HttpException) {
-            println("[FingerprintRepository.loadRemoteData()] HTTP error loading remote data: ${e.code()} ${e.message()}")
-        } catch (e: java.io.IOException) {
-            println("[FingerprintRepository.loadRemoteData()] Network error loading remote data: ${e.message}")
+
+            diagnostics.recordEvent(
+                "Fingerprint catalog loaded",
+                metadata = mapOf(
+                    "nodes" to nodeRegistry.size.toString(),
+                    "fingerprints" to fingerprints.size.toString()
+                ),
+                source = "FingerprintRepository.loadDataRemote"
+            )
+            AppResult.Success(Unit)
+        } catch (e: HttpException) {
+            remoteLoadFailure("HTTP error loading fingerprint catalog: ${e.code()} ${e.message()}", e)
+        } catch (e: IOException) {
+            remoteLoadFailure("Network error loading fingerprint catalog: ${e.message}", e)
         } catch (e: kotlinx.serialization.SerializationException) {
-            println("[FingerprintRepository.loadRemoteData()] Serialization error: ${e.message}")
+            remoteLoadFailure("Serialization error loading fingerprint catalog: ${e.message}", e)
         } catch (e: Exception) {
-            println("[FingerprintRepository.loadRemoteData()] Unexpected error loading remote data: ${e.message}")
+            remoteLoadFailure("Unexpected error loading fingerprint catalog: ${e.message}", e)
         }
+    }
+
+    private fun remoteLoadFailure(message: String, throwable: Throwable): AppResult.Failure {
+        diagnostics.recordError(
+            message,
+            throwable,
+            metadata = mapOf("baseUrl" to GlobalConfig.KNN_API_BASE_URL),
+            source = "FingerprintRepository.loadDataRemote"
+        )
+        return AppResult.Failure(AppError(message, throwable = throwable))
     }
 
     private fun loadDataLocal() {
@@ -111,8 +137,6 @@ class FingerprintRepository @Inject constructor(
                     apList = json.AP_list.map { ap -> FingerprintAP(ap.bssid, ap.rssi, ap.channel) }
                 )
             }
-            println("fingerprints")
-            println(fingerprints)
 
             _catalog.value = AccessPointCatalog(
                 version = "fingerprint-1.0",
@@ -120,12 +144,21 @@ class FingerprintRepository @Inject constructor(
                 nodes = nodeRegistry,
                 lastUpdated = System.currentTimeMillis()
             )
+            diagnostics.recordEvent(
+                "Local fingerprint asset loaded",
+                metadata = mapOf("fingerprints" to fingerprints.size.toString()),
+                source = "FingerprintRepository.loadDataLocal"
+            )
         } catch (e: Exception) {
-            println("asset missing")
             _catalog.value = AccessPointCatalog(
                 version = "empty",
                 nodes = nodeRegistry,
                 lastUpdated = System.currentTimeMillis()
+            )
+            diagnostics.recordError(
+                "Local fingerprint asset missing or invalid",
+                e,
+                source = "FingerprintRepository.loadDataLocal"
             )
         }
     }

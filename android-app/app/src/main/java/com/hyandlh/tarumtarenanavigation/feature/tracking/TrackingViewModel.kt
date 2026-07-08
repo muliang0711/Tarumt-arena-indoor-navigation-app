@@ -7,6 +7,7 @@ import com.hyandlh.tarumtarenanavigation.core.apdata.repository.PositioningDataR
 import com.hyandlh.tarumtarenanavigation.core.model.*
 import com.hyandlh.tarumtarenanavigation.core.observability.InMemoryLogStore
 import com.hyandlh.tarumtarenanavigation.core.observability.LogEntry
+import com.hyandlh.tarumtarenanavigation.core.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,7 +31,8 @@ data class PauseResumeButtonState(
 class TrackingViewModel @Inject constructor(
     private val trackingController: TrackingController,
     private val repository: PositioningDataRepository,
-    private val logStore: InMemoryLogStore
+    private val logStore: InMemoryLogStore,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     val trackingState: StateFlow<TrackingState> = trackingController.state
@@ -38,6 +40,11 @@ class TrackingViewModel @Inject constructor(
     val isPaused: StateFlow<Boolean> = trackingController.isPaused
     val latestSnapshot: StateFlow<WifiScanSnapshot?> = trackingController.latestSnapshot
     val nodeDistances: StateFlow<Map<String, Double>>? = trackingController.nodeDistances
+    val knnDiagnostics = trackingController.knnDiagnostics
+    val lastSavedScanPath = trackingController.lastSavedScanPath
+    val isOneOffScanRunning = trackingController.isOneOffScanRunning
+    val checkedNodeIds: StateFlow<Set<String>> = trackingController.checkedNodeIds
+    val filterSsid: StateFlow<String> = settingsRepository.filterSsid
     val logs: StateFlow<List<LogEntry>> = logStore.logs
 
     val apLocations: StateFlow<List<AccessPointLocation>> = repository.getCatalogFlow()
@@ -79,6 +86,14 @@ class TrackingViewModel @Inject constructor(
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PauseResumeButtonState(R.string.pause_scanning, true, false))
 
+    init {
+        viewModelScope.launch {
+            nodes.collect { availableNodes ->
+                trackingController.syncDefaultCheckedNodes(availableNodes)
+            }
+        }
+    }
+
     fun toggleTracking() {
         if (trackingState.value is TrackingState.Idle || trackingState.value is TrackingState.Error) {
             trackingController.startTracking()
@@ -99,6 +114,24 @@ class TrackingViewModel @Inject constructor(
                 _transitionState.value = TransitionState.NONE
             }
         }
+    }
+
+    fun runOneOffScan() {
+        viewModelScope.launch {
+            trackingController.runOneOffScan()
+        }
+    }
+
+    fun setCheckedNodeIds(nodeIds: Set<String>) {
+        trackingController.setCheckedNodeIds(nodeIds)
+    }
+
+    fun syncDefaultCheckedNodes(nodes: Collection<Node>) {
+        trackingController.syncDefaultCheckedNodes(nodes)
+    }
+
+    fun setFilterSsid(value: String) {
+        settingsRepository.setFilterSsid(value)
     }
 
     fun toggleDebugMode() {

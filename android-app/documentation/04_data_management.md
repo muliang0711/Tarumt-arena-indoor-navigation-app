@@ -18,12 +18,15 @@ Responsibilities:
 - Hold the latest `AccessPointCatalog?` in a `MutableStateFlow`.
 - Load data on initialization using the application IO coroutine scope.
 - Refresh data when `TrackingController.startTracking()` calls `refreshCatalog()`.
+- Refresh data when `TrackingController.runOneOffScan()` runs a one-off positioning attempt.
 - Fetch nodes and fingerprints from the remote KNN API server.
 
 Remote calls:
 
 - `GET {KNN_API_BASE_URL}/{KNN_API_ENDPOINT_GETNODEREGISTRY}` returns `Map<String, Node>`.
 - `GET {KNN_API_BASE_URL}/{KNN_API_ENDPOINT_GETALLFINGERPRINTS}` returns `List<FingerprintEntry>`.
+
+The app always loads the full node/fingerprint catalog. Checked-node selection is stored in `TrackingController` and applied later when local KNN diagnostics run and when `ApiPositioningEngine` sends `PositioningRequest.checkedNodeIds` to `/calcPosition`.
 
 Catalog produced:
 
@@ -38,9 +41,12 @@ AccessPointCatalog(
 
 Current caveats:
 
-- Network and parsing failures are printed with `println`; they are not currently surfaced as `AppResult.Failure`.
-- `refreshCatalog()` returns `AppResult.Success(Unit)` after calling `loadDataRemote()`, even if the remote load fails internally.
 - A local asset fallback function exists in the repository, but it is not currently called by the active load path.
+
+Failure behavior:
+
+- Remote HTTP, network, serialization, and unexpected failures are logged through `DiagnosticsRecorder`.
+- `refreshCatalog()` returns `AppResult.Failure` when remote loading fails, allowing `TrackingController` to surface an error state.
 
 ## PositioningDataRepository Contract
 
@@ -123,6 +129,21 @@ This repository is not currently bound to `PositioningDataRepository`, so it is 
 ## Retrofit Setup
 
 `DataModule` provides a singleton Retrofit instance with base URL `http://localhost:8080/`. Because `PositioningApiService` methods use Retrofit `@Url`, the effective URLs for active KNN calls come from `GlobalConfig`, not from the Retrofit base URL.
+
+## One-Off Scan JSON Storage
+
+Class:
+
+- `core.wifi.WifiScanSnapshotStore`
+
+Behavior:
+
+- Saves a `WifiScanSnapshot` as JSON using Gson.
+- Writes files to the app's internal files directory under `wifi-scans/`.
+- Uses filename `wifi-scan-{snapshot.timestamp}.json`.
+- Returns the absolute file path, which is stored in `TrackingController.lastSavedScanPath` and logged through diagnostics.
+
+This storage path is app-internal. On a development device or emulator, retrieve files through Android Studio Device Explorer or `adb` using the app package's internal files directory.
 
 ## Data Ownership Rule
 

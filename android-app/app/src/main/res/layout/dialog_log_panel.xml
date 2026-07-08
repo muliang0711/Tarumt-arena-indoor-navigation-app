@@ -44,6 +44,28 @@
         android:textStyle="bold"
         android:paddingBottom="4dp"/>
 
+    <RadioGroup
+        android:id="@+id/apFilterModeRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="4dp">
+
+        <RadioButton
+            android:id="@+id/allDetectedApsRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/all_detected_aps" />
+
+        <RadioButton
+            android:id="@+id/filteredApsRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@string/filtered_aps" />
+    </RadioGroup>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/apStatusRecyclerView"
         android:layout_width="match_parent"

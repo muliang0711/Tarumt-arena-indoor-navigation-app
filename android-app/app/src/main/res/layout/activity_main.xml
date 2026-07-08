@@ -101,7 +101,28 @@
             android:id="@+id/viewLogButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="View log"
+            android:text="@string/view_log"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/viewKnnDiagnosticsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/view_knn_diagnostics"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/settingsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings"
+            android:layout_marginBottom="8dp" />
+
+        <Button
+            android:id="@+id/oneOffScanButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/run_one_off_scan"
             android:layout_marginBottom="8dp" />
 
         <Button
