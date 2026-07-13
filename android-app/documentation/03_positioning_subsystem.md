@@ -86,7 +86,11 @@ Retrofit interface:
 
 The use of dynamic `@Url` means Retrofit's base URL in `DataModule` is only a default placeholder; the actual runtime URLs are assembled from `GlobalConfig`.
 
-`PositioningRequest` is the live `WifiScanSnapshot` fields plus `checkedNodeIds`. `TrackingController` owns the checked-node state, initializes it to all loaded nodes until the user saves a custom selection, and passes it to `ApiPositioningEngine`. The API server uses that list as the active node registry for the KNN calculation.
+`PositioningRequest` is the live `WifiScanSnapshot` fields plus `checkedNodeIds`. `TrackingController` owns both the saved manual checked-node selection and the active checked-node set sent to `ApiPositioningEngine`. The API server uses that list as the active node registry for the KNN calculation.
+
+During continuous tracking, the active checked-node set is updated automatically from the latest `PositionEstimate`. `NearbyNodeSelector` selects enabled nodes on the same floor within the Settings close-node threshold, expands that threshold using walking speed, and includes forward nodes using the phone heading. If no node is inside the dynamic range, it falls back to the nearest node so the API request never becomes empty because of the selector.
+
+One-off scans bypass the automatic nearby-node selector and use the manually saved checked-node selection from Settings.
 
 ## Wi-Fi Scan Preparation
 

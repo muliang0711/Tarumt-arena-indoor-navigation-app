@@ -44,7 +44,9 @@ class TrackingViewModel @Inject constructor(
     val lastSavedScanPath = trackingController.lastSavedScanPath
     val isOneOffScanRunning = trackingController.isOneOffScanRunning
     val checkedNodeIds: StateFlow<Set<String>> = trackingController.checkedNodeIds
+    val nearbyNodeSelection: StateFlow<NearbyNodeSelection?> = trackingController.nearbyNodeSelection
     val filterSsid: StateFlow<String> = settingsRepository.filterSsid
+    val closeNodeThresholdMeters: StateFlow<Double> = settingsRepository.closeNodeThresholdMeters
     val logs: StateFlow<List<LogEntry>> = logStore.logs
 
     val apLocations: StateFlow<List<AccessPointLocation>> = repository.getCatalogFlow()
@@ -132,6 +134,10 @@ class TrackingViewModel @Inject constructor(
 
     fun setFilterSsid(value: String) {
         settingsRepository.setFilterSsid(value)
+    }
+
+    fun setCloseNodeThresholdMeters(value: Double) {
+        settingsRepository.setCloseNodeThresholdMeters(value)
     }
 
     fun setDebugMode(enabled: Boolean) {

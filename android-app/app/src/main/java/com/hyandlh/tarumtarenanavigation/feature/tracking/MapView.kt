@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -46,6 +47,34 @@ class MapView @JvmOverloads constructor(
         style = Paint.Style.FILL
     }
 
+    private val uncheckedNodePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#668A8F94")
+        style = Paint.Style.FILL
+    }
+
+    private val checkedNodePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#FFFF9800")
+        style = Paint.Style.FILL
+    }
+
+    private val checkedNodeRingPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.WHITE
+        style = Paint.Style.STROKE
+        strokeWidth = 5f
+    }
+
+    private val thresholdFillPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#2633B5E5")
+        style = Paint.Style.FILL
+    }
+
+    private val thresholdStrokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#FF0288D1")
+        style = Paint.Style.STROKE
+        strokeWidth = 5f
+        pathEffect = DashPathEffect(floatArrayOf(18f, 12f), 0f)
+    }
+
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = Color.BLACK
         textSize = 30f
@@ -68,6 +97,8 @@ class MapView @JvmOverloads constructor(
     private var userPosition: PositionEstimate? = null
     private var apLocations: List<AccessPointLocation> = emptyList()
     private var nodes: List<Node> = emptyList()
+    private var checkedNodeIds: Set<String> = emptySet()
+    private var nearbyNodeSelection: NearbyNodeSelection? = null
     private var latestReadings: Map<String, WifiScanReading> = emptyMap()
     private var isDebugMode: Boolean = false
     private var coordinateConverter: CoordinateConverter? = null
@@ -120,6 +151,16 @@ class MapView @JvmOverloads constructor(
 
     fun setNodes(nodes: List<Node>) {
         this.nodes = nodes
+        invalidate()
+    }
+
+    fun setCheckedNodeIds(nodeIds: Set<String>) {
+        this.checkedNodeIds = nodeIds
+        invalidate()
+    }
+
+    fun setNearbyNodeSelection(selection: NearbyNodeSelection?) {
+        this.nearbyNodeSelection = selection
         invalidate()
     }
 
@@ -192,12 +233,19 @@ class MapView @JvmOverloads constructor(
             
             val converter = coordinateConverter
             if (converter != null) {
+                drawDynamicThreshold(canvas, converter)
+
                 // Draw debug info
                 if (isDebugMode) {
                     // Draw Nodes
                     for (node in nodes) {
                         val (pxX, pxY) = converter.toPixels(node.x, node.y)
-                        canvas.drawCircle(pxX, pxY, 15f, nodePaint)
+                        val isChecked = node.nodeId in checkedNodeIds
+                        val radius = if (isChecked) 22f else 13f
+                        canvas.drawCircle(pxX, pxY, radius, if (isChecked) checkedNodePaint else uncheckedNodePaint)
+                        if (isChecked) {
+                            canvas.drawCircle(pxX, pxY, radius + 4f, checkedNodeRingPaint)
+                        }
                         canvas.drawText(node.nodeId.take(8), pxX, pxY - 20f, labelPaint)
                     }
 
@@ -231,6 +279,27 @@ class MapView @JvmOverloads constructor(
 
     private fun drawErrorMessage(canvas: Canvas, message: String) {
         canvas.drawText(message, width / 2f, height / 2f, errorPaint)
+    }
+
+    private fun drawDynamicThreshold(canvas: Canvas, converter: CoordinateConverter) {
+        val position = userPosition ?: return
+        val selection = nearbyNodeSelection ?: return
+        val thresholdMeters = selection.thresholdMeters
+        if (thresholdMeters <= 0.0) return
+
+        val (centerX, centerY) = converter.toPixels(position.x, position.y)
+        val (edgeX, _) = converter.toPixels(position.x + thresholdMeters, position.y)
+        val (_, edgeY) = converter.toPixels(position.x, position.y + thresholdMeters)
+        val radiusX = kotlin.math.abs(edgeX - centerX)
+        val radiusY = kotlin.math.abs(edgeY - centerY)
+        val bounds = RectF(
+            centerX - radiusX,
+            centerY - radiusY,
+            centerX + radiusX,
+            centerY + radiusY
+        )
+        canvas.drawOval(bounds, thresholdFillPaint)
+        canvas.drawOval(bounds, thresholdStrokePaint)
     }
 
     /**

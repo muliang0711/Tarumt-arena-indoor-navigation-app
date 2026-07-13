@@ -20,6 +20,7 @@ Responsibilities:
 
 - Request permissions.
 - Render tracking status, pause/resume controls, one-off scan controls, debug toggle, map, node details, KNN diagnostics, scan readings, and log stream.
+- Render active checked-node and close-threshold overlays on `MapView`.
 - Observe state exposed by `TrackingViewModel`.
 - Avoid direct Wi-Fi, repository, or positioning work.
 
@@ -34,11 +35,15 @@ Responsibilities:
 - Own the tracking session lifecycle.
 - Refresh the positioning catalog when tracking starts.
 - Start and stop the Wi-Fi scan loop.
+- Start and stop phone motion monitoring for active tracking.
 - Combine catalog data and scan snapshots.
+- Keep the saved manual checked-node selection separate from the automatic active-tracking checked-node selection.
+- Update active-tracking checked nodes to nearby nodes using the latest estimate, Settings threshold, heading, and walking-speed estimate.
 - Call the active `PositioningEngine`.
 - Compute local KNN diagnostic replays for observability.
 - Save one-off scan snapshots as JSON.
 - Publish current state, latest scan snapshot, current position, pause state, node distances, KNN diagnostics, one-off scan status, and last saved scan path.
+- Publish the latest active nearby-node selection so the map can draw the dynamic threshold.
 
 The controller is a singleton and uses its own `CoroutineScope(SupervisorJob() + Dispatchers.Default)` for background tracking work.
 
@@ -65,6 +70,7 @@ Files:
 - `core.apdata.repository.FingerprintRepository`
 - `core.positioning.remote.ApiPositioningEngine`
 - `core.positioning.remote.PositioningApiService`
+- `core.motion.MotionSensorMonitor`
 - `core.observability.*`
 - Room and mock AP catalog classes under `core.apdata`
 
@@ -82,7 +88,8 @@ User taps Start
   -> MainActivity
   -> TrackingViewModel.toggleTracking()
   -> TrackingController.startTracking()
-  -> TrackingController uses checkedNodeIds from the node-selection dialog
+  -> MotionSensorMonitor.startMonitoring()
+  -> TrackingController seeds checkedNodeIds from the manual Settings selection
   -> FingerprintRepository.refreshCatalog()
       -> GET {KNN_API_BASE_URL}/nodes
       -> GET {KNN_API_BASE_URL}/fingerprints
@@ -92,14 +99,17 @@ User taps Start
       -> Android WifiManager + BroadcastReceiver
       -> WifiScanSnapshot(readings filtered to TARUMT-ARENA)
   -> TrackingController combines catalog + snapshot
+  -> NearbyNodeSelector updates checkedNodeIds from the latest estimate when available
   -> KnnDiagnosticsAnalyzer.analyze(snapshot, catalog filtered to checked nodes)
       -> local replay of checked-node API-style WKNN distances, weights, and estimate
   -> ApiPositioningEngine.calculatePosition(snapshot, catalog, checkedNodeIds)
       -> POST {KNN_API_BASE_URL}/calcPosition
          body includes timestamp, readings, metadata, checkedNodeIds
       -> PositioningResponse(estimate, nodeDistances)
+  -> NearbyNodeSelector updates checkedNodeIds for the next active tracking scan
   -> TrackingViewModel exposes state
   -> MainActivity and dialogs render updates
+  -> MapView draws the dynamic threshold and checked-node highlights
 ```
 
 ## One-Off Scan Flow
@@ -114,8 +124,8 @@ User taps Scan once, save JSON, position
   -> TrackingController receives one fresh WifiScanSnapshot
   -> WifiScanSnapshotStore.save(snapshot)
       -> app internal files/wifi-scans/wifi-scan-{timestamp}.json
-  -> KnnDiagnosticsAnalyzer.analyze(snapshot, catalog filtered to checked nodes)
-  -> ApiPositioningEngine.calculatePosition(snapshot, catalog)
+  -> KnnDiagnosticsAnalyzer.analyze(snapshot, catalog filtered to manually saved checked nodes)
+  -> ApiPositioningEngine.calculatePosition(snapshot, catalog, manual checkedNodeIds)
   -> Map, KNN diagnostics, logs, and current position update
 ```
 
@@ -137,6 +147,7 @@ Active:
 - Remote position calculation through `ApiPositioningEngine`.
 - Debug node-distance values from the remote positioning response.
 - Local KNN diagnostic replay through `KnnDiagnosticsAnalyzer`.
+- Active-tracking nearby-node selection through `NearbyNodeSelector` and `MotionSensorMonitor`.
 - One-off scan JSON persistence through `WifiScanSnapshotStore`.
 
 Alternate or currently unbound:
@@ -157,6 +168,8 @@ When changing which algorithm or data source is active, update the Hilt module f
 | Pause/resume state | `TrackingController.isPaused`, `TrackingViewModel.transitionState` | `MainActivity` |
 | Latest scan snapshot | `TrackingController.latestSnapshot` | `MapView`, log panel, node details |
 | Current position | Active `PositioningEngine.currentPosition` exposed by `TrackingController` | `MapView`, status timestamp |
+| Active nearby-node threshold | `TrackingController.nearbyNodeSelection` | `MapView` threshold overlay |
+| Checked nodes | `TrackingController.checkedNodeIds` | `MapView` checked-node highlight, Settings dialog |
 | KNN diagnostic replay | `TrackingController.knnDiagnostics` | `KnnDiagnosticsDialogFragment` |
 | Last saved scan path | `TrackingController.lastSavedScanPath` | `KnnDiagnosticsDialogFragment`, logs |
 | One-off scan running flag | `TrackingController.isOneOffScanRunning` | `MainActivity` |

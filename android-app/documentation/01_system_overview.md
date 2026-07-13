@@ -8,7 +8,7 @@ The app is also a diagnostics tool. Debug mode can show known nodes, AP overlays
 
 1. `MainActivity` owns the tracking screen and asks for Wi-Fi/location permissions.
 2. `TrackingViewModel` exposes `StateFlow` values to the activity and dialogs.
-3. `TrackingController` starts a tracking session, refreshes the positioning catalog, and runs the scan loop.
+3. `TrackingController` starts a tracking session, refreshes the positioning catalog, runs the scan loop, and narrows active tracking to nearby checked nodes.
 4. `AndroidWifiScanner` requests Android Wi-Fi scans and emits `WifiScanSnapshot` values containing all detected APs plus readings filtered to the saved Settings SSID.
 5. `FingerprintRepository` refreshes node and fingerprint data from the KNN API server.
 6. `ApiPositioningEngine` posts each scan snapshot to the KNN API server and receives a `PositionEstimate` plus node-distance diagnostics.
@@ -33,7 +33,8 @@ These are the bindings that determine the app's current behavior:
 | Package | Responsibility |
 | --- | --- |
 | `config` | Global defaults and remote KNN endpoint constants. |
-| `core.settings` | Saved runtime settings such as the editable Wi-Fi SSID filter. |
+| `core.settings` | Saved runtime settings such as the editable Wi-Fi SSID filter and close-node threshold. |
+| `core.motion` | Phone motion sensor monitoring for heading and walking-speed estimates used during active tracking. |
 | `di` | Hilt bindings and providers. This is the first place to check for active implementations. |
 | `core.model` | Shared domain models: scans, fingerprints, nodes, positions, catalog, tracking state. |
 | `core.common` | Shared utility contracts such as `AppResult`, `AppError`, `AppLogger`, and `CoordinateConverter`. |
@@ -50,6 +51,8 @@ These are the bindings that determine the app's current behavior:
 - `FingerprintRepository` fetches `/nodes` and `/fingerprints` from `GlobalConfig.KNN_API_BASE_URL`.
 - `ApiPositioningEngine` sends scans to `/calcPosition` on the same KNN API base URL.
 - `KnnDiagnosticsAnalyzer` mirrors the API server's WKNN logic locally for observability; it does not replace the active remote engine.
+- During continuous tracking, `TrackingController` automatically updates `checkedNodeIds` to nodes near the latest estimate. The close-node threshold comes from Settings and is expanded with phone heading/walking-speed sensor data.
+- One-off scans do not use the automatic nearby-node updater; they use the manually saved checked-node selection.
 - The one-off scan workflow captures a single Wi-Fi scan, saves it under the app's internal `wifi-scans/` directory as JSON, runs positioning on that exact snapshot, and updates the KNN diagnostics panel.
 - `DiagnosticsRecorder` is the primary visible logging path. It writes the same formatted log line to the in-app log store and to `AndroidAppLogger`, whose Android implementation also writes to stdout/stderr.
 - Diagnostic log lines use `[timestamp] [Class.method] message | session=...` format.

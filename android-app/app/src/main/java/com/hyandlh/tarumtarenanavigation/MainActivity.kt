@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
 import android.widget.CheckBox
 import android.widget.EditText
@@ -179,6 +180,18 @@ class MainActivity : AppCompatActivity() {
                         binding.mapView.setNodes(nodes)
                     }
                 }
+
+                launch {
+                    viewModel.checkedNodeIds.collect { checkedNodeIds ->
+                        binding.mapView.setCheckedNodeIds(checkedNodeIds)
+                    }
+                }
+
+                launch {
+                    viewModel.nearbyNodeSelection.collect { selection ->
+                        binding.mapView.setNearbyNodeSelection(selection)
+                    }
+                }
                 
                 launch {
                     viewModel.latestSnapshot.collect { snapshot ->
@@ -259,6 +272,7 @@ class MainActivity : AppCompatActivity() {
             .filter { it in availableIds }
             .toMutableSet()
         val initialFilterSsid = viewModel.filterSsid.value
+        val initialCloseNodeThresholdMeters = viewModel.closeNodeThresholdMeters.value
         val initialSelectedIds = selectedIds.toSet()
         val groups = nodeSelectionGroups()
 
@@ -299,6 +313,21 @@ class MainActivity : AppCompatActivity() {
         }
         filterSsidRow.addView(clearFilterSsidButton)
         content.addView(filterSsidRow)
+
+        val closeNodeThresholdTitle = TextView(this).apply {
+            text = getString(R.string.close_node_threshold)
+            setTypeface(typeface, Typeface.BOLD)
+            setPadding(0, dp(12), 0, 0)
+        }
+        content.addView(closeNodeThresholdTitle)
+
+        val closeNodeThresholdInput = EditText(this).apply {
+            setText(String.format(Locale.US, "%.1f", initialCloseNodeThresholdMeters))
+            setSingleLine(true)
+            hint = getString(R.string.close_node_threshold_hint)
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
+        }
+        content.addView(closeNodeThresholdInput)
 
         val groupCheckBoxes = mutableMapOf<String, CheckBox>()
         val nodeCheckBoxes = mutableMapOf<String, CheckBox>()
@@ -380,6 +409,7 @@ class MainActivity : AppCompatActivity() {
 
         fun hasUnsavedSettingsChanges(): Boolean {
             return filterSsidInput.text?.toString()?.trim().orEmpty() != initialFilterSsid ||
+                parseCloseNodeThreshold(closeNodeThresholdInput.text?.toString().orEmpty()) != initialCloseNodeThresholdMeters ||
                 selectedIds.toSet() != initialSelectedIds
         }
 
@@ -403,6 +433,9 @@ class MainActivity : AppCompatActivity() {
 
             dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
                 viewModel.setFilterSsid(filterSsidInput.text?.toString().orEmpty())
+                viewModel.setCloseNodeThresholdMeters(
+                    parseCloseNodeThreshold(closeNodeThresholdInput.text?.toString().orEmpty())
+                )
                 viewModel.setCheckedNodeIds(selectedIds.toSet())
                 Toast.makeText(
                     this,
@@ -413,6 +446,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
         dialog.show()
+    }
+
+    private fun parseCloseNodeThreshold(value: String): Double {
+        return value.trim().toDoubleOrNull()
+            ?.takeIf { it.isFinite() && it > 0.0 }
+            ?: viewModel.closeNodeThresholdMeters.value
     }
 
     private fun showDiscardSettingsChangesDialog(onDiscard: () -> Unit) {

@@ -113,7 +113,7 @@ Scan loop
   -> TrackingController records scan result count
 
 Positioning
-  -> TrackingController filters the catalog to checked nodes
+  -> TrackingController filters the catalog to active checked nodes
   -> TrackingController runs KnnDiagnosticsAnalyzer
   -> recordEvent("KNN diagnostic trace updated")
   -> ApiPositioningEngine records API call event
@@ -121,6 +121,7 @@ Positioning
   -> recordRemotePositioning(success, latencyMs)
   -> recordPositionCalculated()
   -> HealthHeartbeat.beat("ApiPositioningEngine")
+  -> recordEvent("Automatic checked_nodes update") when active tracking changes nodes or threshold
 
 UI
   -> TrackingViewModel exposes logs and KNN diagnostics
@@ -139,6 +140,24 @@ The one-off scan workflow logs:
 - KNN diagnostic replay update.
 - Checked-node count included in positioning events.
 - Remote positioning latency and result.
+
+One-off scan diagnostics do not include automatic checked-node updates because one-off scans use the manually saved Settings selection.
+
+## Automatic Checked-Node Diagnostics
+
+Continuous tracking logs every automatic checked-node or dynamic-threshold change with:
+
+- `checkedNodes`
+- `checkedNodeIds`
+- `thresholdMeters`
+- `baseThresholdMeters`
+- `directionalLookaheadMeters`
+- `headingDegrees`
+- `walkingSpeedMetersPerSecond`
+- `motionSource`
+- `nearestFallback`
+
+The same active threshold is drawn on `MapView` around the current user estimate. Checked nodes are highlighted in the debug node layer so the visual state matches the `checkedNodeIds` sent to the positioning request.
 
 The saved scan JSON gives a stable input artifact for reproducing or comparing API behavior.
 

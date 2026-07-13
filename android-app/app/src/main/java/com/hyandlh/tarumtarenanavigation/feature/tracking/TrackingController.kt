@@ -9,9 +9,11 @@ import com.hyandlh.tarumtarenanavigation.core.model.Node
 import com.hyandlh.tarumtarenanavigation.core.model.PositionEstimate
 import com.hyandlh.tarumtarenanavigation.core.model.TrackingState
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanSnapshot
+import com.hyandlh.tarumtarenanavigation.core.motion.MotionSensorMonitor
 import com.hyandlh.tarumtarenanavigation.core.observability.DiagnosticsRecorder
 import com.hyandlh.tarumtarenanavigation.core.positioning.KnnDiagnosticsAnalyzer
 import com.hyandlh.tarumtarenanavigation.core.positioning.PositioningEngine
+import com.hyandlh.tarumtarenanavigation.core.settings.SettingsRepository
 import com.hyandlh.tarumtarenanavigation.core.wifi.WifiScanSource
 import com.hyandlh.tarumtarenanavigation.core.wifi.WifiScanSnapshotStore
 import kotlinx.coroutines.CoroutineScope
@@ -39,7 +41,10 @@ class TrackingController @Inject constructor(
     private val repository: PositioningDataRepository,
     private val diagnostics: DiagnosticsRecorder,
     private val knnDiagnosticsAnalyzer: KnnDiagnosticsAnalyzer,
-    private val snapshotStore: WifiScanSnapshotStore
+    private val snapshotStore: WifiScanSnapshotStore,
+    private val settingsRepository: SettingsRepository,
+    private val motionSensorMonitor: MotionSensorMonitor,
+    private val nearbyNodeSelector: NearbyNodeSelector
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
     private var trackingJob: Job? = null
@@ -66,7 +71,13 @@ class TrackingController @Inject constructor(
 
     private val _checkedNodeIds = MutableStateFlow<Set<String>>(emptySet())
     val checkedNodeIds: StateFlow<Set<String>> = _checkedNodeIds.asStateFlow()
+
+    private val _nearbyNodeSelection = MutableStateFlow<NearbyNodeSelection?>(null)
+    val nearbyNodeSelection: StateFlow<NearbyNodeSelection?> = _nearbyNodeSelection.asStateFlow()
+
+    private var manualCheckedNodeIds: Set<String> = emptySet()
     private var hasUserNodeSelection = false
+    private var lastAutomaticThresholdMeters: Double? = null
 
     private var scanIntervalMs: Long = 6000L
 
@@ -78,13 +89,18 @@ class TrackingController @Inject constructor(
     }
 
     fun syncDefaultCheckedNodes(nodes: Collection<Node>) {
-        if (!hasUserNodeSelection && _checkedNodeIds.value.isEmpty() && nodes.isNotEmpty()) {
-            _checkedNodeIds.value = nodes.map { it.nodeId }.toSet()
+        if (!hasUserNodeSelection && manualCheckedNodeIds.isEmpty() && nodes.isNotEmpty()) {
+            val defaultNodeIds = nodes.map { it.nodeId }.toSet()
+            manualCheckedNodeIds = defaultNodeIds
+            if (trackingJob?.isActive != true || _checkedNodeIds.value.isEmpty()) {
+                _checkedNodeIds.value = defaultNodeIds
+            }
         }
     }
 
     fun setCheckedNodeIds(nodeIds: Set<String>) {
         hasUserNodeSelection = true
+        manualCheckedNodeIds = nodeIds
         _checkedNodeIds.value = nodeIds
         diagnostics.recordEvent(
             "Checked node selection updated",
@@ -97,6 +113,7 @@ class TrackingController @Inject constructor(
         if (trackingJob?.isActive == true) return
         
         diagnostics.startNewSession()
+        motionSensorMonitor.startMonitoring()
         _isPaused.value = false
         
         trackingJob = scope.launch {
@@ -111,6 +128,8 @@ class TrackingController @Inject constructor(
                     source = "TrackingController.startTracking"
                 )
                 _state.value = TrackingState.Error(result.error.message)
+                motionSensorMonitor.stopMonitoring()
+                scanLoopJob?.cancel()
                 return@launch
             }
             
@@ -123,7 +142,11 @@ class TrackingController @Inject constructor(
             ) { catalog, snapshot ->
                 if (catalog != null && snapshot.readings.isNotEmpty()) {
                     syncDefaultCheckedNodes(catalog.nodes.values)
-                    val activeCatalog = catalog.filteredByCheckedNodes(_checkedNodeIds.value)
+                    currentPosition.value?.let { estimate ->
+                        updateAutomaticCheckedNodes(estimate, catalog)
+                    }
+                    val activeCheckedNodeIds = activeCheckedNodeIds(catalog)
+                    val activeCatalog = catalog.filteredByCheckedNodes(activeCheckedNodeIds)
                     _state.value = TrackingState.Positioning
                     _latestSnapshot.value = snapshot
                     val report = knnDiagnosticsAnalyzer.analyze(snapshot, activeCatalog)
@@ -133,11 +156,12 @@ class TrackingController @Inject constructor(
                         metadata = mapOf(
                             "nearestNode" to (report.nodeSummaries.firstOrNull()?.nodeId ?: "none"),
                             "nearestDistance" to (report.nodeSummaries.firstOrNull()?.bestDistance?.toString() ?: "n/a"),
-                            "checkedNodes" to _checkedNodeIds.value.size.toString()
+                            "checkedNodes" to activeCheckedNodeIds.size.toString()
                         ),
                         source = "TrackingController.startTracking"
                     )
-                    positioningEngine.calculatePosition(snapshot, catalog, _checkedNodeIds.value)
+                    val estimate = positioningEngine.calculatePosition(snapshot, catalog, activeCheckedNodeIds)
+                    updateAutomaticCheckedNodes(estimate, catalog)
                 } else if (catalog == null) {
                     _state.value = TrackingState.Error("AP Catalog vanished from cache")
                 }
@@ -151,6 +175,9 @@ class TrackingController @Inject constructor(
         trackingJob?.cancel()
         scanLoopJob?.cancel()
         countdownJob?.cancel()
+        motionSensorMonitor.stopMonitoring()
+        restoreManualCheckedNodes()
+        _nearbyNodeSelection.value = null
         _state.value = TrackingState.Idle
     }
 
@@ -186,7 +213,8 @@ class TrackingController @Inject constructor(
 
             val catalog = repository.getCatalogFlow().filterNotNull().first()
             syncDefaultCheckedNodes(catalog.nodes.values)
-            val activeCatalog = catalog.filteredByCheckedNodes(_checkedNodeIds.value)
+            val oneOffCheckedNodeIds = manualCheckedNodeIds(catalog)
+            val activeCatalog = catalog.filteredByCheckedNodes(oneOffCheckedNodeIds)
             diagnostics.recordCatalogUpdate("Complete", source = "TrackingController.runOneOffScan")
 
             _state.value = TrackingState.Scanning
@@ -210,14 +238,14 @@ class TrackingController @Inject constructor(
             _state.value = TrackingState.Positioning
             val report = knnDiagnosticsAnalyzer.analyze(snapshot, activeCatalog)
             _knnDiagnostics.value = report
-            val estimate = positioningEngine.calculatePosition(snapshot, catalog, _checkedNodeIds.value)
+            val estimate = positioningEngine.calculatePosition(snapshot, catalog, oneOffCheckedNodeIds)
             diagnostics.recordEvent(
                 "One-off positioning complete",
                 metadata = mapOf(
                     "x" to estimate.x.toString(),
                     "y" to estimate.y.toString(),
                     "confidence" to estimate.confidence.toString(),
-                    "checkedNodes" to _checkedNodeIds.value.size.toString()
+                    "checkedNodes" to oneOffCheckedNodeIds.size.toString()
                 ),
                 source = "TrackingController.runOneOffScan"
             )
@@ -315,11 +343,82 @@ class TrackingController @Inject constructor(
     val currentPosition: StateFlow<PositionEstimate?> = positioningEngine.currentPosition as StateFlow<PositionEstimate?>
     val nodeDistances: StateFlow<Map<String, Double>>? = positioningEngine.nodeDistances
 
+    private fun activeCheckedNodeIds(catalog: AccessPointCatalog): Set<String> {
+        return _checkedNodeIds.value
+            .filter { it in catalog.nodes }
+            .toSet()
+            .ifEmpty { manualCheckedNodeIds(catalog) }
+    }
+
+    private fun manualCheckedNodeIds(catalog: AccessPointCatalog): Set<String> {
+        val availableNodeIds = catalog.nodes.keys
+        return manualCheckedNodeIds
+            .filter { it in availableNodeIds }
+            .toSet()
+            .ifEmpty { availableNodeIds }
+    }
+
+    private fun restoreManualCheckedNodes() {
+        if (manualCheckedNodeIds.isNotEmpty()) {
+            _checkedNodeIds.value = manualCheckedNodeIds
+        }
+        lastAutomaticThresholdMeters = null
+    }
+
+    private fun updateAutomaticCheckedNodes(
+        estimate: PositionEstimate,
+        catalog: AccessPointCatalog
+    ) {
+        if (estimate.floorId == "unknown") return
+
+        val selection = nearbyNodeSelector.select(
+            estimate = estimate,
+            catalog = catalog,
+            baseThresholdMeters = settingsRepository.closeNodeThresholdMeters.value,
+            motion = motionSensorMonitor.snapshot()
+        )
+        if (selection.nodeIds.isEmpty()) return
+        _nearbyNodeSelection.value = selection
+
+        val previousNodeIds = _checkedNodeIds.value
+        val thresholdChanged = lastAutomaticThresholdMeters
+            ?.let { kotlin.math.abs(it - selection.thresholdMeters) >= THRESHOLD_LOG_DELTA_METERS }
+            ?: true
+        val nodesChanged = previousNodeIds != selection.nodeIds
+
+        if (nodesChanged) {
+            _checkedNodeIds.value = selection.nodeIds
+        }
+
+        if (nodesChanged || thresholdChanged) {
+            diagnostics.recordEvent(
+                "Automatic checked_nodes update",
+                metadata = mapOf(
+                    "checkedNodes" to selection.nodeIds.size.toString(),
+                    "checkedNodeIds" to selection.nodeIds.sorted().joinToString(","),
+                    "thresholdMeters" to selection.thresholdMeters.toString(),
+                    "baseThresholdMeters" to settingsRepository.closeNodeThresholdMeters.value.toString(),
+                    "directionalLookaheadMeters" to selection.directionalLookaheadMeters.toString(),
+                    "headingDegrees" to (selection.headingDegrees?.toString() ?: "n/a"),
+                    "walkingSpeedMetersPerSecond" to selection.walkingSpeedMetersPerSecond.toString(),
+                    "motionSource" to selection.motionSource,
+                    "nearestFallback" to selection.usedNearestFallback.toString()
+                ),
+                source = "TrackingController.updateAutomaticCheckedNodes"
+            )
+            lastAutomaticThresholdMeters = selection.thresholdMeters
+        }
+    }
+
     private fun AccessPointCatalog.filteredByCheckedNodes(checkedNodeIds: Set<String>): AccessPointCatalog {
         return copy(
             nodes = nodes.filterKeys { it in checkedNodeIds },
             fingerprints = fingerprints.filter { it.locationId in checkedNodeIds }
         )
+    }
+
+    private companion object {
+        const val THRESHOLD_LOG_DELTA_METERS = 0.05
     }
 }
 

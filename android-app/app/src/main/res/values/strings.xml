@@ -20,6 +20,8 @@
     <string name="filter_ssid">Filter SSID</string>
     <string name="filter_ssid_hint">Blank accepts all APs</string>
     <string name="clear_filter_ssid">Clear Filter SSID</string>
+    <string name="close_node_threshold">Close-node threshold</string>
+    <string name="close_node_threshold_hint">Meters / map units</string>
     <string name="settings_saved">Settings saved</string>
     <string name="discard_settings_changes_title">Discard settings changes?</string>
     <string name="discard_settings_changes_message">You have unsaved settings changes. Discard them?</string>

@@ -104,15 +104,16 @@ Button:
 Purpose:
 
 - Edit the SSID used to filter Wi-Fi readings for positioning.
-- Choose which nodes are active for one-off scans and continuous tracking.
+- Set the base threshold for nodes considered close during active tracking.
+- Choose the manual checked-node selection used by one-off scans and as the active-tracking seed/fallback.
 - Make it fast to toggle nearby node clusters while still allowing individual node edits.
 
 Behavior:
 
-1. Opens an `AlertDialog` with an editable Filter SSID field and a scrollable node checkbox list.
+1. Opens an `AlertDialog` with editable Filter SSID and close-node threshold fields plus a scrollable node checkbox list.
 2. Shows group checkboxes first, then individual node checkboxes.
-3. Edits temporary SSID and node-selection values while the dialog is open.
-4. Applies both the SSID and checked-node selection only when Save is tapped.
+3. Edits temporary SSID, threshold, and node-selection values while the dialog is open.
+4. Applies the SSID, threshold, and checked-node selection only when Save is tapped.
 5. Cancel closes the dialog without applying changes.
 
 Groups:
@@ -128,7 +129,11 @@ Group semantics:
 - A group checkbox is checked only when all of its currently loaded member nodes are checked.
 - Overlapping nodes, such as `node-1` and `node-2`, update every affected group after each toggle.
 
-The saved filter SSID is read by `AndroidWifiScanner` when processing Android scan results. `WifiScanSnapshot.readings` contains APs matching that SSID and is used for positioning; `WifiScanSnapshot.allReadings` contains every AP detected by the phone scan for diagnostics. The saved checked-node set is included in the remote `PositioningRequest.checkedNodeIds` for both one-off scans and continuous tracking. Local KNN diagnostics filter the catalog to the same checked nodes before replaying the KNN process.
+The saved filter SSID is read by `AndroidWifiScanner` when processing Android scan results. `WifiScanSnapshot.readings` contains APs matching that SSID and is used for positioning; `WifiScanSnapshot.allReadings` contains every AP detected by the phone scan for diagnostics.
+
+For continuous tracking, the saved checked-node set seeds the session, then `TrackingController` automatically updates `checkedNodeIds` to nearby nodes using the latest estimate, the saved close-node threshold, and phone heading/walking-speed data. Automatic node and threshold changes are logged. When tracking stops, the visible checked-node state returns to the manual Settings selection.
+
+For one-off scans, the automatic updater is not used. The saved checked-node set is sent directly in `PositioningRequest.checkedNodeIds`, and local KNN diagnostics filter the catalog to the same manually selected nodes.
 
 ## Log Panel AP Toggle
 
@@ -187,16 +192,19 @@ Responsibilities:
 
 - Draw the floor plan bitmap.
 - Draw the current user position.
+- Draw the active nearby-node threshold around the current user estimate.
 - In debug mode, draw nodes and AP overlays.
+- In debug mode, highlight checked nodes differently from unchecked nodes.
 - Support pan and pinch zoom with `GestureDetector` and `ScaleGestureDetector`.
 - Detect taps on nodes/APs in debug mode.
 
 Rendering order:
 
 1. Floor plan image.
-2. Debug nodes.
-3. Debug APs and estimated AP signal radius when AP readings exist.
-4. User position.
+2. Active nearby-node threshold.
+3. Debug nodes, with checked nodes highlighted.
+4. Debug APs and estimated AP signal radius when AP readings exist.
+5. User position.
 
 Coordinate conversion:
 
