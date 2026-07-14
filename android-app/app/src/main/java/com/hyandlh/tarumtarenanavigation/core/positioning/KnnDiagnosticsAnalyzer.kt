@@ -3,6 +3,7 @@ package com.hyandlh.tarumtarenanavigation.core.positioning
 import com.hyandlh.tarumtarenanavigation.core.model.AccessPointCatalog
 import com.hyandlh.tarumtarenanavigation.core.model.FingerprintEntry
 import com.hyandlh.tarumtarenanavigation.core.model.KnnDiagnosticReport
+import com.hyandlh.tarumtarenanavigation.core.model.KnnFingerprintDistanceDiagnostic
 import com.hyandlh.tarumtarenanavigation.core.model.KnnNeighborDiagnostic
 import com.hyandlh.tarumtarenanavigation.core.model.KnnNodeDiagnostic
 import com.hyandlh.tarumtarenanavigation.core.model.Node
@@ -23,7 +24,29 @@ class KnnDiagnosticsAnalyzer @Inject constructor() {
             fingerprint.toDistance(liveMap)
         }
         val nearest = fingerprintDistances.sortedBy { it.distance }.take(k)
+        val selectedNeighborKeys = nearest.map { it.locationId to it.scanId }.toSet()
         val weightedResult = calculateWeightedEstimate(nearest, catalog.nodes, snapshot.timestamp)
+        val allFingerprintDistances = fingerprintDistances
+            .sortedBy { it.distance }
+            .mapIndexed { index, distance ->
+                val node = catalog.nodes[distance.locationId]
+                KnnFingerprintDistanceDiagnostic(
+                    rank = index + 1,
+                    locationId = distance.locationId,
+                    scanId = distance.scanId,
+                    distance = distance.distance,
+                    nodeId = node?.nodeId,
+                    nodeName = node?.name,
+                    nodeX = node?.x,
+                    nodeY = node?.y,
+                    floorId = node?.floorId,
+                    matchedBssidCount = distance.matchedBssidCount,
+                    missingFromScanCount = distance.missingFromScanCount,
+                    extraFromScanCount = distance.extraFromScanCount,
+                    fingerprintBssidCount = distance.fingerprintBssidCount,
+                    isSelectedNeighbor = (distance.locationId to distance.scanId) in selectedNeighborKeys
+                )
+            }
         val neighbors = nearest.mapIndexed { index, distance ->
             val node = catalog.nodes[distance.locationId]
             val weight = if (node != null) weightFor(distance.distance) else 0.0
@@ -93,6 +116,7 @@ class KnnDiagnosticsAnalyzer @Inject constructor() {
             nodeCount = catalog.nodes.size,
             localEstimate = weightedResult.estimate,
             floorWeights = weightedResult.floorWeights,
+            allFingerprintDistances = allFingerprintDistances,
             nearestNeighbors = neighbors,
             nodeSummaries = nodeSummaries
         )
@@ -109,7 +133,8 @@ class KnnDiagnosticsAnalyzer @Inject constructor() {
             distance = DistanceUtils.calculateEuclideanDistance(liveMap, fingerprintMap),
             matchedBssidCount = liveBssids.intersect(fingerprintBssids).size,
             missingFromScanCount = fingerprintBssids.subtract(liveBssids).size,
-            extraFromScanCount = liveBssids.subtract(fingerprintBssids).size
+            extraFromScanCount = liveBssids.subtract(fingerprintBssids).size,
+            fingerprintBssidCount = fingerprintBssids.size
         )
     }
 
@@ -170,7 +195,8 @@ class KnnDiagnosticsAnalyzer @Inject constructor() {
         val distance: Double,
         val matchedBssidCount: Int,
         val missingFromScanCount: Int,
-        val extraFromScanCount: Int
+        val extraFromScanCount: Int,
+        val fingerprintBssidCount: Int
     )
 
     private data class WeightedKnnResult(

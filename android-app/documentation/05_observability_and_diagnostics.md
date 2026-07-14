@@ -101,6 +101,7 @@ Important behavior:
 ```text
 TrackingController.startTracking()
   -> DiagnosticsRecorder.startNewSession()
+  -> recordEvent("Tracking checked_nodes mode selected")
   -> recordCatalogUpdate("Fetching latest...")
   -> FingerprintRepository.refreshCatalog()
   -> recordCatalogUpdate("Complete")
@@ -138,6 +139,7 @@ The one-off scan workflow logs:
 - Scan request and scan completion.
 - Saved JSON path and reading count.
 - KNN diagnostic replay update.
+- Saved KNN diagnostics JSON path and full fingerprint-distance count.
 - Checked-node count included in positioning events.
 - Remote positioning latency and result.
 
@@ -159,6 +161,8 @@ Continuous tracking logs every automatic checked-node or dynamic-threshold chang
 
 The same active threshold is drawn on `MapView` around the current user estimate. Checked nodes are highlighted in the debug node layer so the visual state matches the `checkedNodeIds` sent to the positioning request.
 
+Fixed checked-node mode logs the selected tracking mode but does not emit automatic checked-node or threshold updates because it follows the saved Settings selection.
+
 The saved scan JSON gives a stable input artifact for reproducing or comparing API behavior.
 
 ## KNN Process Diagnostics
@@ -168,6 +172,7 @@ The saved scan JSON gives a stable input artifact for reproducing or comparing A
 - RSSI readings used and ignored.
 - Fingerprints and nodes compared.
 - Top-k nearest fingerprints.
+- Euclidean distance to every fingerprint in the active checked-node-filtered catalog.
 - Per-neighbor distance and normalized weight.
 - Per-node best distance and BSSID overlap counts.
 - Per-node contribution percentage.

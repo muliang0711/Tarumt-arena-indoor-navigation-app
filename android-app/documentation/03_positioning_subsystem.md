@@ -51,6 +51,7 @@ Purpose:
 - Compare the active API estimate with a local replay using the same `WifiScanSnapshot` and `AccessPointCatalog`.
 - Rank nodes by closest fingerprint distance.
 - Show the top-k selected fingerprints, each distance, each inverse-distance weight, and each weighted contribution.
+- Preserve the Euclidean distance to every compared fingerprint in `KnnDiagnosticReport.allFingerprintDistances`.
 
 Replay algorithm:
 
@@ -62,7 +63,8 @@ Replay algorithm:
 6. Calculate `weight = 1 / (distance + 0.1)` for selected fingerprints whose nodes exist.
 7. Normalize weights to contribution percentages.
 8. Produce a local replay `PositionEstimate`.
-9. Produce node summaries with best distance, matched BSSID count, missing-from-scan count, extra-from-scan count, selected-neighbor count, and contribution percentage.
+9. Produce a full fingerprint-distance table with rank, location id, scan id, distance, BSSID overlap counts, fingerprint BSSID count, node metadata, and whether the fingerprint was selected as a top-k neighbor.
+10. Produce node summaries with best distance, matched BSSID count, missing-from-scan count, extra-from-scan count, selected-neighbor count, and contribution percentage.
 
 Consumers:
 
@@ -88,7 +90,9 @@ The use of dynamic `@Url` means Retrofit's base URL in `DataModule` is only a de
 
 `PositioningRequest` is the live `WifiScanSnapshot` fields plus `checkedNodeIds`. `TrackingController` owns both the saved manual checked-node selection and the active checked-node set sent to `ApiPositioningEngine`. The API server uses that list as the active node registry for the KNN calculation.
 
-During continuous tracking, the active checked-node set is updated automatically from the latest `PositionEstimate`. `NearbyNodeSelector` selects enabled nodes on the same floor within the Settings close-node threshold, expands that threshold using walking speed, and includes forward nodes using the phone heading. If no node is inside the dynamic range, it falls back to the nearest node so the API request never becomes empty because of the selector.
+During continuous tracking, the user chooses the checked-node mode when tapping Start Tracking. In dynamic mode, the active checked-node set is updated automatically from the latest `PositionEstimate`. `NearbyNodeSelector` selects enabled nodes on the same floor within the Settings close-node threshold, expands that threshold using walking speed, and includes forward nodes using the phone heading. If no node is inside the dynamic range, it falls back to the nearest node so the API request never becomes empty because of the selector.
+
+In fixed mode, continuous tracking bypasses `NearbyNodeSelector`, does not start phone motion monitoring, clears the dynamic threshold overlay, and sends the manually saved Settings checked-node selection on every positioning request.
 
 One-off scans bypass the automatic nearby-node selector and use the manually saved checked-node selection from Settings.
 

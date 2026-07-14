@@ -21,6 +21,7 @@ Responsibilities:
 - Request permissions.
 - Render tracking status, pause/resume controls, one-off scan controls, debug toggle, map, node details, KNN diagnostics, scan readings, and log stream.
 - Render active checked-node and close-threshold overlays on `MapView`.
+- Prompt for dynamic or fixed checked-node mode when the user starts tracking.
 - Observe state exposed by `TrackingViewModel`.
 - Avoid direct Wi-Fi, repository, or positioning work.
 
@@ -39,6 +40,7 @@ Responsibilities:
 - Combine catalog data and scan snapshots.
 - Keep the saved manual checked-node selection separate from the automatic active-tracking checked-node selection.
 - Update active-tracking checked nodes to nearby nodes using the latest estimate, Settings threshold, heading, and walking-speed estimate.
+- In fixed checked-node mode, skip the automatic updater and send the saved manual Settings selection on every continuous scan.
 - Call the active `PositioningEngine`.
 - Compute local KNN diagnostic replays for observability.
 - Save one-off scan snapshots as JSON.
@@ -86,9 +88,10 @@ Responsibilities:
 ```text
 User taps Start
   -> MainActivity
-  -> TrackingViewModel.toggleTracking()
-  -> TrackingController.startTracking()
-  -> MotionSensorMonitor.startMonitoring()
+  -> User chooses dynamic checked nodes or fixed checked nodes
+  -> TrackingViewModel.startTracking(mode)
+  -> TrackingController.startTracking(mode)
+  -> MotionSensorMonitor.startMonitoring() only in dynamic mode
   -> TrackingController seeds checkedNodeIds from the manual Settings selection
   -> FingerprintRepository.refreshCatalog()
       -> GET {KNN_API_BASE_URL}/nodes
@@ -99,14 +102,15 @@ User taps Start
       -> Android WifiManager + BroadcastReceiver
       -> WifiScanSnapshot(readings filtered to TARUMT-ARENA)
   -> TrackingController combines catalog + snapshot
-  -> NearbyNodeSelector updates checkedNodeIds from the latest estimate when available
+  -> Dynamic mode: NearbyNodeSelector updates checkedNodeIds from the latest estimate when available
+  -> Fixed mode: TrackingController keeps checkedNodeIds equal to the manual Settings selection
   -> KnnDiagnosticsAnalyzer.analyze(snapshot, catalog filtered to checked nodes)
       -> local replay of checked-node API-style WKNN distances, weights, and estimate
   -> ApiPositioningEngine.calculatePosition(snapshot, catalog, checkedNodeIds)
       -> POST {KNN_API_BASE_URL}/calcPosition
          body includes timestamp, readings, metadata, checkedNodeIds
       -> PositioningResponse(estimate, nodeDistances)
-  -> NearbyNodeSelector updates checkedNodeIds for the next active tracking scan
+  -> Dynamic mode: NearbyNodeSelector updates checkedNodeIds for the next active tracking scan
   -> TrackingViewModel exposes state
   -> MainActivity and dialogs render updates
   -> MapView draws the dynamic threshold and checked-node highlights
@@ -126,6 +130,8 @@ User taps Scan once, save JSON, position
       -> app internal files/wifi-scans/wifi-scan-{timestamp}.json
   -> KnnDiagnosticsAnalyzer.analyze(snapshot, catalog filtered to manually saved checked nodes)
   -> ApiPositioningEngine.calculatePosition(snapshot, catalog, manual checkedNodeIds)
+  -> KnnDiagnosticsJsonStore.save(artifact)
+      -> public Documents/Arena Navigation/knn-diagnostics/knn-diagnostics-{timestamp}.json on Android 10+
   -> Map, KNN diagnostics, logs, and current position update
 ```
 
@@ -149,6 +155,7 @@ Active:
 - Local KNN diagnostic replay through `KnnDiagnosticsAnalyzer`.
 - Active-tracking nearby-node selection through `NearbyNodeSelector` and `MotionSensorMonitor`.
 - One-off scan JSON persistence through `WifiScanSnapshotStore`.
+- One-off KNN diagnostics JSON persistence through `KnnDiagnosticsJsonStore`.
 
 Alternate or currently unbound:
 
@@ -172,6 +179,7 @@ When changing which algorithm or data source is active, update the Hilt module f
 | Checked nodes | `TrackingController.checkedNodeIds` | `MapView` checked-node highlight, Settings dialog |
 | KNN diagnostic replay | `TrackingController.knnDiagnostics` | `KnnDiagnosticsDialogFragment` |
 | Last saved scan path | `TrackingController.lastSavedScanPath` | `KnnDiagnosticsDialogFragment`, logs |
+| Last saved diagnostics path | `TrackingController.lastSavedDiagnosticsPath` | `KnnDiagnosticsDialogFragment`, logs |
 | One-off scan running flag | `TrackingController.isOneOffScanRunning` | `MainActivity` |
 | Catalog nodes/fingerprints/AP locations | `PositioningDataRepository.getCatalogFlow()` via `TrackingViewModel` | `MapView`, node details |
 | Logs | `InMemoryLogStore.logs` | `LogPanelDialogFragment` |

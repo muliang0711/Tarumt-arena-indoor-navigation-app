@@ -51,7 +51,7 @@ These are the bindings that determine the app's current behavior:
 - `FingerprintRepository` fetches `/nodes` and `/fingerprints` from `GlobalConfig.KNN_API_BASE_URL`.
 - `ApiPositioningEngine` sends scans to `/calcPosition` on the same KNN API base URL.
 - `KnnDiagnosticsAnalyzer` mirrors the API server's WKNN logic locally for observability; it does not replace the active remote engine.
-- During continuous tracking, `TrackingController` automatically updates `checkedNodeIds` to nodes near the latest estimate. The close-node threshold comes from Settings and is expanded with phone heading/walking-speed sensor data.
+- When starting continuous tracking, the user chooses dynamic checked nodes or fixed checked nodes. Dynamic mode updates `checkedNodeIds` to nodes near the latest estimate using the Settings threshold plus phone heading/walking-speed sensor data. Fixed mode keeps using the manually saved Settings checked-node list for every scan.
 - One-off scans do not use the automatic nearby-node updater; they use the manually saved checked-node selection.
 - The one-off scan workflow captures a single Wi-Fi scan, saves it under the app's internal `wifi-scans/` directory as JSON, runs positioning on that exact snapshot, and updates the KNN diagnostics panel.
 - `DiagnosticsRecorder` is the primary visible logging path. It writes the same formatted log line to the in-app log store and to `AndroidAppLogger`, whose Android implementation also writes to stdout/stderr.

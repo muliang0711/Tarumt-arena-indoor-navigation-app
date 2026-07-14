@@ -26,6 +26,7 @@ import com.hyandlh.tarumtarenanavigation.core.model.Node
 import com.hyandlh.tarumtarenanavigation.core.model.PositionEstimate
 import com.hyandlh.tarumtarenanavigation.core.model.TrackingState
 import com.hyandlh.tarumtarenanavigation.databinding.ActivityMainBinding
+import com.hyandlh.tarumtarenanavigation.feature.tracking.CheckedNodeSelectionMode
 import com.hyandlh.tarumtarenanavigation.feature.tracking.KnnDiagnosticsDialogFragment
 import com.hyandlh.tarumtarenanavigation.feature.tracking.LogPanelDialogFragment
 import com.hyandlh.tarumtarenanavigation.feature.tracking.NodeDetailsDialogFragment
@@ -49,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var coordinateConverter: CoordinateConverter
 
     private var pendingPermissionAction: PendingPermissionAction? = null
+    private var pendingTrackingMode: CheckedNodeSelectionMode? = null
     private var lastNoUsableReadingsDialogTimestamp: Long? = null
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -57,7 +59,9 @@ class MainActivity : AppCompatActivity() {
         val allGranted = permissions.entries.all { it.value }
         if (allGranted) {
             when (pendingPermissionAction) {
-                PendingPermissionAction.START_TRACKING -> viewModel.toggleTracking()
+                PendingPermissionAction.START_TRACKING -> {
+                    viewModel.startTracking(pendingTrackingMode ?: CheckedNodeSelectionMode.DYNAMIC)
+                }
                 PendingPermissionAction.ONE_OFF_SCAN -> viewModel.runOneOffScan()
                 null -> Unit
             }
@@ -65,6 +69,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Permissions required for tracking", Toast.LENGTH_SHORT).show()
         }
         pendingPermissionAction = null
+        pendingTrackingMode = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -113,11 +118,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.toggleTrackingButton.setOnClickListener {
-            if (hasPermissions()) {
-                viewModel.toggleTracking()
-            } else {
-                requestPermissions(PendingPermissionAction.START_TRACKING)
-            }
+            handleTrackingButtonClick()
         }
 
         binding.oneOffScanButton.setOnClickListener {
@@ -261,6 +262,42 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.no_usable_readings_message_no_filter)
         } else {
             getString(R.string.no_usable_readings_message, filterSsid)
+        }
+    }
+
+    private fun handleTrackingButtonClick() {
+        if (viewModel.trackingState.value is TrackingState.Idle || viewModel.trackingState.value is TrackingState.Error) {
+            showTrackingModeDialog()
+        } else {
+            viewModel.stopTracking()
+        }
+    }
+
+    private fun showTrackingModeDialog() {
+        val modes = arrayOf(
+            getString(R.string.tracking_mode_dynamic_checked_nodes),
+            getString(R.string.tracking_mode_fixed_checked_nodes)
+        )
+        AlertDialog.Builder(this)
+            .setTitle(R.string.select_tracking_mode)
+            .setItems(modes) { _, which ->
+                val mode = if (which == 0) {
+                    CheckedNodeSelectionMode.DYNAMIC
+                } else {
+                    CheckedNodeSelectionMode.FIXED
+                }
+                startTrackingWithMode(mode)
+            }
+            .setNegativeButton(android.R.string.cancel, null)
+            .show()
+    }
+
+    private fun startTrackingWithMode(mode: CheckedNodeSelectionMode) {
+        if (hasPermissions()) {
+            viewModel.startTracking(mode)
+        } else {
+            pendingTrackingMode = mode
+            requestPermissions(PendingPermissionAction.START_TRACKING)
         }
     }
 

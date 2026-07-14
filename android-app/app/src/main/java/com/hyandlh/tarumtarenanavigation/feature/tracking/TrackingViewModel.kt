@@ -42,6 +42,7 @@ class TrackingViewModel @Inject constructor(
     val nodeDistances: StateFlow<Map<String, Double>>? = trackingController.nodeDistances
     val knnDiagnostics = trackingController.knnDiagnostics
     val lastSavedScanPath = trackingController.lastSavedScanPath
+    val lastSavedDiagnosticsPath = trackingController.lastSavedDiagnosticsPath
     val isOneOffScanRunning = trackingController.isOneOffScanRunning
     val checkedNodeIds: StateFlow<Set<String>> = trackingController.checkedNodeIds
     val nearbyNodeSelection: StateFlow<NearbyNodeSelection?> = trackingController.nearbyNodeSelection
@@ -98,10 +99,18 @@ class TrackingViewModel @Inject constructor(
 
     fun toggleTracking() {
         if (trackingState.value is TrackingState.Idle || trackingState.value is TrackingState.Error) {
-            trackingController.startTracking()
+            trackingController.startTracking(CheckedNodeSelectionMode.DYNAMIC)
         } else {
             trackingController.stopTracking()
         }
+    }
+
+    fun startTracking(mode: CheckedNodeSelectionMode) {
+        trackingController.startTracking(mode)
+    }
+
+    fun stopTracking() {
+        trackingController.stopTracking()
     }
 
     fun togglePauseResume() {

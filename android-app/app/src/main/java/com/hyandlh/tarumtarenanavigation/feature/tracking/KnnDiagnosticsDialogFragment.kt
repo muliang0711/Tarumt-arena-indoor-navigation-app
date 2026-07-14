@@ -48,11 +48,17 @@ class KnnDiagnosticsDialogFragment : DialogFragment() {
                 combine(
                     viewModel.knnDiagnostics,
                     viewModel.currentPosition,
-                    viewModel.lastSavedScanPath
-                ) { report, apiEstimate, savedPath ->
-                    Triple(report, apiEstimate, savedPath)
-                }.collect { (report, apiEstimate, savedPath) ->
-                    updateUi(report, apiEstimate, savedPath)
+                    viewModel.lastSavedScanPath,
+                    viewModel.lastSavedDiagnosticsPath
+                ) { report, apiEstimate, savedPath, diagnosticsPath ->
+                    KnnDiagnosticsUiState(report, apiEstimate, savedPath, diagnosticsPath)
+                }.collect { state ->
+                    updateUi(
+                        report = state.report,
+                        apiEstimate = state.apiEstimate,
+                        savedPath = state.savedScanPath,
+                        savedDiagnosticsPath = state.savedDiagnosticsPath
+                    )
                 }
             }
         }
@@ -65,7 +71,8 @@ class KnnDiagnosticsDialogFragment : DialogFragment() {
     private fun updateUi(
         report: KnnDiagnosticReport?,
         apiEstimate: PositionEstimate?,
-        savedPath: String?
+        savedPath: String?,
+        savedDiagnosticsPath: String?
     ) {
         if (report == null) {
             binding.summaryText.text = "No KNN diagnostics yet. Run tracking or use the one-off scan button."
@@ -73,14 +80,15 @@ class KnnDiagnosticsDialogFragment : DialogFragment() {
             return
         }
 
-        binding.summaryText.text = buildSummary(report, apiEstimate, savedPath)
+        binding.summaryText.text = buildSummary(report, apiEstimate, savedPath, savedDiagnosticsPath)
         adapter.submitList(report.nodeSummaries.take(MAX_NODE_ROWS))
     }
 
     private fun buildSummary(
         report: KnnDiagnosticReport,
         apiEstimate: PositionEstimate?,
-        savedPath: String?
+        savedPath: String?,
+        savedDiagnosticsPath: String?
     ): String {
         val local = report.localEstimate
         val api = apiEstimate?.let {
@@ -116,10 +124,12 @@ class KnnDiagnosticsDialogFragment : DialogFragment() {
             appendLine("scan=${dateFormat.format(Date(report.snapshotTimestamp))} k=${report.k} penalty=${report.penaltyRssi}")
             appendLine("readings total=${report.totalReadings} used=${report.usedReadings} ignored=${report.ignoredReadings} uniqueBssid=${report.uniqueLiveBssidCount}")
             appendLine("catalog fingerprints=${report.fingerprintCount} nodes=${report.nodeCount}")
+            appendLine("all fingerprint distances=${report.allFingerprintDistances.size}")
             appendLine("API estimate:   $api")
             appendLine("Local replay:   $localEstimate")
             appendLine("floorWeights:   $floorWeights")
-            appendLine("saved JSON:     ${savedPath ?: "N/A"}")
+            appendLine("scan JSON:      ${savedPath ?: "N/A"}")
+            appendLine("diagnostics JSON: ${savedDiagnosticsPath ?: "N/A"}")
             appendLine()
             appendLine("nearest fingerprints:")
             append(neighbors.ifEmpty { "none" })
@@ -144,3 +154,10 @@ class KnnDiagnosticsDialogFragment : DialogFragment() {
         private const val MAX_NODE_ROWS = 40
     }
 }
+
+private data class KnnDiagnosticsUiState(
+    val report: KnnDiagnosticReport?,
+    val apiEstimate: PositionEstimate?,
+    val savedScanPath: String?,
+    val savedDiagnosticsPath: String?
+)

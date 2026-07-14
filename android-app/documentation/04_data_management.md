@@ -135,10 +135,12 @@ This repository is not currently bound to `PositioningDataRepository`, so it is 
 Class:
 
 - `core.wifi.WifiScanSnapshotStore`
+- `core.positioning.KnnDiagnosticsJsonStore`
 
 Behavior:
 
-- Saves a `WifiScanSnapshot` as JSON using Gson.
+- `WifiScanSnapshotStore` saves a `WifiScanSnapshot` as JSON using Gson.
+- `KnnDiagnosticsJsonStore` saves one-off KNN diagnostics artifacts to public Documents under `Arena Navigation/knn-diagnostics/knn-diagnostics-{timestamp}.json` on Android 10+ through MediaStore. Older devices fall back to app-specific external Documents. The artifact includes the scan JSON path, checked-node ids, API estimate, local replay report, and `allFingerprintDistances`.
 - Writes files to the app's internal files directory under `wifi-scans/`.
 - Uses filename `wifi-scan-{snapshot.timestamp}.json`.
 - Returns the absolute file path, which is stored in `TrackingController.lastSavedScanPath` and logged through diagnostics.

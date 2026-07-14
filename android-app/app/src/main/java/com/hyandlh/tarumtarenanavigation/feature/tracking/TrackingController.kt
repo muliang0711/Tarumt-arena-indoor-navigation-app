@@ -6,12 +6,14 @@ import com.hyandlh.tarumtarenanavigation.core.common.AppResult
 import com.hyandlh.tarumtarenanavigation.core.model.AccessPointCatalog
 import com.hyandlh.tarumtarenanavigation.core.model.KnnDiagnosticReport
 import com.hyandlh.tarumtarenanavigation.core.model.Node
+import com.hyandlh.tarumtarenanavigation.core.model.OneOffKnnDiagnosticsArtifact
 import com.hyandlh.tarumtarenanavigation.core.model.PositionEstimate
 import com.hyandlh.tarumtarenanavigation.core.model.TrackingState
 import com.hyandlh.tarumtarenanavigation.core.model.WifiScanSnapshot
 import com.hyandlh.tarumtarenanavigation.core.motion.MotionSensorMonitor
 import com.hyandlh.tarumtarenanavigation.core.observability.DiagnosticsRecorder
 import com.hyandlh.tarumtarenanavigation.core.positioning.KnnDiagnosticsAnalyzer
+import com.hyandlh.tarumtarenanavigation.core.positioning.KnnDiagnosticsJsonStore
 import com.hyandlh.tarumtarenanavigation.core.positioning.PositioningEngine
 import com.hyandlh.tarumtarenanavigation.core.settings.SettingsRepository
 import com.hyandlh.tarumtarenanavigation.core.wifi.WifiScanSource
@@ -34,6 +36,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
+enum class CheckedNodeSelectionMode {
+    DYNAMIC,
+    FIXED
+}
+
 @Singleton
 class TrackingController @Inject constructor(
     private val wifiScanner: WifiScanSource,
@@ -42,6 +49,7 @@ class TrackingController @Inject constructor(
     private val diagnostics: DiagnosticsRecorder,
     private val knnDiagnosticsAnalyzer: KnnDiagnosticsAnalyzer,
     private val snapshotStore: WifiScanSnapshotStore,
+    private val diagnosticsJsonStore: KnnDiagnosticsJsonStore,
     private val settingsRepository: SettingsRepository,
     private val motionSensorMonitor: MotionSensorMonitor,
     private val nearbyNodeSelector: NearbyNodeSelector
@@ -65,6 +73,9 @@ class TrackingController @Inject constructor(
 
     private val _lastSavedScanPath = MutableStateFlow<String?>(null)
     val lastSavedScanPath: StateFlow<String?> = _lastSavedScanPath.asStateFlow()
+
+    private val _lastSavedDiagnosticsPath = MutableStateFlow<String?>(null)
+    val lastSavedDiagnosticsPath: StateFlow<String?> = _lastSavedDiagnosticsPath.asStateFlow()
 
     private val _isOneOffScanRunning = MutableStateFlow(false)
     val isOneOffScanRunning: StateFlow<Boolean> = _isOneOffScanRunning.asStateFlow()
@@ -109,11 +120,20 @@ class TrackingController @Inject constructor(
         )
     }
 
-    fun startTracking() {
+    fun startTracking(mode: CheckedNodeSelectionMode = CheckedNodeSelectionMode.DYNAMIC) {
         if (trackingJob?.isActive == true) return
         
         diagnostics.startNewSession()
-        motionSensorMonitor.startMonitoring()
+        if (mode == CheckedNodeSelectionMode.DYNAMIC) {
+            motionSensorMonitor.startMonitoring()
+        } else {
+            _nearbyNodeSelection.value = null
+        }
+        diagnostics.recordEvent(
+            "Tracking checked_nodes mode selected",
+            metadata = mapOf("mode" to mode.name.lowercase()),
+            source = "TrackingController.startTracking"
+        )
         _isPaused.value = false
         
         trackingJob = scope.launch {
@@ -142,10 +162,18 @@ class TrackingController @Inject constructor(
             ) { catalog, snapshot ->
                 if (catalog != null && snapshot.readings.isNotEmpty()) {
                     syncDefaultCheckedNodes(catalog.nodes.values)
-                    currentPosition.value?.let { estimate ->
-                        updateAutomaticCheckedNodes(estimate, catalog)
+                    if (mode == CheckedNodeSelectionMode.DYNAMIC) {
+                        currentPosition.value?.let { estimate ->
+                            updateAutomaticCheckedNodes(estimate, catalog)
+                        }
+                    } else {
+                        updateFixedCheckedNodes(catalog)
                     }
-                    val activeCheckedNodeIds = activeCheckedNodeIds(catalog)
+                    val activeCheckedNodeIds = if (mode == CheckedNodeSelectionMode.DYNAMIC) {
+                        activeCheckedNodeIds(catalog)
+                    } else {
+                        manualCheckedNodeIds(catalog)
+                    }
                     val activeCatalog = catalog.filteredByCheckedNodes(activeCheckedNodeIds)
                     _state.value = TrackingState.Positioning
                     _latestSnapshot.value = snapshot
@@ -156,12 +184,15 @@ class TrackingController @Inject constructor(
                         metadata = mapOf(
                             "nearestNode" to (report.nodeSummaries.firstOrNull()?.nodeId ?: "none"),
                             "nearestDistance" to (report.nodeSummaries.firstOrNull()?.bestDistance?.toString() ?: "n/a"),
-                            "checkedNodes" to activeCheckedNodeIds.size.toString()
+                            "checkedNodes" to activeCheckedNodeIds.size.toString(),
+                            "checkedNodeMode" to mode.name.lowercase()
                         ),
                         source = "TrackingController.startTracking"
                     )
                     val estimate = positioningEngine.calculatePosition(snapshot, catalog, activeCheckedNodeIds)
-                    updateAutomaticCheckedNodes(estimate, catalog)
+                    if (mode == CheckedNodeSelectionMode.DYNAMIC) {
+                        updateAutomaticCheckedNodes(estimate, catalog)
+                    }
                 } else if (catalog == null) {
                     _state.value = TrackingState.Error("AP Catalog vanished from cache")
                 }
@@ -239,6 +270,27 @@ class TrackingController @Inject constructor(
             val report = knnDiagnosticsAnalyzer.analyze(snapshot, activeCatalog)
             _knnDiagnostics.value = report
             val estimate = positioningEngine.calculatePosition(snapshot, catalog, oneOffCheckedNodeIds)
+            val diagnosticsFile = diagnosticsJsonStore.save(
+                OneOffKnnDiagnosticsArtifact(
+                    generatedAt = System.currentTimeMillis(),
+                    snapshotTimestamp = snapshot.timestamp,
+                    scanJsonPath = savedFile.absolutePath,
+                    checkedNodeIds = oneOffCheckedNodeIds.sorted(),
+                    apiEstimate = estimate,
+                    report = report
+                )
+            )
+            _lastSavedDiagnosticsPath.value = diagnosticsFile.path
+            diagnostics.recordEvent(
+                "One-off KNN diagnostics saved as JSON",
+                metadata = mapOf(
+                    "path" to diagnosticsFile.path,
+                    "uri" to (diagnosticsFile.uri ?: "n/a"),
+                    "fingerprintDistances" to report.allFingerprintDistances.size.toString(),
+                    "checkedNodes" to oneOffCheckedNodeIds.size.toString()
+                ),
+                source = "TrackingController.runOneOffScan"
+            )
             diagnostics.recordEvent(
                 "One-off positioning complete",
                 metadata = mapOf(
@@ -255,6 +307,7 @@ class TrackingController @Inject constructor(
                 OneOffScanResult(
                     snapshot = snapshot,
                     savedPath = savedFile.absolutePath,
+                    savedDiagnosticsPath = diagnosticsFile.path,
                     estimate = estimate,
                     diagnostics = report
                 )
@@ -365,6 +418,14 @@ class TrackingController @Inject constructor(
         lastAutomaticThresholdMeters = null
     }
 
+    private fun updateFixedCheckedNodes(catalog: AccessPointCatalog) {
+        val fixedNodeIds = manualCheckedNodeIds(catalog)
+        if (_checkedNodeIds.value != fixedNodeIds) {
+            _checkedNodeIds.value = fixedNodeIds
+        }
+        _nearbyNodeSelection.value = null
+    }
+
     private fun updateAutomaticCheckedNodes(
         estimate: PositionEstimate,
         catalog: AccessPointCatalog
@@ -425,6 +486,7 @@ class TrackingController @Inject constructor(
 data class OneOffScanResult(
     val snapshot: WifiScanSnapshot,
     val savedPath: String,
+    val savedDiagnosticsPath: String,
     val estimate: PositionEstimate,
     val diagnostics: KnnDiagnosticReport
 )

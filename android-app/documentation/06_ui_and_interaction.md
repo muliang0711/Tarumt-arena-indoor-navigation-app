@@ -14,7 +14,7 @@ Responsibilities:
   - `ACCESS_WIFI_STATE`
   - `CHANGE_WIFI_STATE`
 - Wire buttons:
-  - Start/stop tracking.
+  - Start/stop tracking, including checked-node mode selection on start.
   - Pause/resume scanning.
   - Run a one-off scan, save JSON, and position that scan.
   - Open node-selection dialog for checked/unchecked KNN nodes.
@@ -34,6 +34,7 @@ Observed streams:
 - `lastSavedScanPath`
 - `isOneOffScanRunning`
 - `checkedNodeIds`
+- `nearbyNodeSelection`
 - `isPaused` combined with `transitionState`
 
 ## TrackingViewModel
@@ -79,6 +80,15 @@ The controller exposes:
 
 `StaleData` exists in the model but is not currently rendered with custom UI behavior.
 
+## Tracking Mode Selection
+
+When the user taps Start Tracking from `Idle` or `Error`, `MainActivity` opens a mode picker:
+
+- Dynamic checked nodes list: starts tracking with the nearby-node selector, dynamic threshold, and phone sensor inputs.
+- Fixed checked nodes list: starts tracking with the manually saved Settings checked-node list and does not run the dynamic threshold updater.
+
+When tracking is already active, the same button stops tracking immediately.
+
 ## One-Off Scan Control
 
 Button:
@@ -90,8 +100,9 @@ Behavior:
 1. Checks the same Wi-Fi/location permissions as tracking.
 2. Calls `TrackingViewModel.runOneOffScan()`.
 3. `TrackingController.runOneOffScan()` refreshes the catalog, requests one fresh scan, saves the scan JSON, computes a KNN diagnostic replay, and runs the active remote positioning engine.
-4. The button is disabled and renamed while the scan is running.
-5. The map position, latest scan, log panel, and KNN diagnostics panel update from the one-off result.
+4. Saves a KNN diagnostics JSON artifact under public Documents in `Arena Navigation/knn-diagnostics/` on Android 10+.
+5. The button is disabled and renamed while the scan is running.
+6. The map position, latest scan, log panel, and KNN diagnostics panel update from the one-off result.
 
 The one-off flow refuses to run while continuous tracking is active; stop tracking first.
 
@@ -131,7 +142,9 @@ Group semantics:
 
 The saved filter SSID is read by `AndroidWifiScanner` when processing Android scan results. `WifiScanSnapshot.readings` contains APs matching that SSID and is used for positioning; `WifiScanSnapshot.allReadings` contains every AP detected by the phone scan for diagnostics.
 
-For continuous tracking, the saved checked-node set seeds the session, then `TrackingController` automatically updates `checkedNodeIds` to nearby nodes using the latest estimate, the saved close-node threshold, and phone heading/walking-speed data. Automatic node and threshold changes are logged. When tracking stops, the visible checked-node state returns to the manual Settings selection.
+For continuous tracking in dynamic mode, the saved checked-node set seeds the session, then `TrackingController` automatically updates `checkedNodeIds` to nearby nodes using the latest estimate, the saved close-node threshold, and phone heading/walking-speed data. Automatic node and threshold changes are logged. When tracking stops, the visible checked-node state returns to the manual Settings selection.
+
+For continuous tracking in fixed mode, `TrackingController` sends the saved checked-node set from Settings on every scan. This matches the old continuous-tracking behavior and the one-off scan behavior.
 
 For one-off scans, the automatic updater is not used. The saved checked-node set is sent directly in `PositioningRequest.checkedNodeIds`, and local KNN diagnostics filter the catalog to the same manually selected nodes.
 
@@ -162,7 +175,9 @@ Displayed summary:
 - Local replay estimate.
 - Floor weights.
 - Saved one-off JSON path when available.
+- Saved one-off diagnostics JSON path when available.
 - Top-k nearest fingerprints with distance, normalized weight, and BSSID overlap counts.
+- Count of all fingerprint distances included in the saved diagnostics report.
 
 Ranked node list:
 
