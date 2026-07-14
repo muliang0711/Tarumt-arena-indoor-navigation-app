@@ -105,15 +105,16 @@ class KnnDiagnosticsDialogFragment : DialogFragment() {
         val neighbors = report.nearestNeighbors.joinToString("\n") { neighbor ->
             String.format(
                 Locale.US,
-                "#%d %s scanId=%d dist=%.2f weight=%.1f%% matched=%d missing=%d extra=%d",
+                "#%d %s bestScan=%d locationDist=%.2f weight=%.1f%% overlap=%.1f%% matched=%d/%d refs=%d",
                 neighbor.rank,
                 neighbor.locationId,
                 neighbor.scanId,
                 neighbor.distance,
                 neighbor.normalizedWeight * 100.0,
+                neighbor.overlapRatio * 100.0,
                 neighbor.matchedBssidCount,
-                neighbor.missingFromScanCount,
-                neighbor.extraFromScanCount
+                neighbor.unionBssidCount,
+                neighbor.fingerprintCount
             )
         }
         val floorWeights = report.floorWeights.entries.joinToString(", ") { (floor, weight) ->
@@ -121,9 +122,10 @@ class KnnDiagnosticsDialogFragment : DialogFragment() {
         }.ifEmpty { "none" }
 
         return buildString {
-            appendLine("scan=${dateFormat.format(Date(report.snapshotTimestamp))} k=${report.k} penalty=${report.penaltyRssi}")
+            appendLine("scan=${dateFormat.format(Date(report.snapshotTimestamp))} locationK=${report.k} bestRefs=${report.fingerprintsPerLocation}")
+            appendLine("metric=${report.distanceMetric} minMatched=${report.minMatchedBssids} penalty=${report.penaltyRssi}")
             appendLine("readings total=${report.totalReadings} used=${report.usedReadings} ignored=${report.ignoredReadings} uniqueBssid=${report.uniqueLiveBssidCount}")
-            appendLine("catalog fingerprints=${report.fingerprintCount} nodes=${report.nodeCount}")
+            appendLine("catalog fingerprints=${report.fingerprintCount} eligible=${report.eligibleFingerprintCount} nodes=${report.nodeCount}")
             appendLine("all fingerprint distances=${report.allFingerprintDistances.size}")
             appendLine("API estimate:   $api")
             appendLine("Local replay:   $localEstimate")
@@ -131,7 +133,7 @@ class KnnDiagnosticsDialogFragment : DialogFragment() {
             appendLine("scan JSON:      ${savedPath ?: "N/A"}")
             appendLine("diagnostics JSON: ${savedDiagnosticsPath ?: "N/A"}")
             appendLine()
-            appendLine("nearest fingerprints:")
+            appendLine("nearest location candidates:")
             append(neighbors.ifEmpty { "none" })
         }
     }

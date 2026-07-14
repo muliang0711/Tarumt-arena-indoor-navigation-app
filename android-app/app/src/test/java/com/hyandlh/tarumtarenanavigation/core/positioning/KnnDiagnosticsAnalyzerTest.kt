@@ -17,12 +17,13 @@ class KnnDiagnosticsAnalyzerTest {
     private val analyzer = KnnDiagnosticsAnalyzer()
 
     @Test
-    fun `analyze includes euclidean distance for every fingerprint`() {
+    fun `analyze includes normalized distance for every eligible fingerprint`() {
         val snapshot = WifiScanSnapshot(
             timestamp = 1000L,
             readings = listOf(
                 WifiScanReading("ap1", -50, 1000L),
-                WifiScanReading("ap2", -60, 1000L)
+                WifiScanReading("ap2", -60, 1000L),
+                WifiScanReading("ap3", -70, 1000L)
             )
         )
         val catalog = AccessPointCatalog(
@@ -63,7 +64,8 @@ class KnnDiagnosticsAnalyzerTest {
             scanId = scanId,
             apList = listOf(
                 FingerprintAP("ap1", ap1Rssi),
-                FingerprintAP("ap2", ap2Rssi)
+                FingerprintAP("ap2", ap2Rssi),
+                FingerprintAP("ap3", -70)
             )
         )
     }

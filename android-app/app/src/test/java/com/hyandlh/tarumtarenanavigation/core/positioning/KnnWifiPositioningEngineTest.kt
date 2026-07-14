@@ -38,7 +38,8 @@ class KnnWifiPositioningEngineTest {
         // Live scan matches loc1 perfectly
         val readings = listOf(
             WifiScanReading("ap1", -50, 1000L),
-            WifiScanReading("ap2", -60, 1000L)
+            WifiScanReading("ap2", -60, 1000L),
+            WifiScanReading("ap3", -70, 1000L)
         )
         val snapshot = WifiScanSnapshot(1000L, readings)
         val fingerprints = listOf(
@@ -46,13 +47,21 @@ class KnnWifiPositioningEngineTest {
                 locationId = "loc1",
                 timestamp = 1000L,
                 scanId = 1,
-                apList = listOf(FingerprintAP("ap1", -50), FingerprintAP("ap2", -60))
+                apList = listOf(
+                    FingerprintAP("ap1", -50),
+                    FingerprintAP("ap2", -60),
+                    FingerprintAP("ap3", -70)
+                )
             ),
             FingerprintEntry(
                 locationId = "loc2",
                 timestamp = 1000L,
                 scanId = 2,
-                apList = listOf(FingerprintAP("ap1", -80), FingerprintAP("ap2", -90))
+                apList = listOf(
+                    FingerprintAP("ap1", -80),
+                    FingerprintAP("ap2", -90),
+                    FingerprintAP("ap3", -90)
+                )
             )
         )
         val nodes = mapOf(

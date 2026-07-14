@@ -29,7 +29,7 @@ Flow:
 4. The server returns `PositioningResponse`.
 5. The engine updates `currentPosition` with `response.estimate`.
 6. The engine updates `nodeDistances` with `response.nodeDistances`.
-7. Diagnostics include request URL, reading count, latency, raw estimate, node-distance count, failures, and heartbeat events.
+7. Diagnostics include request URL, reading count, latency, raw estimate, node-distance count, candidate count, best candidate/overlap, failures, and heartbeat events.
 
 The smoother is injected but currently not applied in `ApiPositioningEngine`; `finalEstimate` is assigned directly from the raw API estimate.
 
@@ -49,22 +49,22 @@ Purpose:
 
 - Explain how the API-style WKNN result was produced without needing the server to return a verbose trace.
 - Compare the active API estimate with a local replay using the same `WifiScanSnapshot` and `AccessPointCatalog`.
-- Rank nodes by closest fingerprint distance.
-- Show the top-k selected fingerprints, each distance, each inverse-distance weight, and each weighted contribution.
-- Preserve the Euclidean distance to every compared fingerprint in `KnnDiagnosticReport.allFingerprintDistances`.
+- Rank nodes by an aggregate of their best eligible fingerprint distances.
+- Show the selected distinct location candidates, overlap, relative weight, and contribution.
+- Preserve the normalized distance to every eligible fingerprint in `KnnDiagnosticReport.allFingerprintDistances`.
 
 Replay algorithm:
 
 1. Use only live readings with RSSI >= -90 dBm.
 2. Convert the live scan and each fingerprint to BSSID-to-RSSI maps.
-3. Calculate Euclidean distance with `DistanceUtils.PENALTY_RSSI = -100.0` for missing BSSIDs.
-4. Sort every fingerprint by distance.
-5. Select `k = 3`.
-6. Calculate `weight = 1 / (distance + 0.1)` for selected fingerprints whose nodes exist.
-7. Normalize weights to contribution percentages.
-8. Produce a local replay `PositionEstimate`.
-9. Produce a full fingerprint-distance table with rank, location id, scan id, distance, BSSID overlap counts, fingerprint BSSID count, node metadata, and whether the fingerprint was selected as a top-k neighbor.
-10. Produce node summaries with best distance, matched BSSID count, missing-from-scan count, extra-from-scan count, selected-neighbor count, and contribution percentage.
+3. Calculate union RMSE with `DistanceUtils.PENALTY_RSSI = -100.0`, then penalize low BSSID overlap.
+4. Reject fingerprints with fewer than three matched BSSIDs.
+5. Group fingerprints by location and average each location's best three distances.
+6. Select the three best distinct locations.
+7. Calculate relative softmax weights with temperature 5.0.
+8. Produce an evidence-aware local replay `PositionEstimate`.
+9. Produce a full eligible-fingerprint table with normalized distance, union RMSE, and overlap.
+10. Produce location summaries and contribution percentages.
 
 Consumers:
 
@@ -123,15 +123,15 @@ This engine is not the active Hilt binding, but it can calculate positions local
 Algorithm:
 
 1. Ignore live readings weaker than -90 dBm.
-2. Compute Euclidean RSSI distance between the live scan and every fingerprint.
-3. Group distances by fingerprint `locationId` to publish node-distance diagnostics.
-4. Take the nearest `k = 3` fingerprints.
-5. Use inverse-distance weighting, `1 / (distance + 0.1)`, over node coordinates.
-6. Pick the floor with the largest cumulative neighbor weight.
-7. Estimate confidence from the nearest neighbor distance.
+2. Compute overlap-adjusted union RMSE against each fingerprint.
+3. Reject comparisons with fewer than three matched BSSIDs.
+4. Aggregate the best three fingerprint scores per location.
+5. Select three distinct locations and use relative softmax weighting.
+6. Pick the floor with the largest cumulative candidate weight.
+7. Calculate an evidence score from distance quality, candidate margin, and overlap.
 8. Apply `PositionSmoother`.
 
-Distance calculation is centralized in `DistanceUtils`. Missing BSSIDs use `PENALTY_RSSI = -100.0`.
+The local engine and diagnostic replay share `LocationKnnAlgorithm`, preventing their behavior from drifting. Missing BSSIDs use `PENALTY_RSSI = -100.0`.
 
 ## Alternate Local Engine: Weighted Centroid
 

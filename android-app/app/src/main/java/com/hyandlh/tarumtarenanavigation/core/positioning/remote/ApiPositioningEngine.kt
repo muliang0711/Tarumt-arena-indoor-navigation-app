@@ -68,7 +68,10 @@ class ApiPositioningEngine @Inject constructor(
                     "x" to rawEstimate.x.toString(),
                     "y" to rawEstimate.y.toString(),
                     "confidence" to rawEstimate.confidence.toString(),
-                    "nodeDistances" to response.nodeDistances.size.toString()
+                    "nodeDistances" to response.nodeDistances.size.toString(),
+                    "candidates" to response.candidates.size.toString(),
+                    "bestCandidate" to (response.candidates.firstOrNull()?.nodeId ?: "none"),
+                    "bestOverlap" to (response.candidates.firstOrNull()?.overlapRatio?.toString() ?: "none")
                 ),
                 source = "ApiPositioningEngine.calculatePosition"
             )

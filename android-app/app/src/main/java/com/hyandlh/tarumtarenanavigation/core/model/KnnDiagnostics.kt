@@ -5,11 +5,15 @@ data class KnnDiagnosticReport(
     val snapshotTimestamp: Long,
     val k: Int,
     val penaltyRssi: Double,
+    val distanceMetric: String,
+    val fingerprintsPerLocation: Int,
+    val minMatchedBssids: Int,
     val totalReadings: Int,
     val usedReadings: Int,
     val ignoredReadings: Int,
     val uniqueLiveBssidCount: Int,
     val fingerprintCount: Int,
+    val eligibleFingerprintCount: Int,
     val nodeCount: Int,
     val localEstimate: PositionEstimate,
     val floorWeights: Map<String, Double>,
@@ -23,6 +27,9 @@ data class KnnFingerprintDistanceDiagnostic(
     val locationId: String,
     val scanId: Int,
     val distance: Double,
+    val unionRmse: Double,
+    val overlapRatio: Double,
+    val unionBssidCount: Int,
     val nodeId: String?,
     val nodeName: String?,
     val nodeX: Double?,
@@ -49,7 +56,11 @@ data class KnnNeighborDiagnostic(
     val floorId: String?,
     val matchedBssidCount: Int,
     val missingFromScanCount: Int,
-    val extraFromScanCount: Int
+    val extraFromScanCount: Int,
+    val unionBssidCount: Int,
+    val overlapRatio: Double,
+    val bestFingerprintDistance: Double,
+    val fingerprintCount: Int
 )
 
 data class KnnNodeDiagnostic(
@@ -67,7 +78,9 @@ data class KnnNodeDiagnostic(
     val extraFromScanCount: Int,
     val selectedNeighborCount: Int,
     val contributionWeight: Double,
-    val contributionPercent: Double
+    val contributionPercent: Double,
+    val overlapRatio: Double,
+    val bestFingerprintDistance: Double
 )
 
 data class OneOffKnnDiagnosticsArtifact(

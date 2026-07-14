@@ -171,13 +171,11 @@ The saved scan JSON gives a stable input artifact for reproducing or comparing A
 
 - RSSI readings used and ignored.
 - Fingerprints and nodes compared.
-- Top-k nearest fingerprints.
-- Euclidean distance to every fingerprint in the active checked-node-filtered catalog.
-- Per-neighbor distance and normalized weight.
-- Per-node best distance and BSSID overlap counts.
+- Top-k distinct location candidates.
+- Overlap-adjusted union RMSE for every eligible fingerprint in the active checked-node-filtered catalog.
+- Per-location aggregate distance, overlap, and normalized relative weight.
+- Per-node aggregate and best-fingerprint distances plus BSSID overlap counts.
 - Per-node contribution percentage.
 - Local replay estimate for comparison with the API estimate.
 
-Known limitation:
-
-- The API server still returns only `estimate` and `nodeDistances`; detailed KNN process visibility is reconstructed locally in the Android app.
+The API now returns concise selected-candidate evidence alongside `estimate` and `nodeDistances`. The Android replay retains the full eligible-fingerprint ranking for deeper inspection and verifies the same shared algorithm locally.
