@@ -1,5 +1,0 @@
-node_modules/
-dist/
-.vite/
-*.local
-playwright-export-check.json
