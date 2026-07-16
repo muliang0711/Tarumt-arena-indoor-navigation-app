@@ -91,6 +91,8 @@ Files:
 - `timestamp`: when the sample was collected.
 - `scanId`: scan identifier.
 - `apList`: BSSID/RSSI/channel entries.
+- optional `sessionId`: collection-session identifier.
+- optional `orientation`: phone orientation during collection; legacy fingerprints use `unknown`.
 
 `Node` stores:
 

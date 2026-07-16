@@ -7,7 +7,9 @@ data class FingerprintEntry(
     val locationId: String,
     val timestamp: Long,
     val scanId: Int,
-    val apList: List<FingerprintAP>
+    val apList: List<FingerprintAP>,
+    val sessionId: String? = null,
+    val orientation: String? = null
 )
 
 /**

@@ -3,6 +3,8 @@
     "timestamp": 1782355999274,
     "location_id": "elev-west",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -250,6 +252,8 @@
     "timestamp": 1782356007432,
     "location_id": "elev-west",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -517,6 +521,8 @@
     "timestamp": 1782356014305,
     "location_id": "elev-west",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -779,6 +785,8 @@
     "timestamp": 1782356022379,
     "location_id": "elev-west",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -1056,6 +1064,8 @@
     "timestamp": 1782356029328,
     "location_id": "elev-west",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -1328,6 +1338,8 @@
     "timestamp": 1782356037417,
     "location_id": "elev-west",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -1600,6 +1612,8 @@
     "timestamp": 1782356044320,
     "location_id": "elev-west",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -1877,6 +1891,8 @@
     "timestamp": 1782356052432,
     "location_id": "elev-west",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -2159,6 +2175,8 @@
     "timestamp": 1782356059313,
     "location_id": "elev-west",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -2441,6 +2459,8 @@
     "timestamp": 1782356067369,
     "location_id": "elev-west",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -2738,6 +2758,8 @@
     "timestamp": 1782356074372,
     "location_id": "elev-west",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -3025,6 +3047,8 @@
     "timestamp": 1782356082464,
     "location_id": "elev-west",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -3317,6 +3341,8 @@
     "timestamp": 1782356089292,
     "location_id": "elev-west",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -3614,6 +3640,8 @@
     "timestamp": 1782356097382,
     "location_id": "elev-west",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -3906,6 +3934,8 @@
     "timestamp": 1782356104355,
     "location_id": "elev-west",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -4193,6 +4223,8 @@
     "timestamp": 1782356112478,
     "location_id": "elev-west",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -4465,6 +4497,8 @@
     "timestamp": 1782356119305,
     "location_id": "elev-west",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -4737,6 +4771,8 @@
     "timestamp": 1782356127358,
     "location_id": "elev-west",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -4994,6 +5030,8 @@
     "timestamp": 1782356135376,
     "location_id": "elev-west",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -5266,6 +5304,8 @@
     "timestamp": 1782356143493,
     "location_id": "elev-west",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -5538,6 +5578,8 @@
     "timestamp": 1782356151471,
     "location_id": "elev-west",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -5840,6 +5882,8 @@
     "timestamp": 1782356159567,
     "location_id": "elev-west",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -6147,6 +6191,8 @@
     "timestamp": 1782356166669,
     "location_id": "elev-west",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -6464,6 +6510,8 @@
     "timestamp": 1782356174766,
     "location_id": "elev-west",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -6776,6 +6824,8 @@
     "timestamp": 1782356182857,
     "location_id": "elev-west",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -7093,6 +7143,8 @@
     "timestamp": 1782356191006,
     "location_id": "elev-west",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -7395,6 +7447,8 @@
     "timestamp": 1782356199173,
     "location_id": "elev-west",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -7662,6 +7716,8 @@
     "timestamp": 1782356207350,
     "location_id": "elev-west",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -7914,6 +7970,8 @@
     "timestamp": 1782356215460,
     "location_id": "elev-west",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -8151,6 +8209,8 @@
     "timestamp": 1782356223546,
     "location_id": "elev-west",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -8383,6 +8443,8 @@
     "timestamp": 1782356231570,
     "location_id": "elev-west",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -8610,6 +8672,8 @@
     "timestamp": 1782356239746,
     "location_id": "elev-west",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -8837,6 +8901,8 @@
     "timestamp": 1782356247832,
     "location_id": "elev-west",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -9074,6 +9140,8 @@
     "timestamp": 1782356255960,
     "location_id": "elev-west",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -9306,6 +9374,8 @@
     "timestamp": 1782356264128,
     "location_id": "elev-west",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -9543,6 +9613,8 @@
     "timestamp": 1782356272163,
     "location_id": "elev-west",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -9785,6 +9857,8 @@
     "timestamp": 1782356280265,
     "location_id": "elev-west",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -10012,6 +10086,8 @@
     "timestamp": 1782356288347,
     "location_id": "elev-west",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -10239,6 +10315,8 @@
     "timestamp": 1782356296487,
     "location_id": "elev-west",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -10476,6 +10554,8 @@
     "timestamp": 1782356304665,
     "location_id": "elev-west",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -10713,6 +10793,8 @@
     "timestamp": 1782356312770,
     "location_id": "elev-west",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:11:60",
@@ -10945,6 +11027,8 @@
     "timestamp": 1782356320781,
     "location_id": "elev-west",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:11:60",
@@ -11187,6 +11271,8 @@
     "timestamp": 1782356328889,
     "location_id": "elev-west",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:11:60",
@@ -11439,6 +11525,8 @@
     "timestamp": 1782356337068,
     "location_id": "elev-west",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:11:60",
@@ -11696,6 +11784,8 @@
     "timestamp": 1782356345233,
     "location_id": "elev-west",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -11978,6 +12068,8 @@
     "timestamp": 1782356353314,
     "location_id": "elev-west",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -12280,6 +12372,8 @@
     "timestamp": 1782356361523,
     "location_id": "elev-west",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -12587,6 +12681,8 @@
     "timestamp": 1782356369686,
     "location_id": "elev-west",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -12894,6 +12990,8 @@
     "timestamp": 1782356377814,
     "location_id": "elev-west",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -13191,6 +13289,8 @@
     "timestamp": 1782356386034,
     "location_id": "elev-west",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -13478,6 +13578,8 @@
     "timestamp": 1782363311645,
     "location_id": "TA257-door",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:1b:10",
@@ -13665,6 +13767,8 @@
     "timestamp": 1782363319737,
     "location_id": "TA257-door",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:1b:10",
@@ -13887,6 +13991,8 @@
     "timestamp": 1782363327819,
     "location_id": "TA257-door",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:1b:10",
@@ -14104,6 +14210,8 @@
     "timestamp": 1782363335911,
     "location_id": "TA257-door",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -14361,6 +14469,8 @@
     "timestamp": 1782363344002,
     "location_id": "TA257-door",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -14623,6 +14733,8 @@
     "timestamp": 1782363352185,
     "location_id": "TA257-door",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -14895,6 +15007,8 @@
     "timestamp": 1782363360279,
     "location_id": "TA257-door",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -15162,6 +15276,8 @@
     "timestamp": 1782363368397,
     "location_id": "TA257-door",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -15444,6 +15560,8 @@
     "timestamp": 1782363376510,
     "location_id": "TA257-door",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -15711,6 +15829,8 @@
     "timestamp": 1782363383819,
     "location_id": "TA257-door",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -15968,6 +16088,8 @@
     "timestamp": 1782363391918,
     "location_id": "TA257-door",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -16215,6 +16337,8 @@
     "timestamp": 1782363398885,
     "location_id": "TA257-door",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -16482,6 +16606,8 @@
     "timestamp": 1782363407019,
     "location_id": "TA257-door",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -16749,6 +16875,8 @@
     "timestamp": 1782363413839,
     "location_id": "TA257-door",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -17016,6 +17144,8 @@
     "timestamp": 1782363421864,
     "location_id": "TA257-door",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -17288,6 +17418,8 @@
     "timestamp": 1782363429957,
     "location_id": "TA257-door",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -17555,6 +17687,8 @@
     "timestamp": 1782363438057,
     "location_id": "TA257-door",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -17827,6 +17961,8 @@
     "timestamp": 1782363443795,
     "location_id": "TA257-door",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -18089,6 +18225,8 @@
     "timestamp": 1782363451873,
     "location_id": "TA257-door",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -18361,6 +18499,8 @@
     "timestamp": 1782363459966,
     "location_id": "TA257-door",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -18638,6 +18778,8 @@
     "timestamp": 1782363468094,
     "location_id": "TA257-door",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -18895,6 +19037,8 @@
     "timestamp": 1782363476202,
     "location_id": "TA257-door",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -19167,6 +19311,8 @@
     "timestamp": 1782363484281,
     "location_id": "TA257-door",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -19424,6 +19570,8 @@
     "timestamp": 1782363492400,
     "location_id": "TA257-door",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -19676,6 +19824,8 @@
     "timestamp": 1782363500482,
     "location_id": "TA257-door",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -19933,6 +20083,8 @@
     "timestamp": 1782363508647,
     "location_id": "TA257-door",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -20175,6 +20327,8 @@
     "timestamp": 1782363516809,
     "location_id": "TA257-door",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -20432,6 +20586,8 @@
     "timestamp": 1782363524900,
     "location_id": "TA257-door",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -20704,6 +20860,8 @@
     "timestamp": 1782363532975,
     "location_id": "TA257-door",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -20976,6 +21134,8 @@
     "timestamp": 1782363541118,
     "location_id": "TA257-door",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -21268,6 +21428,8 @@
     "timestamp": 1782363549189,
     "location_id": "TA257-door",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -21520,6 +21682,8 @@
     "timestamp": 1782363557309,
     "location_id": "TA257-door",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -21772,6 +21936,8 @@
     "timestamp": 1782363565331,
     "location_id": "TA257-door",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -22034,6 +22200,8 @@
     "timestamp": 1782363573436,
     "location_id": "TA257-door",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -22301,6 +22469,8 @@
     "timestamp": 1782363581526,
     "location_id": "TA257-door",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -22568,6 +22738,8 @@
     "timestamp": 1782363589666,
     "location_id": "TA257-door",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -22820,6 +22992,8 @@
     "timestamp": 1782363597763,
     "location_id": "TA257-door",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -23082,6 +23256,8 @@
     "timestamp": 1782363605857,
     "location_id": "TA257-door",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -23344,6 +23520,8 @@
     "timestamp": 1782363613966,
     "location_id": "TA257-door",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -23591,6 +23769,8 @@
     "timestamp": 1782363622056,
     "location_id": "TA257-door",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -23858,6 +24038,8 @@
     "timestamp": 1782363630145,
     "location_id": "TA257-door",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:1b:10",
@@ -24110,6 +24292,8 @@
     "timestamp": 1782363638209,
     "location_id": "TA257-door",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -24367,6 +24551,8 @@
     "timestamp": 1782363646418,
     "location_id": "TA257-door",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -24594,6 +24780,8 @@
     "timestamp": 1782363654485,
     "location_id": "TA257-door",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -24831,6 +25019,8 @@
     "timestamp": 1782363662483,
     "location_id": "TA257-door",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -25058,6 +25248,8 @@
     "timestamp": 1782363670495,
     "location_id": "TA257-door",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -25280,6 +25472,8 @@
     "timestamp": 1782363678573,
     "location_id": "TA257-door",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -25532,6 +25726,8 @@
     "timestamp": 1782363686645,
     "location_id": "TA257-door",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -25774,6 +25970,8 @@
     "timestamp": 1782363694647,
     "location_id": "TA257-door",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -26016,6 +26214,8 @@
     "timestamp": 1782363702770,
     "location_id": "TA257-door",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -26273,6 +26473,8 @@
     "timestamp": 1782363739919,
     "location_id": "TA256-door",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -26490,6 +26692,8 @@
     "timestamp": 1782363747986,
     "location_id": "TA256-door",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:df:00",
@@ -26677,6 +26881,8 @@
     "timestamp": 1782363756095,
     "location_id": "TA256-door",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -26909,6 +27115,8 @@
     "timestamp": 1782363764247,
     "location_id": "TA256-door",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -27151,6 +27359,8 @@
     "timestamp": 1782363772277,
     "location_id": "TA256-door",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -27403,6 +27613,8 @@
     "timestamp": 1782363780407,
     "location_id": "TA256-door",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -27675,6 +27887,8 @@
     "timestamp": 1782363788538,
     "location_id": "TA256-door",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -27952,6 +28166,8 @@
     "timestamp": 1782363796634,
     "location_id": "TA256-door",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -28224,6 +28440,8 @@
     "timestamp": 1782363804845,
     "location_id": "TA256-door",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -28501,6 +28719,8 @@
     "timestamp": 1782363812912,
     "location_id": "TA256-door",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -28783,6 +29003,8 @@
     "timestamp": 1782363821016,
     "location_id": "TA256-door",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -29060,6 +29282,8 @@
     "timestamp": 1782363829097,
     "location_id": "TA256-door",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -29322,6 +29546,8 @@
     "timestamp": 1782363837189,
     "location_id": "TA256-door",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -29569,6 +29795,8 @@
     "timestamp": 1782363845324,
     "location_id": "TA256-door",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -29816,6 +30044,8 @@
     "timestamp": 1782363853262,
     "location_id": "TA256-door",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -30078,6 +30308,8 @@
     "timestamp": 1782363861244,
     "location_id": "TA256-door",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -30355,6 +30587,8 @@
     "timestamp": 1782363869238,
     "location_id": "TA256-door",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -30607,6 +30841,8 @@
     "timestamp": 1782363877249,
     "location_id": "TA256-door",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -30864,6 +31100,8 @@
     "timestamp": 1782363885225,
     "location_id": "TA256-door",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -31146,6 +31384,8 @@
     "timestamp": 1782363893216,
     "location_id": "TA256-door",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -31433,6 +31673,8 @@
     "timestamp": 1782363901301,
     "location_id": "TA256-door",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -31715,6 +31957,8 @@
     "timestamp": 1782363909294,
     "location_id": "TA256-door",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -31997,6 +32241,8 @@
     "timestamp": 1782363917366,
     "location_id": "TA256-door",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -32289,6 +32535,8 @@
     "timestamp": 1782363925348,
     "location_id": "TA256-door",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -32556,6 +32804,8 @@
     "timestamp": 1782363933326,
     "location_id": "TA256-door",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -32803,6 +33053,8 @@
     "timestamp": 1782363941346,
     "location_id": "TA256-door",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:1b:10",
@@ -33045,6 +33297,8 @@
     "timestamp": 1782363949413,
     "location_id": "TA256-door",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -33302,6 +33556,8 @@
     "timestamp": 1782363957401,
     "location_id": "TA256-door",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -33554,6 +33810,8 @@
     "timestamp": 1782363965471,
     "location_id": "TA256-door",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -33811,6 +34069,8 @@
     "timestamp": 1782363973475,
     "location_id": "TA256-door",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -34073,6 +34333,8 @@
     "timestamp": 1782363981460,
     "location_id": "TA256-door",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -34345,6 +34607,8 @@
     "timestamp": 1782363989470,
     "location_id": "TA256-door",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -34632,6 +34896,8 @@
     "timestamp": 1782363997459,
     "location_id": "TA256-door",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -34914,6 +35180,8 @@
     "timestamp": 1782364005597,
     "location_id": "TA256-door",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -35211,6 +35479,8 @@
     "timestamp": 1782364013630,
     "location_id": "TA256-door",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -35523,6 +35793,8 @@
     "timestamp": 1782364021713,
     "location_id": "TA256-door",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -35840,6 +36112,8 @@
     "timestamp": 1782364029797,
     "location_id": "TA256-door",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -36157,6 +36431,8 @@
     "timestamp": 1782364037790,
     "location_id": "TA256-door",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -36459,6 +36735,8 @@
     "timestamp": 1782364045966,
     "location_id": "TA256-door",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -36766,6 +37044,8 @@
     "timestamp": 1782364053969,
     "location_id": "TA256-door",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -37053,6 +37333,8 @@
     "timestamp": 1782364061982,
     "location_id": "TA256-door",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -37335,6 +37617,8 @@
     "timestamp": 1782364070147,
     "location_id": "TA256-door",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -37622,6 +37906,8 @@
     "timestamp": 1782364078239,
     "location_id": "TA256-door",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -37909,6 +38195,8 @@
     "timestamp": 1782364086233,
     "location_id": "TA256-door",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -38171,6 +38459,8 @@
     "timestamp": 1782364094219,
     "location_id": "TA256-door",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -38418,6 +38708,8 @@
     "timestamp": 1782364102361,
     "location_id": "TA256-door",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -38670,6 +38962,8 @@
     "timestamp": 1782364110387,
     "location_id": "TA256-door",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -38947,6 +39241,8 @@
     "timestamp": 1782364118437,
     "location_id": "TA256-door",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -39214,6 +39510,8 @@
     "timestamp": 1782364126499,
     "location_id": "TA256-door",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -39501,6 +39799,8 @@
     "timestamp": 1782364131568,
     "location_id": "TA256-door",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -39778,6 +40078,8 @@
     "timestamp": 1782364153842,
     "location_id": "TA255-door",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -40085,6 +40387,8 @@
     "timestamp": 1782364158915,
     "location_id": "TA255-door",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -40382,6 +40686,8 @@
     "timestamp": 1782364163994,
     "location_id": "TA255-door",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -40664,6 +40970,8 @@
     "timestamp": 1782364169071,
     "location_id": "TA255-door",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -40946,6 +41254,8 @@
     "timestamp": 1782364174255,
     "location_id": "TA255-door",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -41233,6 +41543,8 @@
     "timestamp": 1782364179325,
     "location_id": "TA255-door",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -41490,6 +41802,8 @@
     "timestamp": 1782364187316,
     "location_id": "TA255-door",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -41747,6 +42061,8 @@
     "timestamp": 1782364195435,
     "location_id": "TA255-door",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -42024,6 +42340,8 @@
     "timestamp": 1782364203485,
     "location_id": "TA255-door",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -42321,6 +42639,8 @@
     "timestamp": 1782364211566,
     "location_id": "TA255-door",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -42623,6 +42943,8 @@
     "timestamp": 1782364219648,
     "location_id": "TA255-door",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -42925,6 +43247,8 @@
     "timestamp": 1782364227758,
     "location_id": "TA255-door",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -43227,6 +43551,8 @@
     "timestamp": 1782364235841,
     "location_id": "TA255-door",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -43534,6 +43860,8 @@
     "timestamp": 1782364243937,
     "location_id": "TA255-door",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -43811,6 +44139,8 @@
     "timestamp": 1782364252006,
     "location_id": "TA255-door",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -44058,6 +44388,8 @@
     "timestamp": 1782364260095,
     "location_id": "TA255-door",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -44295,6 +44627,8 @@
     "timestamp": 1782364268076,
     "location_id": "TA255-door",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -44547,6 +44881,8 @@
     "timestamp": 1782364276176,
     "location_id": "TA255-door",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -44794,6 +45130,8 @@
     "timestamp": 1782364284253,
     "location_id": "TA255-door",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -45041,6 +45379,8 @@
     "timestamp": 1782364292370,
     "location_id": "TA255-door",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -45318,6 +45658,8 @@
     "timestamp": 1782364300447,
     "location_id": "TA255-door",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -45605,6 +45947,8 @@
     "timestamp": 1782364308534,
     "location_id": "TA255-door",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -45877,6 +46221,8 @@
     "timestamp": 1782364316644,
     "location_id": "TA255-door",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -46174,6 +46520,8 @@
     "timestamp": 1782364324713,
     "location_id": "TA255-door",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -46471,6 +46819,8 @@
     "timestamp": 1782364332805,
     "location_id": "TA255-door",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -46773,6 +47123,8 @@
     "timestamp": 1782364340901,
     "location_id": "TA255-door",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -47085,6 +47437,8 @@
     "timestamp": 1782364348982,
     "location_id": "TA255-door",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -47377,6 +47731,8 @@
     "timestamp": 1782364356972,
     "location_id": "TA255-door",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -47679,6 +48035,8 @@
     "timestamp": 1782364365064,
     "location_id": "TA255-door",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -47961,6 +48319,8 @@
     "timestamp": 1782364373042,
     "location_id": "TA255-door",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -48233,6 +48593,8 @@
     "timestamp": 1782364381027,
     "location_id": "TA255-door",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -48500,6 +48862,8 @@
     "timestamp": 1782364389000,
     "location_id": "TA255-door",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -48772,6 +49136,8 @@
     "timestamp": 1782364397013,
     "location_id": "TA255-door",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -49064,6 +49430,8 @@
     "timestamp": 1782364405114,
     "location_id": "TA255-door",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -49346,6 +49714,8 @@
     "timestamp": 1782364413186,
     "location_id": "TA255-door",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -49638,6 +50008,8 @@
     "timestamp": 1782364421318,
     "location_id": "TA255-door",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -49940,6 +50312,8 @@
     "timestamp": 1782364429370,
     "location_id": "TA255-door",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -50242,6 +50616,8 @@
     "timestamp": 1782364437465,
     "location_id": "TA255-door",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -50534,6 +50910,8 @@
     "timestamp": 1782364445546,
     "location_id": "TA255-door",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -50816,6 +51194,8 @@
     "timestamp": 1782364453529,
     "location_id": "TA255-door",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -51103,6 +51483,8 @@
     "timestamp": 1782364461580,
     "location_id": "TA255-door",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:4a:00",
@@ -51390,6 +51772,8 @@
     "timestamp": 1782364469604,
     "location_id": "TA255-door",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -51667,6 +52051,8 @@
     "timestamp": 1782364477600,
     "location_id": "TA255-door",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -51924,6 +52310,8 @@
     "timestamp": 1782364485580,
     "location_id": "TA255-door",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -52171,6 +52559,8 @@
     "timestamp": 1782364493667,
     "location_id": "TA255-door",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -52433,6 +52823,8 @@
     "timestamp": 1782364501769,
     "location_id": "TA255-door",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -52700,6 +53092,8 @@
     "timestamp": 1782364509848,
     "location_id": "TA255-door",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -52977,6 +53371,8 @@
     "timestamp": 1782364517943,
     "location_id": "TA255-door",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -53264,6 +53660,8 @@
     "timestamp": 1782364526042,
     "location_id": "TA255-door",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -53551,6 +53949,8 @@
     "timestamp": 1782364534124,
     "location_id": "TA255-door",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -53848,6 +54248,8 @@
     "timestamp": 1782364628140,
     "location_id": "TA254-door",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -54020,6 +54422,8 @@
     "timestamp": 1782364636335,
     "location_id": "TA254-door",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -54192,6 +54596,8 @@
     "timestamp": 1782364644483,
     "location_id": "TA254-door",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -54339,6 +54745,8 @@
     "timestamp": 1782364652610,
     "location_id": "TA254-door",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -54486,6 +54894,8 @@
     "timestamp": 1782364660761,
     "location_id": "TA254-door",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -54638,6 +55048,8 @@
     "timestamp": 1782364668775,
     "location_id": "TA254-door",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -54800,6 +55212,8 @@
     "timestamp": 1782364676883,
     "location_id": "TA254-door",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -54957,6 +55371,8 @@
     "timestamp": 1782364685059,
     "location_id": "TA254-door",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -55119,6 +55535,8 @@
     "timestamp": 1782364693151,
     "location_id": "TA254-door",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -55286,6 +55704,8 @@
     "timestamp": 1782364701235,
     "location_id": "TA254-door",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -55453,6 +55873,8 @@
     "timestamp": 1782364709351,
     "location_id": "TA254-door",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -55610,6 +56032,8 @@
     "timestamp": 1782364717424,
     "location_id": "TA254-door",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -55767,6 +56191,8 @@
     "timestamp": 1782364725507,
     "location_id": "TA254-door",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -55919,6 +56345,8 @@
     "timestamp": 1782364733608,
     "location_id": "TA254-door",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -56071,6 +56499,8 @@
     "timestamp": 1782364741684,
     "location_id": "TA254-door",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -56223,6 +56653,8 @@
     "timestamp": 1782364749782,
     "location_id": "TA254-door",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -56375,6 +56807,8 @@
     "timestamp": 1782364757884,
     "location_id": "TA254-door",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -56537,6 +56971,8 @@
     "timestamp": 1782364765969,
     "location_id": "TA254-door",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -56704,6 +57140,8 @@
     "timestamp": 1782364774081,
     "location_id": "TA254-door",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -56871,6 +57309,8 @@
     "timestamp": 1782364782237,
     "location_id": "TA254-door",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -57043,6 +57483,8 @@
     "timestamp": 1782364790373,
     "location_id": "TA254-door",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -57215,6 +57657,8 @@
     "timestamp": 1782364798491,
     "location_id": "TA254-door",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -57387,6 +57831,8 @@
     "timestamp": 1782364806617,
     "location_id": "TA254-door",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -57554,6 +58000,8 @@
     "timestamp": 1782364814696,
     "location_id": "TA254-door",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -57711,6 +58159,8 @@
     "timestamp": 1782364822802,
     "location_id": "TA254-door",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -57863,6 +58313,8 @@
     "timestamp": 1782364830884,
     "location_id": "TA254-door",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -58000,6 +58452,8 @@
     "timestamp": 1782364838967,
     "location_id": "TA254-door",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -58152,6 +58606,8 @@
     "timestamp": 1782364847057,
     "location_id": "TA254-door",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -58314,6 +58770,8 @@
     "timestamp": 1782364855142,
     "location_id": "TA254-door",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -58466,6 +58924,8 @@
     "timestamp": 1782364863247,
     "location_id": "TA254-door",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -58633,6 +59093,8 @@
     "timestamp": 1782364871429,
     "location_id": "TA254-door",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -58815,6 +59277,8 @@
     "timestamp": 1782364879545,
     "location_id": "TA254-door",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -59002,6 +59466,8 @@
     "timestamp": 1782364887696,
     "location_id": "TA254-door",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -59174,6 +59640,8 @@
     "timestamp": 1782364895814,
     "location_id": "TA254-door",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -59346,6 +59814,8 @@
     "timestamp": 1782364903966,
     "location_id": "TA254-door",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -59533,6 +60003,8 @@
     "timestamp": 1782364912087,
     "location_id": "TA254-door",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -59730,6 +60202,8 @@
     "timestamp": 1782364920244,
     "location_id": "TA254-door",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -59922,6 +60396,8 @@
     "timestamp": 1782364928363,
     "location_id": "TA254-door",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -60109,6 +60585,8 @@
     "timestamp": 1782364936510,
     "location_id": "TA254-door",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -60276,6 +60754,8 @@
     "timestamp": 1782364944646,
     "location_id": "TA254-door",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -60448,6 +60928,8 @@
     "timestamp": 1782364952733,
     "location_id": "TA254-door",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -60610,6 +61092,8 @@
     "timestamp": 1782364960825,
     "location_id": "TA254-door",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -60762,6 +61246,8 @@
     "timestamp": 1782364968964,
     "location_id": "TA254-door",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -60909,6 +61395,8 @@
     "timestamp": 1782364977112,
     "location_id": "TA254-door",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -61056,6 +61544,8 @@
     "timestamp": 1782364985205,
     "location_id": "TA254-door",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -61208,6 +61698,8 @@
     "timestamp": 1782364993287,
     "location_id": "TA254-door",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -61385,6 +61877,8 @@
     "timestamp": 1782365001386,
     "location_id": "TA254-door",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -61562,6 +62056,8 @@
     "timestamp": 1782365009468,
     "location_id": "TA254-door",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -61734,6 +62230,8 @@
     "timestamp": 1782365017580,
     "location_id": "TA254-door",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -61906,6 +62404,8 @@
     "timestamp": 1782365025650,
     "location_id": "TA254-door",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -62098,6 +62598,8 @@
     "timestamp": 1782365226118,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:1b:10",
@@ -62215,6 +62717,8 @@
     "timestamp": 1782365234135,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:1b:10",
@@ -62382,6 +62886,8 @@
     "timestamp": 1782365242310,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -62569,6 +63075,8 @@
     "timestamp": 1782365250441,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -62776,6 +63284,8 @@
     "timestamp": 1782365258559,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -63003,6 +63513,8 @@
     "timestamp": 1782365266634,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -63240,6 +63752,8 @@
     "timestamp": 1782365274732,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -63462,6 +63976,8 @@
     "timestamp": 1782365282819,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -63699,6 +64215,8 @@
     "timestamp": 1782365290914,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -63936,6 +64454,8 @@
     "timestamp": 1782365299002,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -64173,6 +64693,8 @@
     "timestamp": 1782365307193,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -64420,6 +64942,8 @@
     "timestamp": 1782365315371,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -64677,6 +65201,8 @@
     "timestamp": 1782365323480,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -64929,6 +65455,8 @@
     "timestamp": 1782365331546,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -65176,6 +65704,8 @@
     "timestamp": 1782365339656,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -65433,6 +65963,8 @@
     "timestamp": 1782365347751,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -65675,6 +66207,8 @@
     "timestamp": 1782365355818,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -65912,6 +66446,8 @@
     "timestamp": 1782365363903,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -66134,6 +66670,8 @@
     "timestamp": 1782365371995,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -66351,6 +66889,8 @@
     "timestamp": 1782365380170,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -66573,6 +67113,8 @@
     "timestamp": 1782365388282,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -66775,6 +67317,8 @@
     "timestamp": 1782365396447,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -66987,6 +67531,8 @@
     "timestamp": 1782365404562,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -67209,6 +67755,8 @@
     "timestamp": 1782365412665,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -67436,6 +67984,8 @@
     "timestamp": 1782365420754,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -67663,6 +68213,8 @@
     "timestamp": 1782365428857,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -67890,6 +68442,8 @@
     "timestamp": 1782365437017,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -68127,6 +68681,8 @@
     "timestamp": 1782365445129,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -68354,6 +68910,8 @@
     "timestamp": 1782365453202,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -68581,6 +69139,8 @@
     "timestamp": 1782365461305,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -68813,6 +69373,8 @@
     "timestamp": 1782365469401,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -69040,6 +69602,8 @@
     "timestamp": 1782365477451,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -69267,6 +69831,8 @@
     "timestamp": 1782365485574,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -69489,6 +70055,8 @@
     "timestamp": 1782365493678,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -69696,6 +70264,8 @@
     "timestamp": 1782365501856,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -69918,6 +70488,8 @@
     "timestamp": 1782365509952,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -70135,6 +70707,8 @@
     "timestamp": 1782365518039,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -70367,6 +70941,8 @@
     "timestamp": 1782365526211,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -70599,6 +71175,8 @@
     "timestamp": 1782365534356,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -70826,6 +71404,8 @@
     "timestamp": 1782365542486,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -71048,6 +71628,8 @@
     "timestamp": 1782365550577,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -71280,6 +71862,8 @@
     "timestamp": 1782365558738,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -71507,6 +72091,8 @@
     "timestamp": 1782365566836,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -71729,6 +72315,8 @@
     "timestamp": 1782365574921,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -71926,6 +72514,8 @@
     "timestamp": 1782365583059,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -72138,6 +72728,8 @@
     "timestamp": 1782365591150,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -72340,6 +72932,8 @@
     "timestamp": 1782365599258,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -72562,6 +73156,8 @@
     "timestamp": 1782365607338,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -72789,6 +73385,8 @@
     "timestamp": 1782365615439,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -73031,6 +73629,8 @@
     "timestamp": 1782365623517,
     "location_id": "junc-TA254-257corr-west",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -73253,6 +73853,8 @@
     "timestamp": 1782374867383,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:11:60",
@@ -73430,6 +74032,8 @@
     "timestamp": 1782374876891,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:11:60",
@@ -73642,6 +74246,8 @@
     "timestamp": 1782374886612,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -73879,6 +74485,8 @@
     "timestamp": 1782374896173,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -74156,6 +74764,8 @@
     "timestamp": 1782374905587,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -74438,6 +75048,8 @@
     "timestamp": 1782374915143,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -74705,6 +75317,8 @@
     "timestamp": 1782374924793,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -74987,6 +75601,8 @@
     "timestamp": 1782374934413,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -75274,6 +75890,8 @@
     "timestamp": 1782374944059,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -75546,6 +76164,8 @@
     "timestamp": 1782374954628,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -75818,6 +76438,8 @@
     "timestamp": 1782374964158,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -76090,6 +76712,8 @@
     "timestamp": 1782374973689,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -76342,6 +76966,8 @@
     "timestamp": 1782374983374,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -76594,6 +77220,8 @@
     "timestamp": 1782374993081,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -76856,6 +77484,8 @@
     "timestamp": 1782375002790,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -77113,6 +77743,8 @@
     "timestamp": 1782375012688,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -77380,6 +78012,8 @@
     "timestamp": 1782375022151,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -77657,6 +78291,8 @@
     "timestamp": 1782375031720,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -77939,6 +78575,8 @@
     "timestamp": 1782375041230,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -78216,6 +78854,8 @@
     "timestamp": 1782375050738,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -78493,6 +79133,8 @@
     "timestamp": 1782375060376,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -78760,6 +79402,8 @@
     "timestamp": 1782375069900,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -79027,6 +79671,8 @@
     "timestamp": 1782375079499,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -79289,6 +79935,8 @@
     "timestamp": 1782375089026,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -79551,6 +80199,8 @@
     "timestamp": 1782375098615,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -79788,6 +80438,8 @@
     "timestamp": 1782375108033,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -80055,6 +80707,8 @@
     "timestamp": 1782375117612,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -80312,6 +80966,8 @@
     "timestamp": 1782375127093,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -80574,6 +81230,8 @@
     "timestamp": 1782375136662,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -80841,6 +81499,8 @@
     "timestamp": 1782375146188,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -81093,6 +81753,8 @@
     "timestamp": 1782375155833,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -81335,6 +81997,8 @@
     "timestamp": 1782375165335,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -81597,6 +82261,8 @@
     "timestamp": 1782375174822,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ae:60",
@@ -81859,6 +82525,8 @@
     "timestamp": 1782375184268,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ae:60",
@@ -82111,6 +82779,8 @@
     "timestamp": 1782375193797,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ae:60",
@@ -82373,6 +83043,8 @@
     "timestamp": 1782375203557,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ae:60",
@@ -82635,6 +83307,8 @@
     "timestamp": 1782375213010,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ae:60",
@@ -82912,6 +83586,8 @@
     "timestamp": 1782375222573,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -83194,6 +83870,8 @@
     "timestamp": 1782375232242,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ae:60",
@@ -83481,6 +84159,8 @@
     "timestamp": 1782375241807,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ae:60",
@@ -83783,6 +84463,8 @@
     "timestamp": 1782375251163,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ae:60",
@@ -84075,6 +84757,8 @@
     "timestamp": 1782375261837,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ae:60",
@@ -84377,6 +85061,8 @@
     "timestamp": 1782375271305,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -84684,6 +85370,8 @@
     "timestamp": 1782375280917,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -84991,6 +85679,8 @@
     "timestamp": 1782375290476,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -85303,6 +85993,8 @@
     "timestamp": 1782375300031,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -85595,6 +86287,8 @@
     "timestamp": 1782375309557,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -85882,6 +86576,8 @@
     "timestamp": 1782375319158,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -86169,6 +86865,8 @@
     "timestamp": 1782375328616,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -86436,6 +87134,8 @@
     "timestamp": 1782375338256,
     "location_id": "center-of-road-north-of-elevwest",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -86693,6 +87393,8 @@
     "timestamp": 1782375493927,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -86875,6 +87577,8 @@
     "timestamp": 1782375503594,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -87077,6 +87781,8 @@
     "timestamp": 1782375513139,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -87234,6 +87940,8 @@
     "timestamp": 1782375522551,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -87406,6 +88114,8 @@
     "timestamp": 1782375531991,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -87578,6 +88288,8 @@
     "timestamp": 1782375541641,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -87755,6 +88467,8 @@
     "timestamp": 1782375551191,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -87932,6 +88646,8 @@
     "timestamp": 1782375560764,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -88109,6 +88825,8 @@
     "timestamp": 1782375570391,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -88276,6 +88994,8 @@
     "timestamp": 1782375581653,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -88478,6 +89198,8 @@
     "timestamp": 1782375591286,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -88670,6 +89392,8 @@
     "timestamp": 1782375601537,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -88862,6 +89586,8 @@
     "timestamp": 1782375611141,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -89049,6 +89775,8 @@
     "timestamp": 1782375620678,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -89236,6 +89964,8 @@
     "timestamp": 1782375630292,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -89423,6 +90153,8 @@
     "timestamp": 1782375639711,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -89600,6 +90332,8 @@
     "timestamp": 1782375649208,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -89767,6 +90501,8 @@
     "timestamp": 1782375658666,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -89944,6 +90680,8 @@
     "timestamp": 1782375668143,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -90136,6 +90874,8 @@
     "timestamp": 1782375677549,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -90313,6 +91053,8 @@
     "timestamp": 1782375686993,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -90495,6 +91237,8 @@
     "timestamp": 1782375696415,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -90667,6 +91411,8 @@
     "timestamp": 1782375705934,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -90849,6 +91595,8 @@
     "timestamp": 1782375715331,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -91026,6 +91774,8 @@
     "timestamp": 1782375724873,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -91203,6 +91953,8 @@
     "timestamp": 1782375734295,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -91370,6 +92122,8 @@
     "timestamp": 1782375743732,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -91542,6 +92296,8 @@
     "timestamp": 1782375753238,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -91719,6 +92475,8 @@
     "timestamp": 1782375762815,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -91916,6 +92674,8 @@
     "timestamp": 1782375772301,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -92123,6 +92883,8 @@
     "timestamp": 1782375781718,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -92325,6 +93087,8 @@
     "timestamp": 1782375791194,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -92532,6 +93296,8 @@
     "timestamp": 1782375800753,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -92729,6 +93495,8 @@
     "timestamp": 1782375810175,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -92896,6 +93664,8 @@
     "timestamp": 1782375819675,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -93053,6 +93823,8 @@
     "timestamp": 1782375829217,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -93215,6 +93987,8 @@
     "timestamp": 1782375838686,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -93377,6 +94151,8 @@
     "timestamp": 1782375848214,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -93554,6 +94330,8 @@
     "timestamp": 1782375860051,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -93736,6 +94514,8 @@
     "timestamp": 1782375869584,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -93928,6 +94708,8 @@
     "timestamp": 1782375879254,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -94120,6 +94902,8 @@
     "timestamp": 1782375888855,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -94322,6 +95106,8 @@
     "timestamp": 1782375898453,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -94514,6 +95300,8 @@
     "timestamp": 1782375907933,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -94711,6 +95499,8 @@
     "timestamp": 1782375917451,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -94903,6 +95693,8 @@
     "timestamp": 1782375926971,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:b0:e0",
@@ -95085,6 +95877,8 @@
     "timestamp": 1782375936493,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:12:00",
@@ -95252,6 +96046,8 @@
     "timestamp": 1782375946013,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -95434,6 +96230,8 @@
     "timestamp": 1782375955428,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -95616,6 +96414,8 @@
     "timestamp": 1782375965061,
     "location_id": "junc-TA244-246corr-east",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -95803,6 +96603,8 @@
     "timestamp": 1782376078684,
     "location_id": "TA244-door",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -95905,6 +96707,8 @@
     "timestamp": 1782376088710,
     "location_id": "TA244-door",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -96062,6 +96866,8 @@
     "timestamp": 1782376098214,
     "location_id": "TA244-door",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -96224,6 +97030,8 @@
     "timestamp": 1782376107810,
     "location_id": "TA244-door",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -96391,6 +97199,8 @@
     "timestamp": 1782376117669,
     "location_id": "TA244-door",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -96568,6 +97378,8 @@
     "timestamp": 1782376127513,
     "location_id": "TA244-door",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -96745,6 +97557,8 @@
     "timestamp": 1782376137082,
     "location_id": "TA244-door",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -96912,6 +97726,8 @@
     "timestamp": 1782376146611,
     "location_id": "TA244-door",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -97094,6 +97910,8 @@
     "timestamp": 1782376156170,
     "location_id": "TA244-door",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:11:60",
@@ -97276,6 +98094,8 @@
     "timestamp": 1782376165832,
     "location_id": "TA244-door",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -97468,6 +98288,8 @@
     "timestamp": 1782376175593,
     "location_id": "TA244-door",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -97665,6 +98487,8 @@
     "timestamp": 1782376185151,
     "location_id": "TA244-door",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -97857,6 +98681,8 @@
     "timestamp": 1782376194757,
     "location_id": "TA244-door",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -98069,6 +98895,8 @@
     "timestamp": 1782376204273,
     "location_id": "TA244-door",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -98276,6 +99104,8 @@
     "timestamp": 1782376214073,
     "location_id": "TA244-door",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -98473,6 +99303,8 @@
     "timestamp": 1782376224209,
     "location_id": "TA244-door",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -98675,6 +99507,8 @@
     "timestamp": 1782376234772,
     "location_id": "TA244-door",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -98877,6 +99711,8 @@
     "timestamp": 1782376244866,
     "location_id": "TA244-door",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -99084,6 +99920,8 @@
     "timestamp": 1782376254431,
     "location_id": "TA244-door",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -99266,6 +100104,8 @@
     "timestamp": 1782376263833,
     "location_id": "TA244-door",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -99458,6 +100298,8 @@
     "timestamp": 1782376273431,
     "location_id": "TA244-door",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -99660,6 +100502,8 @@
     "timestamp": 1782376282948,
     "location_id": "TA244-door",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -99857,6 +100701,8 @@
     "timestamp": 1782376292476,
     "location_id": "TA244-door",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -100054,6 +100900,8 @@
     "timestamp": 1782376301998,
     "location_id": "TA244-door",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -100246,6 +101094,8 @@
     "timestamp": 1782376311587,
     "location_id": "TA244-door",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -100448,6 +101298,8 @@
     "timestamp": 1782376321209,
     "location_id": "TA244-door",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -100650,6 +101502,8 @@
     "timestamp": 1782376330946,
     "location_id": "TA244-door",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -100857,6 +101711,8 @@
     "timestamp": 1782376340635,
     "location_id": "TA244-door",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -101064,6 +101920,8 @@
     "timestamp": 1782376350156,
     "location_id": "TA244-door",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -101261,6 +102119,8 @@
     "timestamp": 1782376359696,
     "location_id": "TA244-door",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -101463,6 +102323,8 @@
     "timestamp": 1782376369272,
     "location_id": "TA244-door",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -101675,6 +102537,8 @@
     "timestamp": 1782376378794,
     "location_id": "TA244-door",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -101867,6 +102731,8 @@
     "timestamp": 1782376388294,
     "location_id": "TA244-door",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -102064,6 +102930,8 @@
     "timestamp": 1782376397877,
     "location_id": "TA244-door",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -102286,6 +103154,8 @@
     "timestamp": 1782376407574,
     "location_id": "TA244-door",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -102508,6 +103378,8 @@
     "timestamp": 1782376417405,
     "location_id": "TA244-door",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -102730,6 +103602,8 @@
     "timestamp": 1782376427016,
     "location_id": "TA244-door",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -102967,6 +103841,8 @@
     "timestamp": 1782376436535,
     "location_id": "TA244-door",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -103194,6 +104070,8 @@
     "timestamp": 1782376446094,
     "location_id": "TA244-door",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -103401,6 +104279,8 @@
     "timestamp": 1782376455709,
     "location_id": "TA244-door",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -103613,6 +104493,8 @@
     "timestamp": 1782376465494,
     "location_id": "TA244-door",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -103820,6 +104702,8 @@
     "timestamp": 1782376475197,
     "location_id": "TA244-door",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -104042,6 +104926,8 @@
     "timestamp": 1782376484973,
     "location_id": "TA244-door",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -104259,6 +105145,8 @@
     "timestamp": 1782376494657,
     "location_id": "TA244-door",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -104476,6 +105364,8 @@
     "timestamp": 1782376504371,
     "location_id": "TA244-door",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -104683,6 +105573,8 @@
     "timestamp": 1782376514019,
     "location_id": "TA244-door",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -104890,6 +105782,8 @@
     "timestamp": 1782376523576,
     "location_id": "TA244-door",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -105087,6 +105981,8 @@
     "timestamp": 1782376533089,
     "location_id": "TA244-door",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -105284,6 +106180,8 @@
     "timestamp": 1782376542627,
     "location_id": "TA244-door",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -105481,6 +106379,8 @@
     "timestamp": 1782376552291,
     "location_id": "TA244-door",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -105688,6 +106588,8 @@
     "timestamp": 1782376602924,
     "location_id": "TA245-door",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -105820,6 +106722,8 @@
     "timestamp": 1782376612546,
     "location_id": "TA245-door",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -105982,6 +106886,8 @@
     "timestamp": 1782376622087,
     "location_id": "TA245-door",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -106169,6 +107075,8 @@
     "timestamp": 1782376631599,
     "location_id": "TA245-door",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -106366,6 +107274,8 @@
     "timestamp": 1782376641113,
     "location_id": "TA245-door",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -106573,6 +107483,8 @@
     "timestamp": 1782376650844,
     "location_id": "TA245-door",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -106780,6 +107692,8 @@
     "timestamp": 1782376660376,
     "location_id": "TA245-door",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -106982,6 +107896,8 @@
     "timestamp": 1782376669910,
     "location_id": "TA245-door",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -107179,6 +108095,8 @@
     "timestamp": 1782376679556,
     "location_id": "TA245-door",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -107381,6 +108299,8 @@
     "timestamp": 1782376689151,
     "location_id": "TA245-door",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -107588,6 +108508,8 @@
     "timestamp": 1782376698808,
     "location_id": "TA245-door",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -107775,6 +108697,8 @@
     "timestamp": 1782376708296,
     "location_id": "TA245-door",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -107962,6 +108886,8 @@
     "timestamp": 1782376717819,
     "location_id": "TA245-door",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -108144,6 +109070,8 @@
     "timestamp": 1782376727433,
     "location_id": "TA245-door",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -108321,6 +109249,8 @@
     "timestamp": 1782376736950,
     "location_id": "TA245-door",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -108503,6 +109433,8 @@
     "timestamp": 1782376746493,
     "location_id": "TA245-door",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -108685,6 +109617,8 @@
     "timestamp": 1782376756110,
     "location_id": "TA245-door",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -108867,6 +109801,8 @@
     "timestamp": 1782376766048,
     "location_id": "TA245-door",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -109064,6 +110000,8 @@
     "timestamp": 1782376775571,
     "location_id": "TA245-door",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -109271,6 +110209,8 @@
     "timestamp": 1782376785112,
     "location_id": "TA245-door",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -109468,6 +110408,8 @@
     "timestamp": 1782376794631,
     "location_id": "TA245-door",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -109680,6 +110622,8 @@
     "timestamp": 1782376804151,
     "location_id": "TA245-door",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -109897,6 +110841,8 @@
     "timestamp": 1782376813659,
     "location_id": "TA245-door",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -110124,6 +111070,8 @@
     "timestamp": 1782376823389,
     "location_id": "TA245-door",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -110351,6 +111299,8 @@
     "timestamp": 1782376832912,
     "location_id": "TA245-door",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -110578,6 +111528,8 @@
     "timestamp": 1782376842433,
     "location_id": "TA245-door",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -110790,6 +111742,8 @@
     "timestamp": 1782376851953,
     "location_id": "TA245-door",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -110997,6 +111951,8 @@
     "timestamp": 1782376861508,
     "location_id": "TA245-door",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -111219,6 +112175,8 @@
     "timestamp": 1782376871130,
     "location_id": "TA245-door",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -111441,6 +112399,8 @@
     "timestamp": 1782376880632,
     "location_id": "TA245-door",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -111663,6 +112623,8 @@
     "timestamp": 1782376890154,
     "location_id": "TA245-door",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -111885,6 +112847,8 @@
     "timestamp": 1782376899674,
     "location_id": "TA245-door",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -112112,6 +113076,8 @@
     "timestamp": 1782376909211,
     "location_id": "TA245-door",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -112329,6 +113295,8 @@
     "timestamp": 1782376918736,
     "location_id": "TA245-door",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -112556,6 +113524,8 @@
     "timestamp": 1782376928372,
     "location_id": "TA245-door",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -112783,6 +113753,8 @@
     "timestamp": 1782376937975,
     "location_id": "TA245-door",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -113005,6 +113977,8 @@
     "timestamp": 1782376947634,
     "location_id": "TA245-door",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -113217,6 +114191,8 @@
     "timestamp": 1782376957150,
     "location_id": "TA245-door",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -113424,6 +114400,8 @@
     "timestamp": 1782376966677,
     "location_id": "TA245-door",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -113636,6 +114614,8 @@
     "timestamp": 1782376976282,
     "location_id": "TA245-door",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -113853,6 +114833,8 @@
     "timestamp": 1782376985801,
     "location_id": "TA245-door",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -114070,6 +115052,8 @@
     "timestamp": 1782376995354,
     "location_id": "TA245-door",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -114312,6 +115296,8 @@
     "timestamp": 1782377004857,
     "location_id": "TA245-door",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -114549,6 +115535,8 @@
     "timestamp": 1782377014512,
     "location_id": "TA245-door",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -114771,6 +115759,8 @@
     "timestamp": 1782377024110,
     "location_id": "TA245-door",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -114993,6 +115983,8 @@
     "timestamp": 1782377033612,
     "location_id": "TA245-door",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -115200,6 +116192,8 @@
     "timestamp": 1782377043156,
     "location_id": "TA245-door",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -115412,6 +116406,8 @@
     "timestamp": 1782377052616,
     "location_id": "TA245-door",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -115619,6 +116615,8 @@
     "timestamp": 1782377062212,
     "location_id": "TA245-door",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -115846,6 +116844,8 @@
     "timestamp": 1782377071713,
     "location_id": "TA245-door",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:9e:80",
@@ -116083,6 +117083,8 @@
     "timestamp": 1782377250180,
     "location_id": "TA246-door",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -116230,6 +117232,8 @@
     "timestamp": 1782377259712,
     "location_id": "TA246-door",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -116407,6 +117411,8 @@
     "timestamp": 1782377269246,
     "location_id": "TA246-door",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -116614,6 +117620,8 @@
     "timestamp": 1782377278854,
     "location_id": "TA246-door",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -116836,6 +117844,8 @@
     "timestamp": 1782377288375,
     "location_id": "TA246-door",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -117068,6 +118078,8 @@
     "timestamp": 1782377297912,
     "location_id": "TA246-door",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -117300,6 +118312,8 @@
     "timestamp": 1782377307455,
     "location_id": "TA246-door",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -117532,6 +118546,8 @@
     "timestamp": 1782377316978,
     "location_id": "TA246-door",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -117759,6 +118775,8 @@
     "timestamp": 1782377326496,
     "location_id": "TA246-door",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -117986,6 +119004,8 @@
     "timestamp": 1782377336016,
     "location_id": "TA246-door",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -118208,6 +119228,8 @@
     "timestamp": 1782377345517,
     "location_id": "TA246-door",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -118435,6 +119457,8 @@
     "timestamp": 1782377355055,
     "location_id": "TA246-door",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -118647,6 +119671,8 @@
     "timestamp": 1782377364670,
     "location_id": "TA246-door",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -118864,6 +119890,8 @@
     "timestamp": 1782377374210,
     "location_id": "TA246-door",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -119081,6 +120109,8 @@
     "timestamp": 1782377383732,
     "location_id": "TA246-door",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -119293,6 +120323,8 @@
     "timestamp": 1782377393249,
     "location_id": "TA246-door",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -119495,6 +120527,8 @@
     "timestamp": 1782377402795,
     "location_id": "TA246-door",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -119717,6 +120751,8 @@
     "timestamp": 1782377412417,
     "location_id": "TA246-door",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -119939,6 +120975,8 @@
     "timestamp": 1782377421931,
     "location_id": "TA246-door",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -120171,6 +121209,8 @@
     "timestamp": 1782377431448,
     "location_id": "TA246-door",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -120403,6 +121443,8 @@
     "timestamp": 1782377440976,
     "location_id": "TA246-door",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -120640,6 +121682,8 @@
     "timestamp": 1782377450496,
     "location_id": "TA246-door",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -120877,6 +121921,8 @@
     "timestamp": 1782377460029,
     "location_id": "TA246-door",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -121104,6 +122150,8 @@
     "timestamp": 1782377469535,
     "location_id": "TA246-door",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -121331,6 +122379,8 @@
     "timestamp": 1782377479050,
     "location_id": "TA246-door",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -121543,6 +122593,8 @@
     "timestamp": 1782377488572,
     "location_id": "TA246-door",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -121760,6 +122812,8 @@
     "timestamp": 1782377498113,
     "location_id": "TA246-door",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -121997,6 +123051,8 @@
     "timestamp": 1782377507635,
     "location_id": "TA246-door",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -122234,6 +123290,8 @@
     "timestamp": 1782377517179,
     "location_id": "TA246-door",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -122456,6 +123514,8 @@
     "timestamp": 1782377526674,
     "location_id": "TA246-door",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -122693,6 +123753,8 @@
     "timestamp": 1782377536211,
     "location_id": "TA246-door",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -122920,6 +123982,8 @@
     "timestamp": 1782377545709,
     "location_id": "TA246-door",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -123137,6 +124201,8 @@
     "timestamp": 1782377555246,
     "location_id": "TA246-door",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -123349,6 +124415,8 @@
     "timestamp": 1782377564870,
     "location_id": "TA246-door",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -123566,6 +124634,8 @@
     "timestamp": 1782377574400,
     "location_id": "TA246-door",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -123793,6 +124863,8 @@
     "timestamp": 1782377583912,
     "location_id": "TA246-door",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -124020,6 +125092,8 @@
     "timestamp": 1782377593654,
     "location_id": "TA246-door",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -124252,6 +125326,8 @@
     "timestamp": 1782377603172,
     "location_id": "TA246-door",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -124484,6 +125560,8 @@
     "timestamp": 1782377612905,
     "location_id": "TA246-door",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -124726,6 +125804,8 @@
     "timestamp": 1782377622536,
     "location_id": "TA246-door",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -124978,6 +126058,8 @@
     "timestamp": 1782377632149,
     "location_id": "TA246-door",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -125220,6 +126302,8 @@
     "timestamp": 1782377641773,
     "location_id": "TA246-door",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -125447,6 +126531,8 @@
     "timestamp": 1782377651328,
     "location_id": "TA246-door",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -125684,6 +126770,8 @@
     "timestamp": 1782377660832,
     "location_id": "TA246-door",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -125916,6 +127004,8 @@
     "timestamp": 1782377670453,
     "location_id": "TA246-door",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -126148,6 +127238,8 @@
     "timestamp": 1782377680041,
     "location_id": "TA246-door",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -126375,6 +127467,8 @@
     "timestamp": 1782377689708,
     "location_id": "TA246-door",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -126597,6 +127691,8 @@
     "timestamp": 1782377699309,
     "location_id": "TA246-door",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -126824,6 +127920,8 @@
     "timestamp": 1782377708857,
     "location_id": "TA246-door",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -127046,6 +128144,8 @@
     "timestamp": 1782377718552,
     "location_id": "TA246-door",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -127268,6 +128368,8 @@
     "timestamp": 1782377854003,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -127425,6 +128527,8 @@
     "timestamp": 1782377863627,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -127602,6 +128706,8 @@
     "timestamp": 1782377873268,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -127804,6 +128910,8 @@
     "timestamp": 1782377882890,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -128011,6 +129119,8 @@
     "timestamp": 1782377892571,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -128228,6 +129338,8 @@
     "timestamp": 1782377902451,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -128430,6 +129542,8 @@
     "timestamp": 1782377912085,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -128617,6 +129731,8 @@
     "timestamp": 1782377921892,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -128799,6 +129915,8 @@
     "timestamp": 1782377931531,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -128981,6 +130099,8 @@
     "timestamp": 1782377941150,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -129163,6 +130283,8 @@
     "timestamp": 1782377950776,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -129355,6 +130477,8 @@
     "timestamp": 1782377960522,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -129542,6 +130666,8 @@
     "timestamp": 1782377970247,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -129739,6 +130865,8 @@
     "timestamp": 1782377979850,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -129936,6 +131064,8 @@
     "timestamp": 1782377989472,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -130133,6 +131263,8 @@
     "timestamp": 1782377999208,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -130330,6 +131462,8 @@
     "timestamp": 1782378008831,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -130527,6 +131661,8 @@
     "timestamp": 1782378018692,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -130719,6 +131855,8 @@
     "timestamp": 1782378028289,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -130921,6 +132059,8 @@
     "timestamp": 1782378037831,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -131123,6 +132263,8 @@
     "timestamp": 1782378047574,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -131330,6 +132472,8 @@
     "timestamp": 1782378057172,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -131537,6 +132681,8 @@
     "timestamp": 1782378066794,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -131739,6 +132885,8 @@
     "timestamp": 1782378076535,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -131936,6 +133084,8 @@
     "timestamp": 1782378086053,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -132138,6 +133288,8 @@
     "timestamp": 1782378095671,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -132325,6 +133477,8 @@
     "timestamp": 1782378105308,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -132527,6 +133681,8 @@
     "timestamp": 1782378114935,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -132729,6 +133885,8 @@
     "timestamp": 1782378124653,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -132926,6 +134084,8 @@
     "timestamp": 1782378134273,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -133113,6 +134273,8 @@
     "timestamp": 1782378143913,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -133315,6 +134477,8 @@
     "timestamp": 1782378153548,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -133502,6 +134666,8 @@
     "timestamp": 1782378163149,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -133699,6 +134865,8 @@
     "timestamp": 1782378172608,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -133901,6 +135069,8 @@
     "timestamp": 1782378182738,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -134103,6 +135273,8 @@
     "timestamp": 1782378192299,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -134310,6 +135482,8 @@
     "timestamp": 1782378201895,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -134522,6 +135696,8 @@
     "timestamp": 1782378211629,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -134724,6 +135900,8 @@
     "timestamp": 1782378221453,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -134931,6 +136109,8 @@
     "timestamp": 1782378231153,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -135133,6 +136313,8 @@
     "timestamp": 1782378240943,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -135330,6 +136512,8 @@
     "timestamp": 1782378250596,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -135527,6 +136711,8 @@
     "timestamp": 1782378260231,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -135724,6 +136910,8 @@
     "timestamp": 1782378269958,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -135921,6 +137109,8 @@
     "timestamp": 1782378279690,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -136113,6 +137303,8 @@
     "timestamp": 1782378289171,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -136310,6 +137502,8 @@
     "timestamp": 1782378298770,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -136507,6 +137701,8 @@
     "timestamp": 1782378308570,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -136709,6 +137905,8 @@
     "timestamp": 1782378318423,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -136916,6 +138114,8 @@
     "timestamp": 1782378328394,
     "location_id": "west-of-TA246door-opp-TA254",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -137128,6 +138328,8 @@
     "timestamp": 1782381291877,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 1,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -137510,6 +138712,8 @@
     "timestamp": 1782381300014,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 2,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -137892,6 +139096,8 @@
     "timestamp": 1782381308215,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 3,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -138249,6 +139455,8 @@
     "timestamp": 1782381316353,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 4,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -138586,6 +139794,8 @@
     "timestamp": 1782381324471,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 5,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -138938,6 +140148,8 @@
     "timestamp": 1782381332668,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 6,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -139305,6 +140517,8 @@
     "timestamp": 1782381340870,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 7,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -139642,6 +140856,8 @@
     "timestamp": 1782381348939,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 8,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -139989,6 +141205,8 @@
     "timestamp": 1782381356635,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 9,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -140336,6 +141554,8 @@
     "timestamp": 1782381364641,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 10,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -140698,6 +141918,8 @@
     "timestamp": 1782381372660,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 11,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -141040,6 +142262,8 @@
     "timestamp": 1782381380780,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 12,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -141392,6 +142616,8 @@
     "timestamp": 1782381386759,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 13,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -141759,6 +142985,8 @@
     "timestamp": 1782381394808,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 14,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -142126,6 +143354,8 @@
     "timestamp": 1782381402898,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 15,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -142503,6 +143733,8 @@
     "timestamp": 1782381411015,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 16,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -142880,6 +144112,8 @@
     "timestamp": 1782381419077,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 17,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -143247,6 +144481,8 @@
     "timestamp": 1782381427207,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 18,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -143609,6 +144845,8 @@
     "timestamp": 1782381435396,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 19,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -143966,6 +145204,8 @@
     "timestamp": 1782381443435,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 20,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -144328,6 +145568,8 @@
     "timestamp": 1782381451678,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 21,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -144705,6 +145947,8 @@
     "timestamp": 1782381459676,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 22,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -145082,6 +146326,8 @@
     "timestamp": 1782381467816,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 23,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -145469,6 +146715,8 @@
     "timestamp": 1782381475936,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 24,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -145846,6 +147094,8 @@
     "timestamp": 1782381483998,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 25,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -146218,6 +147468,8 @@
     "timestamp": 1782381492102,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 26,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -146570,6 +147822,8 @@
     "timestamp": 1782381500174,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 27,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -146912,6 +148166,8 @@
     "timestamp": 1782381508255,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 28,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -147259,6 +148515,8 @@
     "timestamp": 1782381516375,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 29,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -147591,6 +148849,8 @@
     "timestamp": 1782381524497,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 30,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -147908,6 +149168,8 @@
     "timestamp": 1782381532650,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 31,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -148245,6 +149507,8 @@
     "timestamp": 1782381540733,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 32,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -148577,6 +149841,8 @@
     "timestamp": 1782381548812,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 33,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -148909,6 +150175,8 @@
     "timestamp": 1782381556931,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 34,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -149226,6 +150494,8 @@
     "timestamp": 1782381565133,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 35,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -149563,6 +150833,8 @@
     "timestamp": 1782381573295,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 36,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -149935,6 +151207,8 @@
     "timestamp": 1782381581406,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 37,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:ad:f0",
@@ -150307,6 +151581,8 @@
     "timestamp": 1782381589594,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 38,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -150669,6 +151945,8 @@
     "timestamp": 1782381597785,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 39,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -151036,6 +152314,8 @@
     "timestamp": 1782381605816,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 40,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -151408,6 +152688,8 @@
     "timestamp": 1782381613956,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 41,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -151775,6 +153057,8 @@
     "timestamp": 1782381622059,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 42,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -152157,6 +153441,8 @@
     "timestamp": 1782381630156,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 43,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -152544,6 +153830,8 @@
     "timestamp": 1782381638333,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 44,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -152911,6 +154199,8 @@
     "timestamp": 1782381646395,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 45,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -153283,6 +154573,8 @@
     "timestamp": 1782381654547,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 46,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -153645,6 +154937,8 @@
     "timestamp": 1782381662713,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 47,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -153987,6 +155281,8 @@
     "timestamp": 1782381670906,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 48,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -154324,6 +155620,8 @@
     "timestamp": 1782381678993,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 49,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",
@@ -154661,6 +155959,8 @@
     "timestamp": 1782381687097,
     "location_id": "junc-TA244-246corr-west",
     "scan_id": 50,
+    "orientation": "unknown",
+    "session_id": "25Jun2026",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:a3:20",

@@ -3,6 +3,7 @@
     "timestamp": 1782355999274,
     "location_id": "elev-west",
     "scan_id": 1,
+    "orientation": "unknown",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",
@@ -25,6 +26,7 @@
     "timestamp": 1782356007432,
     "location_id": "elev-west",
     "scan_id": 2,
+    "orientation": "unknown",
     "AP_list": [
       {
         "bssid": "10:3f:8c:d6:dc:e0",

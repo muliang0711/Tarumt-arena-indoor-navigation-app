@@ -134,7 +134,9 @@ class FingerprintRepository @Inject constructor(
                     locationId = json.location_id,
                     timestamp = json.timestamp,
                     scanId = json.scan_id,
-                    apList = json.AP_list.map { ap -> FingerprintAP(ap.bssid, ap.rssi, ap.channel) }
+                    apList = json.AP_list.map { ap -> FingerprintAP(ap.bssid, ap.rssi, ap.channel) },
+                    sessionId = json.session_id,
+                    orientation = json.orientation
                 )
             }
 
@@ -167,7 +169,9 @@ class FingerprintRepository @Inject constructor(
         val timestamp: Long,
         val location_id: String,
         val scan_id: Int,
-        val AP_list: List<FingerprintAPJson>
+        val AP_list: List<FingerprintAPJson>,
+        val session_id: String? = null,
+        val orientation: String? = null
     )
 
     private data class FingerprintAPJson(
