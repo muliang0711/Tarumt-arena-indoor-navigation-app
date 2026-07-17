@@ -223,7 +223,8 @@ Rendering order:
 
 Coordinate conversion:
 
-- Uses `CoordinateConverter.toPixels(x, y)` to convert navigation coordinates into floor-plan pixels.
+- Uses `CoordinateConverter.toPixels(node.x, node.y)` to convert node `coordinates.lh` into
+  floor-plan pixels. Estimated positions retain their normal top-level `x`/`y` values.
 - Converts tap screen coordinates back through the current image matrix before hit testing.
 
 Debug interactions:

@@ -57,7 +57,9 @@ These are the bindings that determine the app's current behavior:
 - `DiagnosticsRecorder` is the primary visible logging path. It writes the same formatted log line to the in-app log store and to `AndroidAppLogger`, whose Android implementation also writes to stdout/stderr.
 - Diagnostic log lines use `[timestamp] [Class.method] message | session=...` format.
 - Android Wi-Fi scan results are filtered to SSID `TARUMT-ARENA` before they become domain scan readings.
-- The map coordinate system is calibrated in `CoordinateConverter`, which maps navigation coordinates to pixels in `arena_second_floor_plan`.
+- Node registry geometry contains `coordinates.lh` and `coordinates.xy`. Android node-coordinate
+  consumers use LH through `Node.x`/`Node.y`; position estimates keep their top-level `x`/`y` shape.
+- The map coordinate system is calibrated in `CoordinateConverter`, which maps LH navigation coordinates to pixels in `arena_second_floor_plan`.
 
 ## Documentation Maintenance Rule
 

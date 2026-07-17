@@ -8,7 +8,8 @@ The positioning subsystem turns a `WifiScanSnapshot` into a `PositionEstimate`. 
 - `PositionEstimate`: x/y coordinate, floor id, confidence, timestamp, and optional diagnostics.
 - `WifiScanSnapshot`: timestamp plus a list of `WifiScanReading` values.
 - `AccessPointCatalog`: container for AP locations, fingerprints, nodes, and metadata.
-- `Node`: named physical point on a floor, used by fingerprint locations and debug UI.
+- `Node`: named physical point on a floor with nested LH and XY coordinate frames, used by
+  fingerprint locations and debug UI. Android `Node.x`/`Node.y` resolve to `coordinates.lh`.
 - `FingerprintEntry`: saved signal profile for a `locationId`.
 
 ## Active Engine: Remote API Positioning
@@ -66,6 +67,10 @@ Replay algorithm:
 9. Produce a full eligible-fingerprint table with normalized distance, union RMSE, and overlap.
 10. Produce location summaries and contribution percentages.
 
+All local node-coordinate reads in replay, geometric node-distance, nearby-node selection, map
+rendering, and node diagnostics use the LH frame through `Node.x` and `Node.y`. Position-estimate
+objects retain their existing top-level `x` and `y` contract.
+
 Consumers:
 
 - `TrackingController` updates `knnDiagnostics` during both continuous tracking and one-off scans.
@@ -85,6 +90,9 @@ Retrofit interface:
 - `POST @Url calculatePosition(@Body PositioningRequest): PositioningResponse`
 - `GET @Url getAllFingerprints(): List<FingerprintEntry>`
 - `GET @Url getNodeRegistry(): Map<String, Node>`
+
+Node rows returned by the registry endpoint must contain both `coordinates.lh` and
+`coordinates.xy`. The Android model exposes LH through its normal `x`/`y` accessors.
 
 The use of dynamic `@Url` means Retrofit's base URL in `DataModule` is only a default placeholder; the actual runtime URLs are assembled from `GlobalConfig`.
 

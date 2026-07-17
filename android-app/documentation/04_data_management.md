@@ -98,11 +98,16 @@ Files:
 
 - `nodeId`
 - `floorId`
-- `x`, `y`
+- `coordinates.lh.x/y`: the Android navigation and map coordinate frame.
+- `coordinates.xy.x/y`: the model coordinate frame retained for explicit diagnostics/contracts.
 - `type`: `DESTINATION`, `JUNCTION`, `STAIRS`, or `ELEVATOR`
 - optional display `name`
 - `enabled`
 - metadata
+
+For compatibility with existing Android call sites, `Node.x` and `Node.y` are computed accessors
+that always return `coordinates.lh.x` and `coordinates.lh.y`. Gson reads and writes only the nested
+`coordinates` object; it does not serialize legacy top-level node `x` or `y` fields.
 
 ## Alternate Room-Backed AP Catalog
 
