@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "file": "demo_1.tmj.json",
+    "layer": "route-graph-layer",
+    "tiledVersion": "1.12.2"
+  },
+  "floorId": "floor-2",
+  "defaultStartNodeId": "node-21",
+  "coordinateSystem": {
+    "unit": "pixel",
+    "origin": "top-left",
+    "tileWidth": 16,
+    "tileHeight": 16
+  },
+  "nodes": [
+    {
+      "id": "node-1",
+      "sourceObjectId": 50,
+      "kind": "junction",
+      "x": -80,
+      "y": 904,
+      "roomId": "elevator"
+    },
+    {
+      "id": "node-2",
+      "sourceObjectId": 67,
+      "kind": "junction",
+      "x": -80,
+      "y": 1133
+    },
+    {
+      "id": "node-3",
+      "sourceObjectId": 66,
+      "kind": "junction",
+      "x": -80,
+      "y": 1860
+    },
+    {
+      "id": "node-4",
+      "sourceObjectId": 65,
+      "kind": "room",
+      "x": 104,
+      "y": 1860,
+      "roomId": "TA242",
+      "label": "TA242"
+    },
+    {
+      "id": "node-5",
+      "sourceObjectId": 64,
+      "kind": "room",
+      "x": 360,
+      "y": 1860,
+      "roomId": "TA241",
+      "label": "TA241"
+    },
+    {
+      "id": "node-6",
+      "sourceObjectId": 63,
+      "kind": "room",
+      "x": 572,
+      "y": 1860,
+      "roomId": "TA240",
+      "label": "TA240"
+    },
+    {
+      "id": "node-7",
+      "sourceObjectId": 62,
+      "kind": "room",
+      "x": 892,
+      "y": 1860,
+      "roomId": "TA239",
+      "label": "TA239"
+    },
+    {
+      "id": "node-8",
+      "sourceObjectId": 61,
+      "kind": "junction",
+      "x": 1128,
+      "y": 1860
+    },
+    {
+      "id": "node-9",
+      "sourceObjectId": 60,
+      "kind": "junction",
+      "x": 1128,
+      "y": 1457
+    },
+    {
+      "id": "node-10",
+      "sourceObjectId": 59,
+      "kind": "junction",
+      "x": 992,
+      "y": 1457
+    },
+    {
+      "id": "node-11",
+      "sourceObjectId": 58,
+      "kind": "junction",
+      "x": 992,
+      "y": 1320,
+      "roomId": "toilet-2"
+    },
+    {
+      "id": "node-12",
+      "sourceObjectId": 57,
+      "kind": "junction",
+      "x": 992,
+      "y": 1133
+    },
+    {
+      "id": "node-13",
+      "sourceObjectId": 70,
+      "kind": "room",
+      "x": 573,
+      "y": 1133,
+      "roomId": "TA243",
+      "label": "TA243"
+    },
+    {
+      "id": "node-14",
+      "sourceObjectId": 69,
+      "kind": "room",
+      "x": 350,
+      "y": 1133,
+      "roomId": "TA245",
+      "label": "TA245"
+    },
+    {
+      "id": "node-15",
+      "sourceObjectId": 68,
+      "kind": "room",
+      "x": 113,
+      "y": 1133,
+      "roomId": "TA244",
+      "label": "TA244"
+    },
+    {
+      "id": "node-16",
+      "sourceObjectId": 56,
+      "kind": "junction",
+      "x": 992,
+      "y": 904
+    },
+    {
+      "id": "node-17",
+      "sourceObjectId": 55,
+      "kind": "room",
+      "x": 792,
+      "y": 904,
+      "roomId": "TA254",
+      "label": "TA254"
+    },
+    {
+      "id": "node-18",
+      "sourceObjectId": 54,
+      "kind": "room",
+      "x": 573,
+      "y": 904,
+      "roomId": "TA255",
+      "label": "TA255"
+    },
+    {
+      "id": "node-19",
+      "sourceObjectId": 53,
+      "kind": "room",
+      "x": 350,
+      "y": 904,
+      "roomId": "TA256",
+      "label": "TA256"
+    },
+    {
+      "id": "node-20",
+      "sourceObjectId": 52,
+      "kind": "room",
+      "x": 113,
+      "y": 904,
+      "roomId": "TA257",
+      "label": "TA257"
+    },
+    {
+      "id": "node-21",
+      "sourceObjectId": 51,
+      "kind": "junction",
+      "x": -20,
+      "y": 904
+    },
+    {
+      "id": "node-22",
+      "sourceObjectId": 72,
+      "kind": "junction",
+      "x": -20,
+      "y": 436,
+      "roomId": "toilet-1"
+    }
+  ]
+}

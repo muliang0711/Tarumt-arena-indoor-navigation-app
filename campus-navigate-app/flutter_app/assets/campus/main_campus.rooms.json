@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "building": {
+    "id": "main-campus",
+    "name": "Main Campus Building",
+    "defaultFloorId": "floor-2"
+  },
+  "floors": [
+    {
+      "id": "floor-2",
+      "code": "F2",
+      "name": "Second Floor",
+      "plan": "second",
+      "summary": "Teaching Rooms & Facilities",
+      "tags": [
+        "TA Rooms",
+        "Elevator",
+        "Restrooms"
+      ],
+      "suggested": true,
+      "nodeAsset": "assets/maps/demo_1.nodes.json",
+      "edgeAsset": "assets/maps/demo_1.edges.json",
+      "mapAsset": "assets/maps/demo_1.tmj.json"
+    }
+  ],
+  "rooms": [
+    {
+      "id": "elevator",
+      "name": "Elevator",
+      "roomCode": "Elevator",
+      "floorId": "floor-2",
+      "category": "facility",
+      "typeLabel": "Facility",
+      "visual": "generic",
+      "nodeId": "node-1",
+      "walkMinutes": 4,
+      "enabled": true
+    },
+    {
+      "id": "TA242",
+      "name": "TA242",
+      "roomCode": "TA242",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-4",
+      "walkMinutes": 5,
+      "enabled": true
+    },
+    {
+      "id": "TA241",
+      "name": "TA241",
+      "roomCode": "TA241",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-5",
+      "walkMinutes": 5,
+      "enabled": true
+    },
+    {
+      "id": "TA240",
+      "name": "TA240",
+      "roomCode": "TA240",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-6",
+      "walkMinutes": 4,
+      "enabled": true
+    },
+    {
+      "id": "TA239",
+      "name": "TA239",
+      "roomCode": "TA239",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-7",
+      "walkMinutes": 4,
+      "enabled": true
+    },
+    {
+      "id": "toilet-2",
+      "name": "Restroom 2",
+      "roomCode": "Toilet 2",
+      "floorId": "floor-2",
+      "category": "restroom",
+      "typeLabel": "Restroom",
+      "visual": "restroom",
+      "nodeId": "node-11",
+      "walkMinutes": 3,
+      "enabled": true
+    },
+    {
+      "id": "TA243",
+      "name": "TA243",
+      "roomCode": "TA243",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-13",
+      "walkMinutes": 3,
+      "enabled": true
+    },
+    {
+      "id": "TA245",
+      "name": "TA245",
+      "roomCode": "TA245",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-14",
+      "walkMinutes": 2,
+      "enabled": true
+    },
+    {
+      "id": "TA244",
+      "name": "TA244",
+      "roomCode": "TA244",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-15",
+      "walkMinutes": 2,
+      "enabled": true
+    },
+    {
+      "id": "TA254",
+      "name": "TA254",
+      "roomCode": "TA254",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-17",
+      "walkMinutes": 3,
+      "enabled": true
+    },
+    {
+      "id": "TA255",
+      "name": "TA255",
+      "roomCode": "TA255",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-18",
+      "walkMinutes": 2,
+      "enabled": true
+    },
+    {
+      "id": "TA256",
+      "name": "TA256",
+      "roomCode": "TA256",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-19",
+      "walkMinutes": 2,
+      "enabled": true
+    },
+    {
+      "id": "TA257",
+      "name": "TA257",
+      "roomCode": "TA257",
+      "floorId": "floor-2",
+      "category": "classroom",
+      "typeLabel": "Classroom",
+      "visual": "lectureHall",
+      "nodeId": "node-20",
+      "walkMinutes": 1,
+      "enabled": true
+    },
+    {
+      "id": "toilet-1",
+      "name": "Restroom 1",
+      "roomCode": "Toilet 1",
+      "floorId": "floor-2",
+      "category": "restroom",
+      "typeLabel": "Restroom",
+      "visual": "restroom",
+      "nodeId": "node-22",
+      "walkMinutes": 1,
+      "enabled": true
+    }
+  ]
+}

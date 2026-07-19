@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "floorId": "floor-2",
+  "mappings": [
+    { "serverNodeId": "node-1", "localNodeId": "node-1" },
+    { "serverNodeId": "node-2", "localNodeId": "node-2" },
+    { "serverNodeId": "node-12", "localNodeId": "node-12" },
+    { "serverNodeId": "node-13", "localNodeId": "node-13" },
+    { "serverNodeId": "node-14", "localNodeId": "node-14" },
+    { "serverNodeId": "node-15", "localNodeId": "node-15" },
+    { "serverNodeId": "node-16", "localNodeId": "node-16" },
+    { "serverNodeId": "node-17", "localNodeId": "node-17" },
+    { "serverNodeId": "node-18", "localNodeId": "node-18" },
+    { "serverNodeId": "node-19", "localNodeId": "node-19" },
+    { "serverNodeId": "node-20", "localNodeId": "node-20" }
+  ],
+  "unmappedServerNodes": [
+    {
+      "serverNodeId": "center-of-road-north-of-elevwest",
+      "reason": "The local route graph has no node at this server position."
+    },
+    {
+      "serverNodeId": "west-of-TA246door-opp-TA254",
+      "reason": "The local route graph has no node at this server position."
+    }
+  ]
+}

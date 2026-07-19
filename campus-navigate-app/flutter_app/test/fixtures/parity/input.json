@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 1,
+  "tolerances": {
+    "absolute": 0.000001,
+    "relative": 1e-9,
+    "exactFields": [
+      "timestamps",
+      "counts",
+      "enum values",
+      "array order",
+      "error and reject reasons"
+    ],
+    "specialNumbers": "NaN and infinities must match by classification"
+  },
+  "approvedDivergences": [
+    {
+      "id": "route-distance-source-of-truth",
+      "legacyBehavior": "Stale TypeScript assertions expected a 42m route.",
+      "targetBehavior": "The current demo_1.edges.json route total of 46m is authoritative.",
+      "parityExempt": true
+    },
+    {
+      "id": "ios-heading-fallback-unit",
+      "legacyBehavior": "Expo iOS attitude.yaw radians were passed through as heading degrees when magnetometer heading was unavailable.",
+      "targetBehavior": "The Flutter iOS adapter converts yaw radians to normalized degrees before publishing fallback heading.",
+      "parityExempt": true
+    }
+  ],
+  "pdrCases": [
+    {
+      "id": "normal-forward-step",
+      "description": "A normal quiet-to-peak batch moves one step along the route.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "pixelsPerMeter": 20,
+      "previousState": {
+        "headingDegrees": 0,
+        "startedAtMs": 5000,
+        "timestampMs": 9800,
+        "x": 10,
+        "y": 20
+      },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 0.4, "y": 0, "z": 0 }, "headingDegrees": 359, "timestampMs": 9850 },
+          { "acceleration": { "x": 0.8, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9890 },
+          { "acceleration": { "x": 1.9, "y": 0, "z": 0 }, "headingDegrees": 1, "timestampMs": 9930 },
+          { "acceleration": { "x": 0.6, "y": 0, "z": 0 }, "headingDegrees": 1, "timestampMs": 9970 }
+        ]
+      }
+    },
+    {
+      "id": "empty-batch",
+      "description": "No samples preserves position and previous heading.",
+      "desiredHeadingDegrees": 45,
+      "nowMs": 10000,
+      "pixelsPerMeter": 20,
+      "previousState": { "headingDegrees": 30, "timestampMs": 9800, "x": 12, "y": 18 },
+      "samples": { "type": "explicit", "values": [] }
+    },
+    {
+      "id": "single-peak",
+      "description": "A single peak has no preceding quiet sample.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "previousState": { "headingDegrees": 0, "timestampMs": 9800, "x": 0, "y": 0 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 1.9, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9950 }
+        ]
+      }
+    },
+    {
+      "id": "extreme-shake",
+      "description": "An extreme acceleration spike is rejected as shake.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "previousState": { "headingDegrees": 0, "timestampMs": 9800, "x": 0, "y": 0 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 0.2, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9900 },
+          { "acceleration": { "x": 6.2, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9950 }
+        ]
+      }
+    },
+    {
+      "id": "nan-acceleration",
+      "description": "NaN acceleration records the existing JavaScript non-finite behavior.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "previousState": { "headingDegrees": 0, "timestampMs": 9800, "x": 0, "y": 0 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": "NaN", "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9900 },
+          { "acceleration": { "x": 0.5, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9950 }
+        ]
+      }
+    },
+    {
+      "id": "infinite-acceleration",
+      "description": "Positive infinity is classified as an extreme shake spike.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "previousState": { "headingDegrees": 0, "timestampMs": 9800, "x": 0, "y": 0 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 0.2, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9900 },
+          { "acceleration": { "x": "Infinity", "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9950 }
+        ]
+      }
+    },
+    {
+      "id": "out-of-order-samples",
+      "description": "The transient batch sorts timestamps before step detection.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "pixelsPerMeter": 20,
+      "previousState": { "headingDegrees": 0, "startedAtMs": 5000, "timestampMs": 9800, "x": 0, "y": 0 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 1.9, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9950 },
+          { "acceleration": { "x": 0.2, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9900 }
+        ]
+      }
+    },
+    {
+      "id": "stale-sensor-interruption",
+      "description": "Only stale samples after a sensor interruption are dropped.",
+      "desiredHeadingDegrees": 90,
+      "nowMs": 10000,
+      "previousState": { "headingDegrees": 75, "lastStepTimestampMs": 9500, "timestampMs": 9800, "x": 4, "y": 8 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 0.2, "y": 0, "z": 0 }, "headingDegrees": 80, "timestampMs": 9700 },
+          { "acceleration": { "x": 1.9, "y": 0, "z": 0 }, "headingDegrees": 80, "timestampMs": 9750 }
+        ]
+      }
+    },
+    {
+      "id": "high-frequency-excess",
+      "description": "Forty high-frequency samples are capped to the newest thirty-two.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "pixelsPerMeter": 20,
+      "previousState": { "headingDegrees": 0, "startedAtMs": 5000, "timestampMs": 9800, "x": 0, "y": 0 },
+      "samples": {
+        "type": "uniform",
+        "count": 40,
+        "startTimestampMs": 9844,
+        "intervalMs": 4,
+        "headingDegrees": 0,
+        "acceleration": { "x": 0.4, "y": 0, "z": 0 },
+        "overrides": [
+          { "index": 39, "acceleration": { "x": 1.9, "y": 0, "z": 0 } }
+        ]
+      }
+    },
+    {
+      "id": "low-frequency-sparse",
+      "description": "Two sparse but fresh samples still form a valid quiet-to-peak batch.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "pixelsPerMeter": 20,
+      "previousState": { "headingDegrees": 0, "startedAtMs": 5000, "timestampMs": 9800, "x": 0, "y": 0 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 0.2, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9830 },
+          { "acceleration": { "x": 1.9, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9990 }
+        ]
+      }
+    },
+    {
+      "id": "future-sample",
+      "description": "A future sample is dropped before analysis.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "previousState": { "headingDegrees": 0, "timestampMs": 9800, "x": 0, "y": 0 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 0.2, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9990 },
+          { "acceleration": { "x": 1.9, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 10010 }
+        ]
+      }
+    },
+    {
+      "id": "too-soon-after-step",
+      "description": "A new peak inside the minimum step interval is rejected.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "previousState": { "headingDegrees": 0, "lastStepTimestampMs": 9900, "timestampMs": 9900, "x": 0, "y": 0 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 0.2, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9920 },
+          { "acceleration": { "x": 1.9, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9970 }
+        ]
+      }
+    },
+    {
+      "id": "startup-lock",
+      "description": "Startup lock suppresses movement without suppressing heading or step diagnostics.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "pixelsPerMeter": 20,
+      "previousState": { "headingDegrees": 0, "startedAtMs": 9500, "timestampMs": 9800, "x": 3, "y": 7 },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 0.2, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9900 },
+          { "acceleration": { "x": 1.9, "y": 0, "z": 0 }, "headingDegrees": 0, "timestampMs": 9950 }
+        ]
+      }
+    },
+    {
+      "id": "backward-confirmed-step",
+      "description": "A confirmed strong backward step moves opposite the route heading.",
+      "desiredHeadingDegrees": 0,
+      "nowMs": 10000,
+      "pixelsPerMeter": 20,
+      "previousState": {
+        "backwardConfirmationTimestampMs": 9300,
+        "headingDegrees": 180,
+        "startedAtMs": 5000,
+        "timestampMs": 9800,
+        "x": 20,
+        "y": 10
+      },
+      "samples": {
+        "type": "explicit",
+        "values": [
+          { "acceleration": { "x": 0.2, "y": 0, "z": 0 }, "headingDegrees": 180, "timestampMs": 9900 },
+          { "acceleration": { "x": 2, "y": 0, "z": 0 }, "headingDegrees": 180, "timestampMs": 9950 }
+        ]
+      }
+    }
+  ]
+}

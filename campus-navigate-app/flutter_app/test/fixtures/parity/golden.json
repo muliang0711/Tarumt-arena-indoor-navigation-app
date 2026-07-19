@@ -1,0 +1,1752 @@
+{
+  "approvedDivergences": [
+    {
+      "id": "route-distance-source-of-truth",
+      "legacyBehavior": "Stale TypeScript assertions expected a 42m route.",
+      "targetBehavior": "The current demo_1.edges.json route total of 46m is authoritative.",
+      "parityExempt": true
+    },
+    {
+      "id": "ios-heading-fallback-unit",
+      "legacyBehavior": "Expo iOS attitude.yaw radians were passed through as heading degrees when magnetometer heading was unavailable.",
+      "targetBehavior": "The Flutter iOS adapter converts yaw radians to normalized degrees before publishing fallback heading.",
+      "parityExempt": true
+    }
+  ],
+  "pdr": [
+    {
+      "description": "A normal quiet-to-peak batch moves one step along the route.",
+      "id": "normal-forward-step",
+      "result": {
+        "acceptedSampleCount": 4,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 4,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 4,
+            "sampleEndTimestampMs": 9970,
+            "sampleStartTimestampMs": 9850
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0.250014279938398,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 0.9995138611223421
+            }
+          },
+          "latencyMs": 30,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 10,
+            "headingDegrees": 0,
+            "movedStepCount": 1,
+            "pixelsPerMeter": 20,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 0.925,
+            "minAcceleration": 0.4,
+            "peakAcceleration": 1.9,
+            "peakTimestampMs": 9930,
+            "rejectReason": "ACCEPTED",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 1,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.883,
+          "headingDegrees": 0.250014279938398,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 20,
+          "y": 20
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 0.9995138611223421
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 0.9995138611223421
+          },
+          {
+            "headingDegrees": 0.250014279938398,
+            "label": "observed",
+            "score": 0.9990971706557781
+          }
+        ],
+        "latencyMs": 30,
+        "nextState": {
+          "headingDegrees": 0.250014279938398,
+          "lastStepTimestampMs": 9930,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0.250014279938398,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 20,
+          "y": 20
+        }
+      }
+    },
+    {
+      "description": "No samples preserves position and previous heading.",
+      "id": "empty-batch",
+      "result": {
+        "acceptedSampleCount": 0,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 0,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 0,
+            "sampleEndTimestampMs": null,
+            "sampleStartTimestampMs": null
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 45,
+            "observedHeadingDegrees": 30,
+            "previousHeadingDegrees": 30,
+            "topCandidate": {
+              "headingDegrees": 45,
+              "label": "desired",
+              "score": 0.9625
+            }
+          },
+          "latencyMs": 0,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 0,
+            "headingDegrees": 45,
+            "movedStepCount": 0,
+            "pixelsPerMeter": 20,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 0,
+            "minAcceleration": 0,
+            "peakAcceleration": 0,
+            "peakTimestampMs": null,
+            "rejectReason": "NO_SAMPLES",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 0,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.626,
+          "headingDegrees": 30,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 12,
+          "y": 18
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 45,
+            "label": "desired",
+            "score": 0.9625
+          },
+          {
+            "headingDegrees": 30,
+            "label": "observed",
+            "score": 0.9541666666666666
+          },
+          {
+            "headingDegrees": 30,
+            "label": "previous",
+            "score": 0.9541666666666666
+          }
+        ],
+        "latencyMs": 0,
+        "nextState": {
+          "headingDegrees": 30,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 30,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 12,
+          "y": 18
+        }
+      }
+    },
+    {
+      "description": "A single peak has no preceding quiet sample.",
+      "id": "single-peak",
+      "result": {
+        "acceptedSampleCount": 1,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 1,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 1,
+            "sampleEndTimestampMs": 9950,
+            "sampleStartTimestampMs": 9950
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 50,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 0,
+            "headingDegrees": 0,
+            "movedStepCount": 0,
+            "pixelsPerMeter": 56,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 1.9,
+            "minAcceleration": 1.9,
+            "peakAcceleration": 1.9,
+            "peakTimestampMs": 9950,
+            "rejectReason": "NO_QUIET_SAMPLE",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 0,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.708,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 50,
+        "nextState": {
+          "headingDegrees": 0,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "description": "An extreme acceleration spike is rejected as shake.",
+      "id": "extreme-shake",
+      "result": {
+        "acceptedSampleCount": 2,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 2,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": 9950,
+            "sampleStartTimestampMs": 9900
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 50,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 0,
+            "headingDegrees": 0,
+            "movedStepCount": 0,
+            "pixelsPerMeter": 56,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 3.2,
+            "minAcceleration": 0.2,
+            "peakAcceleration": 6.2,
+            "peakTimestampMs": 9950,
+            "rejectReason": "SHAKE_TOO_HIGH",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 0,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.767,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 50,
+        "nextState": {
+          "headingDegrees": 0,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 1,
+          "shakeWindowStartedAtMs": 9950,
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "description": "NaN acceleration records the existing JavaScript non-finite behavior.",
+      "id": "nan-acceleration",
+      "result": {
+        "acceptedSampleCount": 2,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 2,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": 9950,
+            "sampleStartTimestampMs": 9900
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 50,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 0,
+            "headingDegrees": 0,
+            "movedStepCount": 0,
+            "pixelsPerMeter": 56,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": "NaN",
+            "minAcceleration": "NaN",
+            "peakAcceleration": "NaN",
+            "peakTimestampMs": 9900,
+            "rejectReason": "NO_QUIET_SAMPLE",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 0,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.767,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 50,
+        "nextState": {
+          "headingDegrees": 0,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "description": "Positive infinity is classified as an extreme shake spike.",
+      "id": "infinite-acceleration",
+      "result": {
+        "acceptedSampleCount": 2,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 2,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": 9950,
+            "sampleStartTimestampMs": 9900
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 50,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 0,
+            "headingDegrees": 0,
+            "movedStepCount": 0,
+            "pixelsPerMeter": 56,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": "Infinity",
+            "minAcceleration": 0.2,
+            "peakAcceleration": "Infinity",
+            "peakTimestampMs": 9950,
+            "rejectReason": "SHAKE_TOO_HIGH",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 0,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.767,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 50,
+        "nextState": {
+          "headingDegrees": 0,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 1,
+          "shakeWindowStartedAtMs": 9950,
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "description": "The transient batch sorts timestamps before step detection.",
+      "id": "out-of-order-samples",
+      "result": {
+        "acceptedSampleCount": 2,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 2,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": 9950,
+            "sampleStartTimestampMs": 9900
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 50,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 10,
+            "headingDegrees": 0,
+            "movedStepCount": 1,
+            "pixelsPerMeter": 20,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 1.05,
+            "minAcceleration": 0.2,
+            "peakAcceleration": 1.9,
+            "peakTimestampMs": 9950,
+            "rejectReason": "ACCEPTED",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 1,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.767,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 10,
+          "y": 0
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 50,
+        "nextState": {
+          "headingDegrees": 0,
+          "lastStepTimestampMs": 9950,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 10,
+          "y": 0
+        }
+      }
+    },
+    {
+      "description": "Only stale samples after a sensor interruption are dropped.",
+      "id": "stale-sensor-interruption",
+      "result": {
+        "acceptedSampleCount": 0,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 0,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 2,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": null,
+            "sampleStartTimestampMs": null
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 90,
+            "observedHeadingDegrees": 75,
+            "previousHeadingDegrees": 75,
+            "topCandidate": {
+              "headingDegrees": 90,
+              "label": "desired",
+              "score": 0.9625
+            }
+          },
+          "latencyMs": 0,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 0,
+            "headingDegrees": 90,
+            "movedStepCount": 0,
+            "pixelsPerMeter": 56,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 0,
+            "minAcceleration": 0,
+            "peakAcceleration": 0,
+            "peakTimestampMs": null,
+            "rejectReason": "NO_SAMPLES",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 0,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 2,
+        "estimate": {
+          "confidence": 0.626,
+          "headingDegrees": 75,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 4,
+          "y": 8
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 90,
+            "label": "desired",
+            "score": 0.9625
+          },
+          {
+            "headingDegrees": 75,
+            "label": "observed",
+            "score": 0.9541666666666666
+          },
+          {
+            "headingDegrees": 75,
+            "label": "previous",
+            "score": 0.9541666666666666
+          }
+        ],
+        "latencyMs": 0,
+        "nextState": {
+          "headingDegrees": 75,
+          "lastStepTimestampMs": 9500,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 75,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 4,
+          "y": 8
+        }
+      }
+    },
+    {
+      "description": "Forty high-frequency samples are capped to the newest thirty-two.",
+      "id": "high-frequency-excess",
+      "result": {
+        "acceptedSampleCount": 32,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 32,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 8,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 40,
+            "sampleEndTimestampMs": 10000,
+            "sampleStartTimestampMs": 9876
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 0,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 10,
+            "headingDegrees": 0,
+            "movedStepCount": 1,
+            "pixelsPerMeter": 20,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 0.447,
+            "minAcceleration": 0.4,
+            "peakAcceleration": 1.9,
+            "peakTimestampMs": 10000,
+            "rejectReason": "ACCEPTED",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 1,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 8,
+        "estimate": {
+          "confidence": 1,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 10,
+          "y": 0
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 0,
+        "nextState": {
+          "headingDegrees": 0,
+          "lastStepTimestampMs": 10000,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 10,
+          "y": 0
+        }
+      }
+    },
+    {
+      "description": "Two sparse but fresh samples still form a valid quiet-to-peak batch.",
+      "id": "low-frequency-sparse",
+      "result": {
+        "acceptedSampleCount": 2,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 2,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": 9990,
+            "sampleStartTimestampMs": 9830
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 10,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 10,
+            "headingDegrees": 0,
+            "movedStepCount": 1,
+            "pixelsPerMeter": 20,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 1.05,
+            "minAcceleration": 0.2,
+            "peakAcceleration": 1.9,
+            "peakTimestampMs": 9990,
+            "rejectReason": "ACCEPTED",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 1,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.767,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 10,
+          "y": 0
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 10,
+        "nextState": {
+          "headingDegrees": 0,
+          "lastStepTimestampMs": 9990,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 10,
+          "y": 0
+        }
+      }
+    },
+    {
+      "description": "A future sample is dropped before analysis.",
+      "id": "future-sample",
+      "result": {
+        "acceptedSampleCount": 1,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 1,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 1,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": 9990,
+            "sampleStartTimestampMs": 9990
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 10,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 0,
+            "headingDegrees": 0,
+            "movedStepCount": 0,
+            "pixelsPerMeter": 56,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 0.2,
+            "minAcceleration": 0.2,
+            "peakAcceleration": 0.2,
+            "peakTimestampMs": 9990,
+            "rejectReason": "LOW_PEAK",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 0,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 1,
+        "estimate": {
+          "confidence": 0.708,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 10,
+        "nextState": {
+          "headingDegrees": 0,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "description": "A new peak inside the minimum step interval is rejected.",
+      "id": "too-soon-after-step",
+      "result": {
+        "acceptedSampleCount": 2,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 2,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": 9970,
+            "sampleStartTimestampMs": 9920
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 30,
+          "movement": {
+            "blockedReason": null,
+            "direction": "forward",
+            "distancePixels": 0,
+            "headingDegrees": 0,
+            "movedStepCount": 0,
+            "pixelsPerMeter": 56,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 1.05,
+            "minAcceleration": 0.2,
+            "peakAcceleration": 1.9,
+            "peakTimestampMs": 9970,
+            "rejectReason": "TOO_SOON_AFTER_LAST_STEP",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 0,
+            "timeSinceLastStepMs": 70
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.767,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 30,
+        "nextState": {
+          "headingDegrees": 0,
+          "lastStepTimestampMs": 9900,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 0,
+          "y": 0
+        }
+      }
+    },
+    {
+      "description": "Startup lock suppresses movement without suppressing heading or step diagnostics.",
+      "id": "startup-lock",
+      "result": {
+        "acceptedSampleCount": 2,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 2,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": 9950,
+            "sampleStartTimestampMs": 9900
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 0,
+            "previousHeadingDegrees": 0,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 1
+            }
+          },
+          "latencyMs": 50,
+          "movement": {
+            "blockedReason": "startup-lock",
+            "direction": "forward",
+            "distancePixels": 0,
+            "headingDegrees": 0,
+            "movedStepCount": 0,
+            "pixelsPerMeter": 20,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 1.05,
+            "minAcceleration": 0.2,
+            "peakAcceleration": 1.9,
+            "peakTimestampMs": 9950,
+            "rejectReason": "ACCEPTED",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 1,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.767,
+          "headingDegrees": 0,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 3,
+          "y": 7
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "observed",
+            "score": 1
+          },
+          {
+            "headingDegrees": 0,
+            "label": "previous",
+            "score": 1
+          }
+        ],
+        "latencyMs": 50,
+        "nextState": {
+          "headingDegrees": 0,
+          "lastStepTimestampMs": 9950,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 0,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 3,
+          "y": 7
+        }
+      }
+    },
+    {
+      "description": "A confirmed strong backward step moves opposite the route heading.",
+      "id": "backward-confirmed-step",
+      "result": {
+        "acceptedSampleCount": 2,
+        "diagnostics": {
+          "batch": {
+            "acceptedSampleCount": 2,
+            "batchWindowMs": 180,
+            "droppedSampleCount": 0,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "rawSampleCount": 2,
+            "sampleEndTimestampMs": 9950,
+            "sampleStartTimestampMs": 9900
+          },
+          "configSnapshot": {
+            "accelerationStepThreshold": 1.7,
+            "backwardConfirmationWindowMs": 1200,
+            "backwardMovementPeakThreshold": 1.8,
+            "batchWindowMs": 180,
+            "maxShakeAccelerationMagnitude": 5.5,
+            "maxBatchAgeMs": 200,
+            "maxSamplesPerBatch": 32,
+            "minStepIntervalMs": 300,
+            "movementHeadingToleranceDegrees": 80,
+            "fallbackPixelsPerMeter": 56,
+            "rotationOnlyHeadingTravelDegrees": 15,
+            "rotationOnlyMaxAverageAcceleration": 1.45,
+            "rotationOnlyWindowMs": 1000,
+            "shakeCooldownMs": 1200,
+            "shakeCooldownTriggerCount": 2,
+            "shakeCooldownWindowMs": 1000,
+            "stillnessAccelerationMagnitude": 1,
+            "startupMovementLockMs": 2000,
+            "stepLengthMeters": 0.5,
+            "turnInPlaceCooldownMs": 700,
+            "turnInPlaceHeadingDeltaDegrees": 35
+          },
+          "heading": {
+            "desiredHeadingDegrees": 0,
+            "observedHeadingDegrees": 180,
+            "previousHeadingDegrees": 180,
+            "topCandidate": {
+              "headingDegrees": 0,
+              "label": "desired",
+              "score": 0.55
+            }
+          },
+          "latencyMs": 50,
+          "movement": {
+            "blockedReason": null,
+            "direction": "backward",
+            "distancePixels": 10,
+            "headingDegrees": 180,
+            "movedStepCount": 1,
+            "pixelsPerMeter": 20,
+            "stepLengthMeters": 0.5
+          },
+          "step": {
+            "averageAcceleration": 1.1,
+            "minAcceleration": 0.2,
+            "peakAcceleration": 2,
+            "peakTimestampMs": 9950,
+            "rejectReason": "ACCEPTED",
+            "rotationHeadingTravelDegrees": 0,
+            "stepCount": 1,
+            "timeSinceLastStepMs": null
+          }
+        },
+        "droppedSampleCount": 0,
+        "estimate": {
+          "confidence": 0.474,
+          "headingDegrees": 180,
+          "source": "pdr-summary",
+          "timestampMs": 10000,
+          "x": 10,
+          "y": 10.000000000000002
+        },
+        "headingCandidates": [
+          {
+            "headingDegrees": 0,
+            "label": "desired",
+            "score": 0.55
+          },
+          {
+            "headingDegrees": 180,
+            "label": "observed",
+            "score": 0.44999999999999996
+          },
+          {
+            "headingDegrees": 180,
+            "label": "previous",
+            "score": 0.44999999999999996
+          }
+        ],
+        "latencyMs": 50,
+        "nextState": {
+          "headingDegrees": 180,
+          "lastStepTimestampMs": 9950,
+          "backwardConfirmationTimestampMs": 9950,
+          "rotationHeadingSnapshots": [
+            {
+              "headingDegrees": 180,
+              "timestampMs": 10000
+            }
+          ],
+          "rotationHeadingTravelDegrees": 0,
+          "shakeSpikeCount": 0,
+          "timestampMs": 10000,
+          "x": 10,
+          "y": 10.000000000000002
+        }
+      }
+    }
+  ],
+  "routeMetrics": {
+    "averagePixelsPerMeter": 55.26086956521739,
+    "segments": [
+      {
+        "endDistanceMeters": 3,
+        "endDistancePixels": 133,
+        "fromNodeId": "node-21",
+        "meterLength": 3,
+        "pixelLength": 133,
+        "pixelsPerMeter": 44.333333333333336,
+        "startDistanceMeters": 0,
+        "startDistancePixels": 0,
+        "toNodeId": "node-20"
+      },
+      {
+        "endDistanceMeters": 6,
+        "endDistancePixels": 370,
+        "fromNodeId": "node-20",
+        "meterLength": 3,
+        "pixelLength": 237,
+        "pixelsPerMeter": 79,
+        "startDistanceMeters": 3,
+        "startDistancePixels": 133,
+        "toNodeId": "node-19"
+      },
+      {
+        "endDistanceMeters": 9,
+        "endDistancePixels": 593,
+        "fromNodeId": "node-19",
+        "meterLength": 3,
+        "pixelLength": 223,
+        "pixelsPerMeter": 74.33333333333333,
+        "startDistanceMeters": 6,
+        "startDistancePixels": 370,
+        "toNodeId": "node-18"
+      },
+      {
+        "endDistanceMeters": 12,
+        "endDistancePixels": 812,
+        "fromNodeId": "node-18",
+        "meterLength": 3,
+        "pixelLength": 219,
+        "pixelsPerMeter": 73,
+        "startDistanceMeters": 9,
+        "startDistancePixels": 593,
+        "toNodeId": "node-17"
+      },
+      {
+        "endDistanceMeters": 15,
+        "endDistancePixels": 1012,
+        "fromNodeId": "node-17",
+        "meterLength": 3,
+        "pixelLength": 200,
+        "pixelsPerMeter": 66.66666666666667,
+        "startDistanceMeters": 12,
+        "startDistancePixels": 812,
+        "toNodeId": "node-16"
+      },
+      {
+        "endDistanceMeters": 23,
+        "endDistancePixels": 1241,
+        "fromNodeId": "node-16",
+        "meterLength": 8,
+        "pixelLength": 229,
+        "pixelsPerMeter": 28.625,
+        "startDistanceMeters": 15,
+        "startDistancePixels": 1012,
+        "toNodeId": "node-12"
+      },
+      {
+        "endDistanceMeters": 29,
+        "endDistancePixels": 1660,
+        "fromNodeId": "node-12",
+        "meterLength": 6,
+        "pixelLength": 419,
+        "pixelsPerMeter": 69.83333333333333,
+        "startDistanceMeters": 23,
+        "startDistancePixels": 1241,
+        "toNodeId": "node-13"
+      },
+      {
+        "endDistanceMeters": 31,
+        "endDistancePixels": 1883,
+        "fromNodeId": "node-13",
+        "meterLength": 2,
+        "pixelLength": 223,
+        "pixelsPerMeter": 111.5,
+        "startDistanceMeters": 29,
+        "startDistancePixels": 1660,
+        "toNodeId": "node-14"
+      },
+      {
+        "endDistanceMeters": 34,
+        "endDistancePixels": 2120,
+        "fromNodeId": "node-14",
+        "meterLength": 3,
+        "pixelLength": 237,
+        "pixelsPerMeter": 79,
+        "startDistanceMeters": 31,
+        "startDistancePixels": 1883,
+        "toNodeId": "node-15"
+      },
+      {
+        "endDistanceMeters": 38,
+        "endDistancePixels": 2313,
+        "fromNodeId": "node-15",
+        "meterLength": 4,
+        "pixelLength": 193,
+        "pixelsPerMeter": 48.25,
+        "startDistanceMeters": 34,
+        "startDistancePixels": 2120,
+        "toNodeId": "node-2"
+      },
+      {
+        "endDistanceMeters": 46,
+        "endDistancePixels": 2542,
+        "fromNodeId": "node-2",
+        "meterLength": 8,
+        "pixelLength": 229,
+        "pixelsPerMeter": 28.625,
+        "startDistanceMeters": 38,
+        "startDistancePixels": 2313,
+        "toNodeId": "node-1"
+      }
+    ],
+    "totalMeters": 46,
+    "totalPixels": 2542
+  },
+  "schemaVersion": 1,
+  "tolerances": {
+    "absolute": 0.000001,
+    "relative": 1e-9,
+    "exactFields": [
+      "timestamps",
+      "counts",
+      "enum values",
+      "array order",
+      "error and reject reasons"
+    ],
+    "specialNumbers": "NaN and infinities must match by classification"
+  }
+}
