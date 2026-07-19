@@ -1,0 +1,23 @@
+export type PdrPipelineConfig = {
+  accelerationStepThreshold: number;
+  backwardConfirmationWindowMs: number;
+  backwardMovementPeakThreshold: number;
+  batchWindowMs: number;
+  maxShakeAccelerationMagnitude: number;
+  maxBatchAgeMs: number;
+  maxSamplesPerBatch: number;
+  minStepIntervalMs: number;
+  movementHeadingToleranceDegrees: number;
+  fallbackPixelsPerMeter: number;
+  rotationOnlyHeadingTravelDegrees: number;
+  rotationOnlyMaxAverageAcceleration: number;
+  rotationOnlyWindowMs: number;
+  shakeCooldownMs: number;
+  shakeCooldownTriggerCount: number;
+  shakeCooldownWindowMs: number;
+  stillnessAccelerationMagnitude: number;
+  startupMovementLockMs: number;
+  stepLengthMeters: number;
+  turnInPlaceCooldownMs: number;
+  turnInPlaceHeadingDeltaDegrees: number;
+};

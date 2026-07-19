@@ -1,0 +1,21 @@
+# Expo app
+expo-app/node_modules/
+expo-app/.expo/
+expo-app/dist/
+expo-app/web-build/
+expo-app/expo-env.d.ts
+expo-app/npm-debug.log*
+expo-app/yarn-debug.log*
+expo-app/yarn-error.log*
+
+# macOS
+.DS_Store
+
+# Generated Expo sensor-debug output
+expo-app/reports/sensor-debug/comparison-*.json
+expo-app/reports/sensor-debug/step-test-*/
+
+# Kotlin app
+kotlinApp/.gradle/
+kotlinApp/**/build/
+kotlinApp/local.properties

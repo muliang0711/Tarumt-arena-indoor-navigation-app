@@ -1,0 +1,17 @@
+Frequency tuning reminder
+
+If UI rendering feels slow, the map pan is laggy, or derived navigation work gets too heavy, tune update frequency before adding heavier logic.
+
+First places to check:
+- Reduce NAVIGATION_INPUT_POLICY.maxDerivedUpdatesPerSecond in src/navigationInput/navigationInputPolicy.ts.
+- Keep PDR batches short and transient; do not record or persist raw sensor samples.
+- Increase RAW_MOTION_CONSUMER_CONFIG.sensorUpdateIntervalMs if the live sensor feed is too heavy; lower it when heading/step response feels too slow.
+- Tune the batch window and maxSamplesPerBatch in src/pdr/model/pdrConfig.ts if real input arrives too often.
+- Keep the front-end on derived estimates only, ideally under 200 ms end-to-end delay and still acceptable under 300 ms.
+- If replay or external derived input moves too fast, lower the accepted estimate frequency before touching map rendering.
+
+Current app rule:
+- Raw sensor events are allowed only in a tiny transient memory batch.
+- No raw sensor recording, files, persistence, or history.
+- Red marker can consume low-rate derived estimates from replay or external preprocessing.
+- Blue marker remains route-progress constrained.

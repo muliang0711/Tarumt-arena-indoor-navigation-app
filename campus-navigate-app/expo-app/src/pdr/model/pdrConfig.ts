@@ -1,0 +1,25 @@
+import type { PdrPipelineConfig } from '../type';
+
+export const DEFAULT_PDR_PIPELINE_CONFIG: PdrPipelineConfig = {
+  accelerationStepThreshold: 1.7,
+  backwardConfirmationWindowMs: 1200,
+  backwardMovementPeakThreshold: 1.8,
+  batchWindowMs: 180,
+  maxShakeAccelerationMagnitude: 5.5,
+  maxBatchAgeMs: 200,
+  maxSamplesPerBatch: 32,
+  minStepIntervalMs: 300,
+  movementHeadingToleranceDegrees: 80,
+  fallbackPixelsPerMeter: 56,
+  rotationOnlyHeadingTravelDegrees: 15,
+  rotationOnlyMaxAverageAcceleration: 1.45,
+  rotationOnlyWindowMs: 1000,
+  shakeCooldownMs: 1200,
+  shakeCooldownTriggerCount: 2,
+  shakeCooldownWindowMs: 1000,
+  stillnessAccelerationMagnitude: 1,
+  startupMovementLockMs: 2000,
+  stepLengthMeters: 0.5,
+  turnInPlaceCooldownMs: 700,
+  turnInPlaceHeadingDeltaDegrees: 35,
+};

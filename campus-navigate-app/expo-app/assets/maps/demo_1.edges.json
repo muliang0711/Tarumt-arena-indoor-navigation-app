@@ -1,0 +1,151 @@
+{
+  "edges": [
+    {
+      "distance": 2,
+      "from": "node-1",
+      "id": "edge-node-1-node-21",
+      "to": "node-21"
+    },
+    {
+      "distance": 8,
+      "from": "node-12",
+      "id": "edge-node-12-node-16",
+      "to": "node-16"
+    },
+    {
+      "distance": 8,
+      "from": "node-1",
+      "id": "edge-node-1-node-2",
+      "to": "node-2"
+    },
+    {
+      "distance": 4,
+      "from": "node-15",
+      "id": "edge-node-15-node-2",
+      "to": "node-2"
+    },
+    {
+      "distance": 2,
+      "from": "node-13",
+      "id": "edge-node-13-node-14",
+      "to": "node-14"
+    },
+    {
+      "distance": 2,
+      "from": "node-11",
+      "id": "edge-node-11-node-12",
+      "to": "node-12"
+    },
+    {
+      "distance": 2,
+      "from": "node-10",
+      "id": "edge-node-10-node-11",
+      "to": "node-11"
+    },
+    {
+      "distance": 2,
+      "from": "node-9",
+      "id": "edge-node-9-node-10",
+      "to": "node-10"
+    },
+    {
+      "distance": 4,
+      "from": "node-8",
+      "id": "edge-node-8-node-9",
+      "to": "node-9"
+    },
+    {
+      "distance": 2,
+      "from": "node-7",
+      "id": "edge-node-7-node-8",
+      "to": "node-8"
+    },
+    {
+      "distance": 2,
+      "from": "node-6",
+      "id": "edge-node-6-node-7",
+      "to": "node-7"
+    },
+    {
+      "distance": 2,
+      "from": "node-5",
+      "id": "edge-node-5-node-6",
+      "to": "node-6"
+    },
+    {
+      "distance": 2,
+      "from": "node-4",
+      "id": "edge-node-4-node-5",
+      "to": "node-5"
+    },
+    {
+      "distance": 2,
+      "from": "node-3",
+      "id": "edge-node-3-node-4",
+      "to": "node-4"
+    },
+    {
+      "distance": 8,
+      "from": "node-3",
+      "id": "edge-node-3-node-2",
+      "to": "node-2"
+    },
+    {
+      "distance": 3,
+      "from": "node-21",
+      "id": "edge-node-21-node-20",
+      "to": "node-20"
+    },
+    {
+      "distance": 3,
+      "from": "node-20",
+      "id": "edge-node-20-node-19",
+      "to": "node-19"
+    },
+    {
+      "distance": 3,
+      "from": "node-18",
+      "id": "edge-node-18-node-19",
+      "to": "node-19"
+    },
+    {
+      "distance": 3,
+      "from": "node-18",
+      "id": "edge-node-18-node-17",
+      "to": "node-17"
+    },
+    {
+      "distance": 3,
+      "from": "node-17",
+      "id": "edge-node-17-node-16",
+      "to": "node-16"
+    },
+    {
+      "distance": 6,
+      "from": "node-13",
+      "id": "edge-node-13-node-12",
+      "to": "node-12"
+    },
+    {
+      "distance": 3,
+      "from": "node-14",
+      "id": "edge-node-14-node-13",
+      "to": "node-13"
+    },
+    {
+      "distance": 3,
+      "from": "node-14",
+      "id": "edge-node-14-node-15",
+      "to": "node-15"
+    },
+    {
+      "distance": 3,
+      "from": "node-2",
+      "id": "edge-node-2-node-15",
+      "to": "node-15"
+    }
+  ],
+  "kind": "route-graph-edges",
+  "sourceMap": "demo_1.tmj",
+  "version": 1
+}
