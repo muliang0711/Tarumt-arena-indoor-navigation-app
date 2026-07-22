@@ -44,6 +44,6 @@ using (true);
 comment on table public.nodes is
     'The shared node registry and runtime source of truth for system clients.';
 comment on column public.nodes.coordinates is
-    'Nested frames: LH is used by Android; XY is used by positioning and the future Flutter app.';
+    'Nested frames: LH is used by Android and positioning; XY is used by the future Flutter app.';
 
 commit;

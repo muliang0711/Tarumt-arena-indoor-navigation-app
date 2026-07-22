@@ -36,9 +36,9 @@ The database fields map to the application node contract as follows:
 | `node_type` | `type` |
 | `positioning_enabled` | `positioningEnabled` |
 
-The future Flutter app must use `coordinates.xy` for node placement. The API also uses
-`coordinates.xy` for positioning and nearest-node calculations. The separate `coordinates.lh`
-frame belongs to the existing Android app and should not be used by Flutter.
+The future Flutter app must use `coordinates.xy` for node placement. The API uses
+`coordinates.lh` for positioning and nearest-node calculations, matching the existing Android app.
+If Flutter consumes API coordinate estimates, it must convert those LH values into its XY frame.
 
 RLS permits both `anon` and authenticated users to select the full table. There is no
 `get_active_nodes()` RPC and no active-model concept in the database.

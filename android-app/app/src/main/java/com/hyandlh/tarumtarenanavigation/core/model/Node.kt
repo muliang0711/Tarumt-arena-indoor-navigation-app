@@ -24,7 +24,7 @@ data class NodeCoordinates(
  *
  * Android navigation and map code accesses [x] and [y], which are deliberately backed by the
  * `coordinates.lh` registry frame. The `coordinates.xy` frame remains available explicitly for
- * diagnostics or contracts that require the model coordinate system.
+ * diagnostics or contracts that require the future Flutter coordinate system.
  */
 data class Node(
     val nodeId: String,

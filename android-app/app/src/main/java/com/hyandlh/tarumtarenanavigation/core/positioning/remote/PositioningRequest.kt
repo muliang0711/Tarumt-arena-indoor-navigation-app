@@ -16,7 +16,9 @@ data class PositioningRequest(
         ): PositioningRequest {
             return PositioningRequest(
                 timestamp = snapshot.timestamp,
-                readings = snapshot.readings,
+                // The baseline API ignores BSSIDs outside its trained vocabulary. Sending the
+                // unfiltered scan also lets a crowdedness-enabled API derive its non-target count.
+                readings = snapshot.allReadings,
                 metadata = snapshot.metadata,
                 checkedNodeIds = checkedNodeIds.sorted()
             )

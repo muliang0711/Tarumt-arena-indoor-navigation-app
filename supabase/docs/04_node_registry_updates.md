@@ -80,12 +80,12 @@ geometry.
 
 ## Coordinate changes and the model
 
-- `coordinates.lh` changes affect placement in the existing Android app only.
-- `coordinates.xy` changes affect node placement in the future Flutter app and take effect in API
+- `coordinates.lh` changes affect placement in the existing Android app and take effect in API
   inference after restart. At startup the API replaces each bundle reference's stored geometry with
   current database values.
+- `coordinates.xy` changes affect node placement in the future Flutter app only.
 - Small calibration corrections can therefore be made without rebuilding the bundle.
-- Meaningful `xy`, floor, or building changes can invalidate the spatial assumptions used during
+- Meaningful `lh`, floor, or building changes can invalidate the spatial assumptions used during
   triplet training. Export the registry, retrain, and reevaluate after such changes.
 - Renaming or removing a node referenced by the bundle prevents API startup until a compatible
   bundle is deployed. Adding new database nodes is allowed.

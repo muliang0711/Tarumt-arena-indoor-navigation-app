@@ -43,9 +43,9 @@ Each node contains both coordinate frames:
 }
 ```
 
-- `coordinates.lh` is the coordinate frame used by the existing Android app.
-- `coordinates.xy` is used by model estimates, geographic nearest-node selection, and the future
-  Flutter app.
+- `coordinates.lh` is used by the existing Android app, WKNN model estimates, and geographic
+  nearest-node selection.
+- `coordinates.xy` is used by the future Flutter app.
 
 Both client applications read the same node rows, but they must select the appropriate nested
 coordinate frame rather than treating `lh` and `xy` as interchangeable.
@@ -85,7 +85,7 @@ source-of-truth data.
 - `/calcPosition` transforms the live Wi-Fi scan using the preprocessing state in `bundle.pt` and
   runs the WKNN Triplet model and reference database.
 - `/findClosestNode` first performs the same inference, then finds the nearest database node by
-  `coordinates.xy` within the inferred building and floor.
+  `coordinates.lh` within the inferred building and floor.
 - Nearest-node eligibility is not limited to nodes represented in the model's training fingerprints.
 
 The legacy `checkedNodeIds` request field remains accepted for compatibility but is ignored by the

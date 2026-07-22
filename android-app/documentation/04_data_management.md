@@ -99,7 +99,7 @@ Files:
 - `nodeId`
 - `floorId`
 - `coordinates.lh.x/y`: the Android navigation and map coordinate frame.
-- `coordinates.xy.x/y`: the model coordinate frame retained for explicit diagnostics/contracts.
+- `coordinates.xy.x/y`: the future Flutter coordinate frame retained for explicit diagnostics/contracts.
 - `type`: `DESTINATION`, `JUNCTION`, `STAIRS`, or `ELEVATOR`
 - optional display `name`
 - `enabled`
