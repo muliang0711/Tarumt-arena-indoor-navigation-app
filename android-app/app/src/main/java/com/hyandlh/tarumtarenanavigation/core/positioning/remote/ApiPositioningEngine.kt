@@ -104,6 +104,7 @@ class ApiPositioningEngine @Inject constructor(
             )
             val fallback = PositionEstimate(0.0, 0.0, "unknown", 0.0, snapshot.timestamp)
             _currentPosition.value = fallback
+            _nodeDistances.value = emptyMap()
             fallback
         }
     }

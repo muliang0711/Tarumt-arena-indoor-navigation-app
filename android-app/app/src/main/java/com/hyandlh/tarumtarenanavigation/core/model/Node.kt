@@ -33,7 +33,9 @@ data class Node(
     val type: NodeType,
     val name: String? = null,
     val enabled: Boolean = true,
-    val metadata: Map<String, String> = emptyMap()
+    val metadata: Map<String, String> = emptyMap(),
+    val buildingId: String = "default",
+    val positioningEnabled: Boolean = true
 ) {
     val x: Double
         get() = coordinates.lh.x
@@ -50,7 +52,9 @@ data class Node(
         type: NodeType,
         name: String? = null,
         enabled: Boolean = true,
-        metadata: Map<String, String> = emptyMap()
+        metadata: Map<String, String> = emptyMap(),
+        buildingId: String = "default",
+        positioningEnabled: Boolean = true
     ) : this(
         nodeId = nodeId,
         floorId = floorId,
@@ -58,7 +62,9 @@ data class Node(
         type = type,
         name = name,
         enabled = enabled,
-        metadata = metadata
+        metadata = metadata,
+        buildingId = buildingId,
+        positioningEnabled = positioningEnabled
     )
 }
 

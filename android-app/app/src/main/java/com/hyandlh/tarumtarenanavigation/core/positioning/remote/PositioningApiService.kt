@@ -1,6 +1,5 @@
 package com.hyandlh.tarumtarenanavigation.core.positioning.remote
 
-import com.hyandlh.tarumtarenanavigation.core.model.FingerprintEntry
 import com.hyandlh.tarumtarenanavigation.core.model.Node
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -14,13 +13,19 @@ interface PositioningApiService {
         @Body request: PositioningRequest
     ): PositioningResponse
 
-    @GET
-    suspend fun getAllFingerprints(
-        @Url url: String
-    ): List<FingerprintEntry>
+    @POST
+    suspend fun findClosestNode(
+        @Url url: String,
+        @Body request: PositioningRequest
+    ): PositioningClosestNodeResponse
 
     @GET
     suspend fun getNodeRegistry(
         @Url url: String
     ): Map<String, Node>
+
+    @GET
+    suspend fun heartbeat(
+        @Url url: String
+    ): HeartbeatResponse
 }

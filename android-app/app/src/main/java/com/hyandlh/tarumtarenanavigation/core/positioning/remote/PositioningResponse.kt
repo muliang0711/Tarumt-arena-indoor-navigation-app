@@ -19,3 +19,11 @@ data class PositionCandidate(
     val overlapRatio: Double,
     val fingerprintCount: Int
 )
+
+data class PositioningClosestNodeResponse(
+    val nodeId: String
+)
+
+data class HeartbeatResponse(
+    val status: String
+)

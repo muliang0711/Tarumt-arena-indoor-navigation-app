@@ -9,5 +9,6 @@ data class PositionEstimate(
     val floorId: String,
     val confidence: Double,
     val timestamp: Long,
-    val diagnostics: Map<String, String> = emptyMap()
+    val diagnostics: Map<String, String> = emptyMap(),
+    val buildingId: String = "default"
 )
