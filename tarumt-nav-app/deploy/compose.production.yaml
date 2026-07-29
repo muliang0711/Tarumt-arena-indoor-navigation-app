@@ -1,0 +1,151 @@
+name: campus-navigator
+
+x-go-runtime: &go-runtime
+  restart: unless-stopped
+  read_only: true
+  tmpfs:
+    - /tmp:size=16m,mode=1777
+  security_opt:
+    - no-new-privileges:true
+  logging:
+    driver: json-file
+    options:
+      max-size: 10m
+      max-file: "3"
+  networks:
+    - application
+
+services:
+  redis:
+    image: redis:8.4-alpine
+    command: ["redis-server", "--appendonly", "no", "--save", ""]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+      start_period: 5s
+    tmpfs:
+      - /data:size=1g,mode=0700
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    networks:
+      - application
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.3-alpine
+    restart: unless-stopped
+    environment:
+      CLICKHOUSE_DB: campus_analytics
+      CLICKHOUSE_USER: trajectory
+      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_TRAJECTORY_PASSWORD:?set CLICKHOUSE_TRAJECTORY_PASSWORD}
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+      CLICKHOUSE_ANALYTICS_PASSWORD: ${CLICKHOUSE_ANALYTICS_PASSWORD:?set CLICKHOUSE_ANALYTICS_PASSWORD}
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ../services/trajectory-worker/migrations/001_trajectory_events.sql:/docker-entrypoint-initdb.d/001_trajectory_events.sql:ro
+      - ./clickhouse-init/002_analytics_reader.sh:/docker-entrypoint-initdb.d/002_analytics_reader.sh:ro
+      - ../services/trajectory-worker/migrations/003_journey_lifecycle_events.sql:/docker-entrypoint-initdb.d/003_journey_lifecycle_events.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8123/ping | grep -q Ok"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+      start_period: 15s
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "5"
+    networks:
+      - application
+
+  presence-gateway:
+    <<: *go-runtime
+    build:
+      context: ../services/presence-gateway
+    environment:
+      PRESENCE_ADDRESS: :8080
+      PRESENCE_BACKEND: redis
+      PRESENCE_REDIS_URL: redis://redis:6379/0
+      PRESENCE_JWT_SECRET: ${PRESENCE_JWT_SECRET:?set PRESENCE_JWT_SECRET}
+      PRESENCE_IDENTITY_HMAC_SECRET: ${PRESENCE_IDENTITY_HMAC_SECRET:?set PRESENCE_IDENTITY_HMAC_SECRET}
+      PRESENCE_INSTANCE_ID: ${PRESENCE_INSTANCE_ID:-cmp-gateway-1}
+      PRESENCE_MAP_DATA_ROOT: /srv/campus-maps
+      PRESENCE_ALLOWED_ORIGINS: ${PRESENCE_ALLOWED_ORIGINS:-}
+      PRESENCE_TRAJECTORY_ENABLED: "true"
+    volumes:
+      - ../map-data:/srv/campus-maps:ro
+    ports:
+      - "127.0.0.1:${PRESENCE_HOST_PORT:-8080}:8080"
+    networks:
+      - application
+      - ingress
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health/ready | grep -q ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  trajectory-worker:
+    <<: *go-runtime
+    build:
+      context: ../services/trajectory-worker
+    environment:
+      TRAJECTORY_WORKER_ADDRESS: :9091
+      TRAJECTORY_REDIS_URL: redis://redis:6379/0
+      TRAJECTORY_CLICKHOUSE_ADDRESS: clickhouse:9000
+      TRAJECTORY_CLICKHOUSE_DATABASE: campus_analytics
+      TRAJECTORY_CLICKHOUSE_USERNAME: trajectory
+      TRAJECTORY_CLICKHOUSE_PASSWORD: ${CLICKHOUSE_TRAJECTORY_PASSWORD:?set CLICKHOUSE_TRAJECTORY_PASSWORD}
+    depends_on:
+      redis:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9091/health/ready | grep -q ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+  analytics-api:
+    <<: *go-runtime
+    build:
+      context: ../services/analytics-api
+    environment:
+      ANALYTICS_API_ADDRESS: :9092
+      ANALYTICS_CLICKHOUSE_ADDRESS: clickhouse:9000
+      ANALYTICS_CLICKHOUSE_DATABASE: campus_analytics
+      ANALYTICS_CLICKHOUSE_USERNAME: analytics_reader
+      ANALYTICS_CLICKHOUSE_PASSWORD: ${CLICKHOUSE_ANALYTICS_PASSWORD:?set CLICKHOUSE_ANALYTICS_PASSWORD}
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9092/health/ready | grep -q ready"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+
+volumes:
+  clickhouse-data:
+
+networks:
+  application:
+    internal: true
+  ingress:

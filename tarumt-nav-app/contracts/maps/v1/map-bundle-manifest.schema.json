@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://campus-navigator.local/contracts/maps/v1/map-bundle-manifest.schema.json",
+  "title": "MapBundleManifestV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "map_id",
+    "bundle_revision",
+    "graph_revision",
+    "assets"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "map_id": { "$ref": "#/$defs/identifier" },
+    "bundle_revision": { "$ref": "#/$defs/revision" },
+    "graph_revision": { "$ref": "#/$defs/revision" },
+    "assets": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/asset" }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "asset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "asset_id",
+        "kind",
+        "path",
+        "sha256",
+        "byte_size",
+        "content_type"
+      ],
+      "properties": {
+        "asset_id": { "$ref": "#/$defs/identifier" },
+        "kind": {
+          "enum": [
+            "map_graph",
+            "rooms",
+            "map_raster",
+            "thumbnail",
+            "tiled_map",
+            "route_edges",
+            "nodes",
+            "wifi_node_mapping"
+          ]
+        },
+        "floor_id": { "$ref": "#/$defs/identifier" },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]*$"
+        },
+        "sha256": { "$ref": "#/$defs/revision" },
+        "byte_size": { "type": "integer", "minimum": 1 },
+        "content_type": {
+          "enum": ["application/json", "image/png"]
+        },
+        "width": { "type": "integer", "minimum": 1 },
+        "height": { "type": "integer", "minimum": 1 }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "event_id": "7d00a880-9f35-4e10-9eef-045f100364e9",
+  "journey_id": "5e667d46-1150-442f-97a4-25fd6c683b77",
+  "building_id": "main",
+  "floor_id": "2",
+  "from_node_id": "node-201",
+  "to_node_id": "node-202",
+  "edge_progress": 0.42,
+  "heading": 90,
+  "movement_state": "walking",
+  "observed_at": "2026-07-22T12:00:00Z",
+  "ingested_at": "2026-07-22T12:00:00.010Z"
+}

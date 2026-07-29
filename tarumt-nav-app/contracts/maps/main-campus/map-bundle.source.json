@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "map_id": "main-campus",
+  "map_graph": "contracts/maps/main-campus/map-graph-bundle.v1.json",
+  "rooms": "flutter_app/assets/campus/main_campus.rooms.json",
+  "floors": [
+    {
+      "floor_id": "floor-2",
+      "map_raster": "flutter_app/assets/maps/demo_1.png",
+      "thumbnail": "contracts/maps/main-campus/assets/floor-2.thumbnail.png",
+      "tiled_map": "flutter_app/assets/maps/demo_1.tmj.json",
+      "route_edges": "flutter_app/assets/maps/demo_1.edges.json",
+      "nodes": "flutter_app/assets/maps/demo_1.nodes.json",
+      "wifi_node_mapping": "flutter_app/assets/positioning/floor-2.wifi-node-mapping.json"
+    }
+  ]
+}

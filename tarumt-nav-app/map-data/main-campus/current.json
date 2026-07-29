@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "map_id": "main-campus",
+  "bundle_revision": "sha256:a0554887cce7a1249f46d5d819fc851513f137128a4eba6446e54f84202f4493",
+  "graph_revision": "sha256:9ce75cc7224ccc08e343761fb981c1625ca1b58231db1eb9c7270f1cf0a7865b",
+  "manifest_path": "revisions/sha256:a0554887cce7a1249f46d5d819fc851513f137128a4eba6446e54f84202f4493/manifest.json"
+}

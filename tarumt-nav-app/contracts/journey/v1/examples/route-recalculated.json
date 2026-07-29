@@ -1,0 +1,32 @@
+{
+  "event_type": "route_recalculated",
+  "event_id": "event-02",
+  "client_event_id": "client-event-02",
+  "journey_id": "journey-01",
+  "client_journey_key": "local-journey-01",
+  "map_id": "main-campus",
+  "map_revision": "sha256:9ce75cc7224ccc08e343761fb981c1625ca1b58231db1eb9c7270f1cf0a7865b",
+  "lifecycle_sequence": 2,
+  "route_revision": 2,
+  "occurred_at": "2026-07-26T02:01:00Z",
+  "ingested_at": "2026-07-26T02:01:00.050Z",
+  "reason": "wrong_way",
+  "planned_route": {
+    "origin_node_id": "node-2",
+    "destination_node_id": "node-17",
+    "planned_edge_ids": [
+      "edge-node-3-node-2",
+      "edge-node-3-node-4",
+      "edge-node-4-node-5",
+      "edge-node-5-node-6",
+      "edge-node-6-node-7",
+      "edge-node-7-node-8",
+      "edge-node-8-node-9",
+      "edge-node-9-node-10",
+      "edge-node-10-node-11",
+      "edge-node-11-node-12",
+      "edge-node-12-node-16",
+      "edge-node-17-node-16"
+    ]
+  }
+}

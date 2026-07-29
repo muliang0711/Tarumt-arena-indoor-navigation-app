@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://campus-navigator.local/contracts/maps/v1/map-bundle-current.schema.json",
+  "title": "CurrentMapBundlePointerV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "map_id",
+    "bundle_revision",
+    "graph_revision",
+    "manifest_path"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "map_id": { "$ref": "#/$defs/identifier" },
+    "bundle_revision": { "$ref": "#/$defs/revision" },
+    "graph_revision": { "$ref": "#/$defs/revision" },
+    "manifest_path": {
+      "type": "string",
+      "pattern": "^revisions/sha256:[a-f0-9]{64}/manifest\\.json$"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "revision": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    }
+  }
+}

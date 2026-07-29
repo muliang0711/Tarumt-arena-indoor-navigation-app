@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://campus-navigator.local/contracts/journey/v1/journey-lifecycle-event.schema.json",
+  "title": "JourneyLifecycleEventV1",
+  "oneOf": [
+    { "$ref": "#/$defs/journey_started" },
+    { "$ref": "#/$defs/route_recalculated" },
+    { "$ref": "#/$defs/journey_ended" }
+  ],
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "common_properties": {
+      "event_id": { "$ref": "#/$defs/identifier" },
+      "client_event_id": { "$ref": "#/$defs/identifier" },
+      "journey_id": { "$ref": "#/$defs/identifier" },
+      "client_journey_key": { "$ref": "#/$defs/identifier" },
+      "map_id": { "$ref": "#/$defs/identifier" },
+      "map_revision": {
+        "type": "string",
+        "pattern": "^sha256:[a-f0-9]{64}$"
+      },
+      "lifecycle_sequence": { "type": "integer", "minimum": 1 },
+      "route_revision": { "type": "integer", "minimum": 1 },
+      "occurred_at": { "type": "string", "format": "date-time" },
+      "ingested_at": { "type": "string", "format": "date-time" }
+    },
+    "planned_route": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "origin_node_id",
+        "destination_node_id",
+        "planned_edge_ids"
+      ],
+      "properties": {
+        "origin_node_id": { "$ref": "#/$defs/identifier" },
+        "destination_node_id": { "$ref": "#/$defs/identifier" },
+        "planned_edge_ids": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/identifier" }
+        }
+      }
+    },
+    "journey_started": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_type",
+        "event_id",
+        "client_event_id",
+        "journey_id",
+        "client_journey_key",
+        "map_id",
+        "map_revision",
+        "lifecycle_sequence",
+        "route_revision",
+        "occurred_at",
+        "ingested_at",
+        "planned_route"
+      ],
+      "properties": {
+        "event_type": { "const": "journey_started" },
+        "event_id": { "$ref": "#/$defs/common_properties/event_id" },
+        "client_event_id": { "$ref": "#/$defs/common_properties/client_event_id" },
+        "journey_id": { "$ref": "#/$defs/common_properties/journey_id" },
+        "client_journey_key": { "$ref": "#/$defs/common_properties/client_journey_key" },
+        "map_id": { "$ref": "#/$defs/common_properties/map_id" },
+        "map_revision": { "$ref": "#/$defs/common_properties/map_revision" },
+        "lifecycle_sequence": { "$ref": "#/$defs/common_properties/lifecycle_sequence" },
+        "route_revision": { "$ref": "#/$defs/common_properties/route_revision" },
+        "occurred_at": { "$ref": "#/$defs/common_properties/occurred_at" },
+        "ingested_at": { "$ref": "#/$defs/common_properties/ingested_at" },
+        "planned_route": { "$ref": "#/$defs/planned_route" }
+      }
+    },
+    "route_recalculated": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_type",
+        "event_id",
+        "client_event_id",
+        "journey_id",
+        "client_journey_key",
+        "map_id",
+        "map_revision",
+        "lifecycle_sequence",
+        "route_revision",
+        "occurred_at",
+        "ingested_at",
+        "reason",
+        "planned_route"
+      ],
+      "properties": {
+        "event_type": { "const": "route_recalculated" },
+        "event_id": { "$ref": "#/$defs/common_properties/event_id" },
+        "client_event_id": { "$ref": "#/$defs/common_properties/client_event_id" },
+        "journey_id": { "$ref": "#/$defs/common_properties/journey_id" },
+        "client_journey_key": { "$ref": "#/$defs/common_properties/client_journey_key" },
+        "map_id": { "$ref": "#/$defs/common_properties/map_id" },
+        "map_revision": { "$ref": "#/$defs/common_properties/map_revision" },
+        "lifecycle_sequence": { "$ref": "#/$defs/common_properties/lifecycle_sequence" },
+        "route_revision": { "$ref": "#/$defs/common_properties/route_revision" },
+        "occurred_at": { "$ref": "#/$defs/common_properties/occurred_at" },
+        "ingested_at": { "$ref": "#/$defs/common_properties/ingested_at" },
+        "reason": {
+          "enum": [
+            "wrong_way",
+            "congestion",
+            "blocked_edge",
+            "localization_correction",
+            "user_requested"
+          ]
+        },
+        "planned_route": { "$ref": "#/$defs/planned_route" }
+      }
+    },
+    "journey_ended": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event_type",
+        "event_id",
+        "journey_id",
+        "client_journey_key",
+        "map_id",
+        "map_revision",
+        "lifecycle_sequence",
+        "route_revision",
+        "occurred_at",
+        "ingested_at",
+        "outcome"
+      ],
+      "properties": {
+        "event_type": { "const": "journey_ended" },
+        "event_id": { "$ref": "#/$defs/common_properties/event_id" },
+        "client_event_id": { "$ref": "#/$defs/common_properties/client_event_id" },
+        "journey_id": { "$ref": "#/$defs/common_properties/journey_id" },
+        "client_journey_key": { "$ref": "#/$defs/common_properties/client_journey_key" },
+        "map_id": { "$ref": "#/$defs/common_properties/map_id" },
+        "map_revision": { "$ref": "#/$defs/common_properties/map_revision" },
+        "lifecycle_sequence": { "$ref": "#/$defs/common_properties/lifecycle_sequence" },
+        "route_revision": { "$ref": "#/$defs/common_properties/route_revision" },
+        "occurred_at": { "$ref": "#/$defs/common_properties/occurred_at" },
+        "ingested_at": { "$ref": "#/$defs/common_properties/ingested_at" },
+        "outcome": {
+          "enum": ["arrived", "cancelled", "superseded", "expired"]
+        }
+      }
+    }
+  }
+}

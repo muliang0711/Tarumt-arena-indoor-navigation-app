@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://campus-navigator.local/contracts/trajectory/v1/trajectory-event.schema.json",
+  "title": "TrajectoryEventV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "event_id",
+    "journey_id",
+    "building_id",
+    "floor_id",
+    "from_node_id",
+    "to_node_id",
+    "edge_progress",
+    "heading",
+    "movement_state",
+    "observed_at",
+    "ingested_at"
+  ],
+  "properties": {
+    "event_id": { "type": "string", "minLength": 1 },
+    "journey_id": { "type": "string", "minLength": 1 },
+    "building_id": { "type": "string", "minLength": 1 },
+    "floor_id": { "type": "string", "minLength": 1 },
+    "from_node_id": { "type": "string", "minLength": 1 },
+    "to_node_id": { "type": "string", "minLength": 1 },
+    "edge_progress": { "type": "number", "minimum": 0, "maximum": 1 },
+    "heading": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 },
+    "movement_state": { "enum": ["idle", "walking"] },
+    "observed_at": { "type": "string", "format": "date-time" },
+    "ingested_at": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "event_type": "journey_ended",
+  "event_id": "event-03",
+  "client_event_id": "client-event-03",
+  "journey_id": "journey-01",
+  "client_journey_key": "local-journey-01",
+  "map_id": "main-campus",
+  "map_revision": "sha256:9ce75cc7224ccc08e343761fb981c1625ca1b58231db1eb9c7270f1cf0a7865b",
+  "lifecycle_sequence": 3,
+  "route_revision": 2,
+  "occurred_at": "2026-07-26T02:05:00Z",
+  "ingested_at": "2026-07-26T02:05:00.050Z",
+  "outcome": "arrived"
+}

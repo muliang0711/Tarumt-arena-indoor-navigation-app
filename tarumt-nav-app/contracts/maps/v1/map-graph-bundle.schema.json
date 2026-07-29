@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://campus-navigator.local/contracts/maps/v1/map-graph-bundle.schema.json",
+  "title": "MapGraphBundleV1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "map_id",
+    "floors",
+    "inter_floor_edges",
+    "map_revision"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "map_id": { "$ref": "#/$defs/identifier" },
+    "map_revision": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "floors": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/floor" }
+    },
+    "inter_floor_edges": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/edge" }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["node_id", "kind", "x", "y"],
+      "properties": {
+        "node_id": { "$ref": "#/$defs/identifier" },
+        "kind": { "enum": ["junction", "room", "connector"] },
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "edge_id",
+        "from_node_id",
+        "to_node_id",
+        "distance",
+        "bidirectional"
+      ],
+      "properties": {
+        "edge_id": { "$ref": "#/$defs/identifier" },
+        "from_node_id": { "$ref": "#/$defs/identifier" },
+        "to_node_id": { "$ref": "#/$defs/identifier" },
+        "distance": { "type": "number", "exclusiveMinimum": 0 },
+        "bidirectional": { "type": "boolean" }
+      }
+    },
+    "floor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["floor_id", "nodes", "edges"],
+      "properties": {
+        "floor_id": { "$ref": "#/$defs/identifier" },
+        "nodes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/node" }
+        },
+        "edges": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/edge" }
+        }
+      }
+    }
+  }
+}
