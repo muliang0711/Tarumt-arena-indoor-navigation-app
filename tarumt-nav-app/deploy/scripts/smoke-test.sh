@@ -41,20 +41,27 @@ done
 gateway_address=$("${compose[@]}" port presence-gateway 8080)
 gateway_url="http://${gateway_address}"
 
+printf '%s\n' "Checking Gateway readiness..."
 curl --fail --silent --show-error "${gateway_url}/health/ready" | grep -q ready
+printf '%s\n' "Checking the current Main Campus Map Bundle..."
 curl --fail --silent --show-error "${gateway_url}/v1/maps/main-campus/current" |
   grep -q '"map_id"[[:space:]]*:[[:space:]]*"main-campus"'
+printf '%s\n' "Checking anonymous session creation..."
 curl --fail --silent --show-error \
   --header 'Content-Type: application/json' \
   --data '{"installation_id":"deployment-smoke-installation-v1"}' \
   "${gateway_url}/v1/anonymous-sessions" |
   grep -q '"access_token"'
 
+printf '%s\n' "Checking Redis..."
 "${compose[@]}" exec -T redis redis-cli ping | grep -q PONG
+printf '%s\n' "Checking ClickHouse..."
 "${compose[@]}" exec -T clickhouse sh -ec \
   'clickhouse-client --user "$CLICKHOUSE_USER" --password "$CLICKHOUSE_PASSWORD" --query "SELECT 1"'
+printf '%s\n' "Checking the Trajectory Worker..."
 "${compose[@]}" exec -T trajectory-worker wget -qO- \
   http://127.0.0.1:9091/health/ready | grep -q ready
+printf '%s\n' "Checking the Analytics API..."
 "${compose[@]}" exec -T analytics-api wget -qO- \
   http://127.0.0.1:9092/health/ready | grep -q ready
 

@@ -80,8 +80,9 @@ bash deploy/gcp/bootstrap-vm.sh
 
 The script installs and enables Docker and Tailscale, creates the protected
 `/opt/campus-navigator/shared/production.env` file when it is absent, builds
-and starts the Compose application, runs the deployment smoke test, and maps
-the loopback-only Gateway to a public Tailscale Funnel HTTPS URL.
+the current Map Bundle when its published revision is absent, builds and starts
+the Compose application, runs the deployment smoke test, and maps the
+loopback-only Gateway to a public Tailscale Funnel HTTPS URL.
 
 Tailscale requires one-time interactive authorization. Open the login or
 Funnel approval URL printed by the script. If Funnel approval interrupts the

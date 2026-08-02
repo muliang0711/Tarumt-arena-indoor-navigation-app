@@ -75,6 +75,24 @@ else
   printf 'Preserving existing secrets in %s.\n' "$environment_file"
 fi
 
+map_pointer="$repository_root/map-data/main-campus/current.json"
+map_manifest_relative=$(sed -n 's/.*"manifest_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$map_pointer")
+if [[ -z "$map_manifest_relative" || ! -f "$repository_root/map-data/main-campus/$map_manifest_relative" ]]; then
+  printf '%s\n' "Publishing the missing Main Campus Map Bundle..."
+  sudo docker run --rm \
+    --user "$(id -u):$(id -g)" \
+    --env HOME=/tmp \
+    --env GOCACHE=/tmp/go-build \
+    --env GOMODCACHE=/tmp/go-mod \
+    --volume "$repository_root:/workspace" \
+    --workdir /workspace/services/presence-gateway \
+    golang:1.24-alpine \
+    go run ./cmd/map-bundle-publisher \
+      -workspace /workspace \
+      -source contracts/maps/main-campus/map-bundle.source.json \
+      -output map-data/main-campus
+fi
+
 printf '%s\n' "Building and starting the Campus Navigator containers..."
 sudo docker compose \
   --project-name "$project_name" \
@@ -88,6 +106,7 @@ sudo docker compose \
   --file "$compose_file" \
   up --detach --build --remove-orphans --wait
 
+printf '%s\n' "Running the complete backend smoke test..."
 sudo bash "$repository_root/deploy/scripts/smoke-test.sh" \
   "$compose_file" \
   "$environment_file"
