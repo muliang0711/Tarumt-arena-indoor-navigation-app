@@ -35,6 +35,7 @@ final class IndoorNavigationReadyView extends StatelessWidget {
     required this.state,
     this.destinationFloor,
     this.destinationRoom,
+    this.displayName,
     this.onChangeDestination,
     this.routeTrafficBySegmentKey = const <String, RouteTrafficLevel>{},
     this.uiConfig = productionAppUiConfig,
@@ -47,6 +48,7 @@ final class IndoorNavigationReadyView extends StatelessWidget {
 
   final CampusFloor? destinationFloor;
   final CampusRoom? destinationRoom;
+  final String? displayName;
   final VoidCallback? onChangeDestination;
   final Map<String, RouteTrafficLevel> routeTrafficBySegmentKey;
   final IndoorNavigationViewState state;
@@ -112,6 +114,7 @@ final class IndoorNavigationReadyView extends StatelessWidget {
                             config: uiConfig,
                             destinationFloor: destinationFloor,
                             destinationRoom: destinationRoom,
+                            displayName: displayName,
                             isEdgeEditing: isEdgeEditing,
                             onChangeDestination: onChangeDestination,
                             routeTrafficBySegmentKey: routeTrafficBySegmentKey,
@@ -145,6 +148,7 @@ final class IndoorNavigationReadyView extends StatelessWidget {
                           config: uiConfig,
                           destinationFloor: destinationFloor,
                           destinationRoom: destinationRoom,
+                          displayName: displayName,
                           isEdgeEditing: isEdgeEditing,
                           onChangeDestination: onChangeDestination,
                           routeTrafficBySegmentKey: routeTrafficBySegmentKey,
@@ -251,6 +255,7 @@ final class _Map extends StatelessWidget {
     required this.config,
     required this.destinationFloor,
     required this.destinationRoom,
+    required this.displayName,
     required this.isEdgeEditing,
     required this.onChangeDestination,
     required this.routeTrafficBySegmentKey,
@@ -261,6 +266,7 @@ final class _Map extends StatelessWidget {
   final AppUiConfig config;
   final CampusFloor? destinationFloor;
   final CampusRoom? destinationRoom;
+  final String? displayName;
   final bool isEdgeEditing;
   final VoidCallback? onChangeDestination;
   final Map<String, RouteTrafficLevel> routeTrafficBySegmentKey;
@@ -306,6 +312,7 @@ final class _Map extends StatelessWidget {
                 );
               },
           observedHeadingDegrees: navigationDisplayHeading,
+          userDisplayName: displayName,
           onRouteNodePressed: isEdgeEditing ? viewModel.selectRouteNode : null,
           onZoomChanged: viewModel.setZoom,
           redMarker: state.derivedEstimate!.redMarker,

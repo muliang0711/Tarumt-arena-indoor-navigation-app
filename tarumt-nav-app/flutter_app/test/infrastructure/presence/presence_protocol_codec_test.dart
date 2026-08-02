@@ -34,6 +34,7 @@ void main() {
           'representatives': <Object>[
             <String, Object>{
               'actor_id': 'anonymous-actor',
+              'display_name': 'IShowSpeed',
               'sequence': 7,
               'updated_at': '2026-07-22T12:00:00Z',
               'position': <String, Object>{
@@ -58,6 +59,7 @@ void main() {
     expect(snapshot.totalAppUsers, 120);
     expect(snapshot.edgeOccupancies.single.activeUsers, 6);
     expect(snapshot.representatives.single.sequence, 7);
+    expect(snapshot.representatives.single.displayName, 'IShowSpeed');
     expect(snapshot.representatives.single.origin, PresenceOrigin.remote);
     expect(snapshot.representatives.single.visualSeed, isNonNegative);
   });

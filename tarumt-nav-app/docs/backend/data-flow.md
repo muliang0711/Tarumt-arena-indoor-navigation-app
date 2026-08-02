@@ -24,7 +24,7 @@ sequenceDiagram
         Catalog-->>Gateway: Asset
         Gateway-->>App: Immutable asset response
     end
-    App->>Gateway: POST /v1/anonymous-sessions<br/>{installation_id}
+    App->>Gateway: POST /v1/anonymous-sessions<br/>{installation_id, display_name}
     Gateway->>Gateway: HMAC installation_id into device_ref
     Gateway->>Redis: Atomically store session + active/expiry indexes
     Gateway-->>App: session_id, JWT, expiry
@@ -36,6 +36,12 @@ sequenceDiagram
 The raw installation ID is used only to derive the private `device_ref`. It is
 not written to Redis or ClickHouse. The Gateway's canonical map graph is also
 used later to validate every planned Journey route.
+
+The optional `display_name` is public presence metadata, not an identity key.
+The client contract requires the Gateway to validate it at session creation,
+attach it to the session's presence actor, and return it as
+`actor.display_name` in snapshots and actor change events. Flutter limits names
+to 24 characters and remains compatible with actors that omit the field.
 
 ## 2. Journey lifecycle and position observations
 

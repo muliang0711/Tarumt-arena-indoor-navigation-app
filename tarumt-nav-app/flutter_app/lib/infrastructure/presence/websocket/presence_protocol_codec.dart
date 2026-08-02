@@ -188,6 +188,7 @@ final class PresenceProtocolCodec {
           ? PresenceActivity.walking
           : PresenceActivity.idle,
       buildingId: _string(position, 'building_id'),
+      displayName: _optionalString(source, 'display_name'),
       edgeProgress: _number(position, 'edge_progress'),
       floorId: _string(position, 'floor_id'),
       fromNodeId: _string(position, 'from_node_id'),

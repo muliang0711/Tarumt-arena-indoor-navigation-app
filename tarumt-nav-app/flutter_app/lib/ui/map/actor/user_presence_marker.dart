@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:indoor_navigation/application/orchestration/wifi/wifi_pdr_fusion_engine.dart';
 import 'package:indoor_navigation/domain/tiled/tiled_models.dart';
+import 'package:indoor_navigation/ui/map/actor/actor_name_label.dart';
 import 'package:indoor_navigation/ui/map/actor/actor_sprite.dart';
 import 'package:indoor_navigation/ui/map/actor/bob_actor.dart';
 import 'package:indoor_navigation/ui/map/actor/user_view_cone.dart';
@@ -11,6 +12,7 @@ import 'package:indoor_navigation/ui/map/widgets/animated_map_marker.dart';
 final class UserPresenceMarker extends StatefulWidget {
   const UserPresenceMarker({
     this.actor,
+    this.displayName,
     this.observedHeadingDegrees,
     required this.position,
     this.wifiCorrection,
@@ -18,6 +20,7 @@ final class UserPresenceMarker extends StatefulWidget {
   });
 
   final ActorDefinition? actor;
+  final String? displayName;
   final double? observedHeadingDegrees;
   final RoutePosition position;
   final WifiCorrectionVisualState? wifiCorrection;
@@ -90,6 +93,13 @@ final class _UserPresenceMarkerState extends State<UserPresenceMarker> {
               forceIdle: correction != null,
               position: widget.position,
             ),
+            if (widget.displayName != null)
+              Positioned(
+                left: definition.displayWidth / 2 - 56,
+                top: definition.displayHeight + 4,
+                width: 112,
+                child: ActorNameLabel(displayName: widget.displayName!),
+              ),
           ],
         ),
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:indoor_navigation/application/view_models/view_model_models.dart';
 import 'package:indoor_navigation/domain/tiled/tiled_models.dart';
+import 'package:indoor_navigation/ui/map/actor/actor_name_label.dart';
 import 'package:indoor_navigation/ui/map/actor/actor_sprite.dart';
 import 'package:indoor_navigation/ui/map/actor/user_presence_marker.dart';
 import 'package:indoor_navigation/ui/map/actor/user_view_cone.dart';
@@ -53,6 +54,17 @@ void main() {
     await tester.pumpWidget(_host(UserPresenceMarker(position: _position(0))));
     expect(find.byType(UserViewCone), findsNothing);
     expect(_assetName(tester), endsWith('idle_down.png'));
+  });
+
+  testWidgets('user presence renders its username below Bob', (tester) async {
+    await tester.pumpWidget(
+      _host(
+        UserPresenceMarker(displayName: 'IShowSpeed', position: _position(0)),
+      ),
+    );
+
+    expect(find.byType(ActorNameLabel), findsOneWidget);
+    expect(find.text('IShowSpeed'), findsOneWidget);
   });
 
   testWidgets('fixed-map compass heading drives Bob and cone together', (

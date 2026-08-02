@@ -8,6 +8,7 @@ import 'package:indoor_navigation/application/orchestration/presence/presence_sn
 import 'package:indoor_navigation/application/ports/journey/journey_lifecycle_gateway.dart';
 import 'package:indoor_navigation/application/ports/presence/installation_identity_store.dart';
 import 'package:indoor_navigation/application/ports/presence/presence_repository.dart';
+import 'package:indoor_navigation/application/ports/presence/user_profile_store.dart';
 import 'package:indoor_navigation/domain/journey/journey.dart';
 import 'package:indoor_navigation/domain/presence/presence_connection.dart';
 import 'package:indoor_navigation/domain/presence/presence_events.dart';
@@ -26,13 +27,15 @@ final class RealtimePresenceRepository
     PresenceProtocolCodec codec = const PresenceProtocolCodec(),
     PresenceReconnectPolicy? reconnectPolicy,
     SecureRandomInstallationIdGenerator? identityGenerator,
+    UserProfileStore? userProfileStore,
   }) : _baseUrl = baseUrl,
        _codec = codec,
        _identityGenerator =
            identityGenerator ?? SecureRandomInstallationIdGenerator(),
        _identityStore = identityStore,
        _reconnectPolicy = reconnectPolicy ?? PresenceReconnectPolicy(),
-       _sessionApi = sessionApi;
+       _sessionApi = sessionApi,
+       _userProfileStore = userProfileStore;
 
   final Uri _baseUrl;
   final PresenceProtocolCodec _codec;
@@ -40,6 +43,7 @@ final class RealtimePresenceRepository
   final InstallationIdentityStore _identityStore;
   final PresenceReconnectPolicy _reconnectPolicy;
   final AnonymousSessionApi _sessionApi;
+  final UserProfileStore? _userProfileStore;
   final PresenceSnapshotReducer _reducer = PresenceSnapshotReducer();
   final StreamController<PresenceConnectionState> _connectionStates =
       StreamController<PresenceConnectionState>.broadcast(sync: true);
@@ -156,7 +160,10 @@ final class RealtimePresenceRepository
         cached.sessionExpiresAt.isAfter(now)) {
       return cached;
     }
-    final created = await _sessionApi.create(await _installationId());
+    final created = await _sessionApi.create(
+      await _installationId(),
+      displayName: await _userProfileStore?.readDisplayName(),
+    );
     _cachedSession = created;
     return created;
   }

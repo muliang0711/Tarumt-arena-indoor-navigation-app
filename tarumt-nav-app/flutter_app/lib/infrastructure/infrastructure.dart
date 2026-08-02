@@ -14,6 +14,7 @@ export 'presence/http/anonymous_session_api.dart';
 export 'presence/hybrid_presence_repository.dart';
 export 'presence/mock_presence_repository.dart';
 export 'presence/storage/shared_preferences_installation_identity_store.dart';
+export 'presence/storage/shared_preferences_user_profile_store.dart';
 export 'presence/websocket/realtime_presence_repository.dart';
 export 'sensors/android_motion_sensor_device_manager.dart';
 export 'sensors/core_motion_sensor_device_manager.dart';

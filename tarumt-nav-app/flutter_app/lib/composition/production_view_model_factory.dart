@@ -9,6 +9,7 @@ import 'package:indoor_navigation/application/ports/journey/journey_lifecycle_ga
 import 'package:indoor_navigation/application/ports/logging/wifi_diagnostic_log.dart';
 import 'package:indoor_navigation/application/ports/maps/map_bundle_repository.dart';
 import 'package:indoor_navigation/application/ports/maps/map_runtime_resource_repository.dart';
+import 'package:indoor_navigation/application/ports/presence/user_profile_store.dart';
 import 'package:indoor_navigation/application/ports/sensors/sensor_device_manager.dart';
 import 'package:indoor_navigation/application/ports/time/clock.dart';
 import 'package:indoor_navigation/application/ports/wifi/wifi_node_mapping_repository.dart';
@@ -177,6 +178,7 @@ ProductionPresenceDependencies createProductionPresenceDependencies({
   PresenceMode? mode,
   Uri? baseUrl,
   int? hybridRemoteRepresentativeLimit,
+  UserProfileStore? userProfileStore,
 }) {
   final resolvedMode = mode ?? resolveConfiguredPresenceMode();
   final resolvedBaseUrl = baseUrl ?? resolveConfiguredPresenceBaseUrl();
@@ -196,6 +198,7 @@ ProductionPresenceDependencies createProductionPresenceDependencies({
         baseUrl: resolvedBaseUrl,
         identityStore: SharedPreferencesInstallationIdentityStore(),
         sessionApi: AnonymousSessionApi(baseUrl: resolvedBaseUrl),
+        userProfileStore: userProfileStore,
       );
   final repository = switch (resolvedMode) {
     PresenceMode.mock => MockPresenceRepository(

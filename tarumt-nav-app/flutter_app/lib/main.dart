@@ -7,6 +7,7 @@ import 'package:indoor_navigation/composition/composition.dart';
 import 'package:indoor_navigation/domain/config/app_config.dart';
 import 'package:indoor_navigation/infrastructure/debug/shared_preferences_wifi_diagnostic_log.dart';
 import 'package:indoor_navigation/infrastructure/export/share_wifi_diagnostic_exporter.dart';
+import 'package:indoor_navigation/infrastructure/presence/storage/shared_preferences_user_profile_store.dart';
 import 'package:indoor_navigation/infrastructure/time/system_clock.dart';
 import 'package:indoor_navigation/infrastructure/wifi/manual_wifi_scan_manager.dart';
 import 'package:indoor_navigation/ui/indoor_navigation_app.dart';
@@ -55,14 +56,19 @@ Future<void> main() async {
   final campusViewModels = await createProductionCampusViewModels(
     campusCatalogRepository: mapResources.campusCatalogRepository,
   );
+  final userProfileStore = SharedPreferencesUserProfileStore();
+  final initialDisplayName = await userProfileStore.readDisplayName();
   final presenceDependencies = createProductionPresenceDependencies(
     mapRuntimeRepository: mapResources.mapRuntimeRepository,
+    userProfileStore: userProfileStore,
   );
   runApp(
     IndoorNavigationApp(
       floorRoomsViewModel: campusViewModels.floorRoomsViewModel,
       homeViewModel: campusViewModels.homeViewModel,
       liveMapViewModel: presenceDependencies.liveMapViewModel,
+      initialDisplayName: initialDisplayName,
+      onDisplayNameSelected: userProfileStore.writeDisplayName,
       presenceCoordinator: presenceDependencies.coordinator,
       viewModel: createProductionIndoorNavigationViewModel(
         mapRuntimeRepository: mapResources.mapRuntimeRepository,

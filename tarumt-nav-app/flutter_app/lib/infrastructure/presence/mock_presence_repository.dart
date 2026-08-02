@@ -10,6 +10,18 @@ import 'package:indoor_navigation/domain/presence/presence_models.dart';
 const mockPresenceTickIntervalMs = 1400;
 const mockTotalAppUsers = 126;
 const mockBuildingUsers = 100;
+const mockPresenceDisplayNames = <String>[
+  'Aina',
+  'Daniel',
+  'Mei Ling',
+  'Arjun',
+  'Sofia',
+  'Hakim',
+  'Jia Wei',
+  'Amir',
+  'Chloe',
+  'Ryan',
+];
 const mockFloorOccupancy = <String, int>{
   'floor-1': 18,
   'floor-2': 32,
@@ -135,6 +147,8 @@ final class MockPresenceRepository implements PresenceRepository {
           ? PresenceActivity.recentlyJoined
           : PresenceActivity.walking,
       buildingId: _buildingId,
+      displayName:
+          mockPresenceDisplayNames[index % mockPresenceDisplayNames.length],
       edgeProgress: reverse ? 1 - rawProgress : rawProgress,
       floorId: _floorId,
       fromNodeId: testRouteNodeIds[fromIndex],

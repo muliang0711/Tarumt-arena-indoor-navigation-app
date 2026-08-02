@@ -34,6 +34,7 @@ final class AppShellScreen extends StatefulWidget {
   const AppShellScreen({
     required this.floorSelectionViewModel,
     required this.floorRoomsViewModel,
+    required this.displayName,
     required this.indoorNavigationViewModel,
     required this.liveMapViewModel,
     this.presenceCoordinator,
@@ -64,6 +65,7 @@ final class AppShellScreen extends StatefulWidget {
   final bool disposeWifiDiagnosticsViewModel;
   final FloorSelectionViewModel floorSelectionViewModel;
   final FloorRoomsViewModel floorRoomsViewModel;
+  final String displayName;
   final HomeViewModel homeViewModel;
   final IndoorNavigationViewModel indoorNavigationViewModel;
   final LiveMapViewModel liveMapViewModel;
@@ -278,6 +280,7 @@ final class _AppShellScreenState extends State<AppShellScreen>
       occupancies: edgeOccupancies,
     );
     final mapScreen = IndoorNavigationScreen(
+      displayName: widget.displayName,
       destinationFloor: destinationRoom == null
           ? null
           : floorRoomsState.selectedFloor,

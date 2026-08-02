@@ -4,6 +4,7 @@ import 'package:indoor_navigation/application/view_models/live_map_view_state.da
 import 'package:indoor_navigation/domain/campus/campus_catalog.dart';
 import 'package:indoor_navigation/domain/presence/presence_connection.dart';
 import 'package:indoor_navigation/domain/presence/presence_models.dart';
+import 'package:indoor_navigation/domain/tiled/tiled_models.dart';
 import 'package:indoor_navigation/ui/live_map/widgets/live_map_header.dart';
 import 'package:indoor_navigation/ui/live_map/widgets/live_presence_actor_marker.dart';
 
@@ -43,20 +44,57 @@ void main() {
     expect(find.byKey(LiveMapHeaderKeys.hybrid), findsOneWidget);
     expect(find.text('HYBRID TEST · REMOTE CONNECTED'), findsOneWidget);
   });
+
+  testWidgets('shows a representative username below the actor', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Stack(
+            children: [
+              LivePresenceActorMarker(
+                presence: _presence(
+                  origin: PresenceOrigin.remote,
+                  displayName: 'IShowSpeed',
+                ),
+                position: _position(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('IShowSpeed'), findsOneWidget);
+  });
 }
 
-AnonymousPresence _presence({required PresenceOrigin origin}) =>
-    AnonymousPresence(
-      activity: PresenceActivity.walking,
-      buildingId: 'main-campus',
-      edgeProgress: 0.5,
-      floorId: 'floor-2',
-      fromNodeId: 'node-21',
-      headingDegrees: 0,
-      origin: origin,
-      presenceId: 'actor',
-      sequence: 1,
-      toNodeId: 'node-20',
-      updatedAt: DateTime.utc(2026, 7, 28),
-      visualSeed: 0,
-    );
+AnonymousPresence _presence({
+  required PresenceOrigin origin,
+  String? displayName,
+}) => AnonymousPresence(
+  activity: PresenceActivity.walking,
+  buildingId: 'main-campus',
+  displayName: displayName,
+  edgeProgress: 0.5,
+  floorId: 'floor-2',
+  fromNodeId: 'node-21',
+  headingDegrees: 0,
+  origin: origin,
+  presenceId: 'actor',
+  sequence: 1,
+  toNodeId: 'node-20',
+  updatedAt: DateTime.utc(2026, 7, 28),
+  visualSeed: 0,
+);
+
+RoutePosition _position() => const RoutePosition(
+  distanceAlongRoute: 0,
+  headingDegrees: 0,
+  screenX: 80,
+  screenY: 80,
+  segmentIndex: 0,
+  tiledX: 0,
+  tiledY: 0,
+);

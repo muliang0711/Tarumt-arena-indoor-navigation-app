@@ -10,6 +10,7 @@ import 'package:indoor_navigation/application/view_models/wifi_diagnostics_view_
 import 'package:indoor_navigation/application/view_models/wifi_positioning_test_lab_view_model.dart';
 import 'package:indoor_navigation/domain/config/app_config.dart';
 import 'package:indoor_navigation/ui/app_shell/app_shell_screen.dart';
+import 'package:indoor_navigation/ui/onboarding/username_onboarding_dialog.dart';
 import 'package:indoor_navigation/ui/theme/indoor_navigation_theme.dart';
 
 final class IndoorNavigationApp extends StatefulWidget {
@@ -29,6 +30,8 @@ final class IndoorNavigationApp extends StatefulWidget {
     this.homeViewModel = const HomeViewModel(),
     this.initialNavigatePage = AppNavigatePage.selectFloor,
     this.initialSection = AppSection.home,
+    this.initialDisplayName = 'Navigator',
+    this.onDisplayNameSelected,
     this.presenceCoordinator,
     this.shellViewModel,
     this.showWifiDiagnostics = false,
@@ -51,6 +54,8 @@ final class IndoorNavigationApp extends StatefulWidget {
   final HomeViewModel homeViewModel;
   final AppNavigatePage initialNavigatePage;
   final AppSection initialSection;
+  final String? initialDisplayName;
+  final Future<void> Function(String displayName)? onDisplayNameSelected;
   final RealtimePresenceCoordinator? presenceCoordinator;
   final AppShellViewModel? shellViewModel;
   final bool showWifiDiagnostics;
@@ -68,10 +73,12 @@ final class _IndoorNavigationAppState extends State<IndoorNavigationApp> {
   late final FloorSelectionViewModel _floorSelectionViewModel;
   late final FloorRoomsViewModel _floorRoomsViewModel;
   late final AppShellViewModel _shellViewModel;
+  String? _displayName;
 
   @override
   void initState() {
     super.initState();
+    _displayName = widget.initialDisplayName;
     _floorRoomsViewModel = widget.floorRoomsViewModel ?? FloorRoomsViewModel();
     _floorSelectionViewModel =
         widget.floorSelectionViewModel ??
@@ -95,27 +102,37 @@ final class _IndoorNavigationAppState extends State<IndoorNavigationApp> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: createIndoorNavigationTheme(),
-      home: AppShellScreen(
-        disposeFloorSelectionViewModel: widget.disposeFloorSelectionViewModel,
-        disposeFloorRoomsViewModel: widget.disposeFloorRoomsViewModel,
-        disposeIndoorNavigationViewModel: widget.disposeViewModel,
-        disposeLiveMapViewModel: widget.disposeLiveMapViewModel,
-        disposePresenceCoordinator: widget.disposePresenceCoordinator,
-        disposeShellViewModel: widget.disposeShellViewModel,
-        disposeWifiTestLabViewModel: widget.disposeWifiTestLabViewModel,
-        disposeWifiDiagnosticsViewModel: widget.disposeWifiDiagnosticsViewModel,
-        floorSelectionViewModel: _floorSelectionViewModel,
-        floorRoomsViewModel: _floorRoomsViewModel,
-        homeViewModel: widget.homeViewModel,
-        indoorNavigationViewModel: widget.viewModel,
-        liveMapViewModel: widget.liveMapViewModel,
-        presenceCoordinator: widget.presenceCoordinator,
-        shellViewModel: _shellViewModel,
-        showWifiDiagnostics: widget.showWifiDiagnostics,
-        uiConfig: widget.uiConfig,
-        wifiTestLabViewModel: widget.wifiTestLabViewModel,
-        wifiDiagnosticsViewModel: widget.wifiDiagnosticsViewModel,
-      ),
+      home: _displayName == null
+          ? UsernameOnboardingDialog(onSubmitted: _saveDisplayName)
+          : AppShellScreen(
+              disposeFloorSelectionViewModel:
+                  widget.disposeFloorSelectionViewModel,
+              disposeFloorRoomsViewModel: widget.disposeFloorRoomsViewModel,
+              disposeIndoorNavigationViewModel: widget.disposeViewModel,
+              disposeLiveMapViewModel: widget.disposeLiveMapViewModel,
+              disposePresenceCoordinator: widget.disposePresenceCoordinator,
+              disposeShellViewModel: widget.disposeShellViewModel,
+              disposeWifiTestLabViewModel: widget.disposeWifiTestLabViewModel,
+              disposeWifiDiagnosticsViewModel:
+                  widget.disposeWifiDiagnosticsViewModel,
+              floorSelectionViewModel: _floorSelectionViewModel,
+              floorRoomsViewModel: _floorRoomsViewModel,
+              displayName: _displayName!,
+              homeViewModel: widget.homeViewModel,
+              indoorNavigationViewModel: widget.viewModel,
+              liveMapViewModel: widget.liveMapViewModel,
+              presenceCoordinator: widget.presenceCoordinator,
+              shellViewModel: _shellViewModel,
+              showWifiDiagnostics: widget.showWifiDiagnostics,
+              uiConfig: widget.uiConfig,
+              wifiTestLabViewModel: widget.wifiTestLabViewModel,
+              wifiDiagnosticsViewModel: widget.wifiDiagnosticsViewModel,
+            ),
     );
+  }
+
+  Future<void> _saveDisplayName(String displayName) async {
+    await widget.onDisplayNameSelected?.call(displayName);
+    if (mounted) setState(() => _displayName = displayName);
   }
 }

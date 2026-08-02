@@ -1,8 +1,9 @@
 # Live Map
 
 The Live Map is intentionally separated from destination navigation. It shows
-building and floor occupancy plus at most ten representative anonymous actors;
-it does not expose identity or claim that the mock actors are exact people.
+building and floor occupancy plus at most ten representative actors. Actors may
+show a user-chosen display name, but the UI does not expose installation or
+session identity and does not claim that the mock actors are exact people.
 
 The dependency flow is:
 
@@ -24,6 +25,10 @@ banner, and replaces stale client state with the next authoritative snapshot.
 
 The shared marker animation compensates between network targets and snaps
 unusually large jumps instead of animating an actor through walls.
+
+Mock mode supplies deterministic names so label layout is visible without a
+backend connection. Realtime snapshots may provide `actor.display_name`; older
+Gateway responses that omit it remain compatible and render no label.
 
 Only Floor 2 currently has an approved map asset. Other floors continue to
 show occupancy with an explicit map-unavailable state until their PNG, TMJ,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:indoor_navigation/domain/presence/presence_models.dart';
 import 'package:indoor_navigation/domain/tiled/tiled_models.dart';
+import 'package:indoor_navigation/ui/map/actor/actor_name_label.dart';
 import 'package:indoor_navigation/ui/map/actor/actor_sprite.dart';
 import 'package:indoor_navigation/ui/map/widgets/animated_map_marker.dart';
 
@@ -45,9 +46,11 @@ final class LivePresenceActorMarker extends StatelessWidget {
       teleportThresholdPixels: 240,
       child: Semantics(
         image: true,
-        label: presence.origin == PresenceOrigin.localSimulation
-            ? 'Local simulated presence'
-            : 'Anonymous live presence',
+        label:
+            presence.displayName ??
+            (presence.origin == PresenceOrigin.localSimulation
+                ? 'Local simulated presence'
+                : 'Anonymous live presence'),
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 260),
           opacity: opacity,
@@ -104,6 +107,11 @@ final class LivePresenceActorMarker extends StatelessWidget {
                     position: position,
                   ),
                 ),
+                if (presence.displayName != null)
+                  Positioned(
+                    top: 55,
+                    child: ActorNameLabel(displayName: presence.displayName!),
+                  ),
               ],
             ),
           ),

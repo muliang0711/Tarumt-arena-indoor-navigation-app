@@ -8,6 +8,7 @@ final class AnonymousPresence {
   const AnonymousPresence({
     required this.activity,
     required this.buildingId,
+    this.displayName,
     required this.edgeProgress,
     required this.floorId,
     required this.fromNodeId,
@@ -22,6 +23,7 @@ final class AnonymousPresence {
 
   final PresenceActivity activity;
   final String buildingId;
+  final String? displayName;
   final double edgeProgress;
   final String floorId;
   final String fromNodeId;

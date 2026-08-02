@@ -43,13 +43,20 @@ final class AnonymousSessionApi {
   final HttpClient _httpClient;
   final Duration timeout;
 
-  Future<AnonymousSession> create(String installationId) async {
+  Future<AnonymousSession> create(
+    String installationId, {
+    String? displayName,
+  }) async {
     final endpoint = _baseUrl.resolve('/v1/anonymous-sessions');
     try {
       final request = await _httpClient.postUrl(endpoint).timeout(timeout);
       request.headers.contentType = ContentType.json;
       request.write(
-        jsonEncode(<String, String>{'installation_id': installationId}),
+        jsonEncode(<String, String>{
+          'installation_id': installationId,
+          if (displayName != null && displayName.trim().isNotEmpty)
+            'display_name': displayName.trim(),
+        }),
       );
       final response = await request.close().timeout(timeout);
       final body = await utf8.decoder.bind(response).join().timeout(timeout);

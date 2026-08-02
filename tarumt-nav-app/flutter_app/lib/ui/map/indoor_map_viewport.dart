@@ -42,6 +42,7 @@ final class IndoorMapViewport extends StatefulWidget {
     this.navigation,
     this.navigationOverlayBuilder,
     this.observedHeadingDegrees,
+    this.userDisplayName,
     this.onZoomChanged,
     this.onRouteNodePressed,
     required this.redMarker,
@@ -68,6 +69,7 @@ final class IndoorMapViewport extends StatefulWidget {
   final NavigationUiState? navigation;
   final IndoorMapNavigationOverlayBuilder? navigationOverlayBuilder;
   final double? observedHeadingDegrees;
+  final String? userDisplayName;
   final ValueChanged<double>? onZoomChanged;
   final ValueChanged<OverlayRouteNode>? onRouteNodePressed;
   final RedMarkerState redMarker;
@@ -365,6 +367,7 @@ final class _IndoorMapViewportState extends State<IndoorMapViewport> {
                           ...widget.mapOverlays,
                           if (widget.showNavigationOverlay) ...[
                             UserPresenceMarker(
+                              displayName: widget.userDisplayName,
                               observedHeadingDegrees:
                                   widget.observedHeadingDegrees,
                               position: widget.blueMarkerPosition,

@@ -18,6 +18,7 @@ final class IndoorNavigationScreen extends StatefulWidget {
     required this.viewModel,
     this.destinationFloor,
     this.destinationRoom,
+    this.displayName,
     this.disposeViewModel = true,
     this.navigationStartNodeId = defaultNavigationStartNodeId,
     this.onChangeDestination,
@@ -31,6 +32,7 @@ final class IndoorNavigationScreen extends StatefulWidget {
 
   final CampusFloor? destinationFloor;
   final CampusRoom? destinationRoom;
+  final String? displayName;
   final bool disposeViewModel;
   final String navigationStartNodeId;
   final VoidCallback? onChangeDestination;
@@ -153,6 +155,7 @@ final class _IndoorNavigationScreenState extends State<IndoorNavigationScreen>
       value: SystemUiOverlayStyle.dark,
       child: switch (_state.loadStatus) {
         IndoorNavigationLoadStatus.ready => IndoorNavigationReadyView(
+          displayName: widget.displayName,
           destinationFloor: widget.destinationFloor,
           destinationRoom: widget.destinationRoom,
           onChangeDestination: widget.onChangeDestination,
