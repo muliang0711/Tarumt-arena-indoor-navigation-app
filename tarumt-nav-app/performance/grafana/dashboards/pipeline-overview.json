@@ -1,0 +1,126 @@
+{
+  "annotations": {"list": []},
+  "editable": false,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Active WebSockets",
+      "id": 1,
+      "gridPos": {"h": 6, "w": 6, "x": 0, "y": 0},
+      "targets": [{"expr": "presence_gateway_websocket_connections_active", "legendFormat": "connections", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Accepted location updates / second",
+      "id": 2,
+      "gridPos": {"h": 8, "w": 9, "x": 6, "y": 0},
+      "targets": [{"expr": "rate(presence_gateway_websocket_message_duration_seconds_count{type=\"location_update\",outcome=\"accepted\"}[1m])", "legendFormat": "accepted/s", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Gateway location-update p95",
+      "id": 3,
+      "gridPos": {"h": 8, "w": 9, "x": 15, "y": 0},
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (le) (rate(presence_gateway_websocket_message_duration_seconds_bucket{type=\"location_update\"}[1m])))", "legendFormat": "p95", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Redis Stream lag and pending by pipeline",
+      "id": 4,
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 8},
+      "targets": [
+        {"expr": "trajectory_worker_stream_lag", "legendFormat": "trajectory lag", "refId": "A"},
+        {"expr": "trajectory_worker_stream_pending", "legendFormat": "trajectory pending", "refId": "B"},
+        {"expr": "journey_lifecycle_worker_stream_lag", "legendFormat": "Journey lag", "refId": "C"},
+        {"expr": "journey_lifecycle_worker_stream_pending", "legendFormat": "Journey pending", "refId": "D"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Worker throughput",
+      "id": 5,
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 8},
+      "targets": [
+        {"expr": "rate(trajectory_worker_events_inserted_total[1m])", "legendFormat": "inserted/s", "refId": "A"},
+        {"expr": "rate(trajectory_worker_events_acknowledged_total[1m])", "legendFormat": "trajectory ACKed/s", "refId": "B"},
+        {"expr": "rate(journey_lifecycle_worker_events_inserted_total[1m])", "legendFormat": "Journey inserted/s", "refId": "C"},
+        {"expr": "rate(journey_lifecycle_worker_events_acknowledged_total[1m])", "legendFormat": "Journey ACKed/s", "refId": "D"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Analytics p95 by query",
+      "id": 6,
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 8},
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "targets": [{"expr": "histogram_quantile(0.95, sum by (query, le) (rate(analytics_api_query_duration_seconds_bucket[1m])))", "legendFormat": "{{query}}", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Redis commands / second",
+      "id": 7,
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 16},
+      "targets": [{"expr": "rate(redis_commands_processed_total[1m])", "legendFormat": "commands/s", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "ClickHouse rows read",
+      "id": 8,
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 16},
+      "targets": [{"expr": "rate(ClickHouseProfileEvents_SelectedRows[1m])", "legendFormat": "selected rows/s", "refId": "A"}]
+    },
+    {
+      "type": "timeseries",
+      "title": "Rejected / failed operations",
+      "id": 9,
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 16},
+      "targets": [
+        {"expr": "rate(presence_gateway_websocket_message_duration_seconds_count{outcome!=\"accepted\"}[1m])", "legendFormat": "gateway {{outcome}}", "refId": "A"},
+        {"expr": "rate(analytics_api_concurrency_rejected_total[1m])", "legendFormat": "analytics 429", "refId": "B"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Worker effective rows per ClickHouse insert",
+      "id": 10,
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 24},
+      "targets": [
+        {"expr": "rate(trajectory_worker_events_inserted_total[1m]) / clamp_min(rate(trajectory_worker_clickhouse_insert_batches_total[1m]), 0.000001)", "legendFormat": "trajectory rows/insert", "refId": "A"},
+        {"expr": "rate(journey_lifecycle_worker_events_inserted_total[1m]) / clamp_min(rate(journey_lifecycle_worker_clickhouse_insert_batches_total[1m]), 0.000001)", "legendFormat": "Journey rows/insert", "refId": "B"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Worker collected batch size",
+      "id": 11,
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 24},
+      "targets": [
+        {"expr": "rate(trajectory_worker_batch_size_sum[1m]) / clamp_min(rate(trajectory_worker_batch_size_count[1m]), 0.000001)", "legendFormat": "average", "refId": "A"},
+        {"expr": "histogram_quantile(0.95, sum by (le) (rate(trajectory_worker_batch_size_bucket[1m])))", "legendFormat": "trajectory p95", "refId": "B"},
+        {"expr": "rate(journey_lifecycle_worker_batch_size_sum[1m]) / clamp_min(rate(journey_lifecycle_worker_batch_size_count[1m]), 0.000001)", "legendFormat": "Journey average", "refId": "C"},
+        {"expr": "histogram_quantile(0.95, sum by (le) (rate(journey_lifecycle_worker_batch_size_bucket[1m])))", "legendFormat": "Journey p95", "refId": "D"}
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Worker batch flush reasons",
+      "id": 12,
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 24},
+      "targets": [
+        {"expr": "rate(trajectory_worker_batches_collected_by_reason_total[1m])", "legendFormat": "trajectory {{reason}}", "refId": "A"},
+        {"expr": "rate(journey_lifecycle_worker_batches_collected_by_reason_total[1m])", "legendFormat": "Journey {{reason}}", "refId": "B"}
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "tags": ["campus-navigator", "performance"],
+  "templating": {"list": []},
+  "time": {"from": "now-15m", "to": "now"},
+  "timezone": "browser",
+  "title": "Campus Navigator Pipeline",
+  "uid": "campus-pipeline",
+  "version": 1
+}

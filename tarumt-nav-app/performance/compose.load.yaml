@@ -1,0 +1,161 @@
+name: campus-performance
+
+services:
+  redis:
+    image: redis:8.4-alpine
+    command: ["redis-server", "--appendonly", "no", "--save", ""]
+    ports:
+      - "127.0.0.1:36379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 1s
+      retries: 30
+    tmpfs:
+      - /data
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.3-alpine
+    environment:
+      CLICKHOUSE_DB: campus_analytics
+      CLICKHOUSE_USER: trajectory
+      CLICKHOUSE_PASSWORD: trajectory-test
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "127.0.0.1:28123:8123"
+      - "127.0.0.1:29000:9000"
+    volumes:
+      - ../services/trajectory-worker/migrations/001_trajectory_events.sql:/docker-entrypoint-initdb.d/001_trajectory_events.sql:ro
+      - ../services/trajectory-worker/migrations/002_analytics_reader.sql:/docker-entrypoint-initdb.d/002_analytics_reader.sql:ro
+      - ../services/trajectory-worker/migrations/003_journey_lifecycle_events.sql:/docker-entrypoint-initdb.d/003_journey_lifecycle_events.sql:ro
+      - ./clickhouse/prometheus.xml:/etc/clickhouse-server/config.d/prometheus.xml:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8123/ping | grep -q Ok"]
+      interval: 2s
+      timeout: 2s
+      retries: 40
+    tmpfs:
+      - /var/lib/clickhouse
+
+  gateway:
+    build:
+      context: ../services/presence-gateway
+    environment:
+      PRESENCE_BACKEND: redis
+      PRESENCE_REDIS_URL: redis://redis:6379/0
+      PRESENCE_JWT_SECRET: performance-jwt-secret-0123456789abcdef
+      PRESENCE_IDENTITY_HMAC_SECRET: performance-hmac-secret-0123456789abcdef
+      PRESENCE_ALLOWED_ORIGINS: "*"
+      PRESENCE_REDIS_POOL_SIZE: "100"
+      PRESENCE_REDIS_MIN_IDLE_CONNECTIONS: "10"
+      PRESENCE_INSTANCE_ID: performance-gateway-1
+    ports:
+      - "127.0.0.1:28080:8080"
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8080/health/ready | grep -q ready"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  worker:
+    build:
+      context: ../services/trajectory-worker
+    environment:
+      TRAJECTORY_REDIS_URL: redis://redis:6379/0
+      TRAJECTORY_CLICKHOUSE_ADDRESS: clickhouse:9000
+      TRAJECTORY_CLICKHOUSE_USERNAME: trajectory
+      TRAJECTORY_CLICKHOUSE_PASSWORD: trajectory-test
+      TRAJECTORY_REDIS_CONSUMER_NAME: performance-worker-1
+      JOURNEY_LIFECYCLE_REDIS_CONSUMER_NAME: performance-worker-1-journey
+      TRAJECTORY_STATS_INTERVAL: 2s
+      TRAJECTORY_BATCH_SIZE: "500"
+      TRAJECTORY_BATCH_MAX_WAIT: 100ms
+    ports:
+      - "127.0.0.1:29091:9091"
+    depends_on:
+      redis:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9091/health/ready | grep -q ready"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  analytics-api:
+    build:
+      context: ../services/analytics-api
+    environment:
+      ANALYTICS_CLICKHOUSE_ADDRESS: clickhouse:9000
+      ANALYTICS_CLICKHOUSE_USERNAME: analytics_reader
+      ANALYTICS_CLICKHOUSE_PASSWORD: analytics-test
+      ANALYTICS_MAX_CONCURRENT_QUERIES: "16"
+    ports:
+      - "127.0.0.1:29092:9092"
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:9092/health/ready | grep -q ready"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.62.0
+    environment:
+      REDIS_ADDR: redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v2.53.1
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=24h
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "127.0.0.1:29090:9090"
+    depends_on:
+      - gateway
+      - worker
+      - analytics-api
+      - redis-exporter
+
+  grafana:
+    image: grafana/grafana:11.1.0
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: performance-only
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "127.0.0.1:23000:3000"
+    depends_on:
+      - prometheus
+
+  k6:
+    profiles: ["load"]
+    image: grafana/k6:0.54.0
+    environment:
+      GATEWAY_HTTP_URL: http://gateway:8080
+      GATEWAY_WS_URL: ws://gateway:8080/v1/presence
+      ANALYTICS_URL: http://analytics-api:9092
+    volumes:
+      - ./k6:/scripts:ro
+      - ./results:/results
+    depends_on:
+      gateway:
+        condition: service_healthy
+      analytics-api:
+        condition: service_healthy
