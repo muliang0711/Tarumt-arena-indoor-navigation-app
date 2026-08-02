@@ -92,6 +92,7 @@ if [[ -z "$map_manifest_relative" || ! -f "$repository_root/map-data/main-campus
       -source contracts/maps/main-campus/map-bundle.source.json \
       -output map-data/main-campus
 fi
+chmod -R a+rX "$repository_root/map-data"
 
 printf '%s\n' "Building and starting the Campus Navigator containers..."
 sudo docker compose \

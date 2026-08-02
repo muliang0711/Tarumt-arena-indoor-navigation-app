@@ -65,10 +65,18 @@ func TestPublisherCreatesDeterministicImmutableBundle(t *testing.T) {
 	}
 
 	var pointer CurrentPointer
-	decodeFile(t, filepath.Join(outputRoot, "current.json"), &pointer)
+	pointerPath := filepath.Join(outputRoot, "current.json")
+	decodeFile(t, pointerPath, &pointer)
 	if pointer.BundleRevision != first.BundleRevision ||
 		pointer.ManifestPath != "revisions/"+first.BundleRevision+"/manifest.json" {
 		t.Fatalf("unexpected current pointer: %#v", pointer)
+	}
+	pointerInfo, err := os.Stat(pointerPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if pointerInfo.Mode().Perm() != 0o644 {
+		t.Fatalf("current pointer mode = %o, want 644", pointerInfo.Mode().Perm())
 	}
 }
 

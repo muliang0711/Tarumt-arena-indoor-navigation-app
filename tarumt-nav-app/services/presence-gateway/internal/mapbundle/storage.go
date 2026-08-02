@@ -64,6 +64,10 @@ func publishFiles(outputRoot string, manifest Manifest, documents map[string][]b
 	}
 	temporaryPath := temporaryPointer.Name()
 	defer os.Remove(temporaryPath)
+	if err := temporaryPointer.Chmod(0o644); err != nil {
+		_ = temporaryPointer.Close()
+		return err
+	}
 	encoder := json.NewEncoder(temporaryPointer)
 	encoder.SetIndent("", "  ")
 	if err := encoder.Encode(pointer); err != nil {
