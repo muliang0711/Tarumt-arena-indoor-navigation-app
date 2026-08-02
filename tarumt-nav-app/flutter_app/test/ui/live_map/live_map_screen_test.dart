@@ -46,7 +46,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: createIndoorNavigationTheme(),
-          home: LiveMapScreen(viewModel: viewModel),
+          home: LiveMapScreen(displayName: 'IShowSpeed', viewModel: viewModel),
         ),
       );
       await tester.pump();

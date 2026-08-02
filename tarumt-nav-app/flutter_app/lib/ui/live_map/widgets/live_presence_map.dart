@@ -24,6 +24,7 @@ final class LivePresenceMap extends StatelessWidget {
     required this.onZoomChanged,
     required this.presences,
     required this.selectedFloorCode,
+    required this.userDisplayName,
     required this.zoom,
     super.key,
   });
@@ -34,6 +35,7 @@ final class LivePresenceMap extends StatelessWidget {
   final ValueChanged<double> onZoomChanged;
   final List<AnonymousPresence> presences;
   final String selectedFloorCode;
+  final String userDisplayName;
   final double zoom;
 
   @override
@@ -45,14 +47,20 @@ final class LivePresenceMap extends StatelessWidget {
     }
     final fallbackPosition = interpolateRoutePosition(model.routePath, 0);
     final markers = <Widget>[];
+    var assignedUserName = false;
     for (final presence in presences.take(maxPresenceRepresentatives)) {
       final position = resolvePresenceRoutePosition(
         presence: presence,
         routeNodes: model.routeNodes,
       );
       if (position != null) {
+        final isDefaultGhostBob =
+            !assignedUserName &&
+            presence.origin == PresenceOrigin.localSimulation;
+        if (isDefaultGhostBob) assignedUserName = true;
         markers.add(
           LivePresenceActorMarker(
+            displayNameOverride: isDefaultGhostBob ? userDisplayName : null,
             key: LivePresenceMapKeys.actor(presence.presenceId),
             presence: presence,
             position: position,

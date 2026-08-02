@@ -426,7 +426,10 @@ final class _AppShellScreenState extends State<AppShellScreen>
           ),
           AppNavigatePage.map => _buildMapScreen(),
         },
-        AppSection.liveMap => LiveMapScreen(viewModel: widget.liveMapViewModel),
+        AppSection.liveMap => LiveMapScreen(
+          displayName: widget.displayName,
+          viewModel: widget.liveMapViewModel,
+        ),
         AppSection.saved => SavedPlacesScreen(
           onBrowseRooms: widget.shellViewModel.openNavigateRoot,
           onNavigate: _navigateToSavedRoom,

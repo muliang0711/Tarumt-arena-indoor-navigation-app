@@ -24,11 +24,13 @@ Color resolveLivePresenceActorColor(AnonymousPresence presence) {
 
 final class LivePresenceActorMarker extends StatelessWidget {
   const LivePresenceActorMarker({
+    this.displayNameOverride,
     required this.presence,
     required this.position,
     super.key,
   });
 
+  final String? displayNameOverride;
   final AnonymousPresence presence;
   final RoutePosition position;
 
@@ -36,6 +38,13 @@ final class LivePresenceActorMarker extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = resolveLivePresenceActorColor(presence);
     final opacity = presence.activity == PresenceActivity.idle ? 0.72 : 0.92;
+    final displayName = switch (displayNameOverride?.trim()) {
+      final value? when value.isNotEmpty => value,
+      _ => switch (presence.displayName?.trim()) {
+        final value? when value.isNotEmpty => value,
+        _ => 'Ghost Bob',
+      },
+    };
     return AnimatedMapMarker(
       anchorX: 18,
       anchorY: 52,
@@ -46,11 +55,7 @@ final class LivePresenceActorMarker extends StatelessWidget {
       teleportThresholdPixels: 240,
       child: Semantics(
         image: true,
-        label:
-            presence.displayName ??
-            (presence.origin == PresenceOrigin.localSimulation
-                ? 'Local simulated presence'
-                : 'Anonymous live presence'),
+        label: displayName,
         child: AnimatedOpacity(
           duration: const Duration(milliseconds: 260),
           opacity: opacity,
@@ -107,11 +112,10 @@ final class LivePresenceActorMarker extends StatelessWidget {
                     position: position,
                   ),
                 ),
-                if (presence.displayName != null)
-                  Positioned(
-                    top: 55,
-                    child: ActorNameLabel(displayName: presence.displayName!),
-                  ),
+                Positioned(
+                  top: 55,
+                  child: ActorNameLabel(displayName: displayName),
+                ),
               ],
             ),
           ),

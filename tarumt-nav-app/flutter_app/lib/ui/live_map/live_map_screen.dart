@@ -17,8 +17,13 @@ abstract final class LiveMapScreenKeys {
 }
 
 final class LiveMapScreen extends StatefulWidget {
-  const LiveMapScreen({required this.viewModel, super.key});
+  const LiveMapScreen({
+    required this.displayName,
+    required this.viewModel,
+    super.key,
+  });
 
+  final String displayName;
   final LiveMapViewModel viewModel;
 
   @override
@@ -110,6 +115,7 @@ final class _LiveMapScreenState extends State<LiveMapScreen>
               ),
               Expanded(
                 child: LivePresenceMap(
+                  userDisplayName: widget.displayName,
                   hasFloorMap: _state.hasMapForSelectedFloor,
                   mapImage: _state.mapImage,
                   mapModel: _state.mapModel,

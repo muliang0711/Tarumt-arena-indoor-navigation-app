@@ -68,6 +68,51 @@ void main() {
 
     expect(find.text('IShowSpeed'), findsOneWidget);
   });
+
+  testWidgets('names an otherwise unnamed ghost Bob', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Stack(
+            children: [
+              LivePresenceActorMarker(
+                presence: _presence(origin: PresenceOrigin.remote),
+                position: _position(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Ghost Bob'), findsOneWidget);
+  });
+
+  testWidgets('uses the current username for the default local ghost Bob', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Stack(
+            children: [
+              LivePresenceActorMarker(
+                displayNameOverride: 'IShowSpeed',
+                presence: _presence(
+                  origin: PresenceOrigin.localSimulation,
+                  displayName: 'Aina',
+                ),
+                position: _position(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('IShowSpeed'), findsOneWidget);
+    expect(find.text('Aina'), findsNothing);
+  });
 }
 
 AnonymousPresence _presence({
