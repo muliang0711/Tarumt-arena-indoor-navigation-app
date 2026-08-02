@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "map_id": "main-campus",
+  "floors": [
+    {
+      "floor_id": "floor-2",
+      "nodes": [
+        { "node_id": "node-1", "kind": "junction", "x": -80, "y": 904 },
+        { "node_id": "node-2", "kind": "junction", "x": -80, "y": 1133 },
+        { "node_id": "node-3", "kind": "junction", "x": -80, "y": 1860 },
+        { "node_id": "node-4", "kind": "room", "x": 104, "y": 1860 },
+        { "node_id": "node-5", "kind": "room", "x": 360, "y": 1860 },
+        { "node_id": "node-6", "kind": "room", "x": 572, "y": 1860 },
+        { "node_id": "node-7", "kind": "room", "x": 892, "y": 1860 },
+        { "node_id": "node-8", "kind": "junction", "x": 1128, "y": 1860 },
+        { "node_id": "node-9", "kind": "junction", "x": 1128, "y": 1457 },
+        { "node_id": "node-10", "kind": "junction", "x": 992, "y": 1457 },
+        { "node_id": "node-11", "kind": "junction", "x": 992, "y": 1320 },
+        { "node_id": "node-12", "kind": "junction", "x": 992, "y": 1133 },
+        { "node_id": "node-13", "kind": "room", "x": 573, "y": 1133 },
+        { "node_id": "node-14", "kind": "room", "x": 350, "y": 1133 },
+        { "node_id": "node-15", "kind": "room", "x": 113, "y": 1133 },
+        { "node_id": "node-16", "kind": "junction", "x": 992, "y": 904 },
+        { "node_id": "node-17", "kind": "room", "x": 792, "y": 904 },
+        { "node_id": "node-18", "kind": "room", "x": 573, "y": 904 },
+        { "node_id": "node-19", "kind": "room", "x": 350, "y": 904 },
+        { "node_id": "node-20", "kind": "room", "x": 113, "y": 904 },
+        { "node_id": "node-21", "kind": "junction", "x": -20, "y": 904 },
+        { "node_id": "node-22", "kind": "junction", "x": -20, "y": 436 }
+      ],
+      "edges": [
+        { "edge_id": "edge-node-1-node-21", "from_node_id": "node-1", "to_node_id": "node-21", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-12-node-16", "from_node_id": "node-12", "to_node_id": "node-16", "distance": 8, "bidirectional": true },
+        { "edge_id": "edge-node-1-node-2", "from_node_id": "node-1", "to_node_id": "node-2", "distance": 8, "bidirectional": true },
+        { "edge_id": "edge-node-15-node-2", "from_node_id": "node-15", "to_node_id": "node-2", "distance": 4, "bidirectional": true },
+        { "edge_id": "edge-node-13-node-14", "from_node_id": "node-13", "to_node_id": "node-14", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-11-node-12", "from_node_id": "node-11", "to_node_id": "node-12", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-10-node-11", "from_node_id": "node-10", "to_node_id": "node-11", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-9-node-10", "from_node_id": "node-9", "to_node_id": "node-10", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-8-node-9", "from_node_id": "node-8", "to_node_id": "node-9", "distance": 4, "bidirectional": true },
+        { "edge_id": "edge-node-7-node-8", "from_node_id": "node-7", "to_node_id": "node-8", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-6-node-7", "from_node_id": "node-6", "to_node_id": "node-7", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-5-node-6", "from_node_id": "node-5", "to_node_id": "node-6", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-4-node-5", "from_node_id": "node-4", "to_node_id": "node-5", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-3-node-4", "from_node_id": "node-3", "to_node_id": "node-4", "distance": 2, "bidirectional": true },
+        { "edge_id": "edge-node-3-node-2", "from_node_id": "node-3", "to_node_id": "node-2", "distance": 8, "bidirectional": true },
+        { "edge_id": "edge-node-21-node-20", "from_node_id": "node-21", "to_node_id": "node-20", "distance": 3, "bidirectional": true },
+        { "edge_id": "edge-node-20-node-19", "from_node_id": "node-20", "to_node_id": "node-19", "distance": 3, "bidirectional": true },
+        { "edge_id": "edge-node-18-node-19", "from_node_id": "node-18", "to_node_id": "node-19", "distance": 3, "bidirectional": true },
+        { "edge_id": "edge-node-18-node-17", "from_node_id": "node-18", "to_node_id": "node-17", "distance": 3, "bidirectional": true },
+        { "edge_id": "edge-node-17-node-16", "from_node_id": "node-17", "to_node_id": "node-16", "distance": 3, "bidirectional": true },
+        { "edge_id": "edge-node-13-node-12", "from_node_id": "node-13", "to_node_id": "node-12", "distance": 6, "bidirectional": true },
+        { "edge_id": "edge-node-14-node-13", "from_node_id": "node-14", "to_node_id": "node-13", "distance": 3, "bidirectional": true },
+        { "edge_id": "edge-node-14-node-15", "from_node_id": "node-14", "to_node_id": "node-15", "distance": 3, "bidirectional": true },
+        { "edge_id": "edge-node-2-node-15", "from_node_id": "node-2", "to_node_id": "node-15", "distance": 3, "bidirectional": true }
+      ]
+    }
+  ],
+  "inter_floor_edges": [],
+  "map_revision": "sha256:9ce75cc7224ccc08e343761fb981c1625ca1b58231db1eb9c7270f1cf0a7865b"
+}

@@ -1,0 +1,531 @@
+asyncapi: 3.0.0
+info:
+  title: Campus Navigator Presence WebSocket API
+  version: 1.0.0
+  description: >-
+    Version 1 snapshot-and-delta protocol for anonymous floor presence. Floor
+    subscriptions select what a client observes and are independent from the
+    building and floor carried by that client's location updates.
+servers:
+  local:
+    host: localhost:8080
+    pathname: /v1/presence
+    protocol: ws
+    security:
+      - $ref: '#/components/securitySchemes/bearerAuth'
+channels:
+  presence:
+    address: /v1/presence
+    messages:
+      subscribeFloor:
+        $ref: '#/components/messages/SubscribeFloor'
+      changeFloor:
+        $ref: '#/components/messages/ChangeFloor'
+      locationUpdate:
+        $ref: '#/components/messages/LocationUpdate'
+      heartbeat:
+        $ref: '#/components/messages/Heartbeat'
+      leave:
+        $ref: '#/components/messages/Leave'
+      journeyStart:
+        $ref: '#/components/messages/JourneyStart'
+      routeRecalculate:
+        $ref: '#/components/messages/RouteRecalculate'
+      journeyEnd:
+        $ref: '#/components/messages/JourneyEnd'
+      sessionReady:
+        $ref: '#/components/messages/SessionReady'
+      floorSnapshot:
+        $ref: '#/components/messages/FloorSnapshot'
+      presenceUpdated:
+        $ref: '#/components/messages/PresenceUpdated'
+      occupancyUpdated:
+        $ref: '#/components/messages/OccupancyUpdated'
+      edgeOccupancyUpdated:
+        $ref: '#/components/messages/EdgeOccupancyUpdated'
+      acknowledgement:
+        $ref: '#/components/messages/Acknowledgement'
+      pong:
+        $ref: '#/components/messages/Pong'
+      protocolError:
+        $ref: '#/components/messages/ProtocolError'
+operations:
+  receiveClientMessages:
+    action: receive
+    channel:
+      $ref: '#/channels/presence'
+    messages:
+      - $ref: '#/channels/presence/messages/subscribeFloor'
+      - $ref: '#/channels/presence/messages/changeFloor'
+      - $ref: '#/channels/presence/messages/locationUpdate'
+      - $ref: '#/channels/presence/messages/heartbeat'
+      - $ref: '#/channels/presence/messages/leave'
+      - $ref: '#/channels/presence/messages/journeyStart'
+      - $ref: '#/channels/presence/messages/routeRecalculate'
+      - $ref: '#/channels/presence/messages/journeyEnd'
+  sendServerMessages:
+    action: send
+    channel:
+      $ref: '#/channels/presence'
+    messages:
+      - $ref: '#/channels/presence/messages/sessionReady'
+      - $ref: '#/channels/presence/messages/floorSnapshot'
+      - $ref: '#/channels/presence/messages/presenceUpdated'
+      - $ref: '#/channels/presence/messages/occupancyUpdated'
+      - $ref: '#/channels/presence/messages/edgeOccupancyUpdated'
+      - $ref: '#/channels/presence/messages/acknowledgement'
+      - $ref: '#/channels/presence/messages/pong'
+      - $ref: '#/channels/presence/messages/protocolError'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: httpApiKey
+      name: Authorization
+      in: header
+  messages:
+    SubscribeFloor:
+      name: subscribe_floor
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: subscribe_floor
+              payload:
+                $ref: '#/components/schemas/FloorSubscription'
+    LocationUpdate:
+      name: location_update
+      description: >-
+        Updates the sender's actual location. The position may differ from the
+        floor selected with subscribe_floor.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: location_update
+              payload:
+                type: object
+                required: [position]
+                properties:
+                  position:
+                    $ref: '#/components/schemas/Position'
+    ChangeFloor:
+      name: change_floor
+      description: >-
+        Deprecated location-update alias retained for version 1 clients. It
+        updates the sender's actual location and does not change the observed
+        floor; use subscribe_floor to change the observed floor.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: change_floor
+              payload:
+                type: object
+                required: [position]
+                properties:
+                  position:
+                    $ref: '#/components/schemas/Position'
+    Heartbeat:
+      name: heartbeat
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: heartbeat
+    Leave:
+      name: leave
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: leave
+    JourneyStart:
+      name: journey_start
+      description: >-
+        Starts a canonical Journey. A new start for the same anonymous device
+        atomically supersedes its previous active Journey.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: journey_start
+              payload:
+                $ref: '#/components/schemas/JourneyStart'
+    RouteRecalculate:
+      name: route_recalculate
+      description: >-
+        Replaces the planned route while preserving the destination and
+        increments both lifecycle_sequence and route_revision.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: route_recalculate
+              payload:
+                $ref: '#/components/schemas/RouteRecalculate'
+    JourneyEnd:
+      name: journey_end
+      description: >-
+        Ends a Journey as arrived or cancelled. Presence and occupancy indexes
+        are removed in the same Redis atomic operation as the lifecycle event.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: journey_end
+              payload:
+                $ref: '#/components/schemas/JourneyEnd'
+    SessionReady:
+      name: session_ready
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: session_ready
+    FloorSnapshot:
+      name: floor_snapshot
+      description: >-
+        Authoritative state sent on first floor subscription. All clients
+        watching a floor share a stable set of at most ten representatives.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: floor_snapshot
+              payload:
+                $ref: '#/components/schemas/FloorSnapshot'
+    PresenceUpdated:
+      name: presence_updated
+      description: >-
+        Latest-position delta for an actor in the cached representative set.
+        Sensor-level movement may be coalesced and non-representative movement
+        is not sent to live-map clients.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                enum: [presence_joined, presence_updated, presence_left]
+    OccupancyUpdated:
+      name: occupancy_updated
+      description: >-
+        Authoritative floor projection refreshed after debounced membership
+        changes or Pub/Sub resynchronization. Ordinary movement does not cause
+        a snapshot query.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: occupancy_updated
+              payload:
+                $ref: '#/components/schemas/FloorSnapshot'
+    EdgeOccupancyUpdated:
+      name: edge_occupancy_updated
+      description: >-
+        Absolute counts for only the physical edges changed by an active
+        user's same-floor edge transition. Progress on the same edge does not
+        emit this message or query a new floor snapshot.
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: edge_occupancy_updated
+              payload:
+                $ref: '#/components/schemas/EdgeOccupancyUpdate'
+    Acknowledgement:
+      name: ack
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: ack
+              payload:
+                $ref: '#/components/schemas/Acknowledgement'
+    Pong:
+      name: pong
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: pong
+    ProtocolError:
+      name: error
+      payload:
+        allOf:
+          - $ref: '#/components/schemas/Envelope'
+          - type: object
+            properties:
+              type:
+                const: error
+  schemas:
+    Envelope:
+      type: object
+      required: [version, type, timestamp]
+      properties:
+        version:
+          type: integer
+          const: 1
+        type:
+          type: string
+        request_id:
+          type: string
+        sequence:
+          type: integer
+          minimum: 0
+        timestamp:
+          type: string
+          format: date-time
+        payload: {}
+    FloorSubscription:
+      type: object
+      additionalProperties: false
+      required: [building_id, floor_id]
+      properties:
+        building_id:
+          type: string
+        floor_id:
+          type: string
+    Position:
+      type: object
+      additionalProperties: false
+      required:
+        - building_id
+        - floor_id
+        - from_node_id
+        - to_node_id
+        - edge_progress
+        - heading
+        - movement_state
+      properties:
+        building_id:
+          type: string
+        floor_id:
+          type: string
+        from_node_id:
+          type: string
+        to_node_id:
+          type: string
+        edge_progress:
+          type: number
+          minimum: 0
+          maximum: 1
+        heading:
+          type: number
+        movement_state:
+          type: string
+          enum: [idle, walking]
+    PlannedRoute:
+      type: object
+      additionalProperties: false
+      required: [origin_node_id, destination_node_id, planned_edge_ids]
+      properties:
+        origin_node_id:
+          type: string
+        destination_node_id:
+          type: string
+        planned_edge_ids:
+          type: array
+          minItems: 1
+          items:
+            type: string
+    JourneyStart:
+      type: object
+      additionalProperties: false
+      required:
+        - client_event_id
+        - client_journey_key
+        - map_id
+        - map_revision
+        - planned_route
+      properties:
+        client_event_id:
+          type: string
+        client_journey_key:
+          type: string
+        map_id:
+          type: string
+        map_revision:
+          type: string
+        planned_route:
+          $ref: '#/components/schemas/PlannedRoute'
+    RouteRecalculate:
+      type: object
+      additionalProperties: false
+      required:
+        - client_event_id
+        - journey_id
+        - client_journey_key
+        - map_id
+        - map_revision
+        - reason
+        - planned_route
+      properties:
+        client_event_id:
+          type: string
+        journey_id:
+          type: string
+        client_journey_key:
+          type: string
+        map_id:
+          type: string
+        map_revision:
+          type: string
+        reason:
+          enum:
+            - wrong_way
+            - congestion
+            - blocked_edge
+            - localization_correction
+            - user_requested
+        planned_route:
+          $ref: '#/components/schemas/PlannedRoute'
+    JourneyEnd:
+      type: object
+      additionalProperties: false
+      required: [client_event_id, journey_id, client_journey_key, outcome]
+      properties:
+        client_event_id:
+          type: string
+        journey_id:
+          type: string
+        client_journey_key:
+          type: string
+        outcome:
+          enum: [arrived, cancelled]
+    Acknowledgement:
+      type: object
+      additionalProperties: false
+      properties:
+        accepted_sequence:
+          type: integer
+          minimum: 1
+        journey_id:
+          type: string
+        lifecycle_sequence:
+          type: integer
+          minimum: 1
+        route_revision:
+          type: integer
+          minimum: 1
+        deduplicated:
+          type: boolean
+    Actor:
+      type: object
+      required: [actor_id, position, sequence, updated_at]
+      properties:
+        actor_id:
+          type: string
+        position:
+          $ref: '#/components/schemas/Position'
+        sequence:
+          type: integer
+          minimum: 1
+        updated_at:
+          type: string
+          format: date-time
+    FloorCount:
+      type: object
+      required: [floor_id, count]
+      properties:
+        floor_id:
+          type: string
+        count:
+          type: integer
+          minimum: 0
+    EdgeOccupancy:
+      type: object
+      required: [from_node_id, to_node_id, active_users]
+      properties:
+        from_node_id:
+          type: string
+        to_node_id:
+          type: string
+        active_users:
+          type: integer
+          minimum: 0
+    EdgeOccupancyUpdate:
+      type: object
+      required:
+        - building_id
+        - floor_id
+        - edge_occupancies
+        - generated_at
+      properties:
+        building_id:
+          type: string
+        floor_id:
+          type: string
+        edge_occupancies:
+          type: array
+          items:
+            $ref: '#/components/schemas/EdgeOccupancy'
+        generated_at:
+          type: string
+          format: date-time
+    FloorSnapshot:
+      type: object
+      required:
+        - total_active_users
+        - building_active_users
+        - building_id
+        - floor_id
+        - floor_counts
+        - representatives
+        - edge_occupancies
+        - generated_at
+      properties:
+        total_active_users:
+          type: integer
+          minimum: 0
+        building_active_users:
+          type: integer
+          minimum: 0
+        building_id:
+          type: string
+        floor_id:
+          type: string
+        floor_counts:
+          type: array
+          items:
+            $ref: '#/components/schemas/FloorCount'
+        representatives:
+          type: array
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/Actor'
+        edge_occupancies:
+          type: array
+          items:
+            $ref: '#/components/schemas/EdgeOccupancy'
+        generated_at:
+          type: string
+          format: date-time

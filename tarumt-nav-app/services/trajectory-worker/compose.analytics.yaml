@@ -1,0 +1,65 @@
+services:
+  redis:
+    image: redis:8.4-alpine
+    command: ["redis-server", "--appendonly", "no", "--save", ""]
+    ports:
+      - "127.0.0.1:26379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 1s
+      retries: 30
+    tmpfs:
+      - /data
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.3-alpine
+    environment:
+      CLICKHOUSE_DB: campus_analytics
+      CLICKHOUSE_USER: trajectory
+      CLICKHOUSE_PASSWORD: trajectory-test
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    ports:
+      - "127.0.0.1:18123:8123"
+      - "127.0.0.1:19000:9000"
+    volumes:
+      - ./migrations/001_trajectory_events.sql:/docker-entrypoint-initdb.d/001_trajectory_events.sql:ro
+      - ./migrations/002_analytics_reader.sql:/docker-entrypoint-initdb.d/002_analytics_reader.sql:ro
+      - ./migrations/003_journey_lifecycle_events.sql:/docker-entrypoint-initdb.d/003_journey_lifecycle_events.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:8123/ping | grep -q Ok"]
+      interval: 2s
+      timeout: 2s
+      retries: 40
+    tmpfs:
+      - /var/lib/clickhouse
+
+  worker:
+    profiles: ["worker"]
+    build: .
+    environment:
+      TRAJECTORY_REDIS_URL: redis://redis:6379/0
+      TRAJECTORY_CLICKHOUSE_ADDRESS: clickhouse:9000
+      TRAJECTORY_CLICKHOUSE_USERNAME: trajectory
+      TRAJECTORY_CLICKHOUSE_PASSWORD: trajectory-test
+    ports:
+      - "127.0.0.1:19091:9091"
+    depends_on:
+      redis:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+
+  analytics-api:
+    profiles: ["api"]
+    build:
+      context: ../analytics-api
+    environment:
+      ANALYTICS_CLICKHOUSE_ADDRESS: clickhouse:9000
+      ANALYTICS_CLICKHOUSE_USERNAME: analytics_reader
+      ANALYTICS_CLICKHOUSE_PASSWORD: analytics-test
+    ports:
+      - "127.0.0.1:19092:9092"
+    depends_on:
+      clickhouse:
+        condition: service_healthy
