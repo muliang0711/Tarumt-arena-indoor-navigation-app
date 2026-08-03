@@ -210,11 +210,12 @@ final class IndoorNavigationViewModel {
         },
       );
     }
-    if (_lifecycleStatus == IndoorNavigationLifecycleStatus.active) {
+    if (_navigationSessionStatus == NavigationSessionStatus.navigating &&
+        _lifecycleStatus == IndoorNavigationLifecycleStatus.active) {
       _wrongWayMonitor?.resume();
       _wifiPositioningCoordinator?.start();
       await startRawMotion();
-    } else {
+    } else if (_navigationSessionStatus == NavigationSessionStatus.navigating) {
       _resumeRawMotion = true;
     }
   }

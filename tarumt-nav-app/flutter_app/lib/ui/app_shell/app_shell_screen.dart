@@ -25,6 +25,7 @@ import 'package:indoor_navigation/ui/home/home_screen.dart';
 import 'package:indoor_navigation/ui/indoor_navigation_screen.dart';
 import 'package:indoor_navigation/ui/live_map/live_map_screen.dart';
 import 'package:indoor_navigation/ui/navigation/navigation_arrival_dialog.dart';
+import 'package:indoor_navigation/ui/navigation/navigation_exit_bar.dart';
 import 'package:indoor_navigation/ui/navigation/wifi_positioning_diagnostics_overlay.dart';
 import 'package:indoor_navigation/ui/navigation/wifi_positioning_map_test_overlay.dart';
 import 'package:indoor_navigation/ui/saved_places/saved_places_screen.dart';
@@ -92,6 +93,7 @@ final class _AppShellScreenState extends State<AppShellScreen>
   bool _isDisposing = false;
   bool _isCompletingArrival = false;
   bool _isEndingNavigation = false;
+  bool _isConfirmingNavigationExit = false;
   bool _navigationRebuildScheduled = false;
   _NavigationExitTarget? _pendingNavigationExit;
   int? _announcedArrivalSessionId;
@@ -120,12 +122,18 @@ final class _AppShellScreenState extends State<AppShellScreen>
           sessionId != null &&
           sessionId != _announcedArrivalSessionId;
       _navigationState = state;
-      unawaited(
-        widget.presenceCoordinator?.updateNavigation(
-          floorId: widget.floorRoomsViewModel.state.selectedFloorId,
-          state: state,
-        ),
+      final presenceUpdate = widget.presenceCoordinator?.updateNavigation(
+        floorId: widget.floorRoomsViewModel.state.selectedFloorId,
+        state: state,
       );
+      if (presenceUpdate != null) {
+        unawaited(
+          presenceUpdate.catchError((Object error, StackTrace stackTrace) {
+            debugPrint('Realtime presence update failed: $error');
+            debugPrintStack(stackTrace: stackTrace);
+          }),
+        );
+      }
       _scheduleNavigationRebuild();
       if (shouldAnnounce) {
         _announcedArrivalSessionId = sessionId;
@@ -220,21 +228,66 @@ final class _AppShellScreenState extends State<AppShellScreen>
 
   void _requestNavigationExit(_NavigationExitTarget target) {
     _pendingNavigationExit = target;
-    if (_isEndingNavigation) return;
-    unawaited(_runNavigationExit());
+    if (_isEndingNavigation || _isConfirmingNavigationExit) return;
+    unawaited(_confirmAndRunNavigationExit());
+  }
+
+  Future<void> _confirmAndRunNavigationExit() async {
+    if (!mounted) return;
+    final shouldConfirm =
+        _navigationState.navigationSessionStatus ==
+        NavigationSessionStatus.navigating;
+    if (shouldConfirm) {
+      _isConfirmingNavigationExit = true;
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Exit navigation?'),
+          content: const Text(
+            'Your current route will end, but you can start a new route at any time.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Continue navigating'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Exit navigation'),
+            ),
+          ],
+        ),
+      );
+      _isConfirmingNavigationExit = false;
+      if (!mounted) return;
+      if (confirmed != true) {
+        _pendingNavigationExit = null;
+        return;
+      }
+    }
+    await _runNavigationExit();
   }
 
   Future<void> _runNavigationExit() async {
-    _isEndingNavigation = true;
+    if (_isEndingNavigation) return;
+    if (mounted) setState(() => _isEndingNavigation = true);
     final sessionId =
         widget.indoorNavigationViewModel.state.navigationSessionId;
-    try {
-      final presenceEnd = widget.presenceCoordinator?.endNavigationPresence(
-        navigationSessionId: sessionId,
+    final presenceEnd = widget.presenceCoordinator?.endNavigationPresence(
+      navigationSessionId: sessionId,
+    );
+    if (presenceEnd != null) {
+      unawaited(
+        presenceEnd.catchError((Object error, StackTrace stackTrace) {
+          debugPrint('Remote navigation cleanup failed: $error');
+          debugPrintStack(stackTrace: stackTrace);
+        }),
       );
-      final navigationCancellation = widget.indoorNavigationViewModel
-          .cancelNavigation();
-      await Future.wait<void>([?presenceEnd, navigationCancellation]);
+    }
+    try {
+      await widget.indoorNavigationViewModel.cancelNavigation().timeout(
+        const Duration(seconds: 3),
+      );
     } catch (error, stackTrace) {
       debugPrint('Navigation cleanup failed: $error');
       debugPrintStack(stackTrace: stackTrace);
@@ -264,7 +317,11 @@ final class _AppShellScreenState extends State<AppShellScreen>
           throw StateError('Unsupported navigation exit target.');
       }
     }
-    _isEndingNavigation = false;
+    if (!_isDisposing && mounted) {
+      setState(() => _isEndingNavigation = false);
+    } else {
+      _isEndingNavigation = false;
+    }
   }
 
   Widget _buildMapScreen() {
@@ -312,6 +369,30 @@ final class _AppShellScreenState extends State<AppShellScreen>
         onSampleReady: _requestImmediateWifiFix,
         viewModel: testLabViewModel,
         child: decoratedMap,
+      );
+    }
+    if (destinationRoom != null &&
+        _navigationState.navigationSessionStatus !=
+            NavigationSessionStatus.arrived) {
+      decoratedMap = Stack(
+        fit: StackFit.expand,
+        children: [
+          decoratedMap,
+          Positioned(
+            left: 16,
+            right: 16,
+            bottom: 16,
+            child: SafeArea(
+              top: false,
+              child: NavigationExitBar(
+                isEnding: _isEndingNavigation,
+                onExit: () => _requestNavigationExit(
+                  const _NavigationExitTarget.floorRooms(),
+                ),
+              ),
+            ),
+          ),
+        ],
       );
     }
     return decoratedMap;
@@ -402,6 +483,11 @@ final class _AppShellScreenState extends State<AppShellScreen>
         _navigationState.navigationSessionStatus ==
             NavigationSessionStatus.arrived &&
         room != null;
+    final isNavigatingMap =
+        _state.selectedSection == AppSection.navigate &&
+        _state.navigatePage == AppNavigatePage.map &&
+        _navigationState.navigationSessionStatus ==
+            NavigationSessionStatus.navigating;
     final scaffold = Scaffold(
       body: switch (_state.selectedSection) {
         AppSection.home => HomeScreen(
@@ -445,7 +531,12 @@ final class _AppShellScreenState extends State<AppShellScreen>
       ),
     );
     return PopScope(
-      canPop: !showArrival,
+      canPop: !showArrival && !isNavigatingMap,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && isNavigatingMap && !showArrival) {
+          _requestNavigationExit(const _NavigationExitTarget.floorRooms());
+        }
+      },
       child: Stack(
         fit: StackFit.expand,
         children: [

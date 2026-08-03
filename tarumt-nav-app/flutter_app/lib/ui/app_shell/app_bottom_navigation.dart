@@ -7,6 +7,12 @@ abstract final class AppBottomNavigationKeys {
       ValueKey<String>('app-bottom-navigation.${section.name}');
 }
 
+const appBottomNavigationSections = <AppSection>[
+  AppSection.home,
+  AppSection.navigate,
+  AppSection.liveMap,
+];
+
 final class AppBottomNavigation extends StatelessWidget {
   const AppBottomNavigation({
     required this.onSectionSelected,
@@ -19,6 +25,7 @@ final class AppBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selectedIndex = appBottomNavigationSections.indexOf(selectedSection);
     return DecoratedBox(
       decoration: const BoxDecoration(
         border: Border(
@@ -26,9 +33,9 @@ final class AppBottomNavigation extends StatelessWidget {
         ),
       ),
       child: NavigationBar(
-        selectedIndex: selectedSection.index,
+        selectedIndex: selectedIndex < 0 ? 0 : selectedIndex,
         onDestinationSelected: (index) {
-          onSectionSelected(AppSection.values[index]);
+          onSectionSelected(appBottomNavigationSections[index]);
         },
         destinations: [
           _destination(
@@ -48,18 +55,6 @@ final class AppBottomNavigation extends StatelessWidget {
             Icons.map_outlined,
             Icons.map,
             'Live',
-          ),
-          _destination(
-            AppSection.saved,
-            Icons.bookmark_border,
-            Icons.bookmark,
-            'Saved',
-          ),
-          _destination(
-            AppSection.settings,
-            Icons.settings_outlined,
-            Icons.settings,
-            'Settings',
           ),
         ],
       ),

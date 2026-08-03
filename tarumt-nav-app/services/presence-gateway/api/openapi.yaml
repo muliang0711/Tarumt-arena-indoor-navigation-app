@@ -233,6 +233,7 @@ components:
           maxLength: 128
         display_name:
           type: string
+          minLength: 1
           maxLength: 24
     CreateAnonymousSessionResponse:
       type: object

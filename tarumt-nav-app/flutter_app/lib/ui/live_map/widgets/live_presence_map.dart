@@ -53,6 +53,12 @@ final class LivePresenceMap extends StatelessWidget {
         presence: presence,
         routeNodes: model.routeNodes,
       );
+      if (position == null) {
+        debugPrint(
+          'Live presence actor ${presence.presenceId} could not resolve edge '
+          '${presence.fromNodeId}->${presence.toNodeId} on $selectedFloorCode.',
+        );
+      }
       if (position != null) {
         final isDefaultGhostBob =
             !assignedUserName &&

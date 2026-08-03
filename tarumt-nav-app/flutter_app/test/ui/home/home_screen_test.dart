@@ -23,9 +23,22 @@ void main() {
       expect(find.text('Find your way indoors'), findsOneWidget);
       expect(find.byKey(HomeScreenKeys.mapPreview), findsOneWidget);
       expect(find.text('Quick Access'), findsOneWidget);
-      for (final target in HomeQuickAccessTarget.values) {
+      for (final target in <HomeQuickAccessTarget>[
+        HomeQuickAccessTarget.selectFloor,
+        HomeQuickAccessTarget.selectRoom,
+      ]) {
         expect(find.byKey(HomeScreenKeys.quickAccess(target)), findsOneWidget);
       }
+      expect(
+        find.byKey(
+          HomeScreenKeys.quickAccess(HomeQuickAccessTarget.recentPlaces),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byKey(HomeScreenKeys.quickAccess(HomeQuickAccessTarget.settings)),
+        findsNothing,
+      );
 
       await tester.tap(find.byKey(HomeScreenKeys.search));
       await tester.tap(
@@ -33,28 +46,16 @@ void main() {
           HomeScreenKeys.quickAccess(HomeQuickAccessTarget.selectFloor),
         ),
       );
-      await tester.ensureVisible(
-        find.byKey(
-          HomeScreenKeys.quickAccess(HomeQuickAccessTarget.recentPlaces),
-        ),
-      );
-      await tester.tap(
-        find.byKey(
-          HomeScreenKeys.quickAccess(HomeQuickAccessTarget.recentPlaces),
-        ),
-      );
-      await tester.tap(
-        find.byKey(HomeScreenKeys.quickAccess(HomeQuickAccessTarget.settings)),
-      );
       await tester.pump();
 
       expect(navigateCount, 2);
-      expect(savedCount, 1);
-      expect(settingsCount, 1);
+      expect(savedCount, 0);
+      expect(settingsCount, 0);
 
-      await tester.ensureVisible(
-        find.byKey(HomeScreenKeys.popularPlace('cafeteria-cf101')),
-      );
+      for (var index = 0; index < 4; index += 1) {
+        await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+        await tester.pump();
+      }
       await tester.pumpAndSettle();
       expect(find.text('Popular Places'), findsOneWidget);
       expect(find.text('Library'), findsOneWidget);

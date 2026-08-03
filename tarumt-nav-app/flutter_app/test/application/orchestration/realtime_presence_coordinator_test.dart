@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -94,9 +95,70 @@ void main() {
       await viewModel.dispose();
     },
   );
+
+  test('republishes the latest navigation position after reconnect', () async {
+    final clock = FakeClock(initialNowMs: 1000);
+    final mapRepository = FakeMapAssetRepository()
+      ..enqueueTiledMapJson(
+        assetPath: 'assets/maps/demo_1.tmj.json',
+        json: File('assets/maps/demo_1.tmj.json').readAsStringSync(),
+      )
+      ..enqueueRouteGraphEdgesJson(
+        assetPath: 'assets/maps/demo_1.edges.json',
+        json: File('assets/maps/demo_1.edges.json').readAsStringSync(),
+      );
+    final viewModel = IndoorNavigationViewModel(
+      clock: clock,
+      edgeDocumentExporter: FakeEdgeDocumentExporter(),
+      mapAssetRepository: mapRepository,
+      periodicScheduler: FakePeriodicScheduler(clock: clock),
+      sensorDebugSink: FakeSensorDebugSink(),
+      sensorDeviceManager: FakeSensorDeviceManager(),
+    );
+    final repository = _RecordingPresenceRepository();
+    final coordinator = RealtimePresenceCoordinator(
+      buildingId: 'main-campus',
+      clock: clock,
+      repository: repository,
+    );
+    final destination = CampusRoom(
+      category: CampusRoomCategory.classroom,
+      floorId: 'floor-2',
+      id: 'TA257',
+      name: 'TA257',
+      navigationNodeId: 'node-20',
+      roomCode: 'TA257',
+      typeLabel: 'Classroom',
+      visual: CampusRoomVisual.lectureHall,
+      walkMinutes: 1,
+    );
+
+    await coordinator.start();
+    await viewModel.startNavigation(
+      destination: destination,
+      startNodeId: 'node-21',
+    );
+    await coordinator.updateNavigation(
+      floorId: 'floor-2',
+      state: viewModel.state,
+    );
+    expect(repository.published, hasLength(1));
+
+    repository.emitConnection(PresenceConnectionPhase.reconnecting);
+    repository.emitConnection(PresenceConnectionPhase.connected);
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+
+    expect(repository.published, hasLength(2));
+    await coordinator.dispose();
+    await viewModel.dispose();
+    await repository.close();
+  });
 }
 
 final class _RecordingPresenceRepository implements PresenceRepository {
+  final StreamController<PresenceConnectionState> _connections =
+      StreamController<PresenceConnectionState>.broadcast(sync: true);
   final List<LocalPresencePosition> published = [];
   final List<String> startedFloors = [];
   int disconnectCount = 0;
@@ -108,7 +170,7 @@ final class _RecordingPresenceRepository implements PresenceRepository {
       const PresenceConnectionState(phase: PresenceConnectionPhase.connected);
 
   @override
-  Stream<PresenceConnectionState> get connectionStates => const Stream.empty();
+  Stream<PresenceConnectionState> get connectionStates => _connections.stream;
 
   @override
   bool get isSimulated => false;
@@ -147,4 +209,10 @@ final class _RecordingPresenceRepository implements PresenceRepository {
 
   @override
   Future<void> stop() async => stopCount += 1;
+
+  void emitConnection(PresenceConnectionPhase phase) {
+    _connections.add(PresenceConnectionState(phase: phase));
+  }
+
+  Future<void> close() => _connections.close();
 }

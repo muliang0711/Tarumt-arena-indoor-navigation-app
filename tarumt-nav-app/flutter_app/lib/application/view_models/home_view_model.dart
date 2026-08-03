@@ -70,16 +70,6 @@ const defaultHomeViewState = HomeViewState(
       target: HomeQuickAccessTarget.selectRoom,
       title: 'Select Room',
     ),
-    HomeQuickAccessItem(
-      subtitle: '3 recent visits',
-      target: HomeQuickAccessTarget.recentPlaces,
-      title: 'Recent Places',
-    ),
-    HomeQuickAccessItem(
-      subtitle: 'App preferences',
-      target: HomeQuickAccessTarget.settings,
-      title: 'Settings',
-    ),
   ],
   recentVisitCount: 3,
 );

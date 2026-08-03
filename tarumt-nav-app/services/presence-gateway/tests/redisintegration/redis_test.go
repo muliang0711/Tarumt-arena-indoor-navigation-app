@@ -38,13 +38,13 @@ func TestRedisStoresAreSharedAndAtomic(t *testing.T) {
 
 	now := time.Now().UTC()
 	session := domain.Session{
-		ID: "shared-session", DeviceRef: "private-reference",
+		ID: "shared-session", DeviceRef: "private-reference", DisplayName: "Mei Ling",
 		CreatedAt: now, LastSeenAt: now, ExpiresAt: now.Add(time.Hour),
 	}
 	if err := sessionsA.Put(ctx, session); err != nil {
 		t.Fatal(err)
 	}
-	if loaded, err := sessionsB.Get(ctx, session.ID); err != nil || loaded.DeviceRef != session.DeviceRef {
+	if loaded, err := sessionsB.Get(ctx, session.ID); err != nil || loaded.DeviceRef != session.DeviceRef || loaded.DisplayName != session.DisplayName {
 		t.Fatalf("shared session = %+v, %v", loaded, err)
 	}
 
@@ -52,7 +52,7 @@ func TestRedisStoresAreSharedAndAtomic(t *testing.T) {
 		BuildingID: "main", FloorID: "2", FromNodeID: "n1", ToNodeID: "n2",
 		EdgeProgress: 0.2, Heading: 90, MovementState: "walking",
 	}
-	first := domain.Presence{SessionID: session.ID, Position: position, Sequence: 1, LastSeenAt: now}
+	first := domain.Presence{SessionID: session.ID, DisplayName: session.DisplayName, Position: position, Sequence: 1, LastSeenAt: now}
 	firstMutation := trajectoryMutation(first)
 	if _, err := presencesA.Apply(ctx, firstMutation); err != nil {
 		t.Fatal(err)

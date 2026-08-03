@@ -50,11 +50,12 @@ func (p Position) Normalized() Position {
 }
 
 type Presence struct {
-	SessionID  string    `json:"session_id"`
-	JourneyID  string    `json:"-"`
-	Position   Position  `json:"position"`
-	Sequence   uint64    `json:"sequence"`
-	LastSeenAt time.Time `json:"last_seen_at"`
+	SessionID   string    `json:"session_id"`
+	JourneyID   string    `json:"-"`
+	DisplayName string    `json:"display_name,omitempty"`
+	Position    Position  `json:"position"`
+	Sequence    uint64    `json:"sequence"`
+	LastSeenAt  time.Time `json:"last_seen_at"`
 }
 
 func (p Presence) IsStale(now time.Time, staleAfter time.Duration) bool {

@@ -73,7 +73,7 @@ func (s *PresenceService) update(
 	}
 	normalizedPosition := position.Normalized()
 	presence := domain.Presence{
-		JourneyID: journeyID,
+		JourneyID: journeyID, DisplayName: session.DisplayName,
 		SessionID: sessionID, Position: normalizedPosition,
 		Sequence: sequence, LastSeenAt: now,
 	}

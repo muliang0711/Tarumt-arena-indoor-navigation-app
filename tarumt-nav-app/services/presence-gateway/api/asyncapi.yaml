@@ -444,6 +444,10 @@ components:
       properties:
         actor_id:
           type: string
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 24
         position:
           $ref: '#/components/schemas/Position'
         sequence:

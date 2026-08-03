@@ -23,12 +23,19 @@ final class RealtimePresenceCoordinator {
   }) : _buildingId = buildingId,
        _clock = clock,
        _repository = repository,
-       _journeys = journeyCoordinator;
+       _journeys = journeyCoordinator {
+    _connectionSubscription = _repository.connectionStates.listen(
+      _handleConnectionState,
+    );
+  }
 
   final String _buildingId;
   final Clock _clock;
   final PresenceRepository _repository;
   final JourneyLifecycleCoordinator? _journeys;
+
+  late final StreamSubscription<PresenceConnectionState>
+  _connectionSubscription;
 
   int _lastPublishAtMs = -presencePublishIntervalMs;
   LocalPresencePosition? _lastPublished;
@@ -37,6 +44,8 @@ final class RealtimePresenceCoordinator {
   bool _foreground = false;
   bool _publishingNavigation = false;
   String? _observedFloorId;
+  String? _latestNavigationFloorId;
+  IndoorNavigationViewState? _latestNavigationState;
 
   Stream<PresenceSnapshot> get trafficSnapshots => _repository.snapshots;
 
@@ -63,6 +72,8 @@ final class RealtimePresenceCoordinator {
     required IndoorNavigationViewState state,
   }) async {
     if (_disposed || !_foreground) return;
+    _latestNavigationFloorId = floorId;
+    _latestNavigationState = state;
     final sessionId = state.navigationSessionId;
     if (sessionId != null && sessionId == _endedNavigationSessionId) return;
     final journeys = _journeys;
@@ -122,6 +133,8 @@ final class RealtimePresenceCoordinator {
     _publishingNavigation = false;
     _lastPublished = null;
     _lastPublishAtMs = -presencePublishIntervalMs;
+    _latestNavigationFloorId = null;
+    _latestNavigationState = null;
     await _journeys?.end(JourneyOutcome.cancelled);
     if (shouldLeave) await _repository.leave();
     if (_observedFloorId != null) {
@@ -203,10 +216,28 @@ final class RealtimePresenceCoordinator {
     );
   }
 
+  void _handleConnectionState(PresenceConnectionState connection) {
+    if (!connection.isConnected || !_foreground || _disposed) return;
+    final floorId = _latestNavigationFloorId;
+    final state = _latestNavigationState;
+    if (floorId == null || state == null) return;
+    _lastPublished = null;
+    _lastPublishAtMs = -presencePublishIntervalMs;
+    unawaited(
+      updateNavigation(floorId: floorId, state: state).catchError((
+        Object error,
+        StackTrace stackTrace,
+      ) {
+        // A later navigation state or reconnect will retry this synchronization.
+      }),
+    );
+  }
+
   Future<void> dispose() async {
     if (_disposed) return;
     await pause();
     _disposed = true;
+    await _connectionSubscription.cancel();
     await _journeys?.dispose();
     await _repository.dispose();
   }

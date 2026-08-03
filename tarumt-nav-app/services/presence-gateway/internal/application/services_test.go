@@ -84,12 +84,16 @@ func TestSessionPresenceAndOccupancyLifecycle(t *testing.T) {
 	presenceService := NewPresenceService(presences, sessions, broker, clock, identity.UUIDGenerator{})
 	occupancyService := NewOccupancyService(occupancyStore, clock, 45*time.Second, 10)
 
-	created, err := sessionService.Create(ctx, "8f912e7e-918b-4455-9561-f4494c44ff75")
+	displayName := "  Mei   Ling  "
+	created, err := sessionService.CreateWithDisplayName(ctx, "8f912e7e-918b-4455-9561-f4494c44ff75", &displayName)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if created.Session.DeviceRef == "8f912e7e-918b-4455-9561-f4494c44ff75" {
 		t.Fatal("raw installation ID was stored")
+	}
+	if created.Session.DisplayName != "Mei Ling" {
+		t.Fatalf("session display name = %q, want %q", created.Session.DisplayName, "Mei Ling")
 	}
 	if _, err := sessionService.Authenticate(ctx, created.AccessToken); err != nil {
 		t.Fatalf("issued token did not authenticate: %v", err)
@@ -105,6 +109,9 @@ func TestSessionPresenceAndOccupancyLifecycle(t *testing.T) {
 	}
 	if firstPresence.JourneyID == "" {
 		t.Fatal("first accepted presence did not receive a journey ID")
+	}
+	if firstPresence.DisplayName != "Mei Ling" {
+		t.Fatalf("presence display name = %q, want %q", firstPresence.DisplayName, "Mei Ling")
 	}
 	if _, err := presenceService.Update(ctx, created.Session.ID, 1, position); !errors.Is(err, domain.ErrStaleSequence) {
 		t.Fatalf("duplicate sequence error = %v, want ErrStaleSequence", err)
@@ -129,6 +136,9 @@ func TestSessionPresenceAndOccupancyLifecycle(t *testing.T) {
 	}
 	if snapshot.TotalActiveUsers != 1 || snapshot.BuildingActiveUsers != 1 || len(snapshot.Representatives) != 1 {
 		t.Fatalf("unexpected snapshot: %+v", snapshot)
+	}
+	if snapshot.Representatives[0].DisplayName != "Mei Ling" {
+		t.Fatalf("snapshot display name = %q, want %q", snapshot.Representatives[0].DisplayName, "Mei Ling")
 	}
 
 	clock.now = clock.now.Add(46 * time.Second)

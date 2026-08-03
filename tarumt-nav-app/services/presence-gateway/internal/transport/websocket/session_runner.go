@@ -492,7 +492,7 @@ func toProtocolSnapshot(snapshot domain.FloorSnapshot) protocol.FloorSnapshot {
 
 func toActor(presence domain.Presence) protocol.ActorPresence {
 	return protocol.ActorPresence{
-		ActorID: publicActorID(presence.SessionID), Position: presence.Position,
+		ActorID: publicActorID(presence.SessionID), DisplayName: presence.DisplayName, Position: presence.Position,
 		Sequence: presence.Sequence, UpdatedAt: presence.LastSeenAt,
 	}
 }

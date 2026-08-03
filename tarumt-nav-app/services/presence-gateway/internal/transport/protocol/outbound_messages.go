@@ -25,10 +25,11 @@ type SessionReady struct {
 }
 
 type ActorPresence struct {
-	ActorID   string          `json:"actor_id"`
-	Position  domain.Position `json:"position"`
-	Sequence  uint64          `json:"sequence"`
-	UpdatedAt time.Time       `json:"updated_at"`
+	ActorID     string          `json:"actor_id"`
+	DisplayName string          `json:"display_name,omitempty"`
+	Position    domain.Position `json:"position"`
+	Sequence    uint64          `json:"sequence"`
+	UpdatedAt   time.Time       `json:"updated_at"`
 }
 
 type FloorSnapshot struct {

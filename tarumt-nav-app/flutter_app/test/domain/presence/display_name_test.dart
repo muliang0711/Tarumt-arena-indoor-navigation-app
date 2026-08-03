@@ -7,6 +7,7 @@ void main() {
     expect(normalizePresenceDisplayName('Mei   Ling'), 'Mei Ling');
     expect(validatePresenceDisplayName('   '), isNotNull);
     expect(validatePresenceDisplayName('IShowSpeed'), isNull);
+    expect(validatePresenceDisplayName('name\nwith-control'), isNotNull);
     expect(validatePresenceDisplayName(List.filled(25, 'x').join()), isNotNull);
   });
 }

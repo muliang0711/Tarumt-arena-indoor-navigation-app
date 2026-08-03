@@ -8,6 +8,7 @@ import (
 
 	"github.com/campus-navigator/presence-gateway/internal/application"
 	"github.com/campus-navigator/presence-gateway/internal/application/ports"
+	"github.com/campus-navigator/presence-gateway/internal/domain"
 	"github.com/campus-navigator/presence-gateway/internal/infrastructure/identity"
 )
 
@@ -17,8 +18,8 @@ type SessionHandler struct {
 }
 
 type createSessionRequest struct {
-	InstallationID string `json:"installation_id"`
-	DisplayName    string `json:"display_name,omitempty"`
+	InstallationID string  `json:"installation_id"`
+	DisplayName    *string `json:"display_name,omitempty"`
 }
 
 type createSessionResponse struct {
@@ -48,9 +49,13 @@ func (h *SessionHandler) ServeHTTP(response http.ResponseWriter, request *http.R
 		writeError(response, http.StatusBadRequest, "invalid_request", "installation_id is required")
 		return
 	}
-	created, err := h.sessions.Create(request.Context(), input.InstallationID)
+	created, err := h.sessions.CreateWithDisplayName(request.Context(), input.InstallationID, input.DisplayName)
 	if errors.Is(err, identity.ErrInvalidInstallationID) {
 		writeError(response, http.StatusBadRequest, "invalid_installation_id", err.Error())
+		return
+	}
+	if errors.Is(err, domain.ErrInvalidDisplayName) {
+		writeError(response, http.StatusBadRequest, "invalid_display_name", err.Error())
 		return
 	}
 	if errors.Is(err, ports.ErrUnavailable) {

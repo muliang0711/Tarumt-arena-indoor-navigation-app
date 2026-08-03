@@ -89,6 +89,7 @@ func TestAnonymousSessionsAndRealtimeFloorIsolation(t *testing.T) {
 	defer server.Close()
 	assertUnauthorizedWebSocket(t, server.URL)
 	assertUnknownSessionFieldRejected(t, server.URL)
+	assertInvalidDisplayNameRejected(t, server.URL)
 
 	clientA := openClient(t, server.URL, createSessionWithDisplayName(t, server.URL, "8f912e7e-918b-4455-9561-f4494c44ff75", "Ghost Bob").AccessToken)
 	defer clientA.CloseNow()
@@ -135,7 +136,14 @@ func TestAnonymousSessionsAndRealtimeFloorIsolation(t *testing.T) {
 	position.EdgeProgress = 0.5
 	sendLocation(t, clientA, 2, "loc-2", position)
 	expectEventually(t, clientA, protocol.TypeAck)
-	expectEventually(t, clientB, protocol.TypePresenceUpdated)
+	updatedEnvelope := expectEventually(t, clientB, protocol.TypePresenceUpdated)
+	var changed protocol.PresenceChanged
+	if err := json.Unmarshal(updatedEnvelope.Payload, &changed); err != nil {
+		t.Fatal(err)
+	}
+	if changed.Actor.DisplayName != "Ghost Bob" {
+		t.Fatalf("actor display name = %q, want %q", changed.Actor.DisplayName, "Ghost Bob")
+	}
 	sendEnvelope(t, clientC, protocol.TypeHeartbeat, "heartbeat-c", 0, nil)
 	expectType(t, clientC, protocol.TypePong)
 
@@ -325,6 +333,26 @@ func assertUnknownSessionFieldRejected(t *testing.T, baseURL string) {
 	if response.StatusCode != http.StatusBadRequest {
 		data, _ := io.ReadAll(response.Body)
 		t.Fatalf("unknown session field status = %d, want %d: %s", response.StatusCode, http.StatusBadRequest, data)
+	}
+}
+
+func assertInvalidDisplayNameRejected(t *testing.T, baseURL string) {
+	t.Helper()
+	body, err := json.Marshal(map[string]string{
+		"installation_id": "invalid-name-installation-v1",
+		"display_name":    "1234567890123456789012345",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	response, err := http.Post(baseURL+"/v1/anonymous-sessions", "application/json", bytes.NewReader(body))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusBadRequest {
+		data, _ := io.ReadAll(response.Body)
+		t.Fatalf("invalid display name status = %d, want %d: %s", response.StatusCode, http.StatusBadRequest, data)
 	}
 }
 

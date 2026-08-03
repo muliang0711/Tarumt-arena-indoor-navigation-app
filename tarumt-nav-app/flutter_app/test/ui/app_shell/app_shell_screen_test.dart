@@ -33,6 +33,7 @@ import 'package:indoor_navigation/ui/map/actor/user_view_cone.dart';
 import 'package:indoor_navigation/ui/map/effects/route_endpoint_effects.dart';
 import 'package:indoor_navigation/ui/navigation/navigation_arrival_dialog.dart';
 import 'package:indoor_navigation/ui/navigation/navigation_destination_card.dart';
+import 'package:indoor_navigation/ui/navigation/navigation_exit_bar.dart';
 import 'package:indoor_navigation/ui/navigation/wifi_positioning_map_test_overlay.dart';
 import 'package:indoor_navigation/ui/navigation_input/navigation_input.dart';
 import 'package:indoor_navigation/ui/saved_places/saved_places_screen.dart';
@@ -57,7 +58,7 @@ void main() {
         .handleAppLifecycleStateChanged(AppLifecycleState.resumed);
   });
 
-  testWidgets('starts on Home and exposes all five app sections', (
+  testWidgets('starts on Home and exposes the three production sections', (
     tester,
   ) async {
     final harness = _createHarness(mapJson: mapJson, edgesJson: edgesJson);
@@ -74,7 +75,7 @@ void main() {
       find.byKey(const ValueKey<String>('app-section.home')),
       findsOneWidget,
     );
-    for (final section in AppSection.values) {
+    for (final section in appBottomNavigationSections) {
       expect(
         find.byKey(AppBottomNavigationKeys.destination(section)),
         findsOneWidget,
@@ -85,17 +86,14 @@ void main() {
       IndoorNavigationLoadStatus.idle,
     );
 
-    await tester.tap(
-      find.byKey(AppBottomNavigationKeys.destination(AppSection.saved)),
-    );
-    await tester.pump();
-
     expect(
-      find.byKey(const ValueKey<String>('app-section.saved')),
-      findsOneWidget,
+      find.byKey(AppBottomNavigationKeys.destination(AppSection.saved)),
+      findsNothing,
     );
-    expect(find.byKey(SavedPlacesScreenKeys.empty), findsOneWidget);
-    expect(harness.shellViewModel.state.selectedSection, AppSection.saved);
+    expect(
+      find.byKey(AppBottomNavigationKeys.destination(AppSection.settings)),
+      findsNothing,
+    );
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
@@ -392,7 +390,7 @@ void main() {
     }
   });
 
-  testWidgets('opens a saved room on its floor and the clean map', (
+  testWidgets('exits an active saved-room route safely to Home', (
     tester,
   ) async {
     final harness = _createHarness(mapJson: mapJson, edgesJson: edgesJson);
@@ -406,9 +404,7 @@ void main() {
       ),
     );
 
-    await tester.tap(
-      find.byKey(AppBottomNavigationKeys.destination(AppSection.saved)),
-    );
+    harness.shellViewModel.selectSection(AppSection.saved);
     await tester.pump();
     expect(find.byKey(SavedPlacesScreenKeys.screen), findsOneWidget);
     expect(find.text('Gym'), findsOneWidget);
@@ -423,13 +419,18 @@ void main() {
     expect(find.text('Gym'), findsOneWidget);
     expect(find.text('Second Floor · G201'), findsOneWidget);
     expect(find.byKey(NavigationDestinationCardKeys.card), findsOneWidget);
+    expect(find.byKey(NavigationExitBarKeys.button), findsOneWidget);
 
     await tester.tap(
-      find.byKey(AppBottomNavigationKeys.destination(AppSection.saved)),
+      find.byKey(AppBottomNavigationKeys.destination(AppSection.home)),
     );
-    await tester.pump();
-    await tester.pump();
-    expect(find.byKey(SavedPlacesScreenKeys.screen), findsOneWidget);
+    for (var index = 0; index < 5; index += 1) {
+      await tester.pump();
+    }
+    expect(
+      find.byKey(const ValueKey<String>('app-section.home')),
+      findsOneWidget,
+    );
     expect(harness.navigationViewModel.state.navigationSessionStatus, isNull);
     expect(harness.floorRoomsViewModel.state.selectedRoom, isNull);
     expect(harness.floorRoomsViewModel.state.savedRoomIds, ['gym-g201']);
@@ -510,6 +511,14 @@ void main() {
 
     await tester.tap(
       find.byKey(AppBottomNavigationKeys.destination(AppSection.liveMap)),
+    );
+    await tester.pump();
+    expect(find.text('Exit navigation?'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.widgetWithText(FilledButton, 'Exit navigation'),
+      ),
     );
     for (var index = 0; index < 5; index += 1) {
       await tester.pump();
@@ -592,6 +601,15 @@ void main() {
       await tester.pump();
     }
 
+    expect(
+      harness.navigationViewModel.state.navigationSessionStatus,
+      NavigationSessionStatus.navigating,
+    );
+    expect(
+      harness.navigationViewModel.state.rawMotion!.status.wireValue,
+      'running',
+    );
+
     harness.navigationViewModel.stepSimulationForward();
     harness.navigationViewModel.stepSimulationForward();
     for (var index = 0; index < 4; index += 1) {
@@ -612,12 +630,9 @@ void main() {
       harness.navigationViewModel.state.navigationSessionStatus,
       NavigationSessionStatus.arrived,
     );
-    expect(
-      harness.navigationViewModel.state.rawMotion!.status.wireValue,
-      'stopped',
-    );
-    expect(harness.navigationViewModel.state.wrongWay!.isRunning, isFalse);
-
+    // Keep this assertion explicit: arrival shutdown requires an active
+    // navigation session and must not silently skip runtime cleanup.
+    expect(harness.navigationViewModel.state.navigationSessionId, isNotNull);
     await tester.tap(find.byKey(NavigationArrivalDialogKeys.confirm));
     for (var index = 0; index < 4; index += 1) {
       await tester.pump();
@@ -633,6 +648,12 @@ void main() {
       harness.navigationViewModel.state.navigationSessionStatus,
       NavigationSessionStatus.completed,
     );
+    expect(harness.sensor.isRunning, isFalse);
+    expect(
+      harness.navigationViewModel.state.rawMotion!.status.wireValue,
+      'stopped',
+    );
+    expect(harness.navigationViewModel.state.wrongWay!.isRunning, isFalse);
     expect(wifiManager.readings, isEmpty);
     expect(wifiTestLabViewModel.state.phase, WifiPositioningTestLabPhase.idle);
 

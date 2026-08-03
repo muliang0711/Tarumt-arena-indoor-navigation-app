@@ -47,6 +47,14 @@ func NewSessionService(
 }
 
 func (s *SessionService) Create(ctx context.Context, installationID string) (CreatedSession, error) {
+	return s.CreateWithDisplayName(ctx, installationID, nil)
+}
+
+func (s *SessionService) CreateWithDisplayName(
+	ctx context.Context,
+	installationID string,
+	displayName *string,
+) (CreatedSession, error) {
 	deviceRef, err := s.identities.DeriveDeviceReference(installationID)
 	if err != nil {
 		return CreatedSession{}, err
@@ -56,9 +64,16 @@ func (s *SessionService) Create(ctx context.Context, installationID string) (Cre
 		return CreatedSession{}, err
 	}
 	now := s.clock.Now().UTC()
+	normalizedDisplayName := ""
+	if displayName != nil {
+		normalizedDisplayName, err = domain.NormalizeDisplayName(*displayName)
+		if err != nil {
+			return CreatedSession{}, err
+		}
+	}
 	session := domain.Session{
 		ID: sessionID, DeviceRef: deviceRef, CreatedAt: now,
-		LastSeenAt: now, ExpiresAt: now.Add(s.sessionTTL),
+		DisplayName: normalizedDisplayName, LastSeenAt: now, ExpiresAt: now.Add(s.sessionTTL),
 	}
 	if err := s.store.Put(ctx, session); err != nil {
 		return CreatedSession{}, err
