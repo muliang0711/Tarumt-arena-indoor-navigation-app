@@ -49,7 +49,7 @@ curl --fail --silent --show-error "${gateway_url}/v1/maps/main-campus/current" |
 printf '%s\n' "Checking anonymous session creation..."
 curl --fail --silent --show-error \
   --header 'Content-Type: application/json' \
-  --data '{"installation_id":"deployment-smoke-installation-v1"}' \
+  --data '{"installation_id":"deployment-smoke-installation-v1","display_name":"Deployment Smoke"}' \
   "${gateway_url}/v1/anonymous-sessions" |
   grep -q '"access_token"'
 

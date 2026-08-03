@@ -18,6 +18,7 @@ type SessionHandler struct {
 
 type createSessionRequest struct {
 	InstallationID string `json:"installation_id"`
+	DisplayName    string `json:"display_name,omitempty"`
 }
 
 type createSessionResponse struct {

@@ -88,8 +88,9 @@ func TestAnonymousSessionsAndRealtimeFloorIsolation(t *testing.T) {
 	server := httptest.NewServer(router)
 	defer server.Close()
 	assertUnauthorizedWebSocket(t, server.URL)
+	assertUnknownSessionFieldRejected(t, server.URL)
 
-	clientA := openClient(t, server.URL, createSession(t, server.URL, "8f912e7e-918b-4455-9561-f4494c44ff75").AccessToken)
+	clientA := openClient(t, server.URL, createSessionWithDisplayName(t, server.URL, "8f912e7e-918b-4455-9561-f4494c44ff75", "Ghost Bob").AccessToken)
 	defer clientA.CloseNow()
 	clientB := openClient(t, server.URL, createSession(t, server.URL, "22d42143-c758-4b0d-9086-7ef840d241d3").AccessToken)
 	defer clientB.CloseNow()
@@ -274,7 +275,20 @@ func responseStatus(response *http.Response) any {
 
 func createSession(t *testing.T, baseURL, installationID string) testSession {
 	t.Helper()
-	body, err := json.Marshal(map[string]string{"installation_id": installationID})
+	return createSessionWithPayload(t, baseURL, map[string]string{"installation_id": installationID})
+}
+
+func createSessionWithDisplayName(t *testing.T, baseURL, installationID, displayName string) testSession {
+	t.Helper()
+	return createSessionWithPayload(t, baseURL, map[string]string{
+		"installation_id": installationID,
+		"display_name":    displayName,
+	})
+}
+
+func createSessionWithPayload(t *testing.T, baseURL string, payload map[string]string) testSession {
+	t.Helper()
+	body, err := json.Marshal(payload)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -292,6 +306,26 @@ func createSession(t *testing.T, baseURL, installationID string) testSession {
 		t.Fatal(err)
 	}
 	return session
+}
+
+func assertUnknownSessionFieldRejected(t *testing.T, baseURL string) {
+	t.Helper()
+	body, err := json.Marshal(map[string]string{
+		"installation_id": "unknown-field-installation-v1",
+		"unexpected":      "value",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	response, err := http.Post(baseURL+"/v1/anonymous-sessions", "application/json", bytes.NewReader(body))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer response.Body.Close()
+	if response.StatusCode != http.StatusBadRequest {
+		data, _ := io.ReadAll(response.Body)
+		t.Fatalf("unknown session field status = %d, want %d: %s", response.StatusCode, http.StatusBadRequest, data)
+	}
 }
 
 func openClient(t *testing.T, baseURL, token string) *websocket.Conn {
