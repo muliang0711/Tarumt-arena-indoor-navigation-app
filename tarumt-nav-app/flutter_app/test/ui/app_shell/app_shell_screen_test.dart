@@ -37,6 +37,7 @@ import 'package:indoor_navigation/ui/navigation/navigation_exit_bar.dart';
 import 'package:indoor_navigation/ui/navigation/wifi_positioning_map_test_overlay.dart';
 import 'package:indoor_navigation/ui/navigation_input/navigation_input.dart';
 import 'package:indoor_navigation/ui/saved_places/saved_places_screen.dart';
+import 'package:indoor_navigation/ui/search/destination_search_delegate.dart';
 
 import '../../support/fakes/fakes.dart';
 
@@ -133,6 +134,56 @@ void main() {
     await tester.pump();
     await tester.pump();
     expect(harness.liveScheduler.activeTaskCount, 0);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    for (var index = 0; index < 8; index += 1) {
+      await tester.pump();
+    }
+  });
+
+  testWidgets('Home search opens a cross-floor room route directly', (
+    tester,
+  ) async {
+    final catalog = parseCampusCatalogBundle(
+      edgeDocumentJson: edgesJson,
+      nodeCatalogJson: nodesJson,
+      roomCatalogJson: roomsJson,
+    );
+    final floorRoomsViewModel = FloorRoomsViewModel(
+      initialState: createFloorRoomsViewState(catalog),
+    );
+    final harness = _createHarness(
+      edgesJson: edgesJson,
+      floorRoomsViewModel: floorRoomsViewModel,
+      mapJson: mapJson,
+    );
+    await tester.pumpWidget(
+      IndoorNavigationApp(
+        floorRoomsViewModel: harness.floorRoomsViewModel,
+        liveMapViewModel: harness.liveMapViewModel,
+        shellViewModel: harness.shellViewModel,
+        viewModel: harness.navigationViewModel,
+      ),
+    );
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -260));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey<String>('home.search')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'TA257');
+    await tester.pump();
+    await tester.tap(find.byKey(DestinationSearchKeys.result('TA257')));
+    for (var index = 0; index < 8; index += 1) {
+      await tester.pump();
+    }
+
+    expect(harness.floorRoomsViewModel.state.selectedFloorId, 'floor-2');
+    expect(harness.floorRoomsViewModel.state.selectedRoom?.id, 'TA257');
+    expect(harness.shellViewModel.state.navigatePage, AppNavigatePage.map);
+    expect(
+      harness.navigationViewModel.state.navigationSessionStatus,
+      NavigationSessionStatus.navigating,
+    );
 
     await tester.pumpWidget(const SizedBox.shrink());
     for (var index = 0; index < 8; index += 1) {

@@ -9,11 +9,13 @@ void main() {
     'renders the complete reference Home content and forwards actions',
     (tester) async {
       var navigateCount = 0;
+      var searchCount = 0;
       var savedCount = 0;
       var settingsCount = 0;
       await _pumpHome(
         tester,
         onOpenNavigate: () => navigateCount += 1,
+        onSearchDestination: () => searchCount += 1,
         onOpenSaved: () => savedCount += 1,
         onOpenSettings: () => settingsCount += 1,
         size: const Size(390, 844),
@@ -48,7 +50,8 @@ void main() {
       );
       await tester.pump();
 
-      expect(navigateCount, 2);
+      expect(navigateCount, 1);
+      expect(searchCount, 1);
       expect(savedCount, 0);
       expect(settingsCount, 0);
 
@@ -67,7 +70,7 @@ void main() {
       await tester.tap(
         find.byKey(HomeScreenKeys.popularPlace('cafeteria-cf101')),
       );
-      expect(navigateCount, 3);
+      expect(navigateCount, 2);
       expect(tester.takeException(), isNull);
     },
   );
@@ -96,6 +99,7 @@ void main() {
 Future<void> _pumpHome(
   WidgetTester tester, {
   required VoidCallback onOpenNavigate,
+  VoidCallback? onSearchDestination,
   required VoidCallback onOpenSaved,
   required VoidCallback onOpenSettings,
   required Size size,
@@ -110,6 +114,7 @@ Future<void> _pumpHome(
       home: Scaffold(
         body: HomeScreen(
           onOpenNavigate: onOpenNavigate,
+          onSearchDestination: onSearchDestination ?? onOpenNavigate,
           onOpenSaved: onOpenSaved,
           onOpenSettings: onOpenSettings,
           viewModel: const HomeViewModel(),

@@ -7,6 +7,7 @@ import 'package:indoor_navigation/domain/presence/presence_models.dart';
 import 'package:indoor_navigation/domain/tiled/tiled_models.dart';
 import 'package:indoor_navigation/ui/live_map/widgets/live_map_header.dart';
 import 'package:indoor_navigation/ui/live_map/widgets/live_presence_actor_marker.dart';
+import 'package:indoor_navigation/ui/live_map/widgets/live_presence_map.dart';
 
 void main() {
   test('reserves red for the local hybrid sentinel', () {
@@ -112,6 +113,20 @@ void main() {
 
     expect(find.text('IShowSpeed'), findsOneWidget);
     expect(find.text('Aina'), findsNothing);
+  });
+
+  test('spreads actors that share a map point in stable ID order', () {
+    final spread = spreadOverlappingActorPositions(<String, RoutePosition>{
+      'bob-b': _position(),
+      'bob-a': _position(),
+    });
+
+    expect(spread['bob-a']!.screenX, closeTo(80, 0.001));
+    expect(spread['bob-a']!.screenY, closeTo(58, 0.001));
+    expect(spread['bob-b']!.screenX, closeTo(80, 0.001));
+    expect(spread['bob-b']!.screenY, closeTo(102, 0.001));
+    expect(spread['bob-a']!.distanceAlongRoute, 0);
+    expect(spread['bob-b']!.distanceAlongRoute, 0);
   });
 }
 

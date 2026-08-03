@@ -18,6 +18,7 @@ abstract final class HomeScreenKeys {
 final class HomeScreen extends StatelessWidget {
   const HomeScreen({
     required this.onOpenNavigate,
+    required this.onSearchDestination,
     required this.onOpenSaved,
     required this.onOpenSettings,
     required this.viewModel,
@@ -25,6 +26,7 @@ final class HomeScreen extends StatelessWidget {
   });
 
   final VoidCallback onOpenNavigate;
+  final VoidCallback onSearchDestination;
   final VoidCallback onOpenSaved;
   final VoidCallback onOpenSettings;
   final HomeViewModel viewModel;
@@ -47,7 +49,7 @@ final class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   _MapPreview(onPressed: onOpenNavigate),
                   const SizedBox(height: 16),
-                  _DestinationSearch(onPressed: onOpenNavigate),
+                  _DestinationSearch(onPressed: onSearchDestination),
                   const SizedBox(height: 18),
                   const _SectionTitle(title: 'Quick Access'),
                   const SizedBox(height: 10),

@@ -29,6 +29,7 @@ import 'package:indoor_navigation/ui/navigation/navigation_exit_bar.dart';
 import 'package:indoor_navigation/ui/navigation/wifi_positioning_diagnostics_overlay.dart';
 import 'package:indoor_navigation/ui/navigation/wifi_positioning_map_test_overlay.dart';
 import 'package:indoor_navigation/ui/saved_places/saved_places_screen.dart';
+import 'package:indoor_navigation/ui/search/destination_search_delegate.dart';
 import 'package:indoor_navigation/ui/settings/settings_screen.dart';
 
 final class AppShellScreen extends StatefulWidget {
@@ -422,6 +423,21 @@ final class _AppShellScreenState extends State<AppShellScreen>
     _openMapWithFreshWifiTestSession();
   }
 
+  Future<void> _openDestinationSearch() async {
+    final floorRoomsState = widget.floorRoomsViewModel.state;
+    final room = await showSearch<CampusRoom?>(
+      context: context,
+      delegate: DestinationSearchDelegate(
+        floors: floorRoomsState.floors,
+        rooms: floorRoomsState.rooms,
+      ),
+    );
+    if (!mounted || room == null) return;
+    widget.floorRoomsViewModel.selectFloor(room.floorId);
+    widget.floorRoomsViewModel.selectRoom(room.id);
+    _openMapWithFreshWifiTestSession();
+  }
+
   Future<void> _completeArrival() async {
     if (_isCompletingArrival || _isDisposing) {
       return;
@@ -492,6 +508,7 @@ final class _AppShellScreenState extends State<AppShellScreen>
       body: switch (_state.selectedSection) {
         AppSection.home => HomeScreen(
           onOpenNavigate: () => _selectSection(AppSection.navigate),
+          onSearchDestination: () => unawaited(_openDestinationSearch()),
           onOpenSaved: () => _selectSection(AppSection.saved),
           onOpenSettings: () => _selectSection(AppSection.settings),
           viewModel: widget.homeViewModel,

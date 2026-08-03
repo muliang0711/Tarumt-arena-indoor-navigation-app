@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:indoor_navigation/application/ports/maps/map_runtime_resource_repository.dart';
 import 'package:indoor_navigation/domain/presence/presence_models.dart';
@@ -46,8 +48,7 @@ final class LivePresenceMap extends StatelessWidget {
       return _UnavailableFloorMap(floorCode: selectedFloorCode);
     }
     final fallbackPosition = interpolateRoutePosition(model.routePath, 0);
-    final markers = <Widget>[];
-    var assignedUserName = false;
+    final resolvedPositions = <String, RoutePosition>{};
     for (final presence in presences.take(maxPresenceRepresentatives)) {
       final position = resolvePresenceRoutePosition(
         presence: presence,
@@ -58,7 +59,15 @@ final class LivePresenceMap extends StatelessWidget {
           'Live presence actor ${presence.presenceId} could not resolve edge '
           '${presence.fromNodeId}->${presence.toNodeId} on $selectedFloorCode.',
         );
+      } else {
+        resolvedPositions[presence.presenceId] = position;
       }
+    }
+    final displayPositions = spreadOverlappingActorPositions(resolvedPositions);
+    final markers = <Widget>[];
+    var assignedUserName = false;
+    for (final presence in presences.take(maxPresenceRepresentatives)) {
+      final position = displayPositions[presence.presenceId];
       if (position != null) {
         final isDefaultGhostBob =
             !assignedUserName &&
@@ -95,6 +104,60 @@ final class LivePresenceMap extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Spreads actors that resolve to the same map point into a small, stable fan.
+///
+/// Presence IDs determine the order so a snapshot refresh does not make actors
+/// randomly swap sides. The offset is visual only; route and occupancy data
+/// keep their authoritative coordinates.
+Map<String, RoutePosition> spreadOverlappingActorPositions(
+  Map<String, RoutePosition> positions, {
+  double collisionRadiusPixels = 8,
+  double spreadRadiusPixels = 22,
+}) {
+  if (positions.length < 2) return Map.unmodifiable(positions);
+  final entries = positions.entries.toList()
+    ..sort((left, right) => left.key.compareTo(right.key));
+  final groups = <List<MapEntry<String, RoutePosition>>>[];
+  for (final entry in entries) {
+    final group = groups.where((candidate) {
+      final anchor = candidate.first.value;
+      return math.sqrt(
+            math.pow(anchor.screenX - entry.value.screenX, 2) +
+                math.pow(anchor.screenY - entry.value.screenY, 2),
+          ) <=
+          collisionRadiusPixels;
+    }).firstOrNull;
+    if (group == null) {
+      groups.add([entry]);
+    } else {
+      group.add(entry);
+    }
+  }
+
+  final spread = <String, RoutePosition>{};
+  for (final group in groups) {
+    if (group.length == 1) {
+      spread[group.single.key] = group.single.value;
+      continue;
+    }
+    for (var index = 0; index < group.length; index += 1) {
+      final entry = group[index];
+      final angle = -math.pi / 2 + (2 * math.pi * index / group.length);
+      final source = entry.value;
+      spread[entry.key] = RoutePosition(
+        distanceAlongRoute: source.distanceAlongRoute,
+        headingDegrees: source.headingDegrees,
+        screenX: source.screenX + math.cos(angle) * spreadRadiusPixels,
+        screenY: source.screenY + math.sin(angle) * spreadRadiusPixels,
+        segmentIndex: source.segmentIndex,
+        tiledX: source.tiledX,
+        tiledY: source.tiledY,
+      );
+    }
+  }
+  return Map.unmodifiable(spread);
 }
 
 final class _UnavailableFloorMap extends StatelessWidget {
