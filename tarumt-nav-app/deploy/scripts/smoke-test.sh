@@ -31,12 +31,34 @@ if [[ -n "$environment_file" ]]; then
 fi
 compose+=(--file "$compose_file")
 
-for service in redis clickhouse presence-gateway trajectory-worker analytics-api; do
+for service in redis clickhouse presence-gateway trajectory-worker analytics-api node-exporter cadvisor redis-exporter prometheus grafana; do
   if [[ $("${compose[@]}" ps --status running --services "$service") != "$service" ]]; then
     printf 'Service is not running: %s\n' "$service" >&2
     exit 1
   fi
 done
+
+printf '%s\n' "Checking infrastructure monitoring targets..."
+wait_for_prometheus_target() {
+  local encoded_job=$1
+  local display_name=$2
+  local attempt
+  for attempt in $(seq 1 20); do
+    if "${compose[@]}" exec -T prometheus wget -qO- \
+      "http://127.0.0.1:9090/api/v1/query?query=up%7Bjob%3D%22${encoded_job}%22%7D" \
+      | grep -q '"value":\[[^]]*,"1"\]'; then
+      return 0
+    fi
+    sleep 2
+  done
+  printf 'Prometheus target is not up: %s\n' "$display_name" >&2
+  return 1
+}
+
+wait_for_prometheus_target node-exporter "Node Exporter"
+wait_for_prometheus_target cadvisor cAdvisor
+"${compose[@]}" exec -T grafana wget -qO- http://127.0.0.1:3000/api/health \
+  | grep -q '"database"[[:space:]]*:[[:space:]]*"ok"'
 
 gateway_address=$("${compose[@]}" port presence-gateway 8080)
 gateway_url="http://${gateway_address}"

@@ -52,6 +52,19 @@ sudo install -d -m 0755 "$release_dir"
 sudo tar -xzf "$remote_archive" -C "$release_dir"
 rm -f "$remote_archive"
 
+if ! sudo grep -q '^GRAFANA_ADMIN_PASSWORD=' "$environment_file"; then
+  printf '%s\n' "Adding the missing Grafana configuration to the server-owned environment."
+  {
+    printf '%s\n' 'GRAFANA_HOST_PORT=3000'
+    printf '%s\n' 'GRAFANA_ADMIN_USER=admin'
+    printf 'GRAFANA_ADMIN_PASSWORD=%s\n' "$(openssl rand -hex 32)"
+    printf '%s\n' 'PROMETHEUS_RETENTION_TIME=15d'
+    printf '%s\n' 'PROMETHEUS_RETENTION_SIZE=8GB'
+  } | sudo tee -a "$environment_file" >/dev/null
+  sudo chown root:root "$environment_file"
+  sudo chmod 0600 "$environment_file"
+fi
+
 sudo docker compose \
   --project-name campus-navigator \
   --env-file "$environment_file" \

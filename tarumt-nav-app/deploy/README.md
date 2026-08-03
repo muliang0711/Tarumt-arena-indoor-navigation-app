@@ -10,8 +10,8 @@ Start with [`OPERATIONS.md`](OPERATIONS.md) when:
 This directory is the deployment Module for the single-host Campus Navigator
 test environment. Its Interface is:
 
-- `compose.production.yaml` defines the five runtime containers, their private
-  application network, and the Gateway-only ingress network.
+- `compose.production.yaml` defines the five application containers plus the
+  private Prometheus/Grafana infrastructure-monitoring stack.
 - `.env.production.example` defines the server-owned configuration contract.
 - `scripts/deploy.sh` publishes one committed Git revision.
 - `scripts/smoke-test.sh` verifies the deployed Interface through health, map,
@@ -20,8 +20,8 @@ test environment. Its Interface is:
   Compute Engine test VM from Cloud Shell or another authenticated `gcloud`
   environment.
 - `gcp/bootstrap-vm.sh` performs the first-time setup inside an Ubuntu Compute
-  Engine VM: Docker, Tailscale, production secrets, all five containers,
-  smoke tests, and the public HTTPS Funnel.
+  Engine VM: Docker, Tailscale, production secrets, the application and
+  monitoring containers, smoke tests, and the public HTTPS Funnel.
 
 Implementation details such as ClickHouse user initialization live behind that
 Interface. Flutter only crosses the public Presence Gateway seam. The
@@ -90,6 +90,28 @@ first run, rerun the same bootstrap command; completed steps are retained.
 Do not copy `production.env` into Git, an APK, chat, logs, or screenshots.
 
 After this first-time bootstrap, normal VM starts do not require rerunning the
-script. Docker, the five containers, `tailscaled`, and the saved Funnel
+script. Docker, the application and monitoring containers, `tailscaled`, and the saved Funnel
 configuration resume automatically. Use `manage-vm.sh` from Cloud Shell to
 start and stop the VM as needed.
+
+## Infrastructure monitoring
+
+Production Compose runs Node Exporter for VM metrics, cAdvisor for per-container
+metrics, Prometheus for collection and retention, and Grafana for dashboards.
+Grafana is bound to host loopback and is not part of the public Funnel.
+
+Open a tunnel from an operator machine:
+
+```sh
+ssh -L 3000:127.0.0.1:3000 hy@100.87.31.93
+```
+
+Then open `http://127.0.0.1:3000` and sign in with `GRAFANA_ADMIN_USER` and
+`GRAFANA_ADMIN_PASSWORD` from the server-owned production environment file.
+The provisioned **Infrastructure Overview** dashboard shows VM CPU, memory,
+root-disk use, load, uptime, and per-container CPU, memory, filesystem, network,
+restart, and scrape-health signals.
+
+Prometheus, Node Exporter, and cAdvisor publish no host ports. cAdvisor requires
+privileged, read-only host mounts to inspect Docker and Linux cgroups; never
+expose it outside the private monitoring network.

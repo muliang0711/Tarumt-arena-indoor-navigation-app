@@ -64,6 +64,11 @@ if [[ ! -f "$environment_file" ]]; then
     printf 'PRESENCE_IDENTITY_HMAC_SECRET=%s\n' "$(openssl rand -hex 32)"
     printf 'CLICKHOUSE_TRAJECTORY_PASSWORD=%s\n' "$(openssl rand -hex 32)"
     printf 'CLICKHOUSE_ANALYTICS_PASSWORD=%s\n' "$(openssl rand -hex 32)"
+    printf '%s\n' 'GRAFANA_HOST_PORT=3000'
+    printf '%s\n' 'GRAFANA_ADMIN_USER=admin'
+    printf 'GRAFANA_ADMIN_PASSWORD=%s\n' "$(openssl rand -hex 32)"
+    printf '%s\n' 'PROMETHEUS_RETENTION_TIME=15d'
+    printf '%s\n' 'PROMETHEUS_RETENTION_SIZE=8GB'
   } > "$environment_tmp"
   sudo install -d -m 0755 /opt/campus-navigator/shared
   sudo install -o root -g root -m 0600 \
@@ -73,6 +78,18 @@ if [[ ! -f "$environment_file" ]]; then
   trap - EXIT
 else
   printf 'Preserving existing secrets in %s.\n' "$environment_file"
+  if ! sudo grep -q '^GRAFANA_ADMIN_PASSWORD=' "$environment_file"; then
+    printf '%s\n' "Adding the missing Grafana configuration to the existing secret file."
+    {
+      printf '%s\n' 'GRAFANA_HOST_PORT=3000'
+      printf '%s\n' 'GRAFANA_ADMIN_USER=admin'
+      printf 'GRAFANA_ADMIN_PASSWORD=%s\n' "$(openssl rand -hex 32)"
+      printf '%s\n' 'PROMETHEUS_RETENTION_TIME=15d'
+      printf '%s\n' 'PROMETHEUS_RETENTION_SIZE=8GB'
+    } | sudo tee -a "$environment_file" >/dev/null
+    sudo chown root:root "$environment_file"
+    sudo chmod 0600 "$environment_file"
+  fi
 fi
 
 map_pointer="$repository_root/map-data/main-campus/current.json"

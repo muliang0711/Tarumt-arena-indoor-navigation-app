@@ -32,7 +32,7 @@ changed.
 A normal reboot does **not** require a new deployment:
 
 - Docker is enabled at boot.
-- All five containers use `restart: unless-stopped`.
+- All application and monitoring containers use `restart: unless-stopped`.
 - `tailscaled` is enabled at boot.
 - Tailscale Funnel configuration is persistent.
 - ClickHouse data is stored in a named Docker volume.
@@ -121,9 +121,27 @@ Expected containers:
 3. `campus-navigator-analytics-api-1`
 4. `campus-navigator-redis-1`
 5. `campus-navigator-clickhouse-1`
+6. `campus-navigator-node-exporter-1`
+7. `campus-navigator-cadvisor-1`
+8. `campus-navigator-redis-exporter-1`
+9. `campus-navigator-prometheus-1`
+10. `campus-navigator-grafana-1`
 
-Every container should say `healthy`. Only Presence Gateway should publish a
-host port, and it should be `127.0.0.1:8080`.
+Containers with a health check should say `healthy`; exporters without a
+container health check should say `Up`. Presence Gateway publishes
+`127.0.0.1:8080`, and Grafana publishes `127.0.0.1:3000`. Neither is bound to a
+LAN address.
+
+### Open the infrastructure dashboard
+
+From the operator machine, keep this SSH session open:
+
+```sh
+ssh -L 3000:127.0.0.1:3000 hy@100.87.31.93
+```
+
+Open `http://127.0.0.1:3000`, sign in using the server-owned Grafana
+credentials, and select **Infrastructure / Infrastructure Overview**.
 
 Run the complete smoke test:
 
@@ -313,7 +331,7 @@ The script:
 
 1. archives the current Git commit;
 2. creates `/opt/campus-navigator/releases/<commit>`;
-3. builds and starts the five-container model;
+3. builds and starts the application and monitoring model;
 4. waits for health checks;
 5. runs the smoke test;
 6. changes `current` only after validation succeeds.
@@ -391,7 +409,8 @@ ssh hy@100.87.31.93 '
 ```
 
 Valid names are `presence-gateway`, `trajectory-worker`, `analytics-api`,
-`redis`, and `clickhouse`.
+`redis`, `clickhouse`, `node-exporter`, `cadvisor`, `redis-exporter`,
+`prometheus`, and `grafana`.
 
 ### Host resources
 

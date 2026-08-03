@@ -10,13 +10,17 @@ This runbook deploys Campus Navigator to the `hy-cmp` Ubuntu host as a
 single-host friend-testing environment. It is deliberately smaller than a
 high-availability production platform.
 
-The deployment contains exactly five application containers:
+The deployment contains five application containers:
 
 1. Presence Gateway
 2. Trajectory Worker
 3. Analytics API
 4. Redis
 5. ClickHouse
+
+It also contains five infrastructure-monitoring containers: Node Exporter,
+cAdvisor, Redis Exporter, Prometheus, and Grafana. They do not participate in
+the Flutter request path.
 
 Tailscale Funnel is an ingress Adapter, not another Go process in the
 application architecture.
@@ -103,7 +107,7 @@ It performs these operations:
 2. Uploads it to the CMP.
 3. Extracts it under `/opt/campus-navigator/releases/<commit>`.
 4. validates the Compose model against the server-owned environment.
-5. Builds and starts the five containers.
+5. Builds and starts the application and monitoring containers.
 6. Runs the smoke-test Interface.
 7. Moves `/opt/campus-navigator/current` only after the checks pass.
 
@@ -121,7 +125,7 @@ ssh hy@100.87.31.93 \
 
 The smoke test verifies:
 
-- all five containers are running;
+- all application and monitoring containers are running;
 - Gateway readiness;
 - the current `main-campus` Map Bundle;
 - anonymous-session creation;
@@ -189,6 +193,21 @@ transport. Do not present current Redis delivery as durable.
 
 The 98 GB host disk is sufficient for initial testing, not unlimited analytics
 retention. ClickHouse tables currently delete raw records after 30 days.
+Prometheus retention is bounded by both time and size through
+`PROMETHEUS_RETENTION_TIME` and `PROMETHEUS_RETENTION_SIZE`.
+
+## Grafana access
+
+Grafana listens only on VM loopback. From an operator machine, create an SSH
+tunnel and then open `http://127.0.0.1:3000`:
+
+```sh
+ssh -L 3000:127.0.0.1:3000 hy@100.87.31.93
+```
+
+Credentials live only in
+`/opt/campus-navigator/shared/production.env`. Prometheus and both host
+exporters have no host-published ports.
 
 ## Public HTTPS/WSS
 
