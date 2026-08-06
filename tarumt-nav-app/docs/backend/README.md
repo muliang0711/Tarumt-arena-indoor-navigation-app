@@ -1,8 +1,9 @@
 # Backend documentation
 
-This documentation describes the implemented backend as of 2026-07-29. It
-covers the three Go deployables and their Redis and ClickHouse dependencies.
-Flutter is shown only where it crosses a backend boundary.
+This documentation describes the implemented backend as of 2026-08-04. It
+covers the three Go deployables, their Redis and ClickHouse dependencies, and
+the production infrastructure-monitoring stack. Flutter is shown only where it
+crosses a backend boundary.
 
 ## Diagram set
 
@@ -27,10 +28,11 @@ The runtime has three Go deployables:
 3. **Analytics API** — a read-only aggregate query service over ClickHouse.
 
 Redis and ClickHouse are private infrastructure. The production Compose model
-publishes only the Presence Gateway to host loopback; the worker, Analytics
-API, Redis, and ClickHouse stay on the internal application network. The
-Analytics API is implemented but is not connected to Flutter in the current
-stage.
+publishes the Presence Gateway and Grafana only to host loopback. The Worker,
+Analytics API, Redis, ClickHouse, Prometheus, and exporters remain private.
+Tailscale Funnel exposes only the Gateway; operators reach Grafana through an
+SSH tunnel. The Analytics API is implemented but is not connected to Flutter
+in the current stage.
 
 Capitalized **Journey** terms use the definitions in the repository
 [domain language](../../CONTEXT.md). In particular, a session authenticates a
@@ -50,6 +52,8 @@ The diagrams summarize code and contracts; they do not replace them:
   [`services/trajectory-worker/migrations`](../../services/trajectory-worker/migrations)
 - Deployment:
   [`deploy/compose.production.yaml`](../../deploy/compose.production.yaml)
+- Monitoring configuration and dashboard:
+  [`deploy/monitoring`](../../deploy/monitoring)
 
 The longer
 [implemented schema and redesign context](../architecture/current-schema-flow-and-redesign-context.md)

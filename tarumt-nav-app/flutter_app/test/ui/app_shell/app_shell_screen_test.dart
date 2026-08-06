@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -713,12 +714,95 @@ void main() {
       await tester.pump();
     }
   });
+
+  testWidgets('finishes navigation presence cleanup before opening Live Map', (
+    tester,
+  ) async {
+    final catalog = parseCampusCatalogBundle(
+      edgeDocumentJson: edgesJson,
+      nodeCatalogJson: nodesJson,
+      roomCatalogJson: roomsJson,
+    );
+    final floorRoomsViewModel = FloorRoomsViewModel(
+      initialState: createFloorRoomsViewState(catalog),
+    )..selectRoom('TA257');
+    final harness = _createHarness(
+      edgesJson: edgesJson,
+      floorRoomsViewModel: floorRoomsViewModel,
+      mapJson: mapJson,
+      sharePresenceRepository: true,
+    );
+    harness.shellViewModel.openMap();
+    await tester.pumpWidget(
+      IndoorNavigationApp(
+        floorRoomsViewModel: harness.floorRoomsViewModel,
+        liveMapViewModel: harness.liveMapViewModel,
+        presenceCoordinator: harness.presenceCoordinator,
+        shellViewModel: harness.shellViewModel,
+        viewModel: harness.navigationViewModel,
+      ),
+    );
+    for (var index = 0; index < 5; index += 1) {
+      await tester.pump();
+    }
+
+    harness.sensor.emit(
+      HeadingSensorEvent(
+        headingDegrees: 90,
+        receivedAtMs: 1000,
+        source: SensorHeadingSource.magnetometer,
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+    expect(harness.presenceRepository.publishCount, greaterThan(0));
+
+    final leaveGate = Completer<void>();
+    harness.presenceRepository.leaveGate = leaveGate;
+    await tester.tap(
+      find.byKey(AppBottomNavigationKeys.destination(AppSection.liveMap)),
+    );
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AlertDialog),
+        matching: find.widgetWithText(FilledButton, 'Exit navigation'),
+      ),
+    );
+    for (var index = 0; index < 5; index += 1) {
+      await tester.pump();
+    }
+
+    expect(find.byKey(LiveMapScreenKeys.screen), findsNothing);
+    expect(harness.presenceRepository.calls, contains('leave-start'));
+
+    leaveGate.complete();
+    for (var index = 0; index < 8; index += 1) {
+      await tester.pump();
+    }
+
+    expect(find.byKey(LiveMapScreenKeys.screen), findsOneWidget);
+    expect(
+      harness.presenceRepository.calls.where((call) => call == 'start'),
+      hasLength(2),
+    );
+    expect(
+      harness.presenceRepository.calls.lastIndexOf('stop'),
+      lessThan(harness.presenceRepository.calls.lastIndexOf('start')),
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    for (var index = 0; index < 8; index += 1) {
+      await tester.pump();
+    }
+  });
 }
 
 _AppShellHarness _createHarness({
   required String edgesJson,
   FloorRoomsViewModel? floorRoomsViewModel,
   required String mapJson,
+  bool sharePresenceRepository = false,
 }) {
   final clock = FakeClock(initialNowMs: 1000);
   final repository = FakeMapAssetRepository()
@@ -742,6 +826,9 @@ _AppShellHarness _createHarness({
     );
   final liveScheduler = FakePeriodicScheduler(clock: clock);
   final presenceRepository = _RecordingPresenceRepository();
+  final PresenceRepository livePresenceRepository = sharePresenceRepository
+      ? presenceRepository
+      : MockPresenceRepository(clock: clock, scheduler: liveScheduler);
   return _AppShellHarness(
     floorRoomsViewModel: floorRoomsViewModel ?? FloorRoomsViewModel(),
     navigationViewModel: IndoorNavigationViewModel(
@@ -757,10 +844,8 @@ _AppShellHarness _createHarness({
       buildingName: mainCampusBuildingName,
       floors: mainCampusFloors,
       mapAssetRepository: liveMapAssetRepository,
-      presenceRepository: MockPresenceRepository(
-        clock: clock,
-        scheduler: liveScheduler,
-      ),
+      presenceRepository: livePresenceRepository,
+      disposePresenceRepository: !sharePresenceRepository,
     ),
     liveScheduler: liveScheduler,
     presenceCoordinator: RealtimePresenceCoordinator(
@@ -804,6 +889,8 @@ final class _StaticNodeApi implements WifiPositioningApi {
 }
 
 final class _RecordingPresenceRepository implements PresenceRepository {
+  final List<String> calls = [];
+  Completer<void>? leaveGate;
   int disconnectCount = 0;
   int leaveCount = 0;
   int publishCount = 0;
@@ -831,7 +918,13 @@ final class _RecordingPresenceRepository implements PresenceRepository {
   Future<void> dispose() async {}
 
   @override
-  Future<void> leave() async => leaveCount += 1;
+  Future<void> leave() async {
+    leaveCount += 1;
+    calls.add('leave-start');
+    final gate = leaveGate;
+    if (gate != null) await gate.future;
+    calls.add('leave-end');
+  }
 
   @override
   Future<void> publishLocation(LocalPresencePosition position) async {
@@ -848,8 +941,12 @@ final class _RecordingPresenceRepository implements PresenceRepository {
   Future<void> start({
     required String buildingId,
     required String floorId,
-  }) async {}
+  }) async {
+    calls.add('start');
+  }
 
   @override
-  Future<void> stop() async {}
+  Future<void> stop() async {
+    calls.add('stop');
+  }
 }

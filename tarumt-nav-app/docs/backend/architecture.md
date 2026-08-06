@@ -20,10 +20,24 @@ flowchart LR
         ClickHouse[("ClickHouse")]
     end
 
+    subgraph Monitoring["Infrastructure monitoring"]
+        Grafana["Grafana"]
+        Prometheus["Prometheus"]
+        NodeExporter["Node Exporter"]
+        CAdvisor["cAdvisor"]
+        RedisExporter["Redis Exporter"]
+    end
+
     Mobile -->|"HTTPS maps + anonymous session<br/>authenticated WebSocket"| Gateway
-    Operator -->|"health and Prometheus metrics"| Gateway
-    Operator -->|"private health and metrics"| Worker
-    Operator -->|"private health and metrics"| Analytics
+    Operator -->|"SSH tunnel to loopback-only UI"| Grafana
+    Grafana -->|"PromQL"| Prometheus
+    Prometheus -->|"private /metrics"| Gateway
+    Prometheus -->|"private /metrics"| Worker
+    Prometheus -->|"private /metrics"| Analytics
+    Prometheus --> NodeExporter
+    Prometheus --> CAdvisor
+    Prometheus --> RedisExporter
+    RedisExporter --> Redis
     Consumer -.->|"aggregate HTTPS queries<br/>not wired to Flutter today"| Analytics
 
     Gateway -->|"hot state, Pub/Sub,<br/>trajectory + lifecycle Streams"| Redis
@@ -32,9 +46,11 @@ flowchart LR
     Analytics -->|"SELECT-only aggregate queries"| ClickHouse
 ```
 
-The solid client edge is implemented and deployed. The dashed analytics-client
-edge marks the intended caller boundary; exposing it is a deployment decision,
-not part of the current Flutter integration.
+The solid mobile edge is deployed. The monitoring edge is implemented in the
+production Compose model and becomes active when that revision is deployed.
+The dashed analytics-client edge marks the intended caller boundary; exposing
+it is a deployment decision, not part of the current Flutter integration.
+Operators do not connect directly to exporter or Go-service metric endpoints.
 
 ## Deployable and network topology
 
@@ -43,10 +59,12 @@ flowchart TB
     Internet["Tailscale Funnel / ingress"]
 
     subgraph Host["Single-host CMP deployment"]
-        Loopback["127.0.0.1:8080"]
+        GatewayLoopback["127.0.0.1:8080"]
+        GrafanaLoopback["127.0.0.1:3000"]
 
         subgraph IngressNet["ingress network"]
             Gateway["presence-gateway :8080"]
+            Grafana["grafana :3000"]
         end
 
         subgraph AppNet["internal application network"]
@@ -54,27 +72,80 @@ flowchart TB
             Worker["trajectory-worker :9091"]
             ClickHouse[("clickhouse :9000")]
             Analytics["analytics-api :9092"]
+            RedisExporter["redis-exporter :9121"]
+            Prometheus["prometheus :9090"]
+        end
+
+        subgraph MonitoringNet["internal monitoring network"]
+            NodeExporter["node-exporter :9100"]
+            CAdvisor["cadvisor :8080"]
         end
 
         MapData[("read-only map-data volume")]
         CHData[("ClickHouse volume")]
+        PromData[("Prometheus volume")]
+        GrafanaData[("Grafana volume")]
     end
 
-    Internet --> Loopback --> Gateway
+    Operator["Operator SSH client"] -->|"SSH port forwarding"| GrafanaLoopback --> Grafana
+    Internet --> GatewayLoopback --> Gateway
     Gateway --> Redis
     Gateway --> MapData
     Worker --> Redis
     Worker --> ClickHouse
     Analytics --> ClickHouse
     ClickHouse --> CHData
+    RedisExporter --> Redis
+    Prometheus -->|"scrapes application metrics"| Gateway
+    Prometheus --> Worker
+    Prometheus --> Analytics
+    Prometheus --> RedisExporter
+    Prometheus --> NodeExporter
+    Prometheus --> CAdvisor
+    Grafana -->|"queries over monitoring network"| Prometheus
+    Prometheus --> PromData
+    Grafana --> GrafanaData
 ```
 
-Only the Gateway joins both networks. Redis, ClickHouse, the Worker operational
-server, and the Analytics API have no host-published port in the production
-Compose file. ClickHouse uses a named volume. The current single-host Compose
-configuration deliberately runs Redis without AOF or snapshots on `tmpfs`, so
-its hot state and unconsumed Stream entries do not survive a Redis container or
-host restart; the deployment runbook records this durability limit.
+The Gateway bridges the application and ingress networks. Prometheus bridges
+the application and monitoring networks, while Grafana bridges monitoring and
+ingress. Only the Gateway and Grafana have host-published ports, and both bind
+to loopback. Tailscale Funnel exposes only the Gateway; Grafana requires an SSH
+tunnel. Redis, ClickHouse, the Worker, the Analytics API, Prometheus, and all
+exporters have no host-published port.
+
+ClickHouse, Prometheus, and Grafana use named volumes. The current single-host
+Compose configuration deliberately runs Redis without AOF or snapshots on
+`tmpfs`, so its hot state and unconsumed Stream entries do not survive a Redis
+container or host restart; the deployment runbook records this durability
+limit.
+
+## Production observability
+
+```mermaid
+flowchart LR
+    VM["GCE VM kernel and filesystem"] --> Node["Node Exporter"]
+    Docker["Docker containers and cgroups"] --> CAdvisor["cAdvisor"]
+    Redis[("Redis")] --> RedisExporter["Redis Exporter"]
+    Go["Go services /metrics"] --> Prometheus["Prometheus"]
+    Node --> Prometheus
+    CAdvisor --> Prometheus
+    RedisExporter --> Prometheus
+    Prometheus --> Grafana["Grafana<br/>Infrastructure Overview"]
+    Operator["Operator browser"] -->|"SSH tunnel<br/>127.0.0.1:3000"| Grafana
+```
+
+Node Exporter owns VM-level CPU, memory, load, uptime, and filesystem signals.
+cAdvisor owns per-container CPU, working-set memory, filesystem, network, start
+time, and liveness signals. Prometheus also scrapes the three Go services and
+Redis Exporter across the private application network. The provisioned Grafana
+dashboard derives restart observations from changes in container start time.
+
+Prometheus scrapes every 15 seconds and is bounded by both time and storage-size
+retention settings. Prometheus and Grafana state survive container replacement
+in named volumes. Monitoring cannot affect the Flutter request path: exporters
+are read-only observers, and an unavailable monitoring container is not a
+dependency of the Gateway, Worker, Analytics API, Redis, or ClickHouse.
 
 ## Presence Gateway modules
 

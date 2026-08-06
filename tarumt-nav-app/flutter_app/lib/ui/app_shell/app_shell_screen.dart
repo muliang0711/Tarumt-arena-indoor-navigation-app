@@ -277,18 +277,11 @@ final class _AppShellScreenState extends State<AppShellScreen>
     final presenceEnd = widget.presenceCoordinator?.endNavigationPresence(
       navigationSessionId: sessionId,
     );
-    if (presenceEnd != null) {
-      unawaited(
-        presenceEnd.catchError((Object error, StackTrace stackTrace) {
-          debugPrint('Remote navigation cleanup failed: $error');
-          debugPrintStack(stackTrace: stackTrace);
-        }),
-      );
-    }
+    final navigationCancellation = widget.indoorNavigationViewModel
+        .cancelNavigation()
+        .timeout(const Duration(seconds: 3));
     try {
-      await widget.indoorNavigationViewModel.cancelNavigation().timeout(
-        const Duration(seconds: 3),
-      );
+      await Future.wait<void>([?presenceEnd, navigationCancellation]);
     } catch (error, stackTrace) {
       debugPrint('Navigation cleanup failed: $error');
       debugPrintStack(stackTrace: stackTrace);
