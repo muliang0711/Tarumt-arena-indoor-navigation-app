@@ -1,0 +1,166 @@
+{
+  "input": "/Users/puihockyang/code/Tarumt-arena-indoor-navigation-app/outputs/fyp-backend-admin-20260907/FYP Report.docx",
+  "fonts_by_char_count": {
+    "Times New Roman": 37580,
+    "Arial": 1843
+  },
+  "direct_run_formatting_runs": 306,
+  "direct_paragraph_formatting_paragraphs": 298,
+  "heading_like_paragraphs_not_heading_style": [
+    {
+      "para_index": 5,
+      "text": "Campus Navigator: Backend System and Web-Based Administration Client",
+      "style": "Title"
+    },
+    {
+      "para_index": 72,
+      "text": "Declaration",
+      "style": "Normal"
+    },
+    {
+      "para_index": 92,
+      "text": "Abstract",
+      "style": "Normal"
+    },
+    {
+      "para_index": 94,
+      "text": "Acknowledgement",
+      "style": "Normal"
+    },
+    {
+      "para_index": 96,
+      "text": "Table of Contents",
+      "style": "Normal"
+    },
+    {
+      "para_index": 108,
+      "text": "Introduction",
+      "style": "Normal"
+    },
+    {
+      "para_index": 140,
+      "text": "Literature Review",
+      "style": "Normal"
+    },
+    {
+      "para_index": 172,
+      "text": "Methodology and Requirements Analysis",
+      "style": "Normal"
+    },
+    {
+      "para_index": 201,
+      "text": "System Design",
+      "style": "Normal"
+    },
+    {
+      "para_index": 243,
+      "text": "Implementation and Testing",
+      "style": "Normal"
+    },
+    {
+      "para_index": 277,
+      "text": "System Deployment",
+      "style": "Normal"
+    },
+    {
+      "para_index": 308,
+      "text": "Discussions and Conclusion",
+      "style": "Normal"
+    },
+    {
+      "para_index": 335,
+      "text": "Appendices",
+      "style": "Normal"
+    },
+    {
+      "para_index": 346,
+      "text": "Component",
+      "style": "Normal"
+    },
+    {
+      "para_index": 347,
+      "text": "Responsibility",
+      "style": "Normal"
+    },
+    {
+      "para_index": 348,
+      "text": "Data boundary",
+      "style": "Normal"
+    },
+    {
+      "para_index": 361,
+      "text": "Case",
+      "style": "Normal"
+    },
+    {
+      "para_index": 362,
+      "text": "Expected behaviour",
+      "style": "Normal"
+    },
+    {
+      "para_index": 363,
+      "text": "Recorded outcome",
+      "style": "Normal"
+    }
+  ],
+  "examples": {
+    "direct_paragraph_formatting": [
+      {
+        "para_index": 1,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 2,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 3,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 4,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 6,
+        "text": "",
+        "style": "Normal"
+      }
+    ],
+    "direct_run_formatting": [
+      {
+        "para_index": 5,
+        "run_text": "Campus Navigator: Backend System and Web-Based Administration Client",
+        "style": "Title"
+      },
+      {
+        "para_index": 9,
+        "run_text": "By",
+        "style": "Normal"
+      },
+      {
+        "para_index": 14,
+        "run_text": "Pui Hock Yang",
+        "style": "Normal"
+      },
+      {
+        "para_index": 25,
+        "run_text": "FACULTY OF COMPUTING AND ",
+        "style": "Normal"
+      },
+      {
+        "para_index": 26,
+        "run_text": "INFORMATION TECHNOLOGY",
+        "style": "Normal"
+      }
+    ]
+  },
+  "notes": [
+    "Direct formatting is not always wrong, but it often causes inconsistent output when templates change.",
+    "Heading-like paragraphs not using Heading styles can break TOC and accessibility."
+  ]
+}

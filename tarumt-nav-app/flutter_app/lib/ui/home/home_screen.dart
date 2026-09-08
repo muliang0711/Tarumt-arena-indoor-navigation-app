@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:indoor_navigation/application/view_models/home_view_model.dart';
+import 'package:indoor_navigation/domain/campus/campus_floor.dart';
 import 'package:indoor_navigation/domain/campus/campus_place.dart';
+import 'package:indoor_navigation/domain/campus/campus_room.dart';
 import 'package:indoor_navigation/ui/theme/indoor_navigation_theme.dart';
 
 abstract final class HomeScreenKeys {
   static const mapPreview = ValueKey<String>('home.map-preview');
+  static const collectionEmpty = ValueKey<String>('home.collection-empty');
   static const screen = ValueKey<String>('app-section.home');
   static const search = ValueKey<String>('home.search');
 
-  static ValueKey<String> popularPlace(String id) =>
-      ValueKey<String>('home.popular-place.$id');
+  static ValueKey<String> collectionPlace(String id) =>
+      ValueKey<String>('home.collection-place.$id');
 
   static ValueKey<String> quickAccess(HomeQuickAccessTarget target) =>
       ValueKey<String>('home.quick-access.${target.name}');
@@ -17,23 +20,30 @@ abstract final class HomeScreenKeys {
 
 final class HomeScreen extends StatelessWidget {
   const HomeScreen({
+    required this.floors,
     required this.onOpenNavigate,
     required this.onSearchDestination,
     required this.onOpenSaved,
     required this.onOpenSettings,
+    required this.onNavigateToRoom,
+    required this.savedRooms,
     required this.viewModel,
     super.key,
   });
 
+  final List<CampusFloor> floors;
   final VoidCallback onOpenNavigate;
   final VoidCallback onSearchDestination;
   final VoidCallback onOpenSaved;
   final VoidCallback onOpenSettings;
+  final ValueChanged<CampusRoom> onNavigateToRoom;
+  final List<CampusRoom> savedRooms;
   final HomeViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     final state = viewModel.state;
+    final collectionRooms = savedRooms.take(3).toList(growable: false);
     return ColoredBox(
       color: CampusNavigatorColors.background,
       child: SafeArea(
@@ -60,22 +70,29 @@ final class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 22),
                   _SectionTitle(
                     actionLabel: 'See all',
-                    onActionPressed: onOpenNavigate,
-                    title: 'Popular Places',
+                    onActionPressed: onOpenSaved,
+                    title: 'My Collection',
                   ),
                   const SizedBox(height: 10),
-                  for (
-                    var index = 0;
-                    index < state.popularPlaces.length;
-                    index++
-                  ) ...[
-                    _PopularPlaceCard(
-                      onPressed: onOpenNavigate,
-                      place: state.popularPlaces[index],
-                    ),
-                    if (index != state.popularPlaces.length - 1)
-                      const SizedBox(height: 12),
-                  ],
+                  if (savedRooms.isEmpty)
+                    _EmptyCollection(onBrowseRooms: onOpenNavigate)
+                  else
+                    for (
+                      var index = 0;
+                      index < collectionRooms.length;
+                      index++
+                    ) ...[
+                      _CollectionPlaceCard(
+                        floor: floors.firstWhere(
+                          (floor) => floor.id == collectionRooms[index].floorId,
+                        ),
+                        onPressed: () =>
+                            onNavigateToRoom(collectionRooms[index]),
+                        room: collectionRooms[index],
+                      ),
+                      if (index != collectionRooms.length - 1)
+                        const SizedBox(height: 12),
+                    ],
                 ],
               ),
             ),
@@ -463,16 +480,93 @@ final class _QuickAccessIcon extends StatelessWidget {
   }
 }
 
-final class _PopularPlaceCard extends StatelessWidget {
-  const _PopularPlaceCard({required this.onPressed, required this.place});
+final class _EmptyCollection extends StatelessWidget {
+  const _EmptyCollection({required this.onBrowseRooms});
 
-  final VoidCallback onPressed;
-  final CampusPlace place;
+  final VoidCallback onBrowseRooms;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      key: HomeScreenKeys.popularPlace(place.id),
+      key: HomeScreenKeys.collectionEmpty,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: CampusNavigatorColors.card,
+        border: Border.all(color: CampusNavigatorColors.border, width: 1.8),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Container(
+            height: 48,
+            width: 48,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF9F6EE),
+              border: Border.all(
+                color: CampusNavigatorColors.border,
+                width: 1.3,
+              ),
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: const Icon(
+              Icons.bookmark_add_outlined,
+              color: CampusNavigatorColors.accent,
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'No collected places yet',
+                  style: TextStyle(
+                    color: CampusNavigatorColors.text,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                SizedBox(height: 3),
+                Text(
+                  'Bookmark a room to keep it within easy reach.',
+                  style: TextStyle(
+                    color: CampusNavigatorColors.textMuted,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            onPressed: onBrowseRooms,
+            tooltip: 'Browse rooms',
+            icon: const Icon(Icons.arrow_forward),
+            color: CampusNavigatorColors.accent,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+final class _CollectionPlaceCard extends StatelessWidget {
+  const _CollectionPlaceCard({
+    required this.floor,
+    required this.onPressed,
+    required this.room,
+  });
+
+  final CampusFloor floor;
+  final VoidCallback onPressed;
+  final CampusRoom room;
+
+  @override
+  Widget build(BuildContext context) {
+    final kind = _placeKindForRoom(room);
+    return Container(
+      key: HomeScreenKeys.collectionPlace(room.id),
       height: 108,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -499,7 +593,7 @@ final class _PopularPlaceCard extends StatelessWidget {
                 SizedBox(
                   height: 78,
                   width: 78,
-                  child: _PlaceThumbnail(kind: place.kind),
+                  child: _PlaceThumbnail(kind: kind),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -508,7 +602,7 @@ final class _PopularPlaceCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        place.name,
+                        room.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -519,7 +613,7 @@ final class _PopularPlaceCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        place.locationLabel,
+                        '${floor.name} · ${room.roomCode}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -532,7 +626,7 @@ final class _PopularPlaceCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                _PlaceKindIcon(kind: place.kind),
+                _PlaceKindIcon(kind: kind),
                 const SizedBox(width: 4),
                 const Icon(
                   Icons.chevron_right,
@@ -546,6 +640,19 @@ final class _PopularPlaceCard extends StatelessWidget {
       ),
     );
   }
+}
+
+CampusPlaceKind _placeKindForRoom(CampusRoom room) {
+  return switch (room.visual) {
+    CampusRoomVisual.cafeteria => CampusPlaceKind.cafeteria,
+    CampusRoomVisual.computerLab => CampusPlaceKind.computerLab,
+    CampusRoomVisual.gym => CampusPlaceKind.gym,
+    CampusRoomVisual.library => CampusPlaceKind.library,
+    CampusRoomVisual.restroom => CampusPlaceKind.restroom,
+    CampusRoomVisual.generic => CampusPlaceKind.facility,
+    CampusRoomVisual.lectureHall ||
+    CampusRoomVisual.researchLab => CampusPlaceKind.classroom,
+  };
 }
 
 final class _PlaceKindIcon extends StatelessWidget {

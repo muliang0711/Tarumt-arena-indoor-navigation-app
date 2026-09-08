@@ -1,0 +1,45 @@
+erDiagram
+    CAMPUS_CATALOG ||--|{ CAMPUS_FLOOR : contains
+    CAMPUS_CATALOG ||--|{ CAMPUS_ROOM : lists
+    CAMPUS_CATALOG ||--|{ CAMPUS_NODE : defines
+    CAMPUS_FLOOR ||--o{ CAMPUS_ROOM : groups
+    CAMPUS_FLOOR ||--o{ CAMPUS_NODE : contains
+    CAMPUS_ROOM }o--o| CAMPUS_NODE : uses_navigation_node
+    CAMPUS_NODE ||--o{ ROUTE_EDGE : from_endpoint
+    CAMPUS_NODE ||--o{ ROUTE_EDGE : to_endpoint
+    TILED_MAP ||--|{ TILED_LAYER : contains
+    TILED_LAYER ||--o{ TILED_OBJECT : contains
+    TILED_OBJECT }o--o| CAMPUS_NODE : supplies_coordinates_for
+    MAP_BUNDLE ||--|| CAMPUS_CATALOG : packages
+    MAP_BUNDLE ||--|| TILED_MAP : packages
+    MAP_BUNDLE ||--|| ROUTE_EDGE_DOCUMENT : packages
+    ROUTE_EDGE_DOCUMENT ||--|{ ROUTE_EDGE : contains
+    MAP_BUNDLE ||--|| MAP_IMAGE : packages
+
+    CAMPUS_ROOM {
+        string id PK
+        string floorId FK
+        string roomCode
+        string name
+        string navigationNodeId FK
+        boolean navigationAvailable
+    }
+    CAMPUS_NODE {
+        string id PK
+        string floorId FK
+        string kind
+        double x
+        double y
+    }
+    ROUTE_EDGE {
+        string id PK
+        string fromNodeId FK
+        string toNodeId FK
+        double distance
+    }
+    MAP_BUNDLE {
+        string mapId
+        string bundleRevision
+        string graphRevision
+        string floorId
+    }

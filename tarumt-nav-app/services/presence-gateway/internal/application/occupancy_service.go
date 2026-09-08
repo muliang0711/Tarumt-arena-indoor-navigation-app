@@ -27,3 +27,12 @@ func (s *OccupancyService) Snapshot(ctx context.Context, buildingID, floorID str
 		RepresentativeLimit: s.limit,
 	})
 }
+
+// SnapshotAll serves the admin map without changing the mobile representative feed.
+func (s *OccupancyService) SnapshotAll(ctx context.Context, buildingID, floorID string) (domain.FloorSnapshot, error) {
+	now := s.clock.Now().UTC()
+	return s.store.Snapshot(ctx, ports.OccupancyQuery{
+		BuildingID: buildingID, FloorID: floorID, ActiveSince: now.Add(-s.staleAfter),
+		GeneratedAt: now, IncludeAll: true,
+	})
+}

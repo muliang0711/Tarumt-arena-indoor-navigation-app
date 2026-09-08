@@ -1,0 +1,23 @@
+flowchart TD
+    A["Start navigation"] --> B["Activate motion adapter, PDR engine,<br/>wrong-way monitor and Wi-Fi coordinator"]
+    B --> C["Receive normalised motion and heading events"]
+    C --> D["Batch samples and evaluate step / movement gates"]
+    D --> E{"Movement accepted?"}
+    E -->|No| F["Keep current route position and diagnostic reason"]
+    E -->|Yes| G["Create relative movement estimate"]
+    G --> H["Project estimate onto active planned route"]
+    H --> I["Update marker, segment, progress,<br/>remaining distance and instruction"]
+    I --> J{"Arrival condition met?"}
+    J -->|Yes| K["Set arrived state and stop active processing"]
+    J -->|No| L["Continue navigation"]
+
+    C --> M["Compare observed heading with accepted route headings"]
+    M --> N{"Wrong-way duration and deviation met?"}
+    N -->|Yes| O["Display wrong-way warning / reroute suggestion"]
+    N -->|No| L
+
+    P["Accepted Wi-Fi mapped node"] --> Q{"Trusted node equals destination?"}
+    Q -->|Yes| K
+    Q -->|No| R["Preserve destination and recalculate route<br/>from trusted node"]
+    R --> S["Rebase PDR and reset wrong-way state"]
+    S --> I

@@ -422,7 +422,14 @@ final class _AppShellScreenState extends State<AppShellScreen>
       context: context,
       delegate: DestinationSearchDelegate(
         floors: floorRoomsState.floors,
+        onToggleSaved: (roomId) {
+          widget.floorRoomsViewModel.toggleSavedRoom(roomId);
+          if (mounted) {
+            setState(() {});
+          }
+        },
         rooms: floorRoomsState.rooms,
+        savedRoomIds: floorRoomsState.savedRoomIds,
       ),
     );
     if (!mounted || room == null) return;
@@ -500,10 +507,13 @@ final class _AppShellScreenState extends State<AppShellScreen>
     final scaffold = Scaffold(
       body: switch (_state.selectedSection) {
         AppSection.home => HomeScreen(
+          floors: widget.floorRoomsViewModel.state.floors,
           onOpenNavigate: () => _selectSection(AppSection.navigate),
           onSearchDestination: () => unawaited(_openDestinationSearch()),
           onOpenSaved: () => _selectSection(AppSection.saved),
           onOpenSettings: () => _selectSection(AppSection.settings),
+          onNavigateToRoom: _navigateToSavedRoom,
+          savedRooms: widget.floorRoomsViewModel.state.savedRooms,
           viewModel: widget.homeViewModel,
         ),
         AppSection.navigate => switch (_state.navigatePage) {

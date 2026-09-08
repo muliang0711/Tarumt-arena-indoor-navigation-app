@@ -1,0 +1,3055 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/y90nupkv",
+    "id": "y90nupkv",
+    "slide": 1,
+    "layoutId": "/ppt/slideLayouts/slideLayout1.xml",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+    "backgroundColor": "#F6E6AC",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 2246.33,
+      "height": 3177.67
+    }
+  },
+  "theme": {
+    "colorSchemeName": "Gallery",
+    "colors": {
+      "accent1": "#B71E42",
+      "accent2": "#DE478E",
+      "accent3": "#BC72F0",
+      "accent4": "#795FAF",
+      "accent5": "#586EA6",
+      "accent6": "#6892A0",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#454545",
+      "lt2": "#DFDBD5",
+      "hlink": "#FA2B5C",
+      "folHlink": "#BC658E"
+    },
+    "fontScheme": {
+      "name": "Gallery",
+      "majorFont": {
+        "latinTypeface": "Gill Sans MT"
+      },
+      "minorFont": {
+        "latinTypeface": "Gill Sans MT"
+      }
+    },
+    "typefaces": [
+      "Arial",
+      "Gill Sans MT",
+      "Times New Roman"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "/ppt/slideLayouts/slideLayout1.xml",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+      "elements": [
+        {
+          "order": 1,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/2",
+          "id": "2",
+          "name": "Title 1",
+          "bbox": [
+            588.68,
+            371.75,
+            1380.26,
+            1177.58
+          ],
+          "text": "Click to edit Master title style",
+          "textPreview": "Click to edit Master title style",
+          "resolvedTextStyle": {
+            "anchor": 3,
+            "verticalAlignment": "bottom",
+            "autoFit": "shrinkText",
+            "insets": {
+              "bottom": 0
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master title style",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master title style"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/3",
+          "id": "3",
+          "name": "Subtitle 2",
+          "bbox": [
+            588.68,
+            1636.19,
+            1380.26,
+            452.98
+          ],
+          "text": "Click to edit Master subtitle style",
+          "textPreview": "Click to edit Master subtitle style",
+          "resolvedTextStyle": {
+            "autoFit": "shrinkText",
+            "insets": {
+              "top": 9.6,
+              "bottom": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master subtitle style",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master subtitle style"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/4",
+          "id": "4",
+          "name": "Date Placeholder 3",
+          "bbox": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "text": "7/7/2025",
+          "textPreview": "7/7/2025",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "7/7/2025",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "7/7/2025"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/5",
+          "id": "5",
+          "name": "Footer Placeholder 4",
+          "bbox": [
+            588.68,
+            152.59,
+            758.18,
+            143.27
+          ]
+        },
+        {
+          "order": 5,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/6",
+          "id": "6",
+          "name": "Slide Number Placeholder 5",
+          "bbox": [
+            352.45,
+            370.21,
+            197.02,
+            233.33
+          ],
+          "text": "‹#›",
+          "textPreview": "‹#›",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "‹#›",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "‹#›"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/15",
+          "id": "15",
+          "name": "Straight Connector 14",
+          "bbox": [
+            588.68,
+            1634.96,
+            1380.26,
+            0
+          ],
+          "geometry": "line",
+          "lineWidth": 3.33
+        }
+      ]
+    },
+    {
+      "scope": "master",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
+      "type": "master",
+      "elements": [
+        {
+          "order": 1,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/2",
+          "id": "2",
+          "name": "Title Placeholder 1",
+          "bbox": [
+            354.61,
+            372.78,
+            1614.33,
+            486.16
+          ],
+          "geometry": "rect",
+          "text": "Click to edit Master title style",
+          "textPreview": "Click to edit Master title style",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "vertical": 1,
+            "verticalAlignment": "top",
+            "autoFit": "shrinkText",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master title style",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master title style"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/3",
+          "id": "3",
+          "name": "Text Placeholder 2",
+          "bbox": [
+            354.61,
+            933.99,
+            1614.33,
+            1598.85
+          ],
+          "geometry": "rect",
+          "text": "Edit Master text styles\nSecond level\nThird level\nFourth level\nFifth level",
+          "textPreview": "Edit Master text styles | Second level | Third level | Fourth level | Fifth level",
+          "resolvedTextStyle": {
+            "vertical": 1,
+            "autoFit": "shrinkText",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Edit Master text styles",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Edit Master text styles"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "text": "Second level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Second level"
+                }
+              ]
+            },
+            {
+              "index": 3,
+              "text": "Third level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Third level"
+                }
+              ]
+            },
+            {
+              "index": 4,
+              "text": "Fourth level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Fourth level"
+                }
+              ]
+            },
+            {
+              "index": 5,
+              "text": "Fifth level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Fifth level"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/4",
+          "id": "4",
+          "name": "Date Placeholder 3",
+          "bbox": [
+            1387.14,
+            153.08,
+            581.8,
+            143.27
+          ],
+          "geometry": "rect",
+          "text": "7/7/2025",
+          "textPreview": "7/7/2025",
+          "resolvedTextStyle": {
+            "anchor": 2,
+            "vertical": 1,
+            "verticalAlignment": "middle",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "7/7/2025",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "7/7/2025"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/5",
+          "id": "5",
+          "name": "Footer Placeholder 4",
+          "bbox": [
+            354.61,
+            152.59,
+            991,
+            143.27
+          ],
+          "geometry": "rect",
+          "resolvedTextStyle": {
+            "anchor": 2,
+            "vertical": 1,
+            "verticalAlignment": "middle",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          }
+        },
+        {
+          "order": 5,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/6",
+          "id": "6",
+          "name": "Slide Number Placeholder 5",
+          "bbox": [
+            119.82,
+            370.21,
+            195.48,
+            233.33
+          ],
+          "geometry": "rect",
+          "text": "‹#›",
+          "textPreview": "‹#›",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "vertical": 1,
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "‹#›",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "‹#›"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/k3yl0zql",
+      "id": "3",
+      "name": "Flowchart: Document 2",
+      "bbox": [
+        15.78,
+        16.81,
+        2214.74,
+        407.58
+      ],
+      "geometry": "flowChartDocument",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "rgba(254, 195, 130, 0.55)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nydczmpk",
+      "id": "26",
+      "name": "Text Box 122",
+      "bbox": [
+        709.09,
+        25.51,
+        1521.43,
+        159.62
+      ],
+      "geometry": "rect",
+      "text": "Avengers Monitoring System",
+      "textPreview": "Avengers Monitoring System",
+      "resolvedFontSize": 29.33,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.33,
+        "typeface": "Arial",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "autoFit": "resizeShapeToFitText",
+        "insets": {
+          "top": 30.89,
+          "right": 12.36,
+          "bottom": 30.89,
+          "left": 12.36
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Avengers Monitoring System"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Avengers Monitoring System",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Avengers Monitoring System",
+              "fontSize": 80.25,
+              "typeface": "Arial",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mx4v6hoz",
+      "id": "27",
+      "name": "Text Box 123",
+      "bbox": [
+        709.09,
+        145.14,
+        1521.43,
+        245.35
+      ],
+      "geometry": "rect",
+      "text": "\nTony Stark, Loki Odinson, Bruce Banner\nBIT(Hons) in Information Security\nSupervisor: Nick Fury\n",
+      "textPreview": "| Tony Stark, Loki Odinson, Bruce Banner | BIT(Hons) in Information Security | Supervisor: Nick Fury |",
+      "resolvedFontSize": 29.33,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.33,
+        "typeface": "Arial",
+        "color": "tx1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 12.36,
+          "right": 12.36,
+          "bottom": 12.36,
+          "left": 12.36
+        }
+      },
+      "textLayout": {
+        "lineCount": 5,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          },
+          {
+            "index": 2,
+            "text": "Tony Stark, Loki Odinson, Bruce Banner"
+          },
+          {
+            "index": 3,
+            "text": "BIT(Hons) in Information Security"
+          },
+          {
+            "index": 4,
+            "text": "Supervisor: Nick Fury"
+          },
+          {
+            "index": 5,
+            "text": ""
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 2,
+          "text": "Tony Stark, Loki Odinson, Bruce Banner",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Tony Stark, Loki Odinson, Bruce Banner",
+              "fontSize": 53.49,
+              "typeface": "Arial",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "BIT(Hons) in Information Security",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "BIT(Hons) in Information Security",
+              "fontSize": 48.15,
+              "typeface": "Arial",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "Supervisor: Nick Fury",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Supervisor: Nick Fury",
+              "fontSize": 53.49,
+              "typeface": "Arial",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p4bu5s76",
+      "id": "28",
+      "name": "Rounded Rectangle 16",
+      "bbox": [
+        38.28,
+        712.92,
+        1105.16,
+        430.57
+      ],
+      "geometry": "roundRect",
+      "text": "\n\n\n\n\n\n\n\nA problem statement is a brief overview of the issues or problems existing in the concerned area. It is a clear, precise and succinct statement of the question or issue that is to be investigated with the goal of finding an answer or solution. There are 2 ways of stating a problem: \n\nPosting question / questions \nMaking declarative statement / statements\n\n\n\n\n\n\t\n",
+      "textPreview": "|  |  |  |  |  |  |  | A problem statement is a brief overview of the issues or problems existing in the concerned area. It is a clear, p...",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 23,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          },
+          {
+            "index": 2,
+            "text": ""
+          },
+          {
+            "index": 3,
+            "text": ""
+          },
+          {
+            "index": 4,
+            "text": ""
+          },
+          {
+            "index": 5,
+            "text": ""
+          },
+          {
+            "index": 6,
+            "text": ""
+          },
+          {
+            "index": 7,
+            "text": ""
+          },
+          {
+            "index": 8,
+            "text": ""
+          },
+          {
+            "index": 9,
+            "text": "A problem statement is a brief overview of the issues or problems"
+          },
+          {
+            "index": 10,
+            "text": "existing in the concerned area. It is a clear, precise and succinct"
+          },
+          {
+            "index": 11,
+            "text": "statement of the question or issue that is to be investigated with the"
+          },
+          {
+            "index": 12,
+            "text": "goal of finding an answer or solution. There are 2 ways of stating a"
+          },
+          {
+            "index": 13,
+            "text": "problem:"
+          },
+          {
+            "index": 14,
+            "text": ""
+          },
+          {
+            "index": 15,
+            "text": "1. Posting question / questions"
+          },
+          {
+            "index": 16,
+            "text": "2. Making declarative statement / statements"
+          },
+          {
+            "index": 17,
+            "text": ""
+          },
+          {
+            "index": 18,
+            "text": ""
+          },
+          {
+            "index": 19,
+            "text": ""
+          },
+          {
+            "index": 20,
+            "text": ""
+          },
+          {
+            "index": 21,
+            "text": ""
+          },
+          {
+            "index": 22,
+            "text": ""
+          },
+          {
+            "index": 23,
+            "text": ""
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 9,
+          "text": "A problem statement is a brief overview of the issues or problems existing in the concerned area. It is a clear, precise and succinct statement of the question or issue that is to be investigated with the goal of finding an answer or solution. There are 2 ways of stating a problem: ",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "A problem statement is a brief overview of the issues or problems existing in the concerned area. It is a clear, precise and succinct statement of the question or issue that is to be investigated with the goal of finding an answer or solution. There are 2 ways of stating a problem: ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 11,
+          "text": "Posting question / questions ",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Posting question / questions ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 12,
+          "text": "Making declarative statement / statements",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Making declarative statement / statements",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 18,
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "\t",
+              "fontSize": 27.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/432dwn6l",
+      "id": "29",
+      "name": "Rectangle 45",
+      "bbox": [
+        293.61,
+        715.46,
+        628.7,
+        47.56
+      ],
+      "geometry": "custom",
+      "text": "Problem Statement",
+      "textPreview": "Problem Statement",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Problem Statement"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Problem Statement",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Problem Statement",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/uxgjq907",
+      "id": "30",
+      "name": "Rounded Rectangle 40",
+      "bbox": [
+        38.28,
+        1178.97,
+        1105.16,
+        389.59
+      ],
+      "geometry": "roundRect",
+      "text": "\nThis is a listing of the objectives which you wish to achieve in the project undertaken, showing how the project is able to bring benefits to the organisation or users concerned.  For research project, the primary objective should be coupled with the hypothesis of the study. \n\nList the objectives which you wish to achieve in the project undertaken that define the specific aims of the study. ",
+      "textPreview": "| This is a listing of the objectives which you wish to achieve in the project undertaken, showing how the project is able to bring benef...",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 8,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          },
+          {
+            "index": 2,
+            "text": "This is a listing of the objectives which you wish to achieve in the"
+          },
+          {
+            "index": 3,
+            "text": "project undertaken, showing how the project is able to bring benefits"
+          },
+          {
+            "index": 4,
+            "text": "to the organisation or users concerned.  For research project, the"
+          },
+          {
+            "index": 5,
+            "text": "primary objective should be coupled with the hypothesis of the study."
+          },
+          {
+            "index": 6,
+            "text": ""
+          },
+          {
+            "index": 7,
+            "text": "List the objectives which you wish to achieve in the project"
+          },
+          {
+            "index": 8,
+            "text": "undertaken that define the specific aims of the study."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 2,
+          "text": "This is a listing of the objectives which you wish to achieve in the project undertaken, showing how the project is able to bring benefits to the organisation or users concerned.  For research project, the primary objective should be coupled with the hypothesis of the study. ",
+          "runs": [
+            {
+              "index": 1,
+              "text": "This is a listing of the objectives which you wish to achieve in the project undertaken, showing how the project is able ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            },
+            {
+              "index": 2,
+              "text": "to bring benefits to the organisation or users concerned",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            },
+            {
+              "index": 3,
+              "text": ".  For research project, the primary objective should be coupled with the hypothesis of the study",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            },
+            {
+              "index": 4,
+              "text": ". ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "List the objectives which you wish to achieve in the project undertaken that define the specific aims of the study. ",
+          "runs": [
+            {
+              "index": 1,
+              "text": "List the objectives which you wish to achieve in the project undertaken ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            },
+            {
+              "index": 2,
+              "text": "that define the specific aims of the study. ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vyp0je1s",
+      "id": "31",
+      "name": "Rectangle 45",
+      "bbox": [
+        384.58,
+        1179.41,
+        459.88,
+        57.19
+      ],
+      "geometry": "custom",
+      "text": "Objectives",
+      "textPreview": "Objectives",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Objectives"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Objectives",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Objectives",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wzy1szid",
+      "id": "32",
+      "name": "Rounded Rectangle 52",
+      "bbox": [
+        30.68,
+        1604.04,
+        1115.3,
+        1249.27
+      ],
+      "geometry": "roundRect",
+      "text": "\n\nRevisit the user-oriented problems and requirements in general, such as production functions, similar system information, problems confronted by the users, user objectives, and general constraints (business rules). You should describe the software development model such as waterfall, agile, spiral, etc in the subsequent sections. \n\nFor a real-life, industrial-based project, the operation environment describes the various hardware and software that are required to run the software that will be developed for a particular organization.  You are required to provide some system architecture, basic configuration of the hardware, for example, server, terminals, network infrastructure etc to be used in that organization.  Software to be used may include the operating system, DBMS, development tools etc.  A specific number and specification details of both the hardware and software components are also required. A diagram showing the basic system architecture would be useful. For easy reading and understanding, the above should be presented in the form of a table\n\nFor projects which are not ‘real-life’ or industrial-based, you are required to specify who the target customers or market will be, which includes the relevant industries, business model, nature of business, size of company, types of products and services etc that the software can be used.  The minimum system (hardware and software) requirements to run the software in an operation environment must also be included.",
+      "textPreview": "|  | Revisit the user-oriented problems and requirements in general, such as production functions, similar system information, problems c...",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 27,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          },
+          {
+            "index": 2,
+            "text": ""
+          },
+          {
+            "index": 3,
+            "text": "Revisit the user-oriented problems and requirements in general, such"
+          },
+          {
+            "index": 4,
+            "text": "as production functions, similar system information, problems"
+          },
+          {
+            "index": 5,
+            "text": "confronted by the users, user objectives, and general constraints"
+          },
+          {
+            "index": 6,
+            "text": "(business rules). You should describe the software development"
+          },
+          {
+            "index": 7,
+            "text": "model such as waterfall, agile, spiral, etc in the subsequent sections."
+          },
+          {
+            "index": 8,
+            "text": ""
+          },
+          {
+            "index": 9,
+            "text": "For a real-life, industrial-based project, the operation environment"
+          },
+          {
+            "index": 10,
+            "text": "describes the various hardware and software that are required to run"
+          },
+          {
+            "index": 11,
+            "text": "the software that will be developed for a particular organization.  You"
+          },
+          {
+            "index": 12,
+            "text": "are required to provide some system architecture, basic configuration"
+          },
+          {
+            "index": 13,
+            "text": "of the hardware, for example, server, terminals, network infrastructure"
+          },
+          {
+            "index": 14,
+            "text": "etc to be used in that organization.  Software to be used may include"
+          },
+          {
+            "index": 15,
+            "text": "the operating system, DBMS, development tools etc.  A specific"
+          },
+          {
+            "index": 16,
+            "text": "number and specification details of both the hardware and software"
+          },
+          {
+            "index": 17,
+            "text": "components are also required. A diagram showing the basic system"
+          },
+          {
+            "index": 18,
+            "text": "architecture would be useful. For easy reading and understanding, the"
+          },
+          {
+            "index": 19,
+            "text": "above should be presented in the form of a table"
+          },
+          {
+            "index": 20,
+            "text": ""
+          },
+          {
+            "index": 21,
+            "text": "For projects which are not ‘real-life’ or industrial-based, you are"
+          },
+          {
+            "index": 22,
+            "text": "required to specify who the target customers or market will be, which"
+          },
+          {
+            "index": 23,
+            "text": "includes the relevant industries, business model, nature of business,"
+          },
+          {
+            "index": 24,
+            "text": "size of company, types of products and services etc that the software"
+          },
+          {
+            "index": 25,
+            "text": "can be used.  The minimum system (hardware and software)"
+          },
+          {
+            "index": 26,
+            "text": "requirements to run the software in an operation environment must"
+          },
+          {
+            "index": 27,
+            "text": "also be included."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 3,
+          "text": "Revisit the user-oriented problems and requirements in general, such as production functions, similar system information, problems confronted by the users, user objectives, and general constraints (business rules). You should describe the software development model such as waterfall, agile, spiral, etc in the subsequent sections. ",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Revisit the user-oriented problems and requirements in general, such as production functions, similar system information, problems confronted by the users, user objectives, and general constraints (business rules). You should describe the software development model such as waterfall, agile, spiral, etc in the subsequent sections. ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "For a real-life, industrial-based project, the operation environment describes the various hardware and software that are required to run the software that will be developed for a particular organization.  You are required to provide some system architecture, basic configuration of the hardware, for example, server, terminals, network infrastructure etc to be used in that organization.  Software to be used may include the operating system, DBMS, development tools etc.  A specific number and specification details of both the hardware and software components are also required. A diagram showing the basic system architecture would be useful. For easy reading and understanding, the above should be presented in the form of a table",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "For a real-life, industrial-based project, the operation environment describes the various hardware and software that are required to run the software that will be developed for a particular organization.  You are required to provide some system architecture, basic configuration of the hardware, for example, server, terminals, network infrastructure etc to be used in that organization.  Software to be used may include the operating system, DBMS, development tools etc.  A specific number and specification details of both the hardware and software components are also required. A diagram showing the basic system architecture would be useful. For easy reading and understanding, the above should be presented in the form of a table",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 7,
+          "text": "For projects which are not ‘real-life’ or industrial-based, you are required to specify who the target customers or market will be, which includes the relevant industries, business model, nature of business, size of company, types of products and services etc that the software can be used.  The minimum system (hardware and software) requirements to run the software in an operation environment must also be included.",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "For projects which are not ‘real-life’ or industrial-based, you are required to specify who the target customers or market will be, which includes the relevant industries, business model, nature of business, size of company, types of products and services etc that the software can be used.  The minimum system (hardware and software) requirements to run the software in an operation environment must also be included.",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h072l4jy",
+      "id": "33",
+      "name": "Rectangle 45",
+      "bbox": [
+        280.81,
+        1606.68,
+        667.41,
+        65.69
+      ],
+      "geometry": "custom",
+      "text": "Design and Methodology",
+      "textPreview": "Design and Methodology",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Design and Methodology"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Design and Methodology",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Design and Methodology",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i1gje90j",
+      "id": "34",
+      "name": "Rounded Rectangle 55",
+      "bbox": [
+        1175.11,
+        710.96,
+        1032.62,
+        1786.14
+      ],
+      "geometry": "roundRect",
+      "text": "\n\nDescribe the various software tools, hardware and other resources are used for constructing and testing the project.  You must identify and quantify the programming languages, databases, development tools, hardware, and other software to be used.\n\nPresent the design of the graphical user interfaces, hardware interfaces, communication interfaces, and software interfaces, if any. Describe the behavioural features that the specified functions must have, e.g. how reliable and usable is the system. Present the concrete functions of the system, such as process logic, tasks and algorithms, i.e. what the system can accomplish. \n\nDiscuss any problems faced and how you solve or reduce the impact of the problems. You should include any innovative or creative ideas used for your project. \n\nAll tables must be labelled with proper captions, placed on top of the table and centralized as shown in Table 1 below.\n\n\t\t\tTable 1: Example of Table\t\t\t\t\t\t\t\t\t\t\t\t\t\t\n\n\n\n\n\nSimilar to table, all figures must be labelled with proper captions, placed below of the figure and centralized, as shown in Figure 1.\n\n\n\n\n\n\n\n\n\nFigure 1: Example of Figure\t\t\t\t",
+      "textPreview": "|  | Describe the various software tools, hardware and other resources are used for constructing and testing the project.  You must ident...",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 40,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          },
+          {
+            "index": 2,
+            "text": ""
+          },
+          {
+            "index": 3,
+            "text": "Describe the various software tools, hardware and other"
+          },
+          {
+            "index": 4,
+            "text": "resources are used for constructing and testing the project.  You"
+          },
+          {
+            "index": 5,
+            "text": "must identify and quantify the programming languages,"
+          },
+          {
+            "index": 6,
+            "text": "databases, development tools, hardware, and other software to be"
+          },
+          {
+            "index": 7,
+            "text": "used."
+          },
+          {
+            "index": 8,
+            "text": ""
+          },
+          {
+            "index": 9,
+            "text": "Present the design of the graphical user interfaces, hardware"
+          },
+          {
+            "index": 10,
+            "text": "interfaces, communication interfaces, and software interfaces, if"
+          },
+          {
+            "index": 11,
+            "text": "any. Describe the behavioural features that the specified"
+          },
+          {
+            "index": 12,
+            "text": "functions must have, e.g. how reliable and usable is the system."
+          },
+          {
+            "index": 13,
+            "text": "Present the concrete functions of the system, such as process"
+          },
+          {
+            "index": 14,
+            "text": "logic, tasks and algorithms, i.e. what the system can accomplish."
+          },
+          {
+            "index": 15,
+            "text": ""
+          },
+          {
+            "index": 16,
+            "text": "Discuss any problems faced and how you solve or reduce the"
+          },
+          {
+            "index": 17,
+            "text": "impact of the problems. You should include any innovative or"
+          },
+          {
+            "index": 18,
+            "text": "creative ideas used for your project."
+          },
+          {
+            "index": 19,
+            "text": ""
+          },
+          {
+            "index": 20,
+            "text": "All tables must be labelled with proper captions, placed on top of"
+          },
+          {
+            "index": 21,
+            "text": "the table and centralized as shown in Table 1 below."
+          },
+          {
+            "index": 22,
+            "text": ""
+          },
+          {
+            "index": 23,
+            "text": "Table 1: Example of Table"
+          },
+          {
+            "index": 24,
+            "text": ""
+          },
+          {
+            "index": 25,
+            "text": ""
+          },
+          {
+            "index": 26,
+            "text": ""
+          },
+          {
+            "index": 27,
+            "text": ""
+          },
+          {
+            "index": 28,
+            "text": ""
+          },
+          {
+            "index": 29,
+            "text": "Similar to table, all figures must be labelled with proper captions,"
+          },
+          {
+            "index": 30,
+            "text": "placed below of the figure and centralized, as shown in Figure 1."
+          },
+          {
+            "index": 31,
+            "text": ""
+          },
+          {
+            "index": 32,
+            "text": ""
+          },
+          {
+            "index": 33,
+            "text": ""
+          },
+          {
+            "index": 34,
+            "text": ""
+          },
+          {
+            "index": 35,
+            "text": ""
+          },
+          {
+            "index": 36,
+            "text": ""
+          },
+          {
+            "index": 37,
+            "text": ""
+          },
+          {
+            "index": 38,
+            "text": ""
+          },
+          {
+            "index": 39,
+            "text": ""
+          },
+          {
+            "index": 40,
+            "text": "Figure 1: Example of Figure"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 3,
+          "text": "Describe the various software tools, hardware and other resources are used for constructing and testing the project.  You must identify and quantify the programming languages, databases, development tools, hardware, and other software to be used.",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Describe the various software tools, hardware and other resources are used for constructing and testing the project.  You must identify and quantify the programming languages, databases, development tools, hardware, and other software to be used.",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "Present the design of the graphical user interfaces, hardware interfaces, communication interfaces, and software interfaces, if any. Describe the behavioural features that the specified functions must have, e.g. how reliable and usable is the system. Present the concrete functions of the system, such as process logic, tasks and algorithms, i.e. what the system can accomplish. ",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Present the design of the graphical user interfaces, hardware interfaces, communication interfaces, and software interfaces, if any. Describe the behavioural features that the specified functions must have, e.g. how reliable and usable is the system. Present the concrete functions of the system, such as process logic, tasks and algorithms, i.e. what the system can accomplish. ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 7,
+          "text": "Discuss any problems faced and how you solve or reduce the impact of the problems. You should include any innovative or creative ideas used for your project. ",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Discuss any problems faced and how you solve or reduce the impact of the problems. You should include any ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            },
+            {
+              "index": 2,
+              "text": "innovative or creative ideas ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            },
+            {
+              "index": 3,
+              "text": "used for your project. ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 9,
+          "text": "All tables must be labelled with proper captions, placed on top of the table and centralized as shown in Table 1 below.",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "All tables must be labelled with proper captions, placed on top of the table and centralized as shown in ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            },
+            {
+              "index": 2,
+              "text": "Table 1",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            },
+            {
+              "index": 3,
+              "text": " below.",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 11,
+          "text": "\t\t\tTable 1: Example of Table\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "\t\t\tTable 1",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            },
+            {
+              "index": 2,
+              "text": ": Example of Table",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            },
+            {
+              "index": 3,
+              "text": "\t\t\t\t\t\t\t\t\t\t\t\t\t\t",
+              "fontSize": 33.33,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 17,
+          "text": "Similar to table, all figures must be labelled with proper captions, placed below of the figure and centralized, as shown in Figure 1.",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Similar to table, all figures must be labelled with proper captions, placed below of the figure and centralized, as shown in ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            },
+            {
+              "index": 2,
+              "text": "Figure 1",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            },
+            {
+              "index": 3,
+              "text": ".",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 27,
+          "text": "Figure 1: Example of Figure\t\t\t\t",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Figure 1: ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            },
+            {
+              "index": 2,
+              "text": "Example of Figure",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            },
+            {
+              "index": 3,
+              "text": "\t\t",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            },
+            {
+              "index": 4,
+              "text": "\t\t",
+              "fontSize": 33.33,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/j2pkne14",
+      "id": "35",
+      "name": "Rectangle 45",
+      "bbox": [
+        1316.57,
+        715,
+        710.59,
+        70.32
+      ],
+      "geometry": "custom",
+      "text": "Construction and Testing",
+      "textPreview": "Construction and Testing",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Construction and Testing"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Construction and Testing",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Construction and Testing",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/y5wjip0z",
+      "id": "38",
+      "name": "Rounded Rectangle 99",
+      "bbox": [
+        35.74,
+        2879.62,
+        2173.75,
+        263.95
+      ],
+      "geometry": "roundRect",
+      "text": "\n\nThe conclusions section should relate directly to the objectives, and sum up the essential features of your work. In this section, you should:\nState whether you have achieved your objectives\nGive a brief summary of the project design\nHighlight the project outputs.\n",
+      "textPreview": "|  | The conclusions section should relate directly to the objectives, and sum up the essential features of your work. In this section, y...",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 7,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          },
+          {
+            "index": 2,
+            "text": ""
+          },
+          {
+            "index": 3,
+            "text": "The conclusions section should relate directly to the objectives, and sum up the essential features of your work. In this section, you should:"
+          },
+          {
+            "index": 4,
+            "text": "1. State whether you have achieved your objectives"
+          },
+          {
+            "index": 5,
+            "text": "2. Give a brief summary of the project design"
+          },
+          {
+            "index": 6,
+            "text": "3. Highlight the project outputs."
+          },
+          {
+            "index": 7,
+            "text": ""
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 3,
+          "text": "The conclusions section should relate directly to the objectives, and sum up the essential features of your work. In this section, you should:",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "The conclusions section should relate directly to the objectives, and sum up the essential features of your work. In this section, you should:",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "State whether you have achieved your objectives",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "State whether you have achieved your objectives",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "Give a brief summary of the project design",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Give a brief summary of the project design",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 6,
+          "text": "Highlight the project outputs.",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Highlight the project outputs.",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z2xgf6to",
+      "id": "40",
+      "name": "Rectangle 45",
+      "bbox": [
+        859.18,
+        2881.19,
+        495.45,
+        59.63
+      ],
+      "geometry": "custom",
+      "text": "Conclusion",
+      "textPreview": "Conclusion",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Conclusion"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Conclusion",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Conclusion",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/036h8but",
+      "id": "43",
+      "name": "Rounded Rectangle 105",
+      "bbox": [
+        1175.11,
+        2523.41,
+        1034.38,
+        329.9
+      ],
+      "geometry": "roundRect",
+      "text": "\nYou should elaborate how your project brings contribution, including but not limited to:\ncommercialization values, \nsocial responsibility, and\ntechnical awesomeness.",
+      "textPreview": "| You should elaborate how your project brings contribution, including but not limited to: | commercialization values,  | social responsi...",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 6,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          },
+          {
+            "index": 2,
+            "text": "You should elaborate how your project brings contribution,"
+          },
+          {
+            "index": 3,
+            "text": "including but not limited to:"
+          },
+          {
+            "index": 4,
+            "text": "1. commercialization values,"
+          },
+          {
+            "index": 5,
+            "text": "2. social responsibility, and"
+          },
+          {
+            "index": 6,
+            "text": "3. technical awesomeness."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 2,
+          "text": "You should elaborate how your project brings contribution, including but not limited to:",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "You should elaborate how your project brings contribution, including but not limited to:",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "commercialization values, ",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "commercialization values, ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "social responsibility, and",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "social responsibility, ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            },
+            {
+              "index": 2,
+              "text": "and",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "technical awesomeness.",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "technical awesomeness",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "bold": true
+            },
+            {
+              "index": 2,
+              "text": ".",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nqxgjqtk",
+      "id": "44",
+      "name": "Rectangle 45",
+      "bbox": [
+        1432.51,
+        2534.02,
+        533.13,
+        65.79
+      ],
+      "geometry": "custom",
+      "text": "Contribution",
+      "textPreview": "Contribution",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Contribution"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Contribution",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Contribution",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9sfylgbq",
+      "id": "46",
+      "name": "Rounded Rectangle 92",
+      "bbox": [
+        31.56,
+        438,
+        2176.17,
+        243.97
+      ],
+      "geometry": "roundRect",
+      "text": "\nAn abstract is generally quite brief. In a computer science/information technology related paper, it should in most cases include the following sections: Problem Statement, Objectives, Design and Methodology, Construction and Testing, Contribution, and Conclusions. Each section is typically a single sentence. In particular, the parts may be merged or spread among a set of sentences. ",
+      "textPreview": "| An abstract is generally quite brief. In a computer science/information technology related paper, it should in most cases include the f...",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          },
+          {
+            "index": 2,
+            "text": "An abstract is generally quite brief. In a computer science/information technology related paper, it should in most cases include the following"
+          },
+          {
+            "index": 3,
+            "text": "sections: Problem Statement, Objectives, Design and Methodology, Construction and Testing, Contribution, and Conclusions. Each"
+          },
+          {
+            "index": 4,
+            "text": "section is typically a single sentence. In particular, the parts may be merged or spread among a set of sentences."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 2,
+          "text": "An abstract is generally quite brief. In a computer science/information technology related paper, it should in most cases include the following sections: Problem Statement, Objectives, Design and Methodology, Construction and Testing, Contribution, and Conclusions. Each section is typically a single sentence. In particular, the parts may be merged or spread among a set of sentences. ",
+          "resolvedTextStyle": {
+            "alignment": "justify"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "An abstract is generally quite brief. In a computer science/information technology related paper, it should in most cases include the following sections: ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            },
+            {
+              "index": 2,
+              "text": "Problem Statement, Objectives, Design and Methodology, Construction and Testing, Contribution, and Conclusions.",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "bold": true
+            },
+            {
+              "index": 3,
+              "text": " Each section is typically a single sentence. In particular, the parts may be merged or spread among a set of sentences. ",
+              "fontSize": 37.45,
+              "typeface": "Times New Roman",
+              "color": "#000000"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/or6hcvu5",
+      "id": "47",
+      "name": "Rectangle 45",
+      "bbox": [
+        884.96,
+        439.87,
+        510.35,
+        57.59
+      ],
+      "geometry": "custom",
+      "text": "Abstract",
+      "textPreview": "Abstract",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Abstract"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Abstract",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Abstract",
+              "fontSize": 64.2,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 18,
+      "kind": "table",
+      "scope": "slide",
+      "aid": "tb/wbqhkbu5",
+      "id": "48",
+      "name": "Table 1",
+      "bbox": [
+        1315.19,
+        1729.03,
+        675.35,
+        192.58
+      ],
+      "text": "Series 1 | Series 2 | Series 3\nCategory 1 | 4.3 | 2.4 | 2\nCategory 2 | 2.5 | 4.4 | 2\nCategory 3 | 3.5 | 1.8 | 3\nCategory 4 | 4.5 | 2.8 | 5",
+      "textPreview": "Series 1 | Series 2 | Series 3 | Category 1 | 4.3 | 2.4 | 2 | Category 2 | 2.5 | 4.4 | 2 | Category 3 | 3.5 | 1.8 | 3 | Category 4 | 4.5 ...",
+      "rows": 5,
+      "cols": 4,
+      "cells": [
+        {
+          "index": 1,
+          "row": 1,
+          "column": 1,
+          "bbox": [
+            1315.19,
+            1729.03,
+            168.53,
+            38.52
+          ],
+          "fillColor": "#A50021"
+        },
+        {
+          "index": 2,
+          "row": 1,
+          "column": 2,
+          "bbox": [
+            1483.72,
+            1729.03,
+            168.94,
+            38.52
+          ],
+          "text": "Series 1",
+          "textPreview": "Series 1",
+          "fillColor": "#A50021",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Series 1",
+              "resolvedTextStyle": {
+                "alignment": "center"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Series 1",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 3,
+          "row": 1,
+          "column": 3,
+          "bbox": [
+            1652.66,
+            1729.03,
+            168.94,
+            38.52
+          ],
+          "text": "Series 2",
+          "textPreview": "Series 2",
+          "fillColor": "#A50021",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Series 2",
+              "resolvedTextStyle": {
+                "alignment": "center"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Series 2",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 4,
+          "row": 1,
+          "column": 4,
+          "bbox": [
+            1821.6,
+            1729.03,
+            168.94,
+            38.52
+          ],
+          "text": "Series 3",
+          "textPreview": "Series 3",
+          "fillColor": "#A50021",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Series 3",
+              "resolvedTextStyle": {
+                "alignment": "center"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Series 3",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 5,
+          "row": 2,
+          "column": 1,
+          "bbox": [
+            1315.19,
+            1767.54,
+            168.53,
+            38.52
+          ],
+          "text": "Category 1",
+          "textPreview": "Category 1",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Category 1",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Category 1",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 6,
+          "row": 2,
+          "column": 2,
+          "bbox": [
+            1483.72,
+            1767.54,
+            168.94,
+            38.52
+          ],
+          "text": "4.3",
+          "textPreview": "4.3",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "4.3",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "4.3",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 7,
+          "row": 2,
+          "column": 3,
+          "bbox": [
+            1652.66,
+            1767.54,
+            168.94,
+            38.52
+          ],
+          "text": "2.4",
+          "textPreview": "2.4",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "2.4",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "2.4",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 8,
+          "row": 2,
+          "column": 4,
+          "bbox": [
+            1821.6,
+            1767.54,
+            168.94,
+            38.52
+          ],
+          "text": "2",
+          "textPreview": "2",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "2",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "2",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 9,
+          "row": 3,
+          "column": 1,
+          "bbox": [
+            1315.19,
+            1806.06,
+            168.53,
+            38.52
+          ],
+          "text": "Category 2",
+          "textPreview": "Category 2",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Category 2",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Category 2",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 10,
+          "row": 3,
+          "column": 2,
+          "bbox": [
+            1483.72,
+            1806.06,
+            168.94,
+            38.52
+          ],
+          "text": "2.5",
+          "textPreview": "2.5",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "2.5",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "2.5",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 11,
+          "row": 3,
+          "column": 3,
+          "bbox": [
+            1652.66,
+            1806.06,
+            168.94,
+            38.52
+          ],
+          "text": "4.4",
+          "textPreview": "4.4",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "4.4",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "4.4",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 12,
+          "row": 3,
+          "column": 4,
+          "bbox": [
+            1821.6,
+            1806.06,
+            168.94,
+            38.52
+          ],
+          "text": "2",
+          "textPreview": "2",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "2",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "2",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 13,
+          "row": 4,
+          "column": 1,
+          "bbox": [
+            1315.19,
+            1844.58,
+            168.53,
+            38.52
+          ],
+          "text": "Category 3",
+          "textPreview": "Category 3",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Category 3",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Category 3",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 14,
+          "row": 4,
+          "column": 2,
+          "bbox": [
+            1483.72,
+            1844.58,
+            168.94,
+            38.52
+          ],
+          "text": "3.5",
+          "textPreview": "3.5",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "3.5",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "3.5",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 15,
+          "row": 4,
+          "column": 3,
+          "bbox": [
+            1652.66,
+            1844.58,
+            168.94,
+            38.52
+          ],
+          "text": "1.8",
+          "textPreview": "1.8",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "1.8",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "1.8",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 16,
+          "row": 4,
+          "column": 4,
+          "bbox": [
+            1821.6,
+            1844.58,
+            168.94,
+            38.52
+          ],
+          "text": "3",
+          "textPreview": "3",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "3",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "3",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 17,
+          "row": 5,
+          "column": 1,
+          "bbox": [
+            1315.19,
+            1883.09,
+            168.53,
+            38.52
+          ],
+          "text": "Category 4",
+          "textPreview": "Category 4",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Category 4",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Category 4",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 18,
+          "row": 5,
+          "column": 2,
+          "bbox": [
+            1483.72,
+            1883.09,
+            168.94,
+            38.52
+          ],
+          "text": "4.5",
+          "textPreview": "4.5",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "4.5",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "4.5",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 19,
+          "row": 5,
+          "column": 3,
+          "bbox": [
+            1652.66,
+            1883.09,
+            168.94,
+            38.52
+          ],
+          "text": "2.8",
+          "textPreview": "2.8",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "2.8",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "2.8",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "index": 20,
+          "row": 5,
+          "column": 4,
+          "bbox": [
+            1821.6,
+            1883.09,
+            168.94,
+            38.52
+          ],
+          "text": "5",
+          "textPreview": "5",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "5",
+              "resolvedTextStyle": {
+                "alignment": "right"
+              },
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "5",
+                  "fontSize": 32
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "order": 19,
+      "kind": "chart",
+      "scope": "slide",
+      "aid": "ch/il0fqh4f",
+      "id": "49",
+      "name": "Chart 21",
+      "bbox": [
+        1269.16,
+        2060.3,
+        767.81,
+        347.03
+      ],
+      "chartType": "bar"
+    },
+    {
+      "order": 20,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/v2tw3ipg",
+      "id": "50",
+      "name": "Picture 4",
+      "bbox": [
+        25.86,
+        65.52,
+        825.29,
+        240.11
+      ],
+      "contentType": "image/png",
+      "asset": {
+        "assetId": "/ppt/media/image2.png",
+        "contentType": "image/png",
+        "byteLength": 100344
+      },
+      "fillImage": {
+        "assetId": "/ppt/media/image2.png",
+        "contentType": "image/png",
+        "byteLength": 100344
+      }
+    }
+  ],
+  "composeRuns": []
+}

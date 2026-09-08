@@ -1,0 +1,22 @@
+{$FRONTEND_DOMAIN} {
+	# Keep literal ordering: allowlisted backend routes precede the deny/fallback.
+	# handle (not handle_path) preserves /v1 paths and WebSocket upgrades.
+	route {
+		@analytics path /v1/analytics/dashboard /v1/analytics/floor-traffic /v1/analytics/route-edges
+		handle @analytics {
+			reverse_proxy analytics-api:9092
+		}
+		@gateway path /health/ready /v1/maps/* /v1/anonymous-sessions /v1/presence /v1/live/floors/*
+		handle @gateway {
+			reverse_proxy presence-gateway:8080
+		}
+		# Do not accidentally send unknown backend/operational routes to the UI.
+		@private path /v1 /v1/* /health /health/* /metrics /metrics/* /debug /debug/*
+		handle @private {
+			respond "Not found" 404
+		}
+		handle {
+			reverse_proxy admin-web:3000
+		}
+	}
+}

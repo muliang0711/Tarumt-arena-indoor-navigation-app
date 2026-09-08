@@ -1,6 +1,6 @@
 # Backend documentation
 
-This documentation describes the implemented backend as of 2026-08-04. It
+This documentation describes the implemented backend, with deployment guidance updated on 2026-09-07. It
 covers the three Go deployables, their Redis and ClickHouse dependencies, and
 the production infrastructure-monitoring stack. Flutter is shown only where it
 crosses a backend boundary.
@@ -30,9 +30,11 @@ The runtime has three Go deployables:
 Redis and ClickHouse are private infrastructure. The production Compose model
 publishes the Presence Gateway and Grafana only to host loopback. The Worker,
 Analytics API, Redis, ClickHouse, Prometheus, and exporters remain private.
-Tailscale Funnel exposes only the Gateway; operators reach Grafana through an
-SSH tunnel. The Analytics API is implemented but is not connected to Flutter
-in the current stage.
+The [Google Cloud guide](../operations/google-cloud-deployment.md) adds a
+loopback Analytics port and Caddy HTTPS ingress for selected Gateway and
+Dashboard routes. Operators reach Grafana through an IAP SSH tunnel.
+The admin website uses both Go APIs; Flutter uses the Gateway, not Analytics.
+The cloud ingress is a documented operator setup, not an already deployed change.
 
 Capitalized **Journey** terms use the definitions in the repository
 [domain language](../../CONTEXT.md). In particular, a session authenticates a

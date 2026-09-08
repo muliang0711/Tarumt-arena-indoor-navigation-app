@@ -13,6 +13,7 @@ type OccupancyQuery struct {
 	ActiveSince         time.Time
 	GeneratedAt         time.Time
 	RepresentativeLimit int
+	IncludeAll          bool
 }
 
 type OccupancyStore interface {

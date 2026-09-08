@@ -40,6 +40,7 @@ func NewServer(service *application.AnalyticsService, health DependencyHealth, m
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /v1/analytics/floor-traffic", handlers.floorTraffic)
 	mux.HandleFunc("GET /v1/analytics/route-edges", handlers.routeEdges)
+	mux.HandleFunc("GET /v1/analytics/dashboard", handlers.dashboard)
 	mux.HandleFunc("GET /health/live", handlers.live)
 	mux.HandleFunc("GET /health/ready", handlers.ready)
 	mux.HandleFunc("GET /metrics", handlers.prometheus)
@@ -75,6 +76,18 @@ type handlers struct {
 	metrics      OperationalMetrics
 	logger       *slog.Logger
 	queryTimeout time.Duration
+}
+
+func (h *handlers) dashboard(response http.ResponseWriter, request *http.Request) {
+	ctx, cancel := context.WithTimeout(request.Context(), h.queryTimeout)
+	defer cancel()
+	report, err := h.service.Dashboard(ctx, request.URL.Query().Get("map_id"), request.URL.Query().Get("period"))
+	if err != nil {
+		h.handleQueryError(response, err)
+		return
+	}
+	response.Header().Set("Cache-Control", "no-store")
+	writeJSON(response, http.StatusOK, report)
 }
 
 func (h *handlers) floorTraffic(response http.ResponseWriter, request *http.Request) {

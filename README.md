@@ -1,5 +1,13 @@
 # Campus Navigator
 
+## Backend deployment
+
+For Google Cloud backend setup, start with the
+[Compute Engine deployment guide](tarumt-nav-app/docs/operations/google-cloud-deployment.md).
+See [frontend public API addresses](tarumt-nav-app/docs/operations/frontend-api-addresses.md)
+for connecting the admin website and Flutter app, and
+[operations](tarumt-nav-app/deploy/OPERATIONS.md) for maintenance.
+
 Campus Navigator is a Flutter indoor-navigation application for browsing a
 campus building, selecting a room, and following a map-based route to the
 destination. It combines pedestrian dead reckoning (PDR) with optional Wi-Fi

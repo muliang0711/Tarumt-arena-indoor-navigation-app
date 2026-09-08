@@ -1,0 +1,43 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import {FileBlob,PresentationFile} from '@oai/artifact-tool';
+const workspaceDir='/Users/puihockyang/code/Tarumt-arena-indoor-navigation-app';
+const task=path.join(workspaceDir,'.work/fyp-backend-admin-20260907');
+const skill='/Users/puihockyang/.codex/plugins/cache/openai-primary-runtime/presentations/26.904.11930/skills/presentations';
+const d=JSON.parse(await fs.readFile('content.json','utf8'));
+const p=await PresentationFile.importPptx(await FileBlob.load('poster-editable-base.pptx'));
+console.log((await p.inspect({kind:'slide,shape,image',maxChars:2200})).ndjson);
+const slide=p.slides.getItem(0);
+const update=(id,text,size,position)=>{const s=p.resolve(id);s.text=text;s.text.style={fontSize:size,typeface:'Arial',bold:true,color:'#000000',alignment:'center',verticalAlignment:'middle',autoFit:'none'};if(position)s.position=position;return s;};
+update('sh/nydczmpk','Campus Navigator\nBackend System and Web-Based\nAdministration Client',52,{left:890,top:35,width:1315,height:185});
+update('sh/mx4v6hoz','Pui Hock Yang   24WMR01790\nSoftware Engineering\nSupervisor: Prof. Ts. Dr. Tew Yiqi',35,{left:890,top:237,width:1315,height:142});
+const hdr=p.resolve('sh/j2pkne14');hdr.text.replace('Construction and Testing','System Features');
+for(const id of ['sh/9sfylgbq','sh/p4bu5s76','sh/uxgjq907','sh/wzy1szid','sh/i1gje90j','sh/036h8but','sh/y5wjip0z'])p.resolve(id).text='';
+function text(name,content,left,top,width,height,size=36,bold=false,font='Times New Roman'){
+ const s=slide.shapes.add({name,geometry:'textbox',position:{left,top,width,height},fill:'none',line:{fill:'none',width:0}});
+ s.text=content;s.text.style={typeface:font,fontSize:size,bold,color:'#000000',alignment:'left',verticalAlignment:'top',autoFit:'none'};return s;
+}
+text('Abstract content','Campus Navigator connects indoor navigation data to a two-page administration website. Go services, Redis and ClickHouse supply current presence and journey summaries. Operators can review popular destinations and follow named users on the shared campus map. Local verification used 100 simulated sessions; Google Cloud deployment remains a planned next step.',64,514,2106,145,35);
+text('Problem content','The mobile application shows an individual route, but operators also need an overview of navigation activity. Internal node IDs and service logs do not clearly show popular destinations or current user movement. A useful administration view must preserve names, align map coordinates and distinguish live sessions from historical journeys.',64,786,1042,334,36);
+text('Objectives content','Provide day and week navigation summaries with readable destination names.\nDisplay named active users on the application’s 2D map with 10, 20, 30 or All markers.\nReuse the backend data path and prepare a reproducible VM deployment.',65,1260,1040,285,35);
+text('Method approach heading','Iterative integration',68,1700,1030,55,40,true,'Arial');
+text('Method approach','Requirements and prototype feedback guided the two-page interface. API inspection, local simulation and focused tests addressed snapshot completeness, coordinate alignment and visible names.',68,1770,1030,245,36);
+text('Architecture heading','Backend responsibilities',68,1990,1030,55,40,true,'Arial');
+text('Architecture content','Presence Gateway accepts session updates and serves current floor snapshots.\n\nTrajectory Worker consumes Redis Streams and inserts journey and trajectory records into ClickHouse.\n\nAnalytics API aggregates stored journeys for the dashboard. The web server provides same-origin read proxies.',68,2060,1030,450,36);
+text('Coordinates heading','One shared coordinate frame',68,2510,1030,55,40,true,'Arial');
+text('Coordinates content','Graph positions are interpolated along edges, then converted using the floor image origin (−256, 256). The map and markers pan and zoom together. A marker limit changes only the visible list, not backend ingestion.',68,2580,1030,235,36);
+text('Dashboard heading','Dashboard',1218,800,945,55,42,true,'Arial');
+text('Dashboard content','Today and week views show navigation starts, journey outcomes, daily activity and popular destinations. Labels use place names such as TA257 and Toilet 1. Counts describe journeys, not unique people.',1218,876,945,250,36);
+text('Live map heading','Live map',1218,1130,945,55,42,true,'Arial');
+text('Live map content','Named user markers refresh from backend snapshots. Choose 10, 20, 30 or All, then pan, zoom or inspect a user. The administrative reader returns all eligible active sessions.',1218,1205,945,226,36);
+slide.images.add({blob:new Uint8Array(await fs.readFile(path.join(workspaceDir,'tarumt-nav-app/admin-web/public/floor-2.png'))),contentType:'image/png',alt:'Shared Floor 2 map asset used by Campus Navigator; no live users shown in this illustration.',fit:'contain',position:{left:1318,top:1460,width:744,height:930}});
+text('Map caption','Shared Floor 2 map asset used by the app and web client\nIllustration of the map surface, not a live-data screenshot',1215,2395,950,75,27);
+text('Contribution content','A backend-connected view of navigation activity with readable labels, aligned coordinates and separate live and historical data paths. A repeatable simulator supports demonstrations without collecting real students’ locations.',1215,2615,949,215,36);
+text('Conclusion content','The local prototype delivers a focused dashboard and named live map. Its next milestone is a verified Google Cloud rollout with public HTTPS and private backend HTTP. Administrator access control, stronger event durability and real-world positioning evaluation are required before production use.',74,2970,2090,140,35);
+slide.speakerNotes.textFrame.setText('Title: '+d.title+'\nAuthor: '+d.name+', '+d.id+'\nSupervisor: '+d.supervisor+'\nSource map: project admin-web/public/floor-2.png. Implementation sources: admin-web; services/presence-gateway; services/trajectory-worker; services/analytics-api; dev/verify-admin-local.mjs; deploy/FRONTEND-GCP.md. The 100-session result refers to earlier local synthetic verification, not 100 real participants or a fresh test during report preparation. Google Cloud deployment is planned, not verified. The original poster structure, logo, frame positions and header treatment are retained. Construction and Testing was replaced with System Features at the user’s request.');
+await (await PresentationFile.exportPptx(p)).save('poster-candidate.pptx');
+for(const [scale,name] of [[.5,'poster-preview.png'],[1,'poster-full.png']]){const im=await p.export({slide,format:'png',scale});await fs.writeFile(name,new Uint8Array(await im.arrayBuffer()));}
+await fs.writeFile('poster-final-layout.json',await (await slide.export({format:'layout'})).text());
+const {finalizePresentation}=await import(path.join(skill,'container_tools/artifact_tool_utils.mjs'));
+const result=await finalizePresentation({workspaceDir,candidatePath:path.join(task,'poster-candidate.pptx'),finalPath:path.join(workspaceDir,'outputs/fyp-backend-admin-20260907/A1 Poster.pptx'),pythonExecutable:'/Users/puihockyang/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3',integrityValidatorPath:path.join(skill,'container_tools/inspect_presentation_package_integrity.py'),layoutValidatorPath:path.join(skill,'container_tools/inspect_presentation_layout_geometry.py'),layoutArgs:['--expected-slide-size-emu',(await fs.readFile('poster-size.txt','utf8')).trim(),'--validate-bullet-geometry','--validate-heading-fit'],explicitTotalSlideCount:1,sourceTemplatePath:'/Users/puihockyang/Downloads/TEMPLETE 1_2/Poster Template A1 size (Project 2).pptx',fontPolicy:{basis:'reference',families:['Arial','Times New Roman','Gill Sans MT'],referencePath:'/Users/puihockyang/Downloads/TEMPLETE 1_2/Poster Template A1 size (Project 2).pptx',referenceSha256:'5edb054e73d4c873ed6057119568b9f2855b62ab554c1621f8e7e84bc0716506'},verifyArtifactToolImport:true,receiptPath:path.join(task,'poster-validation.json')});
+console.log(result);

@@ -1,0 +1,23 @@
+flowchart TB
+    UI["Presentation Layer — Flutter Widgets<br/>App shell • destination screens • indoor map<br/>navigation overlays • Edge Editor • diagnostics"]
+    VM["View-Model Layer<br/>IndoorNavigationViewModel and supporting ViewModels<br/>immutable state • ordered state streams • user actions"]
+    APP["Application Orchestration Layer<br/>Map bootstrap • route simulation • raw-motion PDR<br/>wrong-way monitor • Wi-Fi correction • Edge Editor"]
+    DOMAIN["Domain Layer — Pure Dart<br/>weighted shortest route • instructions • progress<br/>PDR rules • route projection • heading rules • models"]
+    PORTS["Application Ports<br/>map resources • sensors • clock • scheduler<br/>export • diagnostics • Wi-Fi positioning"]
+    INFRA["Infrastructure Adapters<br/>remote/cache/bundled maps • native motion channels<br/>Wi-Fi adapters • preferences • share/export"]
+    ROOT["Composition Root<br/>main.dart + production_view_model_factory.dart"]
+
+    UI --> VM --> APP --> DOMAIN
+    APP --> PORTS
+    INFRA -. "implements" .-> PORTS
+    ROOT --> VM
+    ROOT --> INFRA
+
+    classDef presentation fill:#e0f2fe,stroke:#0369a1,color:#111827;
+    classDef application fill:#eef2ff,stroke:#4338ca,color:#111827;
+    classDef domain fill:#ecfdf5,stroke:#047857,color:#111827;
+    classDef boundary fill:#fff7ed,stroke:#c2410c,color:#111827;
+    class UI presentation;
+    class VM,APP application;
+    class DOMAIN domain;
+    class PORTS,INFRA,ROOT boundary;

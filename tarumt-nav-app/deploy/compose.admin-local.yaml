@@ -1,0 +1,93 @@
+name: arena-admin-local
+services:
+  redis:
+    image: redis:8.4-alpine
+    command: [redis-server, --save, "", --appendonly, "no"]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+  clickhouse:
+    image: clickhouse/clickhouse-server:25.3-alpine
+    environment:
+      CLICKHOUSE_DB: campus_analytics
+      CLICKHOUSE_USER: trajectory
+      CLICKHOUSE_PASSWORD: local-trajectory-only
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: "1"
+    volumes:
+      - admin-analytics:/var/lib/clickhouse
+      - ../services/trajectory-worker/migrations/001_trajectory_events.sql:/docker-entrypoint-initdb.d/001_trajectory_events.sql:ro
+      - ../services/trajectory-worker/migrations/003_journey_lifecycle_events.sql:/docker-entrypoint-initdb.d/003_journey_lifecycle_events.sql:ro
+      - ./admin-local-reader.sql:/docker-entrypoint-initdb.d/004_reader.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, "wget -qO- http://127.0.0.1:8123/ping | grep -q Ok"]
+      interval: 3s
+      timeout: 3s
+      retries: 40
+  presence-gateway:
+    build: ../services/presence-gateway
+    environment:
+      PRESENCE_BACKEND: redis
+      PRESENCE_REDIS_URL: redis://redis:6379/0
+      PRESENCE_JWT_SECRET: local-admin-demo-jwt-secret-32-characters
+      PRESENCE_IDENTITY_HMAC_SECRET: local-admin-demo-identity-secret-32-characters
+      PRESENCE_TRAJECTORY_ENABLED: "true"
+    ports: ["127.0.0.1:18080:8080"]
+    depends_on:
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: [CMD-SHELL, "wget -qO- http://127.0.0.1:8080/health/ready | grep -q ready"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  trajectory-worker:
+    build: ../services/trajectory-worker
+    environment:
+      TRAJECTORY_REDIS_URL: redis://redis:6379/0
+      TRAJECTORY_CLICKHOUSE_ADDRESS: clickhouse:9000
+      TRAJECTORY_CLICKHOUSE_USERNAME: trajectory
+      TRAJECTORY_CLICKHOUSE_PASSWORD: local-trajectory-only
+    depends_on:
+      redis: {condition: service_healthy}
+      clickhouse: {condition: service_healthy}
+    healthcheck:
+      test: [CMD-SHELL, "wget -qO- http://127.0.0.1:9091/health/ready | grep -q ready"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  analytics-api:
+    build: ../services/analytics-api
+    environment:
+      ANALYTICS_CLICKHOUSE_ADDRESS: clickhouse:9000
+      ANALYTICS_CLICKHOUSE_USERNAME: analytics_reader
+      ANALYTICS_CLICKHOUSE_PASSWORD: local-reader-only
+    ports: ["127.0.0.1:19092:9092"]
+    depends_on:
+      clickhouse: {condition: service_healthy}
+    healthcheck:
+      test: [CMD-SHELL, "wget -qO- http://127.0.0.1:9092/health/ready | grep -q ready"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  simulator:
+    profiles: [simulation]
+    build:
+      context: ../services/presence-gateway
+      dockerfile: Dockerfile.simulator
+    command: [--base-url, "http://presence-gateway:8080", --users, "${SIM_USERS:-100}", --interval, 1s]
+    depends_on:
+      presence-gateway: {condition: service_healthy}
+      trajectory-worker: {condition: service_healthy}
+  admin-web:
+    profiles: [web]
+    build: ../admin-web
+    environment:
+      PRESENCE_API_BASE_URL: http://presence-gateway:8080
+      ANALYTICS_API_BASE_URL: http://analytics-api:9092
+    ports: ["127.0.0.1:3100:3000"]
+    depends_on:
+      presence-gateway: {condition: service_healthy}
+      analytics-api: {condition: service_healthy}
+volumes:
+  admin-analytics:

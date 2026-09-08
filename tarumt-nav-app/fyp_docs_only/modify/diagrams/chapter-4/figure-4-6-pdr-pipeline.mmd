@@ -1,0 +1,21 @@
+flowchart TB
+    subgraph Input["1. Sensor Input"]
+        direction LR
+        A["Native motion and heading"] --> B["Normalise event contract"] --> C["Bounded transient batch"]
+    end
+
+    subgraph Decision["2. Step and Movement Decision"]
+        direction LR
+        D["Step detection"] --> E{"Accepted?"}
+        E -->|No| R["Reject with diagnostic reason<br/>low peak • shake • rotation • stale • too frequent"]
+        E -->|Yes| F["Select heading candidate"] --> G["Apply movement gates"]
+    end
+
+    subgraph Estimate["3. Route-Constrained Estimate"]
+        direction LR
+        H["Steps × step length"] --> I["Convert with local pixels-per-metre"] --> J["Relative PDR estimate"]
+        J --> K["Project onto planned route"] --> L["Update marker and progress"]
+    end
+
+    C --> D
+    G --> H

@@ -25,6 +25,7 @@ func NewRouter(
 	health ports.DependencyHealth,
 	metrics OperationalMetrics,
 	logger *slog.Logger,
+	liveMapHandlers ...*LiveMapHandler,
 ) http.Handler {
 	if metrics == nil {
 		metrics = noopMetrics{}
@@ -33,6 +34,12 @@ func NewRouter(
 	healthHandler := NewHealthHandler(health)
 	mux.Handle("POST /v1/anonymous-sessions", sessionHandler)
 	mux.Handle("GET /v1/presence", websocketHandler)
+	if len(liveMapHandlers) > 0 && liveMapHandlers[0] != nil {
+		mux.HandleFunc(
+			"GET /v1/live/floors/{building_id}/{floor_id}",
+			liveMapHandlers[0].FloorSnapshot,
+		)
+	}
 	if mapHandler != nil {
 		mux.HandleFunc("GET /v1/maps/{map_id}/current", mapHandler.Current)
 		mux.HandleFunc(

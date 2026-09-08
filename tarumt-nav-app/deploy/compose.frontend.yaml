@@ -1,0 +1,53 @@
+services:
+  # A disposable public-network client; admin-web deliberately has no egress.
+  ingress-check:
+    image: node:22-alpine
+    profiles: [verification]
+    environment:
+      VERIFY_BASE_URL: https://${FRONTEND_DOMAIN:?set FRONTEND_DOMAIN}
+    command: [node, --input-type=module]
+    networks: [edge]
+  admin-web:
+    build:
+      context: ${FRONTEND_SOURCE:?set FRONTEND_SOURCE}
+    restart: unless-stopped
+    environment:
+      PRESENCE_API_BASE_URL: http://presence-gateway:8080
+      ANALYTICS_API_BASE_URL: http://analytics-api:9092
+    networks: [backend, web]
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 4s
+      retries: 24
+      start_period: 15s
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: "3"}
+  frontend-https:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      FRONTEND_DOMAIN: ${FRONTEND_DOMAIN:?set FRONTEND_DOMAIN}
+    ports: ["80:80", "443:443"]
+    volumes:
+      - ${FRONTEND_DEPLOY_DIR:?set FRONTEND_DEPLOY_DIR}/Caddyfile:/etc/caddy/Caddyfile:ro
+      - frontend-caddy-data:/data
+      - frontend-caddy-config:/config
+    # The one public proxy serves both APK routes and the admin website.
+    networks: [backend, web, edge]
+    depends_on:
+      admin-web: {condition: service_healthy}
+    logging:
+      driver: json-file
+      options: {max-size: 10m, max-file: "3"}
+networks:
+  backend:
+    external: true
+    name: ${BACKEND_NETWORK:-campus-navigator_application}
+  web:
+    internal: true
+  edge: {}
+volumes:
+  frontend-caddy-data:
+  frontend-caddy-config:

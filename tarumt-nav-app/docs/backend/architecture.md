@@ -10,7 +10,7 @@ sequences and [schema flow](schema-flow.md) for storage details.
 flowchart LR
     Mobile["Flutter mobile app"]
     Operator["Operator / monitoring"]
-    Consumer["Approved analytics consumer<br/>(future connection)"]
+    Consumer["Admin website<br/>live map and dashboard"]
 
     subgraph Backend["Campus Navigator backend"]
         Gateway["Presence Gateway"]
@@ -38,7 +38,8 @@ flowchart LR
     Prometheus --> CAdvisor
     Prometheus --> RedisExporter
     RedisExporter --> Redis
-    Consumer -.->|"aggregate HTTPS queries<br/>not wired to Flutter today"| Analytics
+    Consumer -->|"dashboard queries"| Analytics
+    Consumer -->|"all-active floor snapshots"| Gateway
 
     Gateway -->|"hot state, Pub/Sub,<br/>trajectory + lifecycle Streams"| Redis
     Redis -->|"Consumer Groups"| Worker
@@ -46,20 +47,21 @@ flowchart LR
     Analytics -->|"SELECT-only aggregate queries"| ClickHouse
 ```
 
-The solid mobile edge is deployed. The monitoring edge is implemented in the
-production Compose model and becomes active when that revision is deployed.
-The dashed analytics-client edge marks the intended caller boundary; exposing
-it is a deployment decision, not part of the current Flutter integration.
+These service connections are implemented. The admin website runs locally;
+public cloud ingress is configured separately using the deployment guide.
+The monitoring edge is implemented in the production Compose model and becomes
+active when that revision is deployed. Flutter does not call Analytics.
 Operators do not connect directly to exporter or Go-service metric endpoints.
 
 ## Deployable and network topology
 
 ```mermaid
 flowchart TB
-    Internet["Tailscale Funnel / ingress"]
+    Internet["Caddy HTTPS ingress<br/>documented Google Cloud setup"]
 
-    subgraph Host["Single-host CMP deployment"]
+    subgraph Host["Google Compute Engine VM"]
         GatewayLoopback["127.0.0.1:8080"]
+        AnalyticsLoopback["127.0.0.1:9092<br/>cloud override"]
         GrafanaLoopback["127.0.0.1:3000"]
 
         subgraph IngressNet["ingress network"]
@@ -89,6 +91,7 @@ flowchart TB
 
     Operator["Operator SSH client"] -->|"SSH port forwarding"| GrafanaLoopback --> Grafana
     Internet --> GatewayLoopback --> Gateway
+    Internet -->|"dashboard route only"| AnalyticsLoopback --> Analytics
     Gateway --> Redis
     Gateway --> MapData
     Worker --> Redis
@@ -110,9 +113,11 @@ flowchart TB
 The Gateway bridges the application and ingress networks. Prometheus bridges
 the application and monitoring networks, while Grafana bridges monitoring and
 ingress. Only the Gateway and Grafana have host-published ports, and both bind
-to loopback. Tailscale Funnel exposes only the Gateway; Grafana requires an SSH
-tunnel. Redis, ClickHouse, the Worker, the Analytics API, Prometheus, and all
-exporters have no host-published port.
+to loopback in the base Compose file. The Google Cloud guide adds an Analytics
+loopback port and ingress network attachment using an operator-owned override.
+Host Caddy exposes selected application routes through HTTPS; Grafana requires
+an IAP SSH tunnel. Redis, ClickHouse, the Worker, Prometheus, and all exporters
+have no host-published port. The public cloud setup is planned, not verified here.
 
 ClickHouse, Prometheus, and Grafana use named volumes. The current single-host
 Compose configuration deliberately runs Redis without AOF or snapshots on

@@ -1,0 +1,12 @@
+flowchart TD
+    A["Receive motion and heading samples"] --> B["Create bounded sample batch"]
+    B --> C["Evaluate step and movement rules"]
+    C --> D{"Movement accepted?"}
+    D -->|"No"| E["Keep current route position"]
+    D -->|"Yes"| F["Convert accepted step to distance"]
+    F --> G["Create relative position estimate"]
+    G --> H["Project estimate onto planned route"]
+    H --> I["Update marker, progress and instruction"]
+    I --> J{"Destination reached?"}
+    J -->|"No"| A
+    J -->|"Yes"| K["Show arrival and stop navigation"]

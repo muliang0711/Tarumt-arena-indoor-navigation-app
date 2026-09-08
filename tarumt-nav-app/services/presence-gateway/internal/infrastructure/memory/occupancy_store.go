@@ -66,10 +66,14 @@ func (s *OccupancyStore) Snapshot(ctx context.Context, query ports.OccupancyQuer
 		}
 		return edgeOccupancies[i].ToNodeID < edgeOccupancies[j].ToNodeID
 	})
+	limit := query.RepresentativeLimit
+	if query.IncludeAll {
+		limit = len(floorPresences)
+	}
 	return domain.FloorSnapshot{
 		TotalActiveUsers: total, BuildingActiveUsers: buildingTotal,
 		BuildingID: query.BuildingID, FloorID: query.FloorID, FloorCounts: counts,
-		Representatives: domain.SelectRepresentatives(query.BuildingID, query.FloorID, floorPresences, query.RepresentativeLimit),
+		Representatives: domain.SelectRepresentatives(query.BuildingID, query.FloorID, floorPresences, limit),
 		EdgeOccupancies: edgeOccupancies,
 		GeneratedAt:     query.GeneratedAt.Format(time.RFC3339Nano),
 	}, nil

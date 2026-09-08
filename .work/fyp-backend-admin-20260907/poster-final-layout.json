@@ -1,0 +1,2864 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/y90nupkv",
+    "id": "y90nupkv",
+    "slide": 1,
+    "layoutId": "/ppt/slideLayouts/slideLayout1.xml",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+    "backgroundColor": "#F6E6AC",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 2246.33,
+      "height": 3177.67
+    }
+  },
+  "theme": {
+    "colorSchemeName": "Gallery",
+    "colors": {
+      "accent1": "#B71E42",
+      "accent2": "#DE478E",
+      "accent3": "#BC72F0",
+      "accent4": "#795FAF",
+      "accent5": "#586EA6",
+      "accent6": "#6892A0",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#454545",
+      "lt2": "#DFDBD5",
+      "hlink": "#FA2B5C",
+      "folHlink": "#BC658E"
+    },
+    "fontScheme": {
+      "name": "Gallery",
+      "majorFont": {
+        "latinTypeface": "Gill Sans MT"
+      },
+      "minorFont": {
+        "latinTypeface": "Gill Sans MT"
+      }
+    },
+    "typefaces": [
+      "Arial",
+      "Gill Sans MT",
+      "Times New Roman"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "/ppt/slideLayouts/slideLayout1.xml",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "/ppt/slideMasters/slideMaster1.xml",
+      "elements": [
+        {
+          "order": 1,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/2",
+          "id": "2",
+          "name": "Title 1",
+          "bbox": [
+            588.68,
+            371.75,
+            1380.26,
+            1177.58
+          ],
+          "text": "Click to edit Master title style",
+          "textPreview": "Click to edit Master title style",
+          "resolvedTextStyle": {
+            "anchor": 3,
+            "verticalAlignment": "bottom",
+            "autoFit": "shrinkText",
+            "insets": {
+              "bottom": 0
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master title style",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master title style"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/3",
+          "id": "3",
+          "name": "Subtitle 2",
+          "bbox": [
+            588.68,
+            1636.19,
+            1380.26,
+            452.98
+          ],
+          "text": "Click to edit Master subtitle style",
+          "textPreview": "Click to edit Master subtitle style",
+          "resolvedTextStyle": {
+            "autoFit": "shrinkText",
+            "insets": {
+              "top": 9.6,
+              "bottom": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master subtitle style",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master subtitle style"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/4",
+          "id": "4",
+          "name": "Date Placeholder 3",
+          "bbox": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "text": "7/7/2025",
+          "textPreview": "7/7/2025",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "7/7/2025",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "7/7/2025"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/5",
+          "id": "5",
+          "name": "Footer Placeholder 4",
+          "bbox": [
+            588.68,
+            152.59,
+            758.18,
+            143.27
+          ]
+        },
+        {
+          "order": 5,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/6",
+          "id": "6",
+          "name": "Slide Number Placeholder 5",
+          "bbox": [
+            352.45,
+            370.21,
+            197.02,
+            233.33
+          ],
+          "text": "‹#›",
+          "textPreview": "‹#›",
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "‹#›",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "‹#›"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "kind": "shape",
+          "scope": "layout",
+          "aid": "template/layout//ppt/slideLayouts/slideLayout1.xml/15",
+          "id": "15",
+          "name": "Straight Connector 14",
+          "bbox": [
+            588.68,
+            1634.96,
+            1380.26,
+            0
+          ],
+          "geometry": "line",
+          "lineWidth": 3.33
+        }
+      ]
+    },
+    {
+      "scope": "master",
+      "id": "/ppt/slideMasters/slideMaster1.xml",
+      "type": "master",
+      "elements": [
+        {
+          "order": 1,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/2",
+          "id": "2",
+          "name": "Title Placeholder 1",
+          "bbox": [
+            354.61,
+            372.78,
+            1614.33,
+            486.16
+          ],
+          "geometry": "rect",
+          "text": "Click to edit Master title style",
+          "textPreview": "Click to edit Master title style",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "vertical": 1,
+            "verticalAlignment": "top",
+            "autoFit": "shrinkText",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Click to edit Master title style",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Click to edit Master title style"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/3",
+          "id": "3",
+          "name": "Text Placeholder 2",
+          "bbox": [
+            354.61,
+            933.99,
+            1614.33,
+            1598.85
+          ],
+          "geometry": "rect",
+          "text": "Edit Master text styles\nSecond level\nThird level\nFourth level\nFifth level",
+          "textPreview": "Edit Master text styles | Second level | Third level | Fourth level | Fifth level",
+          "resolvedTextStyle": {
+            "vertical": 1,
+            "autoFit": "shrinkText",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "Edit Master text styles",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Edit Master text styles"
+                }
+              ]
+            },
+            {
+              "index": 2,
+              "text": "Second level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Second level"
+                }
+              ]
+            },
+            {
+              "index": 3,
+              "text": "Third level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Third level"
+                }
+              ]
+            },
+            {
+              "index": 4,
+              "text": "Fourth level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Fourth level"
+                }
+              ]
+            },
+            {
+              "index": 5,
+              "text": "Fifth level",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "Fifth level"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/4",
+          "id": "4",
+          "name": "Date Placeholder 3",
+          "bbox": [
+            1387.14,
+            153.08,
+            581.8,
+            143.27
+          ],
+          "geometry": "rect",
+          "text": "7/7/2025",
+          "textPreview": "7/7/2025",
+          "resolvedTextStyle": {
+            "anchor": 2,
+            "vertical": 1,
+            "verticalAlignment": "middle",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "7/7/2025",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "7/7/2025"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/5",
+          "id": "5",
+          "name": "Footer Placeholder 4",
+          "bbox": [
+            354.61,
+            152.59,
+            991,
+            143.27
+          ],
+          "geometry": "rect",
+          "resolvedTextStyle": {
+            "anchor": 2,
+            "vertical": 1,
+            "verticalAlignment": "middle",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          }
+        },
+        {
+          "order": 5,
+          "kind": "shape",
+          "scope": "master",
+          "aid": "template/master//ppt/slideMasters/slideMaster1.xml/6",
+          "id": "6",
+          "name": "Slide Number Placeholder 5",
+          "bbox": [
+            119.82,
+            370.21,
+            195.48,
+            233.33
+          ],
+          "geometry": "rect",
+          "text": "‹#›",
+          "textPreview": "‹#›",
+          "resolvedTextStyle": {
+            "anchor": 1,
+            "vertical": 1,
+            "verticalAlignment": "top",
+            "insets": {
+              "top": 4.8,
+              "right": 9.6,
+              "bottom": 4.8,
+              "left": 9.6
+            }
+          },
+          "paragraphs": [
+            {
+              "index": 1,
+              "text": "‹#›",
+              "runs": [
+                {
+                  "index": 1,
+                  "text": "‹#›"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/k3yl0zql",
+      "id": "3",
+      "name": "Flowchart: Document 2",
+      "bbox": [
+        15.78,
+        16.81,
+        2214.74,
+        407.58
+      ],
+      "geometry": "flowChartDocument",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "fillColor": "rgba(254, 195, 130, 0.55)",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nydczmpk",
+      "id": "26",
+      "name": "Text Box 122",
+      "bbox": [
+        890,
+        35,
+        1315,
+        185
+      ],
+      "geometry": "rect",
+      "text": "Campus Navigator\nBackend System and Web-Based\nAdministration Client",
+      "textPreview": "Campus Navigator | Backend System and Web-Based | Administration Client",
+      "resolvedFontSize": 52,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 52,
+        "typeface": "Arial",
+        "color": "#000000",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "wrap": "square",
+        "autoFit": "none",
+        "insets": {
+          "top": 30.89,
+          "right": 12.36,
+          "bottom": 30.89,
+          "left": 12.36
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Campus Navigator"
+          },
+          {
+            "index": 2,
+            "text": "Backend System and Web-Based"
+          },
+          {
+            "index": 3,
+            "text": "Administration Client"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Campus Navigator",
+          "resolvedTextStyle": {
+            "fontSize": 52,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Campus Navigator",
+              "fontSize": 52,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Backend System and Web-Based",
+          "resolvedTextStyle": {
+            "fontSize": 52,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Backend System and Web-Based",
+              "fontSize": 52,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "Administration Client",
+          "resolvedTextStyle": {
+            "fontSize": 52,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Administration Client",
+              "fontSize": 52,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/mx4v6hoz",
+      "id": "27",
+      "name": "Text Box 123",
+      "bbox": [
+        890,
+        237,
+        1315,
+        142
+      ],
+      "geometry": "rect",
+      "text": "Pui Hock Yang   24WMR01790\nSoftware Engineering\nSupervisor: Prof. Ts. Dr. Tew Yiqi",
+      "textPreview": "Pui Hock Yang   24WMR01790 | Software Engineering | Supervisor: Prof. Ts. Dr. Tew Yiqi",
+      "resolvedFontSize": 35,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 35,
+        "typeface": "Arial",
+        "color": "#000000",
+        "bold": true,
+        "alignment": "center",
+        "verticalAlignment": "middle",
+        "autoFit": "none",
+        "insets": {
+          "top": 12.36,
+          "right": 12.36,
+          "bottom": 12.36,
+          "left": 12.36
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Pui Hock Yang   24WMR01790"
+          },
+          {
+            "index": 2,
+            "text": "Software Engineering"
+          },
+          {
+            "index": 3,
+            "text": "Supervisor: Prof. Ts. Dr. Tew Yiqi"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Pui Hock Yang   24WMR01790",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Pui Hock Yang   24WMR01790",
+              "fontSize": 35,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Software Engineering",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Software Engineering",
+              "fontSize": 35,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "Supervisor: Prof. Ts. Dr. Tew Yiqi",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Supervisor: Prof. Ts. Dr. Tew Yiqi",
+              "fontSize": 35,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "center"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/p4bu5s76",
+      "id": "28",
+      "name": "Rounded Rectangle 16",
+      "bbox": [
+        38.28,
+        712.92,
+        1105.16,
+        430.57
+      ],
+      "geometry": "roundRect",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/432dwn6l",
+      "id": "29",
+      "name": "Rectangle 45",
+      "bbox": [
+        293.61,
+        715.46,
+        628.7,
+        47.56
+      ],
+      "geometry": "custom",
+      "text": "Problem Statement",
+      "textPreview": "Problem Statement",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Problem Statement"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Problem Statement",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Problem Statement",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/uxgjq907",
+      "id": "30",
+      "name": "Rounded Rectangle 40",
+      "bbox": [
+        38.28,
+        1178.97,
+        1105.16,
+        389.59
+      ],
+      "geometry": "roundRect",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/vyp0je1s",
+      "id": "31",
+      "name": "Rectangle 45",
+      "bbox": [
+        384.58,
+        1179.41,
+        459.88,
+        57.19
+      ],
+      "geometry": "custom",
+      "text": "Objectives",
+      "textPreview": "Objectives",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Objectives"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Objectives",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Objectives",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wzy1szid",
+      "id": "32",
+      "name": "Rounded Rectangle 52",
+      "bbox": [
+        30.68,
+        1604.04,
+        1115.3,
+        1249.27
+      ],
+      "geometry": "roundRect",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/h072l4jy",
+      "id": "33",
+      "name": "Rectangle 45",
+      "bbox": [
+        280.81,
+        1606.68,
+        667.41,
+        65.69
+      ],
+      "geometry": "custom",
+      "text": "Design and Methodology",
+      "textPreview": "Design and Methodology",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Design and Methodology"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Design and Methodology",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Design and Methodology",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/i1gje90j",
+      "id": "34",
+      "name": "Rounded Rectangle 55",
+      "bbox": [
+        1175.11,
+        710.96,
+        1032.62,
+        1786.14
+      ],
+      "geometry": "roundRect",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 11,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/j2pkne14",
+      "id": "35",
+      "name": "Rectangle 45",
+      "bbox": [
+        1316.57,
+        715,
+        710.59,
+        70.32
+      ],
+      "geometry": "custom",
+      "text": "System Features",
+      "textPreview": "System Features",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "System Features"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "System Features",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "System Features",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 12,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/y5wjip0z",
+      "id": "38",
+      "name": "Rounded Rectangle 99",
+      "bbox": [
+        35.74,
+        2879.62,
+        2173.75,
+        263.95
+      ],
+      "geometry": "roundRect",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 13,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/z2xgf6to",
+      "id": "40",
+      "name": "Rectangle 45",
+      "bbox": [
+        859.18,
+        2881.19,
+        495.45,
+        59.63
+      ],
+      "geometry": "custom",
+      "text": "Conclusion",
+      "textPreview": "Conclusion",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Conclusion"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Conclusion",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Conclusion",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 14,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/036h8but",
+      "id": "43",
+      "name": "Rounded Rectangle 105",
+      "bbox": [
+        1175.11,
+        2523.41,
+        1034.38,
+        329.9
+      ],
+      "geometry": "roundRect",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 15,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/nqxgjqtk",
+      "id": "44",
+      "name": "Rectangle 45",
+      "bbox": [
+        1432.51,
+        2534.02,
+        533.13,
+        65.79
+      ],
+      "geometry": "custom",
+      "text": "Contribution",
+      "textPreview": "Contribution",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Contribution"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Contribution",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Contribution",
+              "fontSize": 53.49,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 16,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/9sfylgbq",
+      "id": "46",
+      "name": "Rounded Rectangle 92",
+      "bbox": [
+        31.56,
+        438,
+        2176.17,
+        243.97
+      ],
+      "geometry": "roundRect",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "dk1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": ""
+          }
+        ]
+      },
+      "lineColor": "accent1",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 17,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/or6hcvu5",
+      "id": "47",
+      "name": "Rectangle 45",
+      "bbox": [
+        884.96,
+        439.87,
+        510.35,
+        57.59
+      ],
+      "geometry": "custom",
+      "text": "Abstract",
+      "textPreview": "Abstract",
+      "resolvedFontSize": 29.47,
+      "resolvedTextStyle": {
+        "anchor": 2,
+        "fontSize": 29.47,
+        "typeface": "Gill Sans MT",
+        "color": "lt1",
+        "alignment": "left",
+        "verticalAlignment": "middle",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Abstract"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Abstract",
+          "resolvedTextStyle": {
+            "alignment": "center"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Abstract",
+              "fontSize": 64.2,
+              "color": {
+                "type": "theme",
+                "value": "accent3",
+                "transform": {
+                  "lighten": 0.8
+                }
+              },
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "fillColor": "#C1341D",
+      "lineWidth": 1.33
+    },
+    {
+      "order": 18,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/0vyloz2h",
+      "id": "48",
+      "name": "Picture 4",
+      "bbox": [
+        25.86,
+        65.52,
+        825.29,
+        240.11
+      ],
+      "contentType": "image/png",
+      "asset": {
+        "assetId": "/ppt/media/image2.png",
+        "contentType": "image/png",
+        "byteLength": 100344
+      },
+      "fillImage": {
+        "assetId": "/ppt/media/image2.png",
+        "contentType": "image/png",
+        "byteLength": 100344
+      }
+    },
+    {
+      "order": 19,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/at8zelcb",
+      "id": "49",
+      "name": "Abstract content",
+      "bbox": [
+        64,
+        514,
+        2106,
+        145
+      ],
+      "geometry": "rect",
+      "text": "Campus Navigator connects indoor navigation data to a two-page administration website. Go services, Redis and ClickHouse supply current presence and journey summaries. Operators can review popular destinations and follow named users on the shared campus map. Local verification used 100 simulated sessions; Google Cloud deployment remains a planned next step.",
+      "textPreview": "Campus Navigator connects indoor navigation data to a two-page administration website. Go services, Redis and ClickHouse supply current p...",
+      "resolvedFontSize": 35,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 35,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Campus Navigator connects indoor navigation data to a two-page administration website. Go services, Redis and ClickHouse supply current"
+          },
+          {
+            "index": 2,
+            "text": "presence and journey summaries. Operators can review popular destinations and follow named users on the shared campus map. Local verification"
+          },
+          {
+            "index": 3,
+            "text": "used 100 simulated sessions; Google Cloud deployment remains a planned next step."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Campus Navigator connects indoor navigation data to a two-page administration website. Go services, Redis and ClickHouse supply current presence and journey summaries. Operators can review popular destinations and follow named users on the shared campus map. Local verification used 100 simulated sessions; Google Cloud deployment remains a planned next step.",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Campus Navigator connects indoor navigation data to a two-page administration website. Go services, Redis and ClickHouse supply current presence and journey summaries. Operators can review popular destinations and follow named users on the shared campus map. Local verification used 100 simulated sessions; Google Cloud deployment remains a planned next step.",
+              "fontSize": 35,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 20,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/8zqx4vq9",
+      "id": "50",
+      "name": "Problem content",
+      "bbox": [
+        64,
+        786,
+        1042,
+        334
+      ],
+      "geometry": "rect",
+      "text": "The mobile application shows an individual route, but operators also need an overview of navigation activity. Internal node IDs and service logs do not clearly show popular destinations or current user movement. A useful administration view must preserve names, align map coordinates and distinguish live sessions from historical journeys.",
+      "textPreview": "The mobile application shows an individual route, but operators also need an overview of navigation activity. Internal node IDs and servi...",
+      "resolvedFontSize": 36,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 36,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 5,
+        "lines": [
+          {
+            "index": 1,
+            "text": "The mobile application shows an individual route, but operators also"
+          },
+          {
+            "index": 2,
+            "text": "need an overview of navigation activity. Internal node IDs and service"
+          },
+          {
+            "index": 3,
+            "text": "logs do not clearly show popular destinations or current user"
+          },
+          {
+            "index": 4,
+            "text": "movement. A useful administration view must preserve names, align"
+          },
+          {
+            "index": 5,
+            "text": "map coordinates and distinguish live sessions from historical journeys."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "The mobile application shows an individual route, but operators also need an overview of navigation activity. Internal node IDs and service logs do not clearly show popular destinations or current user movement. A useful administration view must preserve names, align map coordinates and distinguish live sessions from historical journeys.",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "The mobile application shows an individual route, but operators also need an overview of navigation activity. Internal node IDs and service logs do not clearly show popular destinations or current user movement. A useful administration view must preserve names, align map coordinates and distinguish live sessions from historical journeys.",
+              "fontSize": 36,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 21,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/t0jyd0ru",
+      "id": "51",
+      "name": "Objectives content",
+      "bbox": [
+        65,
+        1260,
+        1040,
+        285
+      ],
+      "geometry": "rect",
+      "text": "Provide day and week navigation summaries with readable destination names.\nDisplay named active users on the application’s 2D map with 10, 20, 30 or All markers.\nReuse the backend data path and prepare a reproducible VM deployment.",
+      "textPreview": "Provide day and week navigation summaries with readable destination names. | Display named active users on the application’s 2D map with ...",
+      "resolvedFontSize": 35,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 35,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 6,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Provide day and week navigation summaries with readable destination"
+          },
+          {
+            "index": 2,
+            "text": "names."
+          },
+          {
+            "index": 3,
+            "text": "Display named active users on the application’s 2D map with 10, 20, 30"
+          },
+          {
+            "index": 4,
+            "text": "or All markers."
+          },
+          {
+            "index": 5,
+            "text": "Reuse the backend data path and prepare a reproducible VM"
+          },
+          {
+            "index": 6,
+            "text": "deployment."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Provide day and week navigation summaries with readable destination names.",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Provide day and week navigation summaries with readable destination names.",
+              "fontSize": 35,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Display named active users on the application’s 2D map with 10, 20, 30 or All markers.",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Display named active users on the application’s 2D map with 10, 20, 30 or All markers.",
+              "fontSize": 35,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "Reuse the backend data path and prepare a reproducible VM deployment.",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Reuse the backend data path and prepare a reproducible VM deployment.",
+              "fontSize": 35,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 22,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/6x8f2583",
+      "id": "52",
+      "name": "Method approach heading",
+      "bbox": [
+        68,
+        1700,
+        1030,
+        55
+      ],
+      "geometry": "rect",
+      "text": "Iterative integration",
+      "textPreview": "Iterative integration",
+      "resolvedFontSize": 40,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 40,
+        "typeface": "Arial",
+        "color": "#000000",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Iterative integration"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Iterative integration",
+          "resolvedTextStyle": {
+            "fontSize": 40,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Iterative integration",
+              "fontSize": 40,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 23,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/7yhgbq9o",
+      "id": "53",
+      "name": "Method approach",
+      "bbox": [
+        68,
+        1770,
+        1030,
+        245
+      ],
+      "geometry": "rect",
+      "text": "Requirements and prototype feedback guided the two-page interface. API inspection, local simulation and focused tests addressed snapshot completeness, coordinate alignment and visible names.",
+      "textPreview": "Requirements and prototype feedback guided the two-page interface. API inspection, local simulation and focused tests addressed snapshot ...",
+      "resolvedFontSize": 36,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 36,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Requirements and prototype feedback guided the two-page interface."
+          },
+          {
+            "index": 2,
+            "text": "API inspection, local simulation and focused tests addressed snapshot"
+          },
+          {
+            "index": 3,
+            "text": "completeness, coordinate alignment and visible names."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Requirements and prototype feedback guided the two-page interface. API inspection, local simulation and focused tests addressed snapshot completeness, coordinate alignment and visible names.",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Requirements and prototype feedback guided the two-page interface. API inspection, local simulation and focused tests addressed snapshot completeness, coordinate alignment and visible names.",
+              "fontSize": 36,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 24,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/kvqx0vqd",
+      "id": "54",
+      "name": "Architecture heading",
+      "bbox": [
+        68,
+        1990,
+        1030,
+        55
+      ],
+      "geometry": "rect",
+      "text": "Backend responsibilities",
+      "textPreview": "Backend responsibilities",
+      "resolvedFontSize": 40,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 40,
+        "typeface": "Arial",
+        "color": "#000000",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Backend responsibilities"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Backend responsibilities",
+          "resolvedTextStyle": {
+            "fontSize": 40,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Backend responsibilities",
+              "fontSize": 40,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 25,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lwzy90ry",
+      "id": "55",
+      "name": "Architecture content",
+      "bbox": [
+        68,
+        2060,
+        1030,
+        450
+      ],
+      "geometry": "rect",
+      "text": "Presence Gateway accepts session updates and serves current floor snapshots.\n\nTrajectory Worker consumes Redis Streams and inserts journey and trajectory records into ClickHouse.\n\nAnalytics API aggregates stored journeys for the dashboard. The web server provides same-origin read proxies.",
+      "textPreview": "Presence Gateway accepts session updates and serves current floor snapshots. |  | Trajectory Worker consumes Redis Streams and inserts jo...",
+      "resolvedFontSize": 36,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 36,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 8,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Presence Gateway accepts session updates and serves current floor"
+          },
+          {
+            "index": 2,
+            "text": "snapshots."
+          },
+          {
+            "index": 3,
+            "text": ""
+          },
+          {
+            "index": 4,
+            "text": "Trajectory Worker consumes Redis Streams and inserts journey and"
+          },
+          {
+            "index": 5,
+            "text": "trajectory records into ClickHouse."
+          },
+          {
+            "index": 6,
+            "text": ""
+          },
+          {
+            "index": 7,
+            "text": "Analytics API aggregates stored journeys for the dashboard. The web"
+          },
+          {
+            "index": 8,
+            "text": "server provides same-origin read proxies."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Presence Gateway accepts session updates and serves current floor snapshots.",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Presence Gateway accepts session updates and serves current floor snapshots.",
+              "fontSize": 36,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "Trajectory Worker consumes Redis Streams and inserts journey and trajectory records into ClickHouse.",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Trajectory Worker consumes Redis Streams and inserts journey and trajectory records into ClickHouse.",
+              "fontSize": 36,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "Analytics API aggregates stored journeys for the dashboard. The web server provides same-origin read proxies.",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Analytics API aggregates stored journeys for the dashboard. The web server provides same-origin read proxies.",
+              "fontSize": 36,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 26,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/yt8fyl87",
+      "id": "56",
+      "name": "Coordinates heading",
+      "bbox": [
+        68,
+        2510,
+        1030,
+        55
+      ],
+      "geometry": "rect",
+      "text": "One shared coordinate frame",
+      "textPreview": "One shared coordinate frame",
+      "resolvedFontSize": 40,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 40,
+        "typeface": "Arial",
+        "color": "#000000",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "One shared coordinate frame"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "One shared coordinate frame",
+          "resolvedTextStyle": {
+            "fontSize": 40,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "One shared coordinate frame",
+              "fontSize": 40,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 27,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/juhg7q9s",
+      "id": "57",
+      "name": "Coordinates content",
+      "bbox": [
+        68,
+        2580,
+        1030,
+        235
+      ],
+      "geometry": "rect",
+      "text": "Graph positions are interpolated along edges, then converted using the floor image origin (−256, 256). The map and markers pan and zoom together. A marker limit changes only the visible list, not backend ingestion.",
+      "textPreview": "Graph positions are interpolated along edges, then converted using the floor image origin (−256, 256). The map and markers pan and zoom t...",
+      "resolvedFontSize": 36,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 36,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Graph positions are interpolated along edges, then converted using"
+          },
+          {
+            "index": 2,
+            "text": "the floor image origin (−256, 256). The map and markers pan and"
+          },
+          {
+            "index": 3,
+            "text": "zoom together. A marker limit changes only the visible list, not"
+          },
+          {
+            "index": 4,
+            "text": "backend ingestion."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Graph positions are interpolated along edges, then converted using the floor image origin (−256, 256). The map and markers pan and zoom together. A marker limit changes only the visible list, not backend ingestion.",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Graph positions are interpolated along edges, then converted using the floor image origin (−256, 256). The map and markers pan and zoom together. A marker limit changes only the visible list, not backend ingestion.",
+              "fontSize": 36,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 28,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/wr6xwbq1",
+      "id": "58",
+      "name": "Dashboard heading",
+      "bbox": [
+        1218,
+        800,
+        945,
+        55
+      ],
+      "geometry": "rect",
+      "text": "Dashboard",
+      "textPreview": "Dashboard",
+      "resolvedFontSize": 42,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 42,
+        "typeface": "Arial",
+        "color": "#000000",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Dashboard"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Dashboard",
+          "resolvedTextStyle": {
+            "fontSize": 42,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Dashboard",
+              "fontSize": 42,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 29,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xsfy5grm",
+      "id": "59",
+      "name": "Dashboard content",
+      "bbox": [
+        1218,
+        876,
+        945,
+        250
+      ],
+      "geometry": "rect",
+      "text": "Today and week views show navigation starts, journey outcomes, daily activity and popular destinations. Labels use place names such as TA257 and Toilet 1. Counts describe journeys, not unique people.",
+      "textPreview": "Today and week views show navigation starts, journey outcomes, daily activity and popular destinations. Labels use place names such as TA...",
+      "resolvedFontSize": 36,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 36,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Today and week views show navigation starts, journey"
+          },
+          {
+            "index": 2,
+            "text": "outcomes, daily activity and popular destinations. Labels use"
+          },
+          {
+            "index": 3,
+            "text": "place names such as TA257 and Toilet 1. Counts describe"
+          },
+          {
+            "index": 4,
+            "text": "journeys, not unique people."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Today and week views show navigation starts, journey outcomes, daily activity and popular destinations. Labels use place names such as TA257 and Toilet 1. Counts describe journeys, not unique people.",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Today and week views show navigation starts, journey outcomes, daily activity and popular destinations. Labels use place names such as TA257 and Toilet 1. Counts describe journeys, not unique people.",
+              "fontSize": 36,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 30,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/dc7md8fe",
+      "id": "60",
+      "name": "Live map heading",
+      "bbox": [
+        1218,
+        1130,
+        945,
+        55
+      ],
+      "geometry": "rect",
+      "text": "Live map",
+      "textPreview": "Live map",
+      "resolvedFontSize": 42,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 42,
+        "typeface": "Arial",
+        "color": "#000000",
+        "bold": true,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Live map"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Live map",
+          "resolvedTextStyle": {
+            "fontSize": 42,
+            "typeface": "Arial",
+            "color": "#000000",
+            "bold": true,
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Live map",
+              "fontSize": 42,
+              "typeface": "Arial",
+              "color": "#000000",
+              "bold": true,
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 31,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cby5k3yt",
+      "id": "61",
+      "name": "Live map content",
+      "bbox": [
+        1218,
+        1205,
+        945,
+        226
+      ],
+      "geometry": "rect",
+      "text": "Named user markers refresh from backend snapshots. Choose 10, 20, 30 or All, then pan, zoom or inspect a user. The administrative reader returns all eligible active sessions.",
+      "textPreview": "Named user markers refresh from backend snapshots. Choose 10, 20, 30 or All, then pan, zoom or inspect a user. The administrative reader ...",
+      "resolvedFontSize": 36,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 36,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Named user markers refresh from backend snapshots. Choose"
+          },
+          {
+            "index": 2,
+            "text": "10, 20, 30 or All, then pan, zoom or inspect a user. The"
+          },
+          {
+            "index": 3,
+            "text": "administrative reader returns all eligible active sessions."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Named user markers refresh from backend snapshots. Choose 10, 20, 30 or All, then pan, zoom or inspect a user. The administrative reader returns all eligible active sessions.",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Named user markers refresh from backend snapshots. Choose 10, 20, 30 or All, then pan, zoom or inspect a user. The administrative reader returns all eligible active sessions.",
+              "fontSize": 36,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 32,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/orq1cbah",
+      "id": "62",
+      "bbox": [
+        1318,
+        1460,
+        744,
+        930
+      ],
+      "alt": "Shared Floor 2 map asset used by Campus Navigator; no live users shown in this illustration.",
+      "contentType": "image/png",
+      "imageFit": "contain",
+      "asset": {
+        "assetId": "0e22c3b9-ab0c-4fb5-8241-e6f591306c83",
+        "contentType": "image/png",
+        "byteLength": 620370
+      }
+    },
+    {
+      "order": 33,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/q9wnidgn",
+      "id": "63",
+      "name": "Map caption",
+      "bbox": [
+        1215,
+        2395,
+        950,
+        75
+      ],
+      "geometry": "rect",
+      "text": "Shared Floor 2 map asset used by the app and web client\nIllustration of the map surface, not a live-data screenshot",
+      "textPreview": "Shared Floor 2 map asset used by the app and web client | Illustration of the map surface, not a live-data screenshot",
+      "resolvedFontSize": 27,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 27,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Shared Floor 2 map asset used by the app and web client"
+          },
+          {
+            "index": 2,
+            "text": "Illustration of the map surface, not a live-data screenshot"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Shared Floor 2 map asset used by the app and web client",
+          "resolvedTextStyle": {
+            "fontSize": 27,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Shared Floor 2 map asset used by the app and web client",
+              "fontSize": 27,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Illustration of the map surface, not a live-data screenshot",
+          "resolvedTextStyle": {
+            "fontSize": 27,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Illustration of the map surface, not a live-data screenshot",
+              "fontSize": 27,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 34,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5onm98f2",
+      "id": "64",
+      "name": "Contribution content",
+      "bbox": [
+        1215,
+        2615,
+        949,
+        215
+      ],
+      "geometry": "rect",
+      "text": "A backend-connected view of navigation activity with readable labels, aligned coordinates and separate live and historical data paths. A repeatable simulator supports demonstrations without collecting real students’ locations.",
+      "textPreview": "A backend-connected view of navigation activity with readable labels, aligned coordinates and separate live and historical data paths. A ...",
+      "resolvedFontSize": 36,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 36,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 4,
+        "lines": [
+          {
+            "index": 1,
+            "text": "A backend-connected view of navigation activity with readable"
+          },
+          {
+            "index": 2,
+            "text": "labels, aligned coordinates and separate live and historical data"
+          },
+          {
+            "index": 3,
+            "text": "paths. A repeatable simulator supports demonstrations without"
+          },
+          {
+            "index": 4,
+            "text": "collecting real students’ locations."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "A backend-connected view of navigation activity with readable labels, aligned coordinates and separate live and historical data paths. A repeatable simulator supports demonstrations without collecting real students’ locations.",
+          "resolvedTextStyle": {
+            "fontSize": 36,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "A backend-connected view of navigation activity with readable labels, aligned coordinates and separate live and historical data paths. A repeatable simulator supports demonstrations without collecting real students’ locations.",
+              "fontSize": 36,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 35,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4ne5g3yh",
+      "id": "65",
+      "name": "Conclusion content",
+      "bbox": [
+        74,
+        2970,
+        2090,
+        140
+      ],
+      "geometry": "rect",
+      "text": "The local prototype delivers a focused dashboard and named live map. Its next milestone is a verified Google Cloud rollout with public HTTPS and private backend HTTP. Administrator access control, stronger event durability and real-world positioning evaluation are required before production use.",
+      "textPreview": "The local prototype delivers a focused dashboard and named live map. Its next milestone is a verified Google Cloud rollout with public HT...",
+      "resolvedFontSize": 35,
+      "resolvedTextStyle": {
+        "anchor": 1,
+        "fontSize": 35,
+        "typeface": "Times New Roman",
+        "color": "#000000",
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "autoFit": "none",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "The local prototype delivers a focused dashboard and named live map. Its next milestone is a verified Google Cloud rollout with public HTTPS and"
+          },
+          {
+            "index": 2,
+            "text": "private backend HTTP. Administrator access control, stronger event durability and real-world positioning evaluation are required before production"
+          },
+          {
+            "index": 3,
+            "text": "use."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "The local prototype delivers a focused dashboard and named live map. Its next milestone is a verified Google Cloud rollout with public HTTPS and private backend HTTP. Administrator access control, stronger event durability and real-world positioning evaluation are required before production use.",
+          "resolvedTextStyle": {
+            "fontSize": 35,
+            "typeface": "Times New Roman",
+            "color": "#000000",
+            "alignment": "left"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "The local prototype delivers a focused dashboard and named live map. Its next milestone is a verified Google Cloud rollout with public HTTPS and private backend HTTP. Administrator access control, stronger event durability and real-world positioning evaluation are required before production use.",
+              "fontSize": 35,
+              "typeface": "Times New Roman",
+              "color": "#000000",
+              "alignment": "left"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

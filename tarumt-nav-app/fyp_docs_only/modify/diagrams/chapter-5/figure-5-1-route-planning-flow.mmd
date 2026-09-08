@@ -1,0 +1,9 @@
+flowchart TD
+    A["User selects an enabled destination"] --> B["Read destination node ID"]
+    B --> C["Use current start node"]
+    C --> D["Run weighted shortest-path calculation"]
+    D --> E{"Destination reachable?"}
+    E -->|"No"| F["Show route error"]
+    E -->|"Yes"| G["Build ordered route path and metrics"]
+    G --> H["Generate first instruction"]
+    H --> I["Display route on indoor map"]

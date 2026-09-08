@@ -1,0 +1,12 @@
+FROM golang:1.24-alpine AS build
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -trimpath -o /out/admin-simulator ./cmd/admin-simulator
+FROM alpine:3.22
+WORKDIR /app
+COPY --from=build /out/admin-simulator /usr/local/bin/admin-simulator
+COPY internal/mapgraph/assets/main-campus.map-graph.v1.json /app/campus.json
+USER 10001
+ENTRYPOINT ["admin-simulator", "--map-bundle", "/app/campus.json"]

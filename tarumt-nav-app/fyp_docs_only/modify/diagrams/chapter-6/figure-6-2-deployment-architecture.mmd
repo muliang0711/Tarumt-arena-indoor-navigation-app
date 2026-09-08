@@ -1,0 +1,37 @@
+flowchart TB
+    Phone["Android Phone<br/>Flutter release APK"]
+    Funnel["Tailscale Funnel<br/>public HTTPS and WSS"]
+
+    subgraph GCP["Google Compute Engine — Ubuntu VM"]
+        Gateway["Presence Gateway<br/>127.0.0.1:8080"]
+
+        subgraph AppNet["Private Application Network"]
+            Redis[("Redis<br/>volatile hot state and Streams")]
+            Worker["Trajectory Worker"]
+            ClickHouse[("ClickHouse<br/>persistent named volume")]
+            Analytics["Analytics API<br/>private read-only service"]
+        end
+
+        subgraph MonitorNet["Private Monitoring Network"]
+            NodeExporter["Node Exporter"]
+            CAdvisor["cAdvisor"]
+            RedisExporter["Redis Exporter"]
+            Prometheus[("Prometheus")]
+            Grafana["Grafana<br/>127.0.0.1:3000"]
+        end
+    end
+
+    Phone -->|"HTTPS / WSS"| Funnel
+    Funnel --> Gateway
+    Gateway <--> Redis
+    Redis --> Worker
+    Worker --> ClickHouse
+    Analytics --> ClickHouse
+    NodeExporter --> Prometheus
+    CAdvisor --> Prometheus
+    RedisExporter --> Prometheus
+    Gateway -.-> Prometheus
+    Worker -.-> Prometheus
+    Analytics -.-> Prometheus
+    Prometheus --> Grafana
+    Operator["Operator Computer"] -->|"SSH tunnel"| Grafana

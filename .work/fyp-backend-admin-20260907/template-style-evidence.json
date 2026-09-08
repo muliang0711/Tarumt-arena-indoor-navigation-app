@@ -1,0 +1,171 @@
+{
+  "input": "/Users/puihockyang/Downloads/TEMPLETE 1_2/FYP Report Template (updated 2.7.25).docx",
+  "fonts_by_char_count": {
+    "Arial": 4534,
+    "Times New Roman": 1301
+  },
+  "direct_run_formatting_runs": 359,
+  "direct_paragraph_formatting_paragraphs": 252,
+  "heading_like_paragraphs_not_heading_style": [
+    {
+      "para_index": 5,
+      "text": "Individual Project Title",
+      "style": "Normal"
+    },
+    {
+      "para_index": 72,
+      "text": "Declaration",
+      "style": "Normal"
+    },
+    {
+      "para_index": 92,
+      "text": "Abstract",
+      "style": "Normal"
+    },
+    {
+      "para_index": 101,
+      "text": "Acknowledgement",
+      "style": "Normal"
+    },
+    {
+      "para_index": 103,
+      "text": "Table of Contents",
+      "style": "Normal"
+    },
+    {
+      "para_index": 115,
+      "text": "Introduction",
+      "style": "Normal"
+    },
+    {
+      "para_index": 139,
+      "text": "REMINDER TO STUDENTS ABOUT FIGURES AND TABLES",
+      "style": "Normal"
+    },
+    {
+      "para_index": 165,
+      "text": "Literature Review",
+      "style": "Normal"
+    },
+    {
+      "para_index": 196,
+      "text": "Methodology and Requirements Analysis",
+      "style": "Normal"
+    },
+    {
+      "para_index": 219,
+      "text": "System Design",
+      "style": "Normal"
+    },
+    {
+      "para_index": 247,
+      "text": "Implementation and Testing",
+      "style": "Normal"
+    },
+    {
+      "para_index": 252,
+      "text": "Implementation",
+      "style": "Normal"
+    },
+    {
+      "para_index": 259,
+      "text": "Testing",
+      "style": "Normal"
+    },
+    {
+      "para_index": 291,
+      "text": "System Deployment",
+      "style": "Normal"
+    },
+    {
+      "para_index": 324,
+      "text": "Discussions and Conclusion",
+      "style": "Normal"
+    },
+    {
+      "para_index": 351,
+      "text": "Appendices",
+      "style": "Normal"
+    },
+    {
+      "para_index": 363,
+      "text": "APPENDIX n User Guide ",
+      "style": "Normal"
+    },
+    {
+      "para_index": 371,
+      "text": "APPENDIX n+1 Developer Guide*",
+      "style": "Normal"
+    },
+    {
+      "para_index": 414,
+      "text": "System Document",
+      "style": "Normal"
+    },
+    {
+      "para_index": 418,
+      "text": "Operation Document",
+      "style": "Normal"
+    }
+  ],
+  "examples": {
+    "direct_run_formatting": [
+      {
+        "para_index": 5,
+        "run_text": "Individual Project Title",
+        "style": "Normal"
+      },
+      {
+        "para_index": 9,
+        "run_text": "By",
+        "style": "Normal"
+      },
+      {
+        "para_index": 14,
+        "run_text": "Student Name",
+        "style": "Normal"
+      },
+      {
+        "para_index": 25,
+        "run_text": "FACULTY OF COMPUTING AND ",
+        "style": "Normal"
+      },
+      {
+        "para_index": 26,
+        "run_text": "INFORMATION TECHNOLOGY",
+        "style": "Normal"
+      }
+    ],
+    "direct_paragraph_formatting": [
+      {
+        "para_index": 21,
+        "text": "\t\t\t\t\t\t\t     ",
+        "style": "Normal"
+      },
+      {
+        "para_index": 68,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 72,
+        "text": "Declaration",
+        "style": "Normal"
+      },
+      {
+        "para_index": 73,
+        "text": "The project submitted herewith is a result of my own efforts in totality and in every aspect of the project works.  All ",
+        "style": "Normal"
+      },
+      {
+        "para_index": 74,
+        "text": "",
+        "style": "Normal"
+      }
+    ]
+  },
+  "notes": [
+    "Direct formatting is not always wrong, but it often causes inconsistent output when templates change.",
+    "Heading-like paragraphs not using Heading styles can break TOC and accessibility."
+  ]
+}

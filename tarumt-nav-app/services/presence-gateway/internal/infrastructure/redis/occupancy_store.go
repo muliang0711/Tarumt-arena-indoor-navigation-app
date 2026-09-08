@@ -107,10 +107,18 @@ func (s *OccupancyStore) Snapshot(ctx context.Context, query ports.OccupancyQuer
 
 func (s *OccupancyStore) representatives(ctx context.Context, query ports.OccupancyQuery) ([]domain.Presence, error) {
 	scanLimit := max(query.RepresentativeLimit*50, 500)
-	ids, err := representativesScript.Run(ctx, s.client, []string{
-		s.keys.FloorRepresentatives(query.BuildingID, query.FloorID),
-		s.keys.FloorActive(query.BuildingID, query.FloorID),
-	}, query.ActiveSince.UnixMilli(), query.RepresentativeLimit, scanLimit).StringSlice()
+	var ids []string
+	var err error
+	if query.IncludeAll {
+		ids, err = s.client.ZRangeByScore(ctx, s.keys.FloorActive(query.BuildingID, query.FloorID), &redis.ZRangeBy{
+			Min: strconv.FormatInt(query.ActiveSince.UnixMilli(), 10), Max: "+inf",
+		}).Result()
+	} else {
+		ids, err = representativesScript.Run(ctx, s.client, []string{
+			s.keys.FloorRepresentatives(query.BuildingID, query.FloorID),
+			s.keys.FloorActive(query.BuildingID, query.FloorID),
+		}, query.ActiveSince.UnixMilli(), query.RepresentativeLimit, scanLimit).StringSlice()
+	}
 	if err != nil {
 		return nil, storeError("select representatives", err)
 	}
@@ -136,9 +144,10 @@ func (s *OccupancyStore) representatives(ctx context.Context, query ports.Occupa
 		if err != nil {
 			return nil, err
 		}
-		if !presence.LastSeenAt.Before(query.ActiveSince) {
+		if !presence.LastSeenAt.Before(query.ActiveSince) && presence.Position.BuildingID == query.BuildingID && presence.Position.FloorID == query.FloorID {
 			result = append(result, presence)
 		}
 	}
+	sort.Slice(result, func(i, j int) bool { return result[i].SessionID < result[j].SessionID })
 	return result, nil
 }

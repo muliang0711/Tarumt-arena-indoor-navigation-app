@@ -1,474 +1,114 @@
-# Campus Navigator operator guide
+# Google Cloud operations
 
-This is the start-here guide for operating the CMP deployment and releasing
-new Android APKs. It is organized by situation rather than by implementation
-detail.
+Complete the [first-deployment guide](../docs/operations/google-cloud-deployment.md)
+before using this runbook. Examples assume its VM, checkout, environment file,
+and shared `campus-admin` ingress project. Replace project and zone placeholders.
+For an older host-Caddy installation, retain its reviewed override until a
+planned migration; the commands below target the new shared-container setup.
 
-The deployment root on the CMP is `/opt/campus-navigator`. The remote host is
-normally reachable through Tailscale as `hy@100.87.31.93`, and the public
-Flutter endpoint is:
-
-```text
-https://hy-cmp.tailefdbe9.ts.net
-```
-
-## Decide what needs releasing
-
-| Change | Backend deployment | New APK |
-| --- | --- | --- |
-| Flutter UI or local navigation logic only | No | Yes |
-| Compatible Go implementation change | Yes | No |
-| Backward-compatible HTTP/WebSocket addition | Backend first | Only if Flutter uses it |
-| Breaking contract change | Deploy a backward-compatible backend first | Yes |
-| `map-data/` asset or graph change | Yes | No |
-| Compose or server environment change | Yes | No |
-| Flutter build-time endpoint change | No | Yes |
-
-Do not rebuild or restart everything automatically. Release only the side that
-changed.
-
-## Situation: the CMP rebooted
-
-A normal reboot does **not** require a new deployment:
-
-- Docker is enabled at boot.
-- All application and monitoring containers use `restart: unless-stopped`.
-- `tailscaled` is enabled at boot.
-- Tailscale Funnel configuration is persistent.
-- ClickHouse data is stored in a named Docker volume.
-
-Use this recovery order.
-
-### 1. Check whether the host is online
-
-Run on the Mac:
+## Start, stop, and connect — Cloud Shell
 
 ```sh
-tailscale status
-tailscale ping --c 3 hy-cmp
-ssh -o ConnectTimeout=10 hy@100.87.31.93 'uptime'
+export GCP_PROJECT_ID=YOUR_PROJECT_ID
+export GCP_ZONE=asia-southeast1-b
+export GCP_INSTANCE=tarumt-backend
+gcloud compute instances describe "$GCP_INSTANCE" --project="$GCP_PROJECT_ID" --zone="$GCP_ZONE"
+gcloud compute instances start "$GCP_INSTANCE" --project="$GCP_PROJECT_ID" --zone="$GCP_ZONE"
+gcloud compute ssh "$GCP_INSTANCE" --project="$GCP_PROJECT_ID" --zone="$GCP_ZONE" --tunnel-through-iap
 ```
 
-If these work, continue to [Check the application](#2-check-the-application).
-
-If Tailscale reports `hy-cmp` as offline or SSH times out, the problem is below
-the application layer. Docker commands from the Mac cannot fix an unreachable
-host.
-
-Use a keyboard/monitor or another local access method on the CMP and run:
+Only stop when interrupting all users is acceptable:
 
 ```sh
-ip route
-nmcli device status
-nmcli connection show --active
-systemctl --no-pager --full status NetworkManager tailscaled docker
+gcloud compute instances stop "$GCP_INSTANCE" --project="$GCP_PROJECT_ID" --zone="$GCP_ZONE"
 ```
 
-Expected state:
+Stopping makes the backend unavailable. Disks and reserved addresses can still
+incur charges; closing Cloud Shell does not stop the VM. Configure a billing
+budget and alerts. A budget alert is not an automatic spending cap.
 
-- the Wi-Fi or Ethernet device is connected;
-- a default route exists;
-- `NetworkManager`, `tailscaled`, and `docker` are active.
-
-If a saved network profile did not reconnect, list profiles and bring up the
-correct saved profile:
+## Inspect and recover — inside the VM
 
 ```sh
-nmcli connection show
-sudo nmcli connection up "<saved-profile-name>"
-```
-
-Then recover only the inactive system process:
-
-```sh
-sudo systemctl enable --now tailscaled
-sudo systemctl enable --now docker
-```
-
-If `tailscale status` says the machine is logged out, run:
-
-```sh
-sudo tailscale up
-```
-
-Open the authorization URL it prints. Do not run `tailscale up` when the
-machine is already authenticated.
-
-Useful boot logs:
-
-```sh
-sudo journalctl -b -u NetworkManager -n 100 --no-pager
-sudo journalctl -b -u tailscaled -n 100 --no-pager
-sudo journalctl -b -u docker -n 100 --no-pager
-```
-
-### 2. Check the application
-
-Once SSH works, run from the Mac:
-
-```sh
-ssh hy@100.87.31.93 '
-  sudo docker ps \
-    --filter label=com.docker.compose.project=campus-navigator \
-    --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-'
-```
-
-Expected containers:
-
-1. `campus-navigator-presence-gateway-1`
-2. `campus-navigator-trajectory-worker-1`
-3. `campus-navigator-analytics-api-1`
-4. `campus-navigator-redis-1`
-5. `campus-navigator-clickhouse-1`
-6. `campus-navigator-node-exporter-1`
-7. `campus-navigator-cadvisor-1`
-8. `campus-navigator-redis-exporter-1`
-9. `campus-navigator-prometheus-1`
-10. `campus-navigator-grafana-1`
-
-Containers with a health check should say `healthy`; exporters without a
-container health check should say `Up`. Presence Gateway publishes
-`127.0.0.1:8080`, and Grafana publishes `127.0.0.1:3000`. Neither is bound to a
-LAN address.
-
-### Open the infrastructure dashboard
-
-From the operator machine, keep this SSH session open:
-
-```sh
-ssh -L 3000:127.0.0.1:3000 hy@100.87.31.93
-```
-
-Open `http://127.0.0.1:3000`, sign in using the server-owned Grafana
-credentials, and select **Infrastructure / Infrastructure Overview**.
-
-Run the complete smoke test:
-
-```sh
-ssh hy@100.87.31.93 '
-  /opt/campus-navigator/current/deploy/scripts/smoke-test.sh \
-    /opt/campus-navigator/current/deploy/compose.production.yaml \
-    /opt/campus-navigator/shared/production.env
-'
-```
-
-Check the public Interface:
-
-```sh
-curl --fail --show-error \
-  https://hy-cmp.tailefdbe9.ts.net/health/ready
-```
-
-### 3. If Docker is active but the containers are stopped
-
-Start the existing verified release. This is a restart, not a new deployment:
-
-```sh
-ssh hy@100.87.31.93 '
-  release=/opt/campus-navigator/current
-  environment_file=/opt/campus-navigator/shared/production.env
-
-  sudo docker compose \
-    --project-name campus-navigator \
-    --env-file "$environment_file" \
-    --file "$release/deploy/compose.production.yaml" \
-    up --detach --remove-orphans --wait
-
-  "$release/deploy/scripts/smoke-test.sh" \
-    "$release/deploy/compose.production.yaml" \
-    "$environment_file"
-'
-```
-
-Do not add `--build` after a simple reboot unless an image is missing.
-
-### 4. If the containers work but the public URL does not
-
-Check Funnel:
-
-```sh
-ssh hy@100.87.31.93 'sudo tailscale funnel status'
-```
-
-Expected route:
-
-```text
-https://hy-cmp.tailefdbe9.ts.net
-|-- / proxy http://127.0.0.1:8080
-```
-
-If the route is absent, restore only the ingress Adapter:
-
-```sh
-ssh -t hy@100.87.31.93 \
-  'sudo tailscale funnel --bg http://127.0.0.1:8080'
-```
-
-New public DNS records can take several minutes to propagate.
-
-## Situation: release a Flutter-only feature
-
-Run all commands from the repository on the Mac.
-
-### 1. Finish and commit the feature
-
-The worktree must be intentional and reproducible:
-
-```sh
-cd /Users/puihockyang/coding_project/test
-git status --short
-git add <feature-files>
-git commit -m "feat: describe the feature"
-```
-
-Do not use `git add .` when unrelated work is present.
-
-### 2. Increase the Android version
-
-Edit `flutter_app/pubspec.yaml`:
-
-```yaml
-version: 1.0.1+2
-```
-
-- `1.0.1` is the user-visible version.
-- `2` is Android's version code.
-- Increase the version code for every APK release.
-
-Commit the version change.
-
-### 3. Verify Flutter
-
-```sh
-cd /Users/puihockyang/coding_project/test/flutter_app
-flutter pub get
-flutter analyze
-flutter test
-```
-
-Verify the real Map Bundle Interface:
-
-```sh
-MAP_BUNDLE_INTEGRATION_BASE_URL=https://hy-cmp.tailefdbe9.ts.net \
-  flutter test \
-  test/infrastructure/maps/remote_map_bundle_gateway_integration_test.dart
-```
-
-### 4. Build the friend-testing APK
-
-```sh
-flutter build apk --release \
-  --dart-define=PRESENCE_MODE=realtime \
-  --dart-define=PRESENCE_BASE_URL=https://hy-cmp.tailefdbe9.ts.net \
-  --dart-define=WIFI_POSITIONING_SOURCE=auto \
-  --dart-define=WIFI_POSITIONING_BASE_URL=https://uni-rssi-knn-api-server.onrender.com
-```
-
-The result is:
-
-```text
-flutter_app/build/app/outputs/flutter-apk/app-release.apk
-```
-
-Generate a checksum:
-
-```sh
-shasum -a 256 build/app/outputs/flutter-apk/app-release.apk
-```
-
-Rename the uploaded copy with its version:
-
-```text
-campus-navigator-v1.0.1-build2.apk
-```
-
-Upload it to Google Drive as a new versioned file and share a viewer link.
-Send the checksum separately.
-
-An existing installation updates in place only when:
-
-- the application ID is unchanged;
-- the new Android version code is higher;
-- both APKs use the same signing certificate.
-
-The current friend-testing APK uses the Mac's Android debug certificate. Keep
-building from the same Mac. Configure a permanent release keystore before Play
-Store or wider distribution.
-
-## Situation: release a backend change
-
-### 1. Verify the changed Go Module
-
-Run the relevant tests:
-
-```sh
-cd /Users/puihockyang/coding_project/test/services/presence-gateway
-go test ./...
-
-cd /Users/puihockyang/coding_project/test/services/trajectory-worker
-go test ./...
-
-cd /Users/puihockyang/coding_project/test/services/analytics-api
-go test ./...
-```
-
-Run only the Modules affected by the change, plus any cross-Module integration
-test for a changed contract.
-
-### 2. Commit and deploy one exact revision
-
-The deployment script rejects a dirty worktree:
-
-```sh
-cd /Users/puihockyang/coding_project/test
-git status --short
-git log -1 --oneline
-deploy/scripts/deploy.sh hy@100.87.31.93
-```
-
-The script:
-
-1. archives the current Git commit;
-2. creates `/opt/campus-navigator/releases/<commit>`;
-3. builds and starts the application and monitoring model;
-4. waits for health checks;
-5. runs the smoke test;
-6. changes `current` only after validation succeeds.
-
-After deployment:
-
-```sh
-curl --fail --show-error \
-  https://hy-cmp.tailefdbe9.ts.net/health/ready
-
-ssh hy@100.87.31.93 \
-  'sudo readlink -f /opt/campus-navigator/current'
-```
-
-For a breaking client/server change, first release a backend that understands
-both the old and new Flutter contracts. Release the new APK only after that
-backend is healthy. Remove old-contract compatibility in a later release.
-
-## Situation: publish a new map
-
-The Gateway serves `map-data/` from the deployed Git release. A map-only change
-therefore needs a backend deployment but normally does not need a new APK.
-
-1. Publish and verify a new immutable Map Bundle revision.
-2. Update `map-data/main-campus/current.json`.
-3. Commit the complete `map-data/` change.
-4. Run `deploy/scripts/deploy.sh hy@100.87.31.93`.
-5. Verify the returned `bundle_revision`.
-
-```sh
-curl --fail --silent \
-  https://hy-cmp.tailefdbe9.ts.net/v1/maps/main-campus/current
-```
-
-Flutter revalidates the current manifest and caches verified immutable assets.
-
-## Situation: inspect a failure
-
-### Status
-
-```sh
-ssh hy@100.87.31.93 '
-  sudo docker compose \
-    --project-name campus-navigator \
+cd /opt/campus-navigator/source/tarumt-nav-app
+dc() {
+  sudo docker compose --project-name campus-navigator \
     --env-file /opt/campus-navigator/shared/production.env \
-    --file /opt/campus-navigator/current/deploy/compose.production.yaml \
-    ps
-'
+    -f deploy/compose.production.yaml "$@"
+}
+sudo systemctl status docker --no-pager
+dc ps
+dc logs --tail=100 presence-gateway trajectory-worker analytics-api
+curl -fsS http://127.0.0.1:8080/health/ready
+dc exec -T analytics-api wget -qO- http://127.0.0.1:9092/health/ready
+sudo docker ps --filter label=com.docker.compose.project=campus-admin
+sudo docker logs --tail=100 campus-admin-frontend-https-1
+sudo docker logs --tail=100 campus-admin-admin-web-1
 ```
 
-### Logs
+After a normal reboot, the enabled Docker service and container restart
+policies should restore service. If a service is stopped, investigate logs
+first; use `dc up -d --wait` for backend recovery. For the admin/shared ingress,
+rerun the documented deployment command with the same domain and reserved IP.
+Do not regenerate secrets or remove volumes to repair a connectivity problem.
 
-All containers:
+- Local health works but HTTPS fails: check DNS, reserved IP attachment, ports
+  80/443, Caddy certificate logs, and the VM firewall.
+- Website works but APK fails: check the APK base hostname, session response,
+  token forwarding and `/v1/presence` WebSocket upgrade with the ingress verifier.
+- HTML works but admin data fails: check the server's private API base URLs and
+  Docker backend network. This same-origin setup does not require browser CORS.
+- Dashboard fails while readiness passes: check both ClickHouse tables and
+  SELECT grants from the first-deployment guide.
+- User disappears: presence is filtered by recent activity and floor. Journey
+  completion, disconnects, and expiry can change live counts.
+- Redis restart: current configuration loses hot state and unconsumed Streams;
+  reconnect clients. Do not claim those events can be recovered from ClickHouse.
+
+## Private Grafana — operator laptop
 
 ```sh
-ssh hy@100.87.31.93 '
-  sudo docker compose \
-    --project-name campus-navigator \
-    --env-file /opt/campus-navigator/shared/production.env \
-    --file /opt/campus-navigator/current/deploy/compose.production.yaml \
-    logs --tail 200
-'
+gcloud compute ssh "$GCP_INSTANCE" --project="$GCP_PROJECT_ID" --zone="$GCP_ZONE" \
+  --tunnel-through-iap -- -N -L 3300:127.0.0.1:3000
 ```
 
-One Module:
+Open `http://127.0.0.1:3300` on that laptop. Sign in using the server-owned
+Grafana account; do not put its password in the frontend. Keep port 3000 private.
+For Cloud Shell, use its authenticated Web Preview instead of treating its
+loopback address as your laptop's loopback address.
 
-```sh
-ssh hy@100.87.31.93 '
-  sudo docker compose \
-    --project-name campus-navigator \
-    --env-file /opt/campus-navigator/shared/production.env \
-    --file /opt/campus-navigator/current/deploy/compose.production.yaml \
-    logs --tail 200 presence-gateway
-'
-```
+## Release and rollback
 
-Valid names are `presence-gateway`, `trajectory-worker`, `analytics-api`,
-`redis`, `clickhouse`, `node-exporter`, `cadvisor`, `redis-exporter`,
-`prometheus`, and `grafana`.
+1. Commit and push the intended backend and generated map resources from the
+   development workstation. Record the exact commit and current deployed commit.
+2. On the VM, inspect `git status --short` in the source checkout. Preserve any
+   local changes; stop if they overlap the release. Fetch and check out the
+   reviewed commit only in a clean checkout.
+3. From `tarumt-nav-app`, rerun the map publisher from the first-deployment guide,
+   then `dc config --quiet` and `dc up -d --build --wait`.
+4. Recheck service health, maps, sessions, the public live endpoint, dashboard,
+   WebSocket token checks, and a real frontend connection. Record the commit only after success.
+5. To roll back application code, check out the previously recorded clean
+   revision, rebuild its map resources, and repeat the same Compose and checks.
+   This is an in-place single-VM release, not atomic or zero-downtime deployment.
 
-### Host resources
+Database schema changes require their own compatibility review and backup.
+Reverting code does not revert persisted data or migrations. Avoid changing
+the Compose project name because it selects different named volumes.
+The server-backed admin frontend is released separately; see
+[frontend API configuration](../docs/operations/frontend-api-addresses.md).
 
-```sh
-ssh hy@100.87.31.93 '
-  free -h
-  df -h /
-  sudo docker system df
-'
-```
+## Data protection
 
-Do not prune images or volumes during diagnosis. Build cache is reusable and
-the ClickHouse volume contains analytics data.
+Keep `production.env`, `/opt/campus-navigator/frontend`, any legacy cloud override, the exact
+release commit, and map resources in a protected recovery inventory. Never
+commit populated secrets. Back up ClickHouse with an application-consistent
+procedure and test a restore before relying on it; a disk snapshot taken while
+the database is writing is not by itself proof of a usable backup.
 
-## Situation: roll back the backend
+ClickHouse, Grafana, and Prometheus use named volumes. Redis currently uses
+tmpfs with persistence disabled. Monitor disk usage, bound retention, and do not
+run `docker compose down --volumes`, volume pruning, or VM/disk deletion as
+routine troubleshooting.
 
-List releases:
-
-```sh
-ssh hy@100.87.31.93 \
-  'ls -1 /opt/campus-navigator/releases'
-```
-
-Choose a known-good commit, then follow the rollback command in
-`docs/operations/cmp-deployment.md`.
-
-Rollback is safe only when the older code understands the current Redis and
-ClickHouse schemas. Review database compatibility first.
-
-## Situation: prepare a new CMP
-
-First-time host preparation, secret generation, production Compose validation,
-and the detailed rollback command are documented in:
-
-```text
-docs/operations/cmp-deployment.md
-```
-
-The server-owned secret file is:
-
-```text
-/opt/campus-navigator/shared/production.env
-```
-
-It must remain `root:root` with mode `0600`. Never copy it into Git, an APK,
-chat, logs, or screenshots. The `.env.production.example` file contains names
-only and is safe to commit.
-
-## Safety rules
-
-- Never expose Redis, ClickHouse, Worker, or Analytics API host ports.
-- Flutter communicates only with Presence Gateway.
-- Never run `docker compose down --volumes` on the CMP.
-- Never delete `/opt/campus-navigator/shared/production.env`.
-- Never deploy a dirty worktree.
-- Never reuse a lower Android version code.
-- Never send server secrets inside a Flutter `dart-define`.
-- Keep at least one known-good release until the new release is verified.
-- Treat Redis as volatile in the current friend-testing deployment.
-- Treat ClickHouse as the only durable application data volume.
-
+Cloud verification remains pending until performed on your actual project.

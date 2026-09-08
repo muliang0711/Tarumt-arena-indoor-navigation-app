@@ -1,117 +1,41 @@
-# CMP deployment
+# Deploy Campus Navigator on Google Cloud
 
-Start with [`OPERATIONS.md`](OPERATIONS.md) when:
+Start with [the Google Cloud deployment guide](../docs/operations/google-cloud-deployment.md).
+It teaches a new deployment on **Compute Engine + Ubuntu + Docker Compose**,
+with a reserved external IP, a free DuckDNS name, and one Caddy HTTPS/WSS ingress
+for both the APK API and admin website.
 
-- the CMP has rebooted or become unreachable;
-- a container or the public URL is down;
-- a new Flutter APK, backend revision, or map must be released;
-- logs, rollback, environment setup, or recovery commands are needed.
+This is a deployment plan and operator guide, not evidence that a new cloud
+deployment has already succeeded. Replace all project, domain, and revision
+placeholders before running commands. No cloud resources are created by reading it.
 
-This directory is the deployment Module for the single-host Campus Navigator
-test environment. Its Interface is:
+## Documentation
 
-- `compose.production.yaml` defines the five application containers plus the
-  private Prometheus/Grafana infrastructure-monitoring stack.
-- `.env.production.example` defines the server-owned configuration contract.
-- `scripts/deploy.sh` publishes one committed Git revision.
-- `scripts/smoke-test.sh` verifies the deployed Interface through health, map,
-  session, Redis, and ClickHouse checks.
-- `gcp/manage-vm.sh` starts, stops, checks, or opens SSH to the shared Google
-  Compute Engine test VM from Cloud Shell or another authenticated `gcloud`
-  environment.
-- `gcp/bootstrap-vm.sh` performs the first-time setup inside an Ubuntu Compute
-  Engine VM: Docker, Tailscale, production secrets, the application and
-  monitoring containers, smoke tests, and the public HTTPS Funnel.
+- [One-command website + APK ingress](FRONTEND-GCP.md): free DuckDNS hostname,
+  shared public HTTPS/WSS, and private HTTP to the existing backend on the same VM.
 
-Implementation details such as ClickHouse user initialization live behind that
-Interface. Flutter only crosses the public Presence Gateway seam. The
-Gateway-only ingress network publishes loopback port 8080; Redis, ClickHouse,
-the worker, and the Analytics API remain only on the internal application
-network and have no host port.
+- [Google Cloud first deployment](../docs/operations/google-cloud-deployment.md):
+  VM, firewall, SSH, secrets, map bundle, database permissions, HTTPS, and verification.
+- [Public API addresses for the frontend](../docs/operations/frontend-api-addresses.md):
+  exact shared-origin URLs, APK build settings, and alternative hosting considerations.
+- [Operations](OPERATIONS.md): restart, logs, updates, rollback, backup, and private Grafana.
+- [Local admin demo](ADMIN-LOCAL.md): local Docker and simulated users; not a cloud deployment.
 
-See [`../docs/operations/cmp-deployment.md`](../docs/operations/cmp-deployment.md)
-for the lower-level first-time infrastructure runbook.
+## Configuration boundaries
 
-## Google Compute Engine test VM
+`compose.production.yaml` is the existing ten-container backend/monitoring stack.
+It does not include public HTTPS ingress or the admin website. The cloud guide
+uses `compose.frontend.yaml` as a separate `campus-admin` project containing the
+admin server and shared Caddy. Caddy joins the existing backend network; no
+Analytics host port or second host Caddy is required. Certificates persist in
+the existing frontend named volumes. Runtime state stays outside the checkout.
 
-The shared test VM can be managed from Google Cloud Shell without keeping an
-SSH session open:
+Use the explicit commands in the new guide. The older
+`gcp/bootstrap-vm.sh` and `scripts/deploy.sh` helpers have not been migrated to
+this workflow and must not be used as shortcuts for it. The supported public
+ingress entrypoint is now `gcp/deploy-frontend.sh` after backend preparation.
 
-```sh
-cd ~/Tarumt-arena-indoor-navigation-app/tarumt-nav-app
-bash deploy/gcp/manage-vm.sh status
-bash deploy/gcp/manage-vm.sh start
-bash deploy/gcp/manage-vm.sh ssh
-bash deploy/gcp/manage-vm.sh stop
-```
-
-Stopping the VM stops compute charges and makes the backend unavailable, but
-the attached persistent disk remains billable. Closing Cloud Shell or an SSH
-window does not stop the VM. The stop command asks for confirmation so a
-running test is not interrupted accidentally.
-
-The defaults describe the current shared test VM:
-
-```text
-project:  formidable-gate-504309-r6
-zone:     asia-southeast1-b
-instance: tarumt-backend
-```
-
-For a different environment, override any default without editing the script:
-
-```sh
-GCP_PROJECT_ID=another-project \
-GCP_ZONE=another-zone \
-GCP_INSTANCE=another-instance \
-bash deploy/gcp/manage-vm.sh status
-```
-
-## First-time VM bootstrap
-
-Run the bootstrap script from inside the Compute Engine VM after cloning this
-repository. It is safe to rerun: existing production secrets are preserved,
-package installation is idempotent, and Docker reuses its build cache.
-
-```sh
-cd ~/Tarumt-arena-indoor-navigation-app/tarumt-nav-app
-bash deploy/gcp/bootstrap-vm.sh
-```
-
-The script installs and enables Docker and Tailscale, creates the protected
-`/opt/campus-navigator/shared/production.env` file when it is absent, builds
-the current Map Bundle when its published revision is absent, builds and starts
-the Compose application, runs the deployment smoke test, and maps the
-loopback-only Gateway to a public Tailscale Funnel HTTPS URL.
-
-Tailscale requires one-time interactive authorization. Open the login or
-Funnel approval URL printed by the script. If Funnel approval interrupts the
-first run, rerun the same bootstrap command; completed steps are retained.
-Do not copy `production.env` into Git, an APK, chat, logs, or screenshots.
-
-After this first-time bootstrap, normal VM starts do not require rerunning the
-script. Docker, the application and monitoring containers, `tailscaled`, and the saved Funnel
-configuration resume automatically. Use `manage-vm.sh` from Cloud Shell to
-start and stop the VM as needed.
-
-## Infrastructure monitoring
-
-Production Compose runs Node Exporter for VM metrics, cAdvisor for per-container
-metrics, Prometheus for collection and retention, and Grafana for dashboards.
-Grafana is bound to host loopback and is not part of the public Funnel.
-
-Open a tunnel from an operator machine:
-
-```sh
-ssh -L 3000:127.0.0.1:3000 hy@100.87.31.93
-```
-
-Then open `http://127.0.0.1:3000` and sign in with `GRAFANA_ADMIN_USER` and
-`GRAFANA_ADMIN_PASSWORD` from the server-owned production environment file.
-The provisioned **Infrastructure Overview** dashboard shows VM CPU, memory,
-root-disk use, load, uptime, and per-container CPU, memory, filesystem, network,
-restart, and scrape-health signals.
-
-Prometheus, Node Exporter, and cAdvisor publish no host ports. cAdvisor requires
-privileged, read-only host mounts to inspect Docker and Linux cgroups; never
-expose it outside the private monitoring network.
+Redis, ClickHouse, the worker, Prometheus, exporters, and Grafana are not public
+frontend APIs. Only the selected application routes go through HTTPS port 443.
+The admin endpoints currently have no administrator authentication: publish
+only synthetic demo data until an access-control decision is made.

@@ -92,6 +92,7 @@ func run(logger *slog.Logger) error {
 	router := httptransport.NewRouter(
 		sessionHandler, websocketHandler, mapHandler,
 		backend.Health, metrics, logger,
+		httptransport.NewLiveMapHandler(occupancyService),
 	)
 	server := httptransport.NewServer(cfg.Address, router)
 

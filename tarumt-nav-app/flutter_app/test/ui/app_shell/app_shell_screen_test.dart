@@ -26,6 +26,7 @@ import 'package:indoor_navigation/ui/app/app.dart';
 import 'package:indoor_navigation/ui/app_shell/app_bottom_navigation.dart';
 import 'package:indoor_navigation/ui/floor_rooms/floor_rooms_screen.dart';
 import 'package:indoor_navigation/ui/floor_selection/floor_selection_screen.dart';
+import 'package:indoor_navigation/ui/home/home_screen.dart';
 import 'package:indoor_navigation/ui/indoor_navigation_app.dart';
 import 'package:indoor_navigation/ui/live_map/live_map_screen.dart';
 import 'package:indoor_navigation/ui/live_map/widgets/live_presence_map.dart';
@@ -173,7 +174,17 @@ void main() {
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'TA257');
     await tester.pump();
-    await tester.tap(find.byKey(DestinationSearchKeys.result('TA257')));
+    await tester.tap(find.byKey(DestinationSearchKeys.save('TA257')));
+    await tester.pump();
+    expect(harness.floorRoomsViewModel.state.savedRoomIds, ['TA257']);
+    expect(
+      find.descendant(
+        of: find.byKey(DestinationSearchKeys.save('TA257')),
+        matching: find.byIcon(Icons.bookmark),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(DestinationSearchKeys.navigate('TA257')));
     for (var index = 0; index < 8; index += 1) {
       await tester.pump();
     }
@@ -185,6 +196,47 @@ void main() {
       harness.navigationViewModel.state.navigationSessionStatus,
       NavigationSessionStatus.navigating,
     );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    for (var index = 0; index < 8; index += 1) {
+      await tester.pump();
+    }
+  });
+
+  testWidgets('rooms saved from Home search appear in My Collection', (
+    tester,
+  ) async {
+    final harness = _createHarness(mapJson: mapJson, edgesJson: edgesJson);
+    await tester.pumpWidget(
+      IndoorNavigationApp(
+        floorRoomsViewModel: harness.floorRoomsViewModel,
+        liveMapViewModel: harness.liveMapViewModel,
+        shellViewModel: harness.shellViewModel,
+        viewModel: harness.navigationViewModel,
+      ),
+    );
+
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -260));
+    await tester.pump();
+    await tester.tap(find.byKey(HomeScreenKeys.search));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'Library');
+    await tester.pump();
+    await tester.tap(find.byKey(DestinationSearchKeys.save('library-l305')));
+    await tester.pump();
+    await tester.tap(find.byTooltip('Back'));
+    await tester.pumpAndSettle();
+    for (var index = 0; index < 4; index += 1) {
+      await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+      await tester.pump();
+    }
+
+    expect(find.text('My Collection'), findsOneWidget);
+    expect(
+      find.byKey(HomeScreenKeys.collectionPlace('library-l305')),
+      findsOneWidget,
+    );
+    expect(harness.floorRoomsViewModel.state.savedRoomIds, ['library-l305']);
 
     await tester.pumpWidget(const SizedBox.shrink());
     for (var index = 0; index < 8; index += 1) {
