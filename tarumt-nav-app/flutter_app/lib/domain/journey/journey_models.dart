@@ -265,11 +265,18 @@ final class JourneyOutboxSnapshot {
   JourneyOutboxSnapshot({
     required List<JourneyCommand> pending,
     required this.state,
-  }) : pending = List.unmodifiable(pending);
+    List<JourneyCommand> rejected = const [],
+  }) : pending = List.unmodifiable(pending),
+       rejected = List.unmodifiable(rejected);
 
-  const JourneyOutboxSnapshot.empty() : pending = const [], state = null;
+  const JourneyOutboxSnapshot.empty()
+    : pending = const [],
+      rejected = const [],
+      state = null;
 
   final List<JourneyCommand> pending;
+  // Retain terminally rejected records locally for diagnosis, not replay.
+  final List<JourneyCommand> rejected;
   final JourneyClientState? state;
 }
 

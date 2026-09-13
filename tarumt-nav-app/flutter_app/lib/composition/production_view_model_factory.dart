@@ -224,7 +224,9 @@ ProductionPresenceDependencies createProductionPresenceDependencies({
           idGenerator: SecureRandomInstallationIdGenerator().generate,
           mapId: mainCampusMapId,
           mapRevision: mainCampusMapRevision,
-          outboxStore: SharedPreferencesJourneyOutboxStore(),
+          outboxStore: SharedPreferencesJourneyOutboxStore(
+            backendBaseUrl: resolvedBaseUrl,
+          ),
         )
       : null;
   return ProductionPresenceDependencies(

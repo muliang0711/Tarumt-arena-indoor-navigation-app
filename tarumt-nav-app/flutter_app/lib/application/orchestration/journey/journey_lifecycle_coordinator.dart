@@ -90,6 +90,7 @@ final class JourneyLifecycleCoordinator {
       final current = _snapshot.state;
       if (current == null) return;
       _snapshot = JourneyOutboxSnapshot(
+        rejected: _snapshot.rejected,
         pending: _snapshot.pending,
         state: current.copyWith(desiredEndOutcome: outcome),
       );
@@ -138,6 +139,7 @@ final class JourneyLifecycleCoordinator {
     JourneyClientState? state,
   }) async {
     _snapshot = JourneyOutboxSnapshot(
+      rejected: _snapshot.rejected,
       pending: <JourneyCommand>[..._snapshot.pending, command],
       state: state ?? _snapshot.state,
     );
@@ -153,6 +155,30 @@ final class JourneyLifecycleCoordinator {
       JourneyAcknowledgement acknowledgement;
       try {
         acknowledgement = await _gateway.sendJourneyCommand(command);
+      } on JourneyCommandRejected catch (error) {
+        // A restarted Redis or a new authenticated session cannot restore a
+        // server journey that no longer exists/belongs to this session.
+        // Only explicit terminal lifecycle rejections are safe to quarantine.
+        if (error.retryable ||
+            command is JourneyStartCommand ||
+            !{'journey_not_active', 'journey_ended'}.contains(error.code)) {
+          return;
+        }
+        final key = command.clientJourneyKey;
+        _snapshot = JourneyOutboxSnapshot(
+          pending: _snapshot.pending
+              .where((item) => item.clientJourneyKey != key)
+              .toList(),
+          rejected: [
+            ..._snapshot.rejected,
+            ..._snapshot.pending.where((item) => item.clientJourneyKey == key),
+          ],
+          state: _snapshot.state?.clientJourneyKey == key
+              ? null
+              : _snapshot.state,
+        );
+        await _persist();
+        continue;
       } on Object {
         return;
       }
@@ -175,7 +201,11 @@ final class JourneyLifecycleCoordinator {
             state = null;
         }
       }
-      _snapshot = JourneyOutboxSnapshot(pending: remaining, state: state);
+      _snapshot = JourneyOutboxSnapshot(
+        pending: remaining,
+        state: state,
+        rejected: _snapshot.rejected,
+      );
       await _persist();
     }
   }

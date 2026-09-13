@@ -244,13 +244,16 @@ final class RealtimePresenceRepository
           final reduced = _reducer.apply(event);
           if (reduced != null) _snapshots.add(reduced);
         case PresenceProtocolFailure(
+          :final code,
           :final retryable,
           :final message,
           :final requestId,
         ):
           final request = _journeyRequests.remove(requestId);
           if (request != null && !request.isCompleted) {
-            request.completeError(StateError(message));
+            request.completeError(
+              JourneyCommandRejected(code: code, retryable: retryable),
+            );
           }
           if (retryable) {
             _onSocketClosed(channel, epoch, StateError(message));

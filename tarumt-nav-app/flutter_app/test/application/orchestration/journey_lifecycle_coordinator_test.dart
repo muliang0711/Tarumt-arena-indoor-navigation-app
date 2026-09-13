@@ -6,6 +6,83 @@ import 'package:indoor_navigation/application/ports/time/clock.dart';
 import 'package:indoor_navigation/domain/journey/journey.dart';
 
 void main() {
+  test(
+    'unknown terminal failures are retained rather than discarded',
+    () async {
+      final store = _MemoryOutboxStore();
+      final command = JourneyEndCommand(
+        clientEventId: 'event',
+        clientJourneyKey: 'key',
+        occurredAt: DateTime.utc(2026, 7, 28),
+        journeyId: 'journey',
+        outcome: JourneyOutcome.cancelled,
+      );
+      store.snapshot = JourneyOutboxSnapshot(pending: [command], state: null);
+      final gateway = _RecordingGateway()
+        ..connected = true
+        ..rejectNext = const JourneyCommandRejected(
+          code: 'invalid_journey',
+          retryable: false,
+        );
+      await _coordinator(store: store, gateway: gateway).resume();
+      expect(store.snapshot.pending, [command]);
+      expect(store.snapshot.rejected, isEmpty);
+    },
+  );
+
+  for (final code in ['journey_not_active', 'journey_ended']) {
+    test(
+      'quarantines stale end ($code) and acknowledges new navigation',
+      () async {
+        final store = _MemoryOutboxStore();
+        final old = JourneyEndCommand(
+          clientEventId: 'old-event',
+          clientJourneyKey: 'old-key',
+          occurredAt: DateTime.utc(2026, 7, 28),
+          journeyId: 'old-server-journey',
+          outcome: JourneyOutcome.cancelled,
+        );
+        store.snapshot = JourneyOutboxSnapshot(pending: [old], state: null);
+        final gateway = _RecordingGateway()
+          ..connected = true
+          ..rejectNext = JourneyCommandRejected(code: code, retryable: false);
+        final coordinator = _coordinator(store: store, gateway: gateway);
+        expect(
+          await coordinator.synchronizeNavigation(
+            navigationSessionId: 99,
+            route: _route('node-1', 'node-2', ['edge-1']),
+          ),
+          isTrue,
+        );
+        expect(store.snapshot.pending, isEmpty);
+        expect(store.snapshot.rejected, [old]);
+        expect(gateway.sent.last, isA<JourneyStartCommand>());
+      },
+    );
+  }
+
+  test('retryable rejection preserves pending start for retry', () async {
+    final store = _MemoryOutboxStore();
+    final gateway = _RecordingGateway()
+      ..connected = true
+      ..rejectNext = const JourneyCommandRejected(
+        code: 'unavailable',
+        retryable: true,
+      );
+    final coordinator = _coordinator(store: store, gateway: gateway);
+    expect(
+      await coordinator.synchronizeNavigation(
+        navigationSessionId: 1,
+        route: _route('node-1', 'node-2', ['edge-1']),
+      ),
+      isFalse,
+    );
+    expect(store.snapshot.pending, hasLength(1));
+    expect(store.snapshot.rejected, isEmpty);
+    await coordinator.resume();
+    expect(coordinator.canPublishFor(1), isTrue);
+  });
+
   test('persists before send and retries the same client_event_id', () async {
     final store = _MemoryOutboxStore();
     final gateway = _RecordingGateway()..connected = false;
@@ -146,6 +223,7 @@ final class _MemoryOutboxStore implements JourneyOutboxStore {
 final class _RecordingGateway implements JourneyLifecycleGateway {
   bool connected = false;
   bool failNext = false;
+  JourneyCommandRejected? rejectNext;
   final List<JourneyCommand> sent = [];
   int _routeRevision = 0;
 
@@ -157,6 +235,11 @@ final class _RecordingGateway implements JourneyLifecycleGateway {
     JourneyCommand command,
   ) async {
     sent.add(command);
+    final rejection = rejectNext;
+    if (rejection != null) {
+      rejectNext = null;
+      throw rejection;
+    }
     if (failNext) {
       failNext = false;
       throw StateError('connection lost');
