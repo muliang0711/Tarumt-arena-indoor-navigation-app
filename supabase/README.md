@@ -1,7 +1,7 @@
 # Shared Supabase project
 
 This directory is owned by the overall `fyp_backend` system. It contains the database schema,
-migrations, administration scripts, and client contracts shared by `android-app`,
+migrations, administration scripts, and client contracts shared by `diagnostic-app`,
 `knn-api-server`, and the future Flutter app.
 
 Supabase stores one thing for this system: the node registry in `public.nodes`. It is the runtime

@@ -1,6 +1,6 @@
 # Developer DO's and DON'T's
 
-NOTE: Treat `android-app/` as the root of the Android project.
+NOTE: Treat `diagnostic-app/` as the root of the Android project.
 
 Follow these guidelines at every step of the implementation to maintain code quality and architectural integrity.
 
