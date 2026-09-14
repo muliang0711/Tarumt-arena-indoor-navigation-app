@@ -1,6 +1,9 @@
 package protocol
 
-import "github.com/campus-navigator/presence-gateway/internal/domain"
+import (
+	"github.com/campus-navigator/presence-gateway/internal/domain"
+	"time"
+)
 
 const (
 	TypeSubscribeFloor   = "subscribe_floor"
@@ -23,6 +26,7 @@ type LocationUpdate struct {
 }
 
 type JourneyStart struct {
+	OccurredAt       *time.Time          `json:"occurred_at,omitempty"`
 	ClientEventID    string              `json:"client_event_id"`
 	ClientJourneyKey string              `json:"client_journey_key"`
 	MapID            string              `json:"map_id"`
@@ -31,6 +35,7 @@ type JourneyStart struct {
 }
 
 type RouteRecalculate struct {
+	OccurredAt       *time.Time           `json:"occurred_at,omitempty"`
 	ClientEventID    string               `json:"client_event_id"`
 	JourneyID        string               `json:"journey_id"`
 	ClientJourneyKey string               `json:"client_journey_key"`
@@ -41,6 +46,7 @@ type RouteRecalculate struct {
 }
 
 type JourneyEnd struct {
+	OccurredAt       *time.Time            `json:"occurred_at,omitempty"`
 	ClientEventID    string                `json:"client_event_id"`
 	JourneyID        string                `json:"journey_id"`
 	ClientJourneyKey string                `json:"client_journey_key"`

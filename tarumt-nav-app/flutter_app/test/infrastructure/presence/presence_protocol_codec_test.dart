@@ -164,7 +164,15 @@ void main() {
     );
     final envelope = jsonDecode(encoded) as Map<String, dynamic>;
     expect(envelope['type'], 'journey_start');
-    expect(envelope['timestamp'], '2026-07-26T02:00:00.000Z');
+    final sentAt = DateTime.parse(envelope['timestamp'] as String);
+    expect(
+      DateTime.now().toUtc().difference(sentAt).abs(),
+      lessThan(const Duration(seconds: 5)),
+    );
+    expect(
+      (envelope['payload'] as Map<String, dynamic>)['occurred_at'],
+      '2026-07-26T02:00:00.000Z',
+    );
     expect(
       (envelope['payload'] as Map<String, dynamic>)['planned_route'],
       <String, Object>{

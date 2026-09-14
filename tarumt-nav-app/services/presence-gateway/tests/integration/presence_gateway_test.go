@@ -32,6 +32,11 @@ type testSession struct {
 }
 
 func TestAnonymousSessionsAndRealtimeFloorIsolation(t *testing.T) {
+	t.Run("legacy client", func(t *testing.T) { testRealtimeFloorIsolation(t, false) })
+	t.Run("offline journey replay", func(t *testing.T) { testRealtimeFloorIsolation(t, true) })
+}
+
+func testRealtimeFloorIsolation(t *testing.T, offline bool) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	clock := timeinfra.SystemClock{}
 	sessions := memory.NewSessionStore()
@@ -177,6 +182,10 @@ func TestAnonymousSessionsAndRealtimeFloorIsolation(t *testing.T) {
 			PlannedEdgeIDs: []string{"edge-node-1-node-21"},
 		},
 	}
+	oldEventTime := time.Now().UTC().Add(-48 * time.Hour)
+	if offline {
+		startPayload.OccurredAt = &oldEventTime
+	}
 	sendEnvelope(
 		t,
 		clientA,
@@ -245,6 +254,9 @@ func TestAnonymousSessionsAndRealtimeFloorIsolation(t *testing.T) {
 		t.Fatal("journey end left presence data behind")
 	}
 	events := journeyStore.LifecycleEvents()
+	if offline && (len(events) == 0 || !events[0].OccurredAt.Equal(oldEventTime)) {
+		t.Fatal("offline event time was not preserved")
+	}
 	if len(events) != 2 ||
 		events[0].EventType != domain.JourneyStartedEvent ||
 		events[1].Outcome != domain.JourneyArrived {

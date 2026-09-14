@@ -235,6 +235,11 @@ func (s *runnerState) handle(ctx context.Context, envelope protocol.Envelope) (b
 			s.sendProtocolError(envelope.RequestID, err)
 			return false, nil
 		}
+		occurredAt, err := protocol.JourneyEventTime(payload.OccurredAt, envelope.Timestamp)
+		if err != nil {
+			s.sendProtocolError(envelope.RequestID, err)
+			return false, nil
+		}
 		result, err := s.runner.journeys.Start(
 			ctx,
 			s.session,
@@ -242,7 +247,7 @@ func (s *runnerState) handle(ctx context.Context, envelope protocol.Envelope) (b
 				ClientEventID:    payload.ClientEventID,
 				ClientJourneyKey: payload.ClientJourneyKey,
 				MapID:            payload.MapID, MapRevision: payload.MapRevision,
-				Route: payload.PlannedRoute, OccurredAt: envelope.Timestamp,
+				Route: payload.PlannedRoute, OccurredAt: occurredAt,
 			},
 		)
 		if s.sendJourneyError(envelope.RequestID, err) {
@@ -259,6 +264,11 @@ func (s *runnerState) handle(ctx context.Context, envelope protocol.Envelope) (b
 			s.sendProtocolError(envelope.RequestID, err)
 			return false, nil
 		}
+		occurredAt, err := protocol.JourneyEventTime(payload.OccurredAt, envelope.Timestamp)
+		if err != nil {
+			s.sendProtocolError(envelope.RequestID, err)
+			return false, nil
+		}
 		result, err := s.runner.journeys.Recalculate(
 			ctx,
 			s.session,
@@ -268,7 +278,7 @@ func (s *runnerState) handle(ctx context.Context, envelope protocol.Envelope) (b
 				ClientJourneyKey: payload.ClientJourneyKey,
 				MapID:            payload.MapID, MapRevision: payload.MapRevision,
 				Route: payload.PlannedRoute, Reason: payload.Reason,
-				OccurredAt: envelope.Timestamp,
+				OccurredAt: occurredAt,
 			},
 		)
 		if s.sendJourneyError(envelope.RequestID, err) {
@@ -284,6 +294,11 @@ func (s *runnerState) handle(ctx context.Context, envelope protocol.Envelope) (b
 			s.sendProtocolError(envelope.RequestID, err)
 			return false, nil
 		}
+		occurredAt, err := protocol.JourneyEventTime(payload.OccurredAt, envelope.Timestamp)
+		if err != nil {
+			s.sendProtocolError(envelope.RequestID, err)
+			return false, nil
+		}
 		result, err := s.runner.journeys.End(
 			ctx,
 			s.session,
@@ -291,7 +306,7 @@ func (s *runnerState) handle(ctx context.Context, envelope protocol.Envelope) (b
 				ClientEventID:    payload.ClientEventID,
 				JourneyID:        payload.JourneyID,
 				ClientJourneyKey: payload.ClientJourneyKey,
-				Outcome:          payload.Outcome, OccurredAt: envelope.Timestamp,
+				Outcome:          payload.Outcome, OccurredAt: occurredAt,
 			},
 		)
 		if s.sendJourneyError(envelope.RequestID, err) {
