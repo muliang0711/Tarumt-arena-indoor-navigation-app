@@ -118,10 +118,9 @@ final class PresenceProtocolCodec {
   }) => _encode(
     type: command.type,
     requestId: requestId,
-    timestamp: command.occurredAt,
-    payload: command.toJson()
-      ..remove('type')
-      ..remove('occurred_at'),
+    // Envelope time is transmission time, including every outbox retry.
+    // Event time stays immutable for analytics and idempotent replay.
+    payload: command.toJson()..remove('type'),
   );
 
   String _encode({
